@@ -1,0 +1,167 @@
+---
+title: Installation
+description: Install Stoma and configure your TypeScript project for any runtime.
+draft: false
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Install the package
+
+Stoma requires **Hono v4.0.0 or later** as a peer dependency. Install both together:
+
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install @homegrower-club/stoma hono
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add @homegrower-club/stoma hono
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add @homegrower-club/stoma hono
+    ```
+  </TabItem>
+</Tabs>
+
+## Optional dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `hono` | `>=4.0.0` | **Required** peer dependency. Provides the router, context, and middleware system. |
+| `zod` | `>=3.0.0` | **Optional**. Enables config schema validation at construction time. |
+
+If you want Zod-based config validation:
+
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install zod
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add zod
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add zod
+    ```
+  </TabItem>
+</Tabs>
+
+## TypeScript configuration
+
+Stoma is written in TypeScript and exports raw `.ts` source files directly -- there
+is no build step. Your bundler (Vite, esbuild, wrangler) compiles the TypeScript at
+build time alongside your own code.
+
+Your `tsconfig.json` should use these settings at minimum:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
+```
+
+Key requirements:
+
+- **`target: "ES2022"`** or later. Stoma uses `structuredClone`, `AbortSignal.timeout`,
+  `crypto.subtle`, and other modern APIs. These are available natively in Cloudflare
+  Workers, Deno, Bun, and Node.js 20+.
+- **`moduleResolution: "bundler"`**. Required for subpath exports
+  (`@homegrower-club/stoma/policies`, `@homegrower-club/stoma/config`) to resolve
+  correctly.
+- **`strict: true`**. Recommended. Stoma's types are authored with strict mode enabled.
+
+## Subpath exports
+
+The package exposes five entry points:
+
+| Import path | Contents |
+|-------------|----------|
+| `@homegrower-club/stoma` | Main entry: `createGateway`, all 39 built-in policies, SDK helpers, all types |
+| `@homegrower-club/stoma/policies` | Policy factory functions, SDK helpers, and policy types only |
+| `@homegrower-club/stoma/config` | Config type re-exports + Zod validation schemas (`validateConfig`, `safeValidateConfig`, `GatewayConfigSchema`) |
+| `@homegrower-club/stoma/sdk` | Policy SDK: `definePolicy()`, `createPolicyTestHarness()`, `Priority` constants, `resolveConfig`, `policyDebug`, `withSkip` |
+| `@homegrower-club/stoma/adapters` | Cloudflare-specific adapters (KV, Durable Objects) |
+
+For most use cases, import everything from the main entry point:
+
+```typescript
+import { createGateway, jwtAuth, rateLimit, cors } from "@homegrower-club/stoma";
+```
+
+For custom policy development, import the SDK directly:
+
+```typescript
+import { definePolicy, Priority, createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+```
+
+## Runtime-specific setup
+
+Stoma runs on any runtime Hono supports. The core library has no
+runtime-specific dependencies. Additional setup depends on where you deploy.
+
+### Cloudflare Workers
+
+Install the Workers type definitions as a dev dependency:
+
+```sh
+npm install -D @cloudflare/workers-types
+```
+
+Add them to your `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types"]
+  }
+}
+```
+
+This enables typed access to `c.env` bindings (secrets, Service Bindings, KV
+namespaces). The `@homegrower-club/stoma/adapters` subpath export provides
+Cloudflare-specific stores for rate limiting (KV, Durable Objects) and circuit
+breakers.
+
+### Node.js
+
+Install the Hono Node.js adapter:
+
+```sh
+npm install @hono/node-server
+```
+
+Then serve the gateway app:
+
+```typescript
+import { serve } from "@hono/node-server";
+serve({ fetch: gateway.app.fetch, port: 3000 });
+```
+
+### Deno and Bun
+
+No additional dependencies are needed. Export or serve the `gateway.app`
+directly using the runtime's native APIs. See the
+[Quick Start](/getting-started/quick-start/) for examples.
+
+## Next steps
+
+With the package installed, proceed to the [Quick Start](/getting-started/quick-start/)
+to define your first gateway.

@@ -1,0 +1,166 @@
+---
+title: Service Bindings
+draft: false
+sidebar:
+  order: 1
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Service Bindings enable Worker-to-Worker communication with zero network
+overhead. Instead of routing through the public internet, a Service Binding
+calls the target Worker's `fetch()` handler directly via in-process
+communication within the same Cloudflare data center.
+
+## How Service Bindings work
+
+When a Cloudflare Worker makes a regular `fetch()` call to another Worker's
+public URL, the request traverses the full HTTP stack -- DNS resolution, TLS
+handshake, routing, and serialization. A Service Binding bypasses all of this.
+The Workers runtime resolves the binding to the target Worker at the platform
+level and invokes it directly. There is no cold start, no DNS lookup, and no
+network hop.
+
+This makes Service Bindings the optimal upstream type for internal
+microservice communication on Cloudflare Workers.
+
+## Gateway configuration
+
+Use the `service-binding` upstream type and reference the binding name from
+your `wrangler.toml`:
+
+```typescript
+import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+
+const gateway = createGateway({
+  name: "api-gateway",
+  basePath: "/api",
+  routes: [
+    {
+      path: "/auth/*",
+      pipeline: {
+        policies: [rateLimit({ max: 200 })],
+        upstream: {
+          type: "service-binding",
+          service: "AUTH_WORKER",
+          rewritePath: (path) => path.replace("/api/auth", ""),
+        },
+      },
+    },
+    {
+      path: "/projects/*",
+      pipeline: {
+        policies: [
+          jwtAuth({ secret: env.JWT_SECRET }),
+          rateLimit({ max: 500 }),
+        ],
+        upstream: {
+          type: "service-binding",
+          service: "PROJECTS_WORKER",
+          rewritePath: (path) => path.replace("/api/projects", ""),
+        },
+      },
+    },
+  ],
+});
+
+export default gateway.app;
+```
+
+## Wrangler configuration
+
+The `service` field in the gateway config must match the `binding` name in your
+`wrangler.toml`. The `service` field in `wrangler.toml` is the name of the
+target Worker as deployed to your Cloudflare account:
+
+```toml
+[[services]]
+binding = "AUTH_WORKER"
+service = "auth-worker"
+
+[[services]]
+binding = "PROJECTS_WORKER"
+service = "projects-worker"
+```
+
+<Aside type="caution">
+The `service` field in Stoma's upstream config refers to the **binding name**
+(e.g. `"AUTH_WORKER"`), not the deployed Worker name (e.g. `"auth-worker"`).
+The binding name is how your gateway Worker accesses the binding at runtime
+via `env.AUTH_WORKER`.
+</Aside>
+
+## Path rewriting
+
+The optional `rewritePath` function transforms the incoming request path before
+forwarding it to the bound service. This lets the target Worker define its own
+route structure without knowing about the gateway's `basePath` or route
+prefixes:
+
+```typescript
+{
+  path: "/users/*",
+  pipeline: {
+    upstream: {
+      type: "service-binding",
+      service: "USERS_WORKER",
+      // /api/users/123 becomes /123
+      rewritePath: (path) => path.replace("/api/users", ""),
+    },
+  },
+}
+```
+
+## Runtime behavior
+
+At request time, the gateway:
+
+1. Reads `c.env[service]` from the Hono context (populated by the Workers runtime)
+2. Validates that the binding exists and has a `fetch` method
+3. Applies `rewritePath` if configured
+4. Clones the request headers and strips hop-by-hop headers (RFC 2616)
+5. Propagates W3C `traceparent` with a fresh span ID for the upstream leg
+6. Calls `binding.fetch()` with the rewritten request
+7. Returns the upstream response with hop-by-hop headers stripped
+
+If the binding is not available (missing from `wrangler.toml` or misconfigured),
+the gateway returns a `502` error:
+
+```json
+{
+  "error": "upstream_error",
+  "message": "Service binding \"AUTH_WORKER\" is not available in the Worker environment",
+  "statusCode": 502
+}
+```
+
+## Benefits
+
+| Characteristic | Service Binding | URL Proxy (`fetch()`) |
+|----------------|-----------------|----------------------|
+| Latency | Near-zero (in-process) | Variable (network RTT) |
+| Cold starts | None (co-located) | Possible |
+| DNS resolution | None | Required |
+| TLS handshake | None | Required |
+| Data center | Same colo guaranteed | May cross colos |
+| Billing | Included in caller | Separate per-request |
+
+<Aside>
+Service Bindings are a Cloudflare-specific feature. If you are deploying to a
+different edge runtime, use the `url` upstream type with an internal URL
+instead.
+</Aside>
+
+## TypeScript types
+
+The upstream config is typed as a `ServiceBindingUpstream`:
+
+```typescript
+interface ServiceBindingUpstream {
+  type: "service-binding";
+  /** Name of the Service Binding in wrangler.toml (e.g. "AUTH_SERVICE"). */
+  service: string;
+  /** Rewrite the path before forwarding to the bound service. */
+  rewritePath?: (path: string) => string;
+}
+```

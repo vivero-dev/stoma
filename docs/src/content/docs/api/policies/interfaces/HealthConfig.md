@@ -1,0 +1,70 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "HealthConfig"
+---
+
+Defined in: src/core/health.ts:8
+
+Configuration for the health route factory.
+
+## Properties
+
+### includeUpstreamStatus?
+
+> `optional` **includeUpstreamStatus**: `boolean`
+
+Defined in: src/core/health.ts:14
+
+Include individual upstream statuses in response. Default: false.
+
+***
+
+### path?
+
+> `optional` **path**: `string`
+
+Defined in: src/core/health.ts:10
+
+Health endpoint path. Default: "/health".
+
+***
+
+### probeMethod?
+
+> `optional` **probeMethod**: `string`
+
+Defined in: src/core/health.ts:18
+
+HTTP method for upstream probes. Default: `"HEAD"`.
+
+***
+
+### probeTimeoutMs?
+
+> `optional` **probeTimeoutMs**: `number`
+
+Defined in: src/core/health.ts:16
+
+Timeout in ms for each upstream probe. Default: 5000.
+
+***
+
+### unhealthyStatusCode?
+
+> `optional` **unhealthyStatusCode**: `number`
+
+Defined in: src/core/health.ts:20
+
+Status code returned when all probes are unhealthy. Default: 503.
+
+***
+
+### upstreamProbes?
+
+> `optional` **upstreamProbes**: `string`[]
+
+Defined in: src/core/health.ts:12
+
+URLs to probe for upstream health.

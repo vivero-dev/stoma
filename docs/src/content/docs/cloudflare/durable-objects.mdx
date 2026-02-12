@@ -1,0 +1,171 @@
+---
+title: Durable Objects
+draft: false
+sidebar:
+  order: 3
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+For precise, globally consistent rate limiting or circuit breaking, Stoma
+provides a Durable Objects adapter. Each unique rate limit key maps to a
+Durable Object instance that maintains an atomic counter, ensuring exact
+counts across all Worker isolates worldwide.
+
+## When to use Durable Objects
+
+Use Durable Objects instead of KV when you need:
+
+- **Exact counting** -- billing, quota enforcement, or compliance scenarios
+  where approximate counts are not acceptable
+- **Strong consistency** -- every request must see the true current count,
+  not an eventually consistent snapshot
+- **Circuit breaking** -- a single DO instance per upstream can track failure
+  counts and circuit state (closed/open/half-open) with guaranteed consistency
+- **Session affinity** -- consistent routing for stateful connections
+
+For high-volume rate limiting where approximate counts are acceptable, the
+[KV approach](/cloudflare/kv-rate-limiting/) is simpler and cheaper.
+
+## Setup
+
+Stoma provides two exports from `@homegrower-club/stoma/adapters`:
+
+- **`RateLimiterDO`** -- A Durable Object class that maintains an atomic
+  rate limit counter with alarm-based expiry
+- **`DurableObjectRateLimitStore`** -- A `RateLimitStore` implementation that
+  communicates with `RateLimiterDO` instances
+
+### 1. Export the Durable Object class
+
+The `RateLimiterDO` class must be exported from your Worker entry point so the
+Cloudflare runtime can instantiate it:
+
+```typescript
+// worker.ts (your entry point)
+import { createGateway, rateLimit } from "@homegrower-club/stoma";
+import { DurableObjectRateLimitStore } from "@homegrower-club/stoma/adapters";
+
+// Re-export the DO class for the runtime
+export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
+
+export default {
+  fetch(request: Request, env: Env) {
+    const store = new DurableObjectRateLimitStore(env.RATE_LIMITER);
+
+    const gateway = createGateway({
+      routes: [
+        {
+          path: "/api/*",
+          pipeline: {
+            policies: [rateLimit({ max: 100, store })],
+            upstream: { type: "url", target: "https://backend.internal" },
+          },
+        },
+      ],
+    });
+
+    return gateway.app.fetch(request, env);
+  },
+};
+```
+
+### 2. Configure wrangler.toml
+
+Declare the Durable Object binding and class:
+
+```toml
+[[durable_objects.bindings]]
+name = "RATE_LIMITER"
+class_name = "RateLimiterDO"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["RateLimiterDO"]
+```
+
+The `name` field (`"RATE_LIMITER"`) is the binding you pass to
+`DurableObjectRateLimitStore` via `env.RATE_LIMITER`. The `class_name` must
+match the exported class name.
+
+## How it works
+
+The `DurableObjectRateLimitStore` maps each rate limit key to a unique DO
+instance via `namespace.idFromName(key)`. When `increment()` is called:
+
+1. The store calls `namespace.get(id)` to obtain a stub for the DO instance
+2. It sends a `fetch()` request to the stub with the window duration as a
+   query parameter
+3. The `RateLimiterDO` reads its counter from durable storage
+4. If the window is still active, the count is incremented atomically
+5. If the window has expired, a new counter starts at 1 and an alarm is
+   scheduled to clean up the expired entry
+6. The updated count and reset timestamp are returned as JSON
+
+Because each key maps to exactly one DO instance, and Durable Objects provide
+single-threaded execution guarantees, the counter is always accurate regardless
+of how many Worker isolates are handling concurrent requests.
+
+## Using the cloudflareAdapter factory
+
+The `cloudflareAdapter` factory automatically selects Durable Objects when a
+DO namespace is provided (preferred over KV):
+
+```typescript
+import { createGateway, rateLimit } from "@homegrower-club/stoma";
+import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+
+const adapter = cloudflareAdapter({
+  rateLimitDo: env.RATE_LIMITER,
+});
+
+const gateway = createGateway({
+  routes: [
+    {
+      path: "/api/*",
+      pipeline: {
+        policies: [
+          rateLimit({ max: 100, store: adapter.rateLimitStore }),
+        ],
+        upstream: { type: "url", target: "https://backend.internal" },
+      },
+    },
+  ],
+});
+```
+
+If both `rateLimitDo` and `rateLimitKv` are provided, the adapter prefers
+Durable Objects.
+
+## Circuit breaking with Durable Objects
+
+The circuit breaker pattern benefits from strong consistency. A DO per upstream
+can track failure counts and circuit state transitions across all Worker
+isolates. While Stoma's built-in `InMemoryCircuitBreakerStore` works for
+single-instance deployments, a DO-backed store ensures that circuit state is
+globally consistent.
+
+<Aside type="tip">
+The `circuitBreaker` policy accepts a pluggable `CircuitBreakerStore`. You can
+implement this interface against a Durable Object following the same pattern
+as `RateLimiterDO` -- one DO instance per circuit key, with state transitions
+managed atomically in durable storage.
+</Aside>
+
+## Trade-offs
+
+| Characteristic | Durable Objects | KV |
+|----------------|-----------------|-----|
+| Consistency | Strong (single-writer) | Eventually consistent |
+| Accuracy | Exact counts | Approximate |
+| Latency | ~10-50ms per operation | Sub-millisecond reads |
+| Cost | Higher (per-request + storage) | Lower (KV pricing) |
+| Setup | Requires DO class export + migration | KV namespace only |
+| Use case | Billing, quotas, compliance | Abuse prevention, general rate limiting |
+
+<Aside>
+Durable Objects add latency because each request to the DO instance is routed
+to the specific data center where that instance lives. For rate limiting, this
+typically adds 10-50ms per request. If sub-millisecond rate limit checks are
+critical, use the KV store with its eventual consistency trade-off.
+</Aside>

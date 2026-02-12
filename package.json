@@ -1,0 +1,98 @@
+{
+  "name": "@homegrower-club/stoma",
+  "version": "0.0.1",
+  "description": "Declarative API gateway as a TypeScript library, built on Hono. Runs on Cloudflare Workers, Node.js, Deno, Bun, and any edge runtime.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HomeGrower-club/stoma.git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./policies": {
+      "types": "./src/policies/index.ts",
+      "default": "./src/policies/index.ts"
+    },
+    "./config": {
+      "types": "./src/config/index.ts",
+      "default": "./src/config/index.ts"
+    },
+    "./sdk": {
+      "types": "./src/policies/sdk/index.ts",
+      "default": "./src/policies/sdk/index.ts"
+    },
+    "./adapters": {
+      "types": "./src/adapters/index.ts",
+      "default": "./src/adapters/index.ts"
+    },
+    "./adapters/cloudflare": {
+      "types": "./src/adapters/cloudflare.ts",
+      "default": "./src/adapters/cloudflare.ts"
+    },
+    "./adapters/deno": {
+      "types": "./src/adapters/deno.ts",
+      "default": "./src/adapters/deno.ts"
+    },
+    "./adapters/bun": {
+      "types": "./src/adapters/bun.ts",
+      "default": "./src/adapters/bun.ts"
+    },
+    "./adapters/node": {
+      "types": "./src/adapters/node.ts",
+      "default": "./src/adapters/node.ts"
+    },
+    "./adapters/memory": {
+      "types": "./src/adapters/memory.ts",
+      "default": "./src/adapters/memory.ts"
+    }
+  },
+  "scripts": {
+    "lint": "echo 'No linter configured'",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "docs:dev": "cd docs && npx astro dev",
+    "docs:build": "cd docs && npx astro build",
+    "docs:preview": "cd docs && npx astro preview"
+  },
+  "dependencies": {
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.0",
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "@vitest/coverage-istanbul": "3.2.4",
+    "@vitest/expect": "3.2.4",
+    "@vitest/mocker": "3.2.4",
+    "@vitest/pretty-format": "3.2.4",
+    "@vitest/runner": "3.2.4",
+    "@vitest/snapshot": "3.2.4",
+    "@vitest/spy": "3.2.4",
+    "@vitest/utils": "3.2.4",
+    "typescript": "^5.9.3",
+    "vitest": "3.2.4",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "hono": ">=4.0.0",
+    "zod": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  },
+  "workspaces": [
+    "demo"
+  ]
+}

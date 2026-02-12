@@ -1,0 +1,386 @@
+---
+title: Custom Policies
+draft: false
+sidebar:
+  order: 7
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Stoma provides a policy SDK at `@homegrower-club/stoma/sdk` that gives you
+the same tools the built-in policies use. The recommended way to write custom
+policies is with `definePolicy()`, which handles config merging, skip logic,
+debug logging, and gateway context injection automatically.
+
+## Writing a policy with definePolicy
+
+The `definePolicy()` function takes a declarative definition and returns a
+factory function `(config?) => Policy`. Your handler receives the Hono context,
+`next`, and a `PolicyHandlerContext` with the merged config, a pre-namespaced
+debug logger, and the gateway context.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma/sdk";
+import { GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface TenantFilterConfig extends PolicyConfig {
+  allowedTenants: string[];
+}
+
+export const tenantFilter = definePolicy<TenantFilterConfig>({
+  name: "tenant-filter",
+  priority: Priority.RATE_LIMIT,
+  handler: async (c, next, { config, debug }) => {
+    const tenant = c.req.header("x-tenant-id");
+
+    if (!tenant || !config.allowedTenants.includes(tenant)) {
+      debug("rejected tenant: %s", tenant ?? "none");
+      throw new GatewayError(403, "forbidden", "Tenant not allowed");
+    }
+
+    debug("allowed tenant: %s", tenant);
+    await next();
+  },
+});
+```
+
+Using it:
+
+```typescript
+import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+import { tenantFilter } from "./policies/tenant-filter";
+
+const gateway = createGateway({
+  routes: [
+    {
+      path: "/api/*",
+      pipeline: {
+        policies: [
+          jwtAuth({ secret: env.JWT_SECRET }),
+          tenantFilter({ allowedTenants: ["acme", "globex"] }),
+          rateLimit({ max: 100 }),
+        ],
+        upstream: { type: "url", target: "https://backend.internal" },
+      },
+    },
+  ],
+});
+```
+
+### What definePolicy handles for you
+
+- **Config merging** -- your `defaults` object is shallow-merged with user config via `resolveConfig()`.
+- **Skip logic** -- the standard `skip` field from `PolicyConfig` is automatically checked before your handler runs. You do not need to check `config.skip` manually.
+- **Debug logging** -- the `debug` argument is a pre-namespaced logger scoped to `stoma:policy:{name}`. It is always callable (returns a no-op when debug is disabled or when running outside a gateway pipeline).
+- **Gateway context** -- the `gateway` argument provides `requestId`, `traceId`, `spanId`, `gatewayName`, `routePath`, and a `debug` factory.
+
+### PolicyDefinition reference
+
+```typescript
+interface PolicyDefinition<TConfig extends PolicyConfig> {
+  /** Unique policy name (e.g. "my-auth", "custom-cache"). */
+  name: string;
+  /** Execution priority. Use Priority constants. Default: Priority.DEFAULT (100). */
+  priority?: number;
+  /** Default values for optional config fields. */
+  defaults?: Partial<TConfig>;
+  /** The policy handler. */
+  handler: (
+    c: Context,
+    next: Next,
+    ctx: PolicyHandlerContext<TConfig>,
+  ) => Promise<void> | void;
+}
+```
+
+### PolicyHandlerContext reference
+
+```typescript
+interface PolicyHandlerContext<TConfig> {
+  /** Fully merged config (defaults + user overrides). */
+  config: TConfig;
+  /** Debug logger pre-namespaced to stoma:policy:{name}. Always callable. */
+  debug: DebugLogger;
+  /** Gateway context, or undefined when running outside a gateway pipeline. */
+  gateway: PolicyContext | undefined;
+}
+```
+
+`gateway` includes request metadata such as `requestId`, `traceId`, `spanId`,
+`startTime`, `gatewayName`, and `routePath`, plus adapter capabilities (when available).
+
+---
+
+## Priority constants
+
+The SDK exports named `Priority` constants so you do not need magic numbers.
+All built-in policies use these constants:
+
+| Constant | Value | Tier | Examples |
+|----------|-------|------|----------|
+| `Priority.OBSERVABILITY` | 0 | Observability | `requestLog`, `assignMetrics` |
+| `Priority.IP_FILTER` | 1 | Early filters | `ipFilter` |
+| `Priority.METRICS` | 1 | Metrics | `metricsReporter` |
+| `Priority.EARLY` | 5 | Early transform | `cors`, `overrideMethod`, `latencyInjection` |
+| `Priority.AUTH` | 10 | Authentication | `jwtAuth`, `apiKeyAuth`, `basicAuth`, `oauth2`, `rbac`, `jws`, `verifyHttpSignature`, `requestValidation`, `jsonValidation` |
+| `Priority.RATE_LIMIT` | 20 | Rate limiting | `rateLimit` |
+| `Priority.CIRCUIT_BREAKER` | 30 | Resilience (pre) | `circuitBreaker` |
+| `Priority.CACHE` | 40 | Caching | `cache` |
+| `Priority.REQUEST_TRANSFORM` | 50 | Request transform | `requestTransform`, `assignAttributes`, `assignContent`, `generateJwt`, `dynamicRouting`, `httpCallout` |
+| `Priority.TIMEOUT` | 85 | Timeout | `timeout` |
+| `Priority.RETRY` | 90 | Retry | `retry` |
+| `Priority.RESPONSE_TRANSFORM` | 92 | Response transform | `responseTransform`, `trafficShadow`, `resourceFilter` |
+| `Priority.PROXY` | 95 | Proxy | `proxy`, `generateHttpSignature` |
+| `Priority.DEFAULT` | 100 | Default | Custom policies (when no priority specified) |
+| `Priority.MOCK` | 999 | Terminal | `mock` |
+
+```typescript
+import { Priority } from "@homegrower-club/stoma/sdk";
+
+// Use named constants instead of magic numbers
+const myPolicy = definePolicy({
+  name: "my-policy",
+  priority: Priority.AUTH,
+  // ...
+});
+```
+
+If you do not specify a priority, your policy receives `Priority.DEFAULT` (100)
+unless overridden via `GatewayConfig.defaultPolicyPriority`.
+
+<Aside type="tip">
+Place authentication before rate limiting. Place rate limiting before caching.
+Place transforms close to the upstream boundary. When in doubt, use a priority
+between 10 and 90 and test the resulting pipeline order.
+</Aside>
+
+---
+
+## SDK helpers
+
+The SDK also exports three composable helpers that `definePolicy` uses
+internally. You can use them directly when building policies with the manual
+approach (see below).
+
+### resolveConfig
+
+Shallow-merge default config values with user-provided config:
+
+```typescript
+import { resolveConfig } from "@homegrower-club/stoma/sdk";
+
+const config = resolveConfig<MyConfig>(
+  { timeout: 5000, retries: 3 },  // defaults
+  userConfig,                       // user overrides (may be undefined)
+);
+```
+
+### policyDebug
+
+Get a debug logger pre-namespaced to `stoma:policy:{name}`. Returns a no-op
+logger when there is no gateway context:
+
+```typescript
+import { policyDebug } from "@homegrower-club/stoma/sdk";
+
+// Inside a policy handler:
+const debug = policyDebug(c, "my-policy");
+debug("processing request %s", c.req.url);
+```
+
+### withSkip
+
+Wrap a middleware handler with `PolicyConfig.skip` logic. If `skipFn` is
+undefined, returns the original handler unchanged (zero overhead):
+
+```typescript
+import { withSkip } from "@homegrower-club/stoma/sdk";
+
+const handler: MiddlewareHandler = async (c, next) => {
+  // policy logic
+  await next();
+};
+
+return {
+  name: "my-policy",
+  priority: 50,
+  handler: withSkip(config?.skip, handler),
+};
+```
+
+---
+
+## Testing custom policies
+
+The SDK provides `createPolicyTestHarness()` to eliminate the repeated
+boilerplate of setting up a test Hono app. It creates a minimal app with the
+policy under test, GatewayError handling, gateway context injection, and a
+configurable upstream.
+
+```typescript
+import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { tenantFilter } from "./tenant-filter";
+
+const { request } = createPolicyTestHarness(
+  tenantFilter({ allowedTenants: ["acme"] }),
+);
+
+it("should allow valid tenants", async () => {
+  const res = await request("/test", {
+    headers: { "x-tenant-id": "acme" },
+  });
+  expect(res.status).toBe(200);
+});
+
+it("should reject unknown tenants", async () => {
+  const res = await request("/test", {
+    headers: { "x-tenant-id": "evil-corp" },
+  });
+  expect(res.status).toBe(403);
+});
+```
+
+### Test harness options
+
+```typescript
+interface PolicyTestHarnessOptions {
+  /** Custom upstream handler. Default: returns { ok: true } with status 200. */
+  upstream?: MiddlewareHandler;
+  /** Route path pattern for the test app. Default: "/*". */
+  path?: string;
+  /** Gateway name injected into context. Default: "test-gateway". */
+  gatewayName?: string;
+}
+```
+
+Custom upstream for testing pass-through behavior:
+
+```typescript
+const { request } = createPolicyTestHarness(myPolicy(), {
+  upstream: async (c) => {
+    return c.json({ user: "test-user", role: "admin" });
+  },
+});
+```
+
+---
+
+## Manual approach (lower-level alternative)
+
+You can also create policies by returning a `Policy` object directly. This is
+the lower-level approach -- you handle config merging, skip logic, and debug
+logging yourself.
+
+### The Policy interface
+
+Every policy has three fields:
+
+```typescript
+interface Policy {
+  /** Unique name -- used for deduplication when merging global and route policies. */
+  name: string;
+  /** A standard Hono MiddlewareHandler. */
+  handler: MiddlewareHandler;
+  /** Execution priority -- lower numbers run first. Default: 100. */
+  priority?: number;
+}
+```
+
+### Writing a manual policy factory
+
+```typescript
+import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
+import { GatewayError } from "@homegrower-club/stoma";
+import { resolveConfig, policyDebug, withSkip, Priority } from "@homegrower-club/stoma/sdk";
+
+interface TenantFilterConfig extends PolicyConfig {
+  allowedTenants: string[];
+}
+
+export function tenantFilter(config: TenantFilterConfig): Policy {
+  if (config.allowedTenants.length === 0) {
+    throw new Error("tenantFilter requires at least one allowed tenant");
+  }
+
+  const handler: import("hono").MiddlewareHandler = async (c, next) => {
+    const debug = policyDebug(c, "tenant-filter");
+    const tenant = c.req.header("x-tenant-id");
+
+    if (!tenant || !config.allowedTenants.includes(tenant)) {
+      debug("rejected tenant: %s", tenant ?? "none");
+      throw new GatewayError(403, "forbidden", "Tenant not allowed");
+    }
+
+    debug("allowed tenant: %s", tenant);
+    await next();
+  };
+
+  return {
+    name: "tenant-filter",
+    priority: Priority.RATE_LIMIT,
+    handler: withSkip(config.skip, handler),
+  };
+}
+```
+
+### Accessing gateway context (manual)
+
+The gateway injects a `PolicyContext` on every request. Access it via
+`getGatewayContext(c)` to read the request ID, timing data, or create a
+namespaced debug logger:
+
+```typescript
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+// Inside a policy handler:
+const ctx = getGatewayContext(c);
+const debug = ctx?.debug("stoma:policy:my-policy");
+debug?.("processing request", ctx?.requestId);
+```
+
+The context includes `requestId`, `startTime`, `gatewayName`, `routePath`,
+`traceId`, `spanId`, and a `debug` factory. See the
+[Policy System](/concepts/policies/) page for the full interface.
+
+---
+
+## Short-circuiting
+
+A policy short-circuits the pipeline by returning a `Response` without calling
+`next()`. When this happens, no further policies or the upstream handler
+execute. Use `GatewayError` for structured JSON error responses:
+
+```typescript
+import { GatewayError } from "@homegrower-club/stoma";
+
+// Inside a policy handler:
+throw new GatewayError(403, "forbidden", "Access denied");
+```
+
+You can also return a response directly:
+
+```typescript
+// Inside a policy handler:
+return c.json({ status: "blocked" }, 403);
+```
+
+---
+
+## Wrapping existing Hono middleware
+
+Any existing Hono middleware can be wrapped as a policy by adding `name` and
+`priority`:
+
+```typescript
+import { compress } from "hono/compress";
+import type { Policy } from "@homegrower-club/stoma";
+
+function compression(): Policy {
+  return {
+    name: "compression",
+    priority: 93,
+    handler: compress(),
+  };
+}
+```

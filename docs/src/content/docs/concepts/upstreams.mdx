@@ -1,0 +1,191 @@
+---
+title: Upstream Types
+draft: false
+sidebar:
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+An upstream is the terminal destination for a request after all policies have executed. Stoma supports three upstream types, expressed as a discriminated union on the `type` field.
+
+The **URL** and **Handler** upstreams work on every runtime. The **Service Binding** upstream is a Cloudflare Workers feature for zero-network-hop Worker-to-Worker communication.
+
+```typescript
+type UpstreamConfig =
+  | {
+      type: "url";
+      target: string;
+      rewritePath?: (path: string) => string;
+      headers?: Record<string, string>;
+    }
+  | {
+      type: "service-binding";
+      service: string;
+      rewritePath?: (path: string) => string;
+    }
+  | {
+      type: "handler";
+      handler: (c: Context) => Response | Promise<Response>;
+    };
+```
+
+## URL Upstream
+
+The most common upstream type. Forwards the request to an external HTTP endpoint via `fetch()`. Works on every runtime.
+
+```typescript
+{
+  path: "/api/users/*",
+  pipeline: {
+    upstream: {
+      type: "url",
+      target: "https://users-service.internal",
+      rewritePath: (path) => path.replace("/api/users", "/v2/users"),
+      headers: { "x-forwarded-host": "gateway.example.com" },
+    },
+  },
+}
+```
+
+### Configuration
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"url"` | Discriminant field. |
+| `target` | `string` | Target URL (e.g. `"https://api.example.com"`). Validated at config time. |
+| `rewritePath` | `(path: string) => string` | Optional. Transform the request path before forwarding. Must not change the origin. |
+| `headers` | `Record<string, string>` | Optional. Headers to add or override on the forwarded request. |
+
+### Resolution steps
+
+1. **Build target URL.** The incoming request path (and query string) is appended to the configured `target` origin. If `rewritePath` is provided, it transforms the path first.
+2. **SSRF protection.** The rewritten URL is validated to ensure its origin (protocol + host + port) matches the configured `target` origin. If the origin changes, the gateway returns a 502 error. This prevents `rewritePath` functions from redirecting traffic to unintended destinations.
+3. **Header preparation.** The original request headers are cloned. Hop-by-hop headers (e.g. `connection`, `keep-alive`, `transfer-encoding`, `upgrade`) are stripped per RFC 2616. The `Host` header is set to the upstream's host. Any configured `headers` overrides are applied. A W3C `traceparent` header is added with a fresh span ID for the upstream leg.
+4. **Fetch.** The request is forwarded via `fetch()` with `redirect: "manual"` to prevent redirect-based SSRF to internal services.
+5. **Response.** Hop-by-hop headers are stripped from the upstream response before returning it to the client.
+
+<Aside type="caution">
+The `rewritePath` function must not change the origin of the target URL. If you need to route to different origins based on the path, define separate routes with different `target` values instead.
+</Aside>
+
+### Hop-by-hop headers
+
+The following headers are stripped from both the forwarded request and the upstream response:
+
+- `connection`
+- `keep-alive`
+- `proxy-authenticate`
+- `proxy-authorization`
+- `proxy-connection`
+- `te`
+- `trailer`
+- `transfer-encoding`
+- `upgrade`
+
+## Handler Upstream
+
+Handler upstreams invoke a function directly -- no proxying occurs. The gateway itself acts as the origin server. This is useful for health checks, static responses, development stubs, and routes that compute responses without external dependencies. Works on every runtime.
+
+```typescript
+{
+  path: "/api/version",
+  pipeline: {
+    upstream: {
+      type: "handler",
+      handler: (c) => c.json({ version: "1.0.0", environment: "production" }),
+    },
+  },
+}
+```
+
+### Configuration
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"handler"` | Discriminant field. |
+| `handler` | `(c: Context) => Response \| Promise<Response>` | Function receiving the Hono context and returning a `Response`. |
+
+The handler function receives the full Hono `Context`, including access to `PolicyContext` via `getGatewayContext(c)`, any headers set by upstream policies, and all standard Hono helpers (`c.json()`, `c.text()`, `c.html()`, etc.).
+
+### Example: Health check
+
+The built-in `health()` function uses a handler upstream internally. You can build similar inline responses:
+
+```typescript
+{
+  path: "/api/echo",
+  methods: ["POST"],
+  pipeline: {
+    upstream: {
+      type: "handler",
+      handler: async (c) => {
+        const body = await c.req.json();
+        return c.json({
+          echo: body,
+          requestId: getGatewayContext(c)?.requestId,
+          timestamp: new Date().toISOString(),
+        });
+      },
+    },
+  },
+}
+```
+
+## Service Binding Upstream (Cloudflare Workers)
+
+Service Binding upstreams use Cloudflare's Worker-to-Worker communication for zero-network-hop dispatching. The bound Worker runs on the same Cloudflare infrastructure, eliminating external network latency. This upstream type is only available when deploying to Cloudflare Workers.
+
+```typescript
+{
+  path: "/auth/*",
+  pipeline: {
+    upstream: {
+      type: "service-binding",
+      service: "AUTH_SERVICE",
+      rewritePath: (path) => path.replace("/auth", ""),
+    },
+  },
+}
+```
+
+### Configuration
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | `"service-binding"` | Discriminant field. |
+| `service` | `string` | Name of the Service Binding as configured in `wrangler.toml` (e.g. `"AUTH_SERVICE"`). |
+| `rewritePath` | `(path: string) => string` | Optional. Transform the request path before forwarding to the bound service. |
+
+### Resolution steps
+
+1. **Resolve binding.** The gateway accesses `c.env[service]` to retrieve the Service Binding `Fetcher`. If the binding is not available or does not expose a `fetch` method, a 502 error is returned.
+2. **Path rewrite.** If `rewritePath` is configured, the incoming path is transformed. The query string is preserved.
+3. **Header preparation.** Hop-by-hop headers are stripped. A W3C `traceparent` header is added with a fresh span ID.
+4. **Dispatch.** The request is forwarded via `binding.fetch(request)`.
+5. **Response.** Hop-by-hop headers are stripped from the bound Worker's response before returning it.
+
+### wrangler.toml configuration
+
+The Service Binding must be declared in the consuming Worker's `wrangler.toml`:
+
+```toml
+[[services]]
+binding = "AUTH_SERVICE"
+service = "auth-worker"
+environment = "production"
+```
+
+The `binding` value must match the `service` field in the upstream config. The `service` value is the name of the target Worker as deployed on Cloudflare.
+
+<Aside type="note">
+Service Bindings work only within the same Cloudflare account. Both the gateway Worker and the bound Worker must be deployed under the same account.
+</Aside>
+
+## Config Validation
+
+Invalid upstream configuration is caught at gateway construction time:
+
+- A `url` upstream with an unparseable `target` throws immediately when `new URL(target)` fails.
+- An unknown `type` value throws a `GatewayError` with code `config_error`.
+- A `service-binding` upstream where the binding is missing from the Worker environment throws a 502 at request time (since bindings are runtime-resolved from `c.env`).

@@ -1,0 +1,234 @@
+---
+title: "Transforms"
+draft: false
+sidebar:
+  order: 4
+---
+
+Transforms mutate request/response shape and validate payloads as they move through the pipeline.
+
+## Policy Summary
+
+| Policy | Priority | Purpose |
+|---|---:|---|
+| `cors` | `5` | Apply CORS behavior (simple + preflight). |
+| `overrideMethod` | `5` | POST method tunneling via override header. |
+| `requestTransform` | `50` | Rename/set/remove request headers. |
+| `assignAttributes` | `50` | Set context attributes (`c.set`). |
+| `assignContent` | `50` | Inject fields into JSON request/response bodies. |
+| `requestValidation` | `10` | Pluggable request validation (sync/async). |
+| `jsonValidation` | `10` | JSON parse + optional custom validator. |
+| `responseTransform` | `92` | Rename/set/remove response headers. |
+
+---
+
+## cors
+
+Wraps Hono CORS middleware as a policy.
+
+```typescript
+import { cors } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface CorsConfig {
+  origins?: string | string[] | ((origin: string) => boolean); // default: "*"
+  methods?: string[];
+  allowHeaders?: string[];
+  exposeHeaders?: string[];
+  maxAge?: number;                       // default from Hono behavior
+  credentials?: boolean;                 // default: false
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+---
+
+## overrideMethod
+
+Apply method override on POST requests only.
+
+```typescript
+import { overrideMethod } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface OverrideMethodConfig {
+  header?: string;                       // default: "X-HTTP-Method-Override"
+  allowedMethods?: string[];             // default: ["GET", "PUT", "PATCH", "DELETE"]
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Invalid overrides return `400` `invalid_method_override`.
+
+---
+
+## requestTransform
+
+Rename, set, and remove request headers before upstream dispatch.
+
+```typescript
+import { requestTransform } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RequestTransformConfig {
+  renameHeaders?: Record<string, string>;
+  setHeaders?: Record<string, string>;
+  removeHeaders?: string[];
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Operation order: `rename` -> `set` -> `remove`.
+
+---
+
+## responseTransform
+
+Rename, set, and remove response headers after downstream runs.
+
+```typescript
+import { responseTransform } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface ResponseTransformConfig {
+  renameHeaders?: Record<string, string>;
+  setHeaders?: Record<string, string>;
+  removeHeaders?: string[];
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Operation order: `rename` -> `set` -> `remove`.
+
+---
+
+## assignAttributes
+
+Attach key/value values to request context.
+
+```typescript
+import { assignAttributes } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface AssignAttributesConfig {
+  attributes: Record<string, string | ((c: Context) => string | Promise<string>)>;
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Downstream readers use `c.get(key)`.
+
+---
+
+## assignContent
+
+Inject/override JSON fields in request and/or response bodies.
+
+```typescript
+import { assignContent } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface AssignContentConfig {
+  request?: Record<string, unknown | ((c: Context) => unknown | Promise<unknown>)>;
+  response?: Record<string, unknown | ((c: Context) => unknown | Promise<unknown>)>;
+  contentTypes?: string[];               // default: ["application/json"]
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Only matching content types are modified.
+
+---
+
+## requestValidation
+
+Pluggable request body validation (sync or async), with optional detailed errors.
+
+```typescript
+import { requestValidation } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RequestValidationConfig {
+  validate?: (body: unknown) => boolean | { valid: boolean; errors?: string[] };
+  validateAsync?: (body: unknown) => Promise<boolean | { valid: boolean; errors?: string[] }>;
+  contentTypes?: string[];               // default: ["application/json"]
+  errorMessage?: string;                 // default: "Request validation failed"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Notes:
+
+- `validateAsync` takes precedence over `validate`.
+- Invalid JSON or failed validation returns `400` `validation_failed`.
+
+---
+
+## jsonValidation
+
+JSON-specific validation policy:
+
+- Always checks parseable JSON for matching content types.
+- Optionally applies a user `validate` function.
+
+```typescript
+import { jsonValidation } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface JsonValidationConfig {
+  validate?: (body: unknown) => { valid: boolean; errors?: string[] } | Promise<{ valid: boolean; errors?: string[] }>;
+  contentTypes?: string[];               // default: ["application/json"]
+  rejectStatus?: number;                 // default: 422
+  errorDetail?: boolean;                 // default: true
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Errors use `validation_failed` with configurable status (`422` by default).
+
+---
+
+## requestValidation vs jsonValidation
+
+| Feature | `requestValidation` | `jsonValidation` |
+|---|---|---|
+| Default status code | `400` | `422` |
+| Built-in empty JSON body error | no explicit empty-body branch | yes (`Request body is empty`) |
+| Validator return shape | `boolean` or `{ valid, errors }` | `{ valid, errors }` |
+| Async validator option | `validateAsync` field | async function through `validate` |
+
+---
+
+## Example
+
+```typescript
+import {
+  cors,
+  overrideMethod,
+  requestTransform,
+  assignAttributes,
+  assignContent,
+  requestValidation,
+  responseTransform,
+} from "@homegrower-club/stoma";
+
+[
+  cors({ origins: ["https://app.example.com"], credentials: true }),
+  overrideMethod(),
+  assignAttributes({ attributes: { tenant: (c) => c.req.header("x-tenant") ?? "default" } }),
+  requestValidation({
+    validate: (body) => ({ valid: typeof body === "object" && body !== null, errors: ["Body must be object"] }),
+  }),
+  assignContent({ request: { gateway: "stoma" } }),
+  requestTransform({ setHeaders: { "x-api-version": "2026-01-01" } }),
+  responseTransform({ removeHeaders: ["server"] }),
+]
+```

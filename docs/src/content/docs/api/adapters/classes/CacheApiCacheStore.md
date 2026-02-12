@@ -1,0 +1,120 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "CacheApiCacheStore"
+---
+
+Defined in: src/adapters/cloudflare.ts:48
+
+Response cache backed by the Cloudflare Cache API.
+
+## Implements
+
+- [`CacheStore`](/api/index/interfaces/cachestore/)
+
+## Constructors
+
+### Constructor
+
+> **new CacheApiCacheStore**(`cache?`, `origin?`): `CacheApiCacheStore`
+
+Defined in: src/adapters/cloudflare.ts:56
+
+#### Parameters
+
+##### cache?
+
+`Cache`
+
+A `Cache` instance (e.g. `caches.default`). Falls back to `caches.default` when omitted.
+
+##### origin?
+
+`string`
+
+Synthetic origin used to construct cache keys. Default: `"https://edge-gateway.internal"`.
+
+#### Returns
+
+`CacheApiCacheStore`
+
+## Methods
+
+### delete()
+
+> **delete**(`key`): `Promise`\<`boolean`\>
+
+Defined in: src/adapters/cloudflare.ts:84
+
+Delete a cached entry. Returns true if something was removed.
+
+#### Parameters
+
+##### key
+
+`string`
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Implementation of
+
+[`CacheStore`](/api/index/interfaces/cachestore/).[`delete`](/api/index/interfaces/cachestore/#delete)
+
+***
+
+### get()
+
+> **get**(`key`): `Promise`\<`Response` \| `null`\>
+
+Defined in: src/adapters/cloudflare.ts:62
+
+Retrieve a cached response by key. Returns null on miss.
+
+#### Parameters
+
+##### key
+
+`string`
+
+#### Returns
+
+`Promise`\<`Response` \| `null`\>
+
+#### Implementation of
+
+[`CacheStore`](/api/index/interfaces/cachestore/).[`get`](/api/index/interfaces/cachestore/#get)
+
+***
+
+### put()
+
+> **put**(`key`, `response`, `ttlSeconds`): `Promise`\<`void`\>
+
+Defined in: src/adapters/cloudflare.ts:68
+
+Store a response under key with a TTL in seconds.
+
+#### Parameters
+
+##### key
+
+`string`
+
+##### response
+
+`Response`
+
+##### ttlSeconds
+
+`number`
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[`CacheStore`](/api/index/interfaces/cachestore/).[`put`](/api/index/interfaces/cachestore/#put)

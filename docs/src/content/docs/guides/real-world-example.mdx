@@ -1,0 +1,493 @@
+---
+title: Real-World Example
+draft: false
+sidebar:
+  order: 1
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This walkthrough builds a production SaaS API gateway demonstrating the full
+breadth of Stoma's policy system: JWT and OAuth2 authentication, role-based
+access control, geographic IP filtering, SSL enforcement, request validation,
+traffic shadowing, metrics collection, config validation, and the admin
+introspection API. It shows how Stoma's 39 built-in policies compose together to
+protect a multi-service architecture.
+
+## The full gateway
+
+```typescript
+import {
+  createGateway,
+  cors,
+  sslEnforce,
+  geoIpFilter,
+  jwtAuth,
+  oauth2,
+  rbac,
+  apiKeyAuth,
+  rateLimit,
+  requestLog,
+  metricsReporter,
+  requestValidation,
+  cache,
+  circuitBreaker,
+  retry,
+  timeout,
+  trafficShadow,
+  health,
+  InMemoryMetricsCollector,
+} from "@homegrower-club/stoma";
+import { validateConfig } from "@homegrower-club/stoma/config";
+import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+
+// Validate config at startup (uses Zod schemas -- optional peer dependency)
+const config = validateConfig({
+  name: "saas-api",
+  basePath: "/v1",
+  debug: env.DEBUG, // "stoma:*" for all, "stoma:policy:*" for policies only
+
+  // Admin introspection API at ___gateway/*
+  admin: {
+    enabled: true,
+    metrics: new InMemoryMetricsCollector(),
+    auth: (c) => c.req.header("x-admin-key") === env.ADMIN_KEY,
+  },
+
+  // Global policies -- apply to every route
+  policies: [
+    requestLog({ level: "info" }),
+    metricsReporter({ collector: new InMemoryMetricsCollector() }),
+    sslEnforce({ hstsMaxAge: 31536000, includeSubDomains: true }),
+    cors({
+      origins: ["https://app.example.com"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+    }),
+    geoIpFilter({ deny: ["KP", "IR"] }),
+  ],
+
+  routes: [
+    // Health check (returns a RouteConfig, not a Policy)
+    health({ path: "/health" }),
+
+    // Private API -- JWT + RBAC
+    {
+      path: "/projects/*",
+      pipeline: {
+        policies: [
+          jwtAuth({
+            jwksUrl: "https://auth.example.com/.well-known/jwks.json",
+            issuer: "https://auth.example.com",
+            audience: "https://api.example.com",
+            forwardClaims: {
+              sub: "x-user-id",
+              email: "x-user-email",
+              role: "x-user-role",
+            },
+          }),
+          rbac({ roles: ["admin", "member"] }),
+          rateLimit({
+            max: 200,
+            windowSeconds: 60,
+            store: adapter.rateLimitStore,
+          }),
+        ],
+        upstream: {
+          type: "service-binding",
+          service: "PROJECTS_SERVICE",
+        },
+      },
+    },
+
+    // Admin-only route -- RBAC with specific role
+    {
+      path: "/admin/*",
+      pipeline: {
+        policies: [
+          jwtAuth({
+            jwksUrl: "https://auth.example.com/.well-known/jwks.json",
+            issuer: "https://auth.example.com",
+            forwardClaims: { sub: "x-user-id", role: "x-user-role" },
+          }),
+          rbac({ roles: ["admin"] }),
+        ],
+        upstream: {
+          type: "service-binding",
+          service: "ADMIN_SERVICE",
+        },
+      },
+    },
+
+    // OAuth2-protected partner API
+    {
+      path: "/partner/*",
+      pipeline: {
+        policies: [
+          oauth2({
+            introspectionUrl: "https://auth.example.com/oauth2/introspect",
+            clientId: env.OAUTH_CLIENT_ID,
+            clientSecret: env.OAUTH_CLIENT_SECRET,
+            requiredScopes: ["read:data", "write:data"],
+            cacheTtlSeconds: 300,
+            forwardTokenInfo: {
+              sub: "x-partner-id",
+              client_id: "x-client-id",
+            },
+          }),
+          rateLimit({ max: 500, windowSeconds: 60 }),
+          requestValidation({
+            validate: (body) => {
+              const errors: string[] = [];
+              if (!body || typeof body !== "object") {
+                errors.push("Body must be a JSON object");
+              }
+              return { valid: errors.length === 0, errors };
+            },
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://partner-api.internal.example.com",
+          rewritePath: (path) => path.replace("/v1/partner", ""),
+        },
+      },
+    },
+
+    // Webhook receiver -- API key auth with body validation
+    {
+      path: "/webhooks/stripe",
+      methods: ["POST"],
+      pipeline: {
+        policies: [
+          apiKeyAuth({
+            headerName: "Stripe-Signature",
+            validate: async (key) => verifyStripeSignature(key),
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://webhooks.internal.example.com",
+        },
+      },
+    },
+
+    // Public catalog -- cached, rate-limited, with traffic shadow
+    {
+      path: "/catalog/*",
+      methods: ["GET"],
+      pipeline: {
+        policies: [
+          rateLimit({ max: 1000, windowSeconds: 60 }),
+          cache({ ttlSeconds: 120, store: adapter.cacheStore }),
+          circuitBreaker({
+            threshold: 5,
+            resetTimeoutMs: 30000,
+            store: adapter.circuitBreakerStore,
+          }),
+          retry({ maxRetries: 2, retryOn: [502, 503] }),
+          timeout({ timeoutMs: 5000 }),
+          trafficShadow({
+            target: "https://catalog-v2.internal.example.com",
+            percentage: 10,
+            methods: ["GET"],
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://catalog.internal.example.com",
+          rewritePath: (path) => path.replace("/v1/catalog", ""),
+        },
+      },
+    },
+  ],
+});
+
+const adapter = cloudflareAdapter({
+  rateLimitDo: env.RATE_LIMITER,
+  rateLimitKv: env.RATE_LIMIT_KV,
+  cache: caches.default,
+});
+
+const gateway = createGateway(config);
+
+// Re-export the DO class for wrangler
+export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
+export default gateway.app;
+```
+
+## Route-by-route breakdown
+
+### Config validation
+
+```typescript
+import { validateConfig } from "@homegrower-club/stoma/config";
+
+const config = validateConfig({ ... });
+```
+
+`validateConfig()` uses Zod schemas (optional peer dependency) to validate the
+entire gateway configuration at startup. It catches problems like missing route
+paths, invalid upstream URLs, or malformed policy objects before the gateway
+starts accepting traffic. There is also a `safeValidateConfig()` variant that
+returns a result object instead of throwing.
+
+### Admin introspection API
+
+```typescript
+admin: {
+  enabled: true,
+  metrics: new InMemoryMetricsCollector(),
+  auth: (c) => c.req.header("x-admin-key") === env.ADMIN_KEY,
+},
+```
+
+The admin API exposes five endpoints under `___gateway/*`:
+
+- `GET ___gateway/routes` -- all registered routes with their methods, policies, and upstream types
+- `GET ___gateway/policies` -- all unique policies with their priority levels
+- `GET ___gateway/config` -- the gateway configuration with secrets automatically redacted
+- `GET ___gateway/metrics` -- Prometheus text exposition format metrics (requires a `MetricsCollector`)
+- `GET ___gateway/health` -- gateway health status with route and policy counts
+
+The `auth` callback protects admin routes. If omitted, admin routes are accessible without authentication.
+
+### Global policies
+
+```typescript
+policies: [
+  requestLog({ level: "info" }),
+  metricsReporter({ collector: new InMemoryMetricsCollector() }),
+  sslEnforce({ hstsMaxAge: 31536000, includeSubDomains: true }),
+  cors({ origins: ["https://app.example.com"], credentials: true }),
+  geoIpFilter({ deny: ["KP", "IR"] }),
+],
+```
+
+**`requestLog`** (priority 0) runs first in every pipeline, logging method, path,
+status code, and duration as structured JSON.
+
+**`metricsReporter`** (priority 1) records `gateway_requests_total`,
+`gateway_request_duration_ms`, and `gateway_request_errors_total` to any
+`MetricsCollector` implementation. The admin API's `/metrics` endpoint serves
+these in Prometheus text format.
+
+**`sslEnforce`** (priority 5) redirects HTTP to HTTPS with a 301 and sets the
+`Strict-Transport-Security` header on all responses.
+
+**`cors`** (priority 5) handles preflight `OPTIONS` requests and sets CORS headers.
+
+**`geoIpFilter`** (priority 1) reads the `cf-ipcountry` header set by Cloudflare
+and denies requests from sanctioned regions.
+
+### Private API: JWT + RBAC
+
+```typescript
+{
+  path: "/projects/*",
+  pipeline: {
+    policies: [
+      jwtAuth({
+        jwksUrl: "https://auth.example.com/.well-known/jwks.json",
+        issuer: "https://auth.example.com",
+        audience: "https://api.example.com",
+        forwardClaims: {
+          sub: "x-user-id",
+          email: "x-user-email",
+          role: "x-user-role",
+        },
+      }),
+      rbac({ roles: ["admin", "member"] }),
+      rateLimit({ max: 200, windowSeconds: 60, store: adapter.rateLimitStore }),
+    ],
+    upstream: {
+      type: "service-binding",
+      service: "PROJECTS_SERVICE",
+    },
+  },
+},
+```
+
+**Why JWT auth.** User-facing API routes need identity verification. JWT with
+JWKS allows the gateway to verify tokens without sharing secrets -- the auth
+provider publishes its public keys at a well-known URL, and the gateway
+fetches and caches them. The `issuer` and `audience` claims prevent tokens
+issued for other services from being accepted.
+
+**Why claim forwarding.** The `forwardClaims` option extracts `sub`, `email`,
+and `role` from the JWT payload and sets them as `x-user-id`, `x-user-email`,
+and `x-user-role` headers on the upstream request. The projects service
+receives the authenticated user's identity without needing to parse JWTs.
+
+**Why RBAC.** The `rbac` policy reads the `x-user-role` header (set by
+`jwtAuth`'s claim forwarding) and verifies the user has one of the allowed
+roles. This decouples authorization logic from individual services.
+
+**Why Service Binding.** The projects service is a separate Cloudflare Worker
+in the same account. Service Bindings give zero-latency, in-process
+communication with no cold starts or DNS resolution.
+
+### OAuth2-protected partner API
+
+```typescript
+{
+  path: "/partner/*",
+  pipeline: {
+    policies: [
+      oauth2({
+        introspectionUrl: "https://auth.example.com/oauth2/introspect",
+        clientId: env.OAUTH_CLIENT_ID,
+        clientSecret: env.OAUTH_CLIENT_SECRET,
+        requiredScopes: ["read:data", "write:data"],
+        cacheTtlSeconds: 300,
+        forwardTokenInfo: { sub: "x-partner-id", client_id: "x-client-id" },
+      }),
+      rateLimit({ max: 500, windowSeconds: 60 }),
+      requestValidation({
+        validate: (body) => {
+          const errors: string[] = [];
+          if (!body || typeof body !== "object") {
+            errors.push("Body must be a JSON object");
+          }
+          return { valid: errors.length === 0, errors };
+        },
+      }),
+    ],
+    upstream: { ... },
+  },
+},
+```
+
+**Why OAuth2.** Partner integrations authenticate with OAuth2 tokens issued by
+your authorization server. The `oauth2` policy validates bearer tokens via the
+RFC 7662 introspection endpoint. `requiredScopes` ensures the token has the
+necessary permissions. Introspection results are cached for 5 minutes to reduce
+latency.
+
+**Why request validation.** The `requestValidation` policy validates the request
+body using a user-provided function. It is dependency-free -- you bring your
+own validator (Zod, Ajv, or a simple function). Requests with non-JSON content
+types pass through without validation by default.
+
+### Webhook receiver: API key authentication
+
+```typescript
+{
+  path: "/webhooks/stripe",
+  methods: ["POST"],
+  pipeline: {
+    policies: [
+      apiKeyAuth({
+        headerName: "Stripe-Signature",
+        validate: async (key) => verifyStripeSignature(key),
+      }),
+    ],
+    upstream: {
+      type: "url",
+      target: "https://webhooks.internal.example.com",
+    },
+  },
+},
+```
+
+**Why API key auth.** Webhooks from external services do not carry JWTs. Stripe
+sends a signature in the `Stripe-Signature` header that must be verified
+against a shared secret. The `validate` function performs this verification.
+
+**Why `methods: ["POST"]`.** Webhooks are always POST requests. Restricting the
+method prevents accidental GET requests from matching this route.
+
+### Public catalog: cached with resilience
+
+```typescript
+{
+  path: "/catalog/*",
+  methods: ["GET"],
+  pipeline: {
+    policies: [
+      rateLimit({ max: 1000, windowSeconds: 60 }),
+      cache({ ttlSeconds: 120, store: adapter.cacheStore }),
+      circuitBreaker({ threshold: 5, resetTimeoutMs: 30000 }),
+      retry({ maxRetries: 2, retryOn: [502, 503] }),
+      timeout({ timeoutMs: 5000 }),
+      trafficShadow({
+        target: "https://catalog-v2.internal.example.com",
+        percentage: 10,
+        methods: ["GET"],
+      }),
+    ],
+    upstream: {
+      type: "url",
+      target: "https://catalog.internal.example.com",
+      rewritePath: (path) => path.replace("/v1/catalog", ""),
+    },
+  },
+},
+```
+
+**Why cache.** Public catalog data is read-heavy and changes infrequently. The
+`cache` policy stores upstream responses for 120 seconds using the Cloudflare
+Cache API (via `cloudflareAdapter`).
+
+**Why circuit breaker + retry + timeout.** These three resilience policies
+protect against upstream failures. The circuit breaker opens after 5 failures,
+preventing cascading load on a struggling upstream. The retry policy retries
+502/503 responses up to 2 times. The timeout policy aborts requests that take
+longer than 5 seconds.
+
+**Why traffic shadow.** The `trafficShadow` policy mirrors 10% of GET requests
+to a v2 catalog service for validation testing. Shadow requests are
+fire-and-forget -- they use `waitUntil()` on Cloudflare Workers and never
+affect the primary response.
+
+## How the pieces fit together
+
+The merged pipeline for each route (after global + route policies are combined
+and sorted by priority) executes in this order:
+
+| Order | Policy | Priority | Source |
+|-------|--------|----------|--------|
+| 1 | `requestLog` | 0 | Global |
+| 2 | `metricsReporter` | 1 | Global |
+| 3 | `geoIpFilter` | 1 | Global |
+| 4 | `sslEnforce` | 5 | Global |
+| 5 | `cors` | 5 | Global |
+| 6 | `jwtAuth` / `oauth2` / `apiKeyAuth` | 10 | Route |
+| 7 | `rbac` / `requestValidation` | 10 | Route |
+| 8 | `rateLimit` | 20 | Route |
+| 9 | `circuitBreaker` | 30 | Route |
+| 10 | `cache` | 40 | Route |
+| 11 | `timeout` | 85 | Route |
+| 12 | `retry` | 90 | Route |
+| 13 | `trafficShadow` | 92 | Route |
+
+Observability and security policies run first. Authentication runs before
+authorization. Rate limiting runs after auth -- unauthenticated requests are
+rejected before consuming rate limit counters. Resilience policies wrap the
+upstream call. Traffic shadowing runs after the primary response is ready.
+
+<Aside type="tip">
+The global `requestLog` policy uses the same name across all routes, so you
+can override it on a specific route by providing a `requestLog` with
+different configuration in that route's `policies` array. Route-level policies
+win on name collision.
+</Aside>
+
+## Cloudflare adapter setup
+
+The `cloudflareAdapter` factory creates Cloudflare-native stores for rate
+limiting, circuit breaking, and caching from your Worker's `env` bindings:
+
+```typescript
+import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+
+const adapter = cloudflareAdapter({
+  rateLimitDo: env.RATE_LIMITER,   // Durable Objects (preferred)
+  rateLimitKv: env.RATE_LIMIT_KV,  // KV fallback
+  cache: caches.default,            // Cache API
+});
+```
+
+If both `rateLimitDo` and `rateLimitKv` are provided, the adapter prefers
+Durable Objects for strongly consistent counting. See the
+[Cloudflare](/cloudflare/service-bindings/) section for detailed setup guides.

@@ -1,0 +1,507 @@
+---
+title: Configuration
+draft: false
+description: Core config types for defining gateways, routes, pipelines, and upstreams.
+sidebar:
+  order: 3
+---
+
+Stoma uses a fully declarative configuration model. You pass a `GatewayConfig`
+object to `createGateway()` and the library validates it at construction time,
+builds policy pipelines, and registers routes on a Hono app. This page
+documents every config type in detail.
+
+## GatewayConfig
+
+The top-level configuration object. Only `routes` is required.
+
+```typescript
+interface GatewayConfig {
+  /** Gateway name, used in logs and error responses. Default: "stoma". */
+  name?: string;
+
+  /** Base path prefix for all routes (e.g. "/api"). */
+  basePath?: string;
+
+  /** Route definitions. At least one is required. */
+  routes: RouteConfig[];
+
+  /** Global policies applied to every route. */
+  policies?: Policy[];
+
+  /** Custom error handler. Receives the error and the Hono context. */
+  onError?: (error: Error, c: unknown) => Response | Promise<Response>;
+
+  /**
+   * Enable debug logging. Outputs to console.debug().
+   * - true: log all namespaces
+   * - false / undefined: disabled (zero overhead)
+   * - string: comma-separated glob patterns (e.g. "stoma:policy:*")
+   */
+  debug?: boolean | string;
+
+  /** Response header name for the request ID. Default: "x-request-id". */
+  requestIdHeader?: string;
+
+  /**
+   * Default HTTP methods for routes that omit `methods`.
+   * Default: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"].
+   */
+  defaultMethods?: HttpMethod[];
+
+  /** Default error message for unexpected errors. Default: "An unexpected error occurred". */
+  defaultErrorMessage?: string;
+
+  /** Default priority for policies that don't specify one. Default: 100. */
+  defaultPolicyPriority?: number;
+
+  /**
+   * Admin introspection API. Exposes ___gateway/* routes for operational visibility.
+   * - true: enable with defaults (no auth)
+   * - AdminConfig object: full customization
+   * - false / undefined: disabled (default)
+   */
+  admin?: boolean | AdminConfig;
+}
+```
+
+### Validation
+
+`createGateway()` validates the config at construction time:
+
+- Throws a `GatewayError` if `routes` is empty.
+- Validates URL upstream targets by constructing a `new URL()`.
+- Policies with duplicate names are deduplicated (route-level wins over global).
+
+For dynamic or untrusted config (loaded from KV, environment variables, or
+external sources), use the Zod-based validation from `@homegrower-club/stoma/config`:
+
+```typescript
+import { validateConfig, safeValidateConfig } from "@homegrower-club/stoma/config";
+
+// Throws z.ZodError on failure
+const config = validateConfig(untrustedInput);
+
+// Returns { success, data } or { success, error } without throwing
+const result = safeValidateConfig(untrustedInput);
+if (result.success) {
+  const gateway = createGateway(result.data);
+}
+```
+
+Individual schemas are also exported for composing validation:
+`GatewayConfigSchema`, `RouteSchema`, `PipelineSchema`, `UpstreamSchema`, `PolicySchema`.
+
+### Debug namespaces
+
+When `debug` is enabled, Stoma logs internal operations under these namespaces:
+
+| Namespace | Content |
+|-----------|---------|
+| `stoma:gateway` | Route registration, startup |
+| `stoma:pipeline` | Policy chain construction, merging |
+| `stoma:upstream` | Proxy requests, path rewrites, SSRF checks |
+| `stoma:policy:*` | Per-policy logs (e.g. `stoma:policy:cache`, `stoma:policy:jwt-auth`) |
+
+Pass a glob string to filter: `debug: "stoma:policy:*"` logs only policy
+activity.
+
+## RouteConfig
+
+Defines a single route in the gateway.
+
+```typescript
+interface RouteConfig {
+  /** Route path pattern using Hono syntax (e.g. "/users/:id", "/files/*"). */
+  path: string;
+
+  /** Allowed HTTP methods. Defaults to GatewayConfig.defaultMethods. */
+  methods?: HttpMethod[];
+
+  /** The pipeline that processes requests matching this route. */
+  pipeline: PipelineConfig;
+
+  /** Arbitrary metadata attached to the route for logging and observability. */
+  metadata?: Record<string, unknown>;
+}
+```
+
+### Path syntax
+
+Route paths use [Hono's routing syntax](https://hono.dev/docs/api/routing):
+
+- **Static**: `/health`, `/api/v1/status`
+- **Parameterized**: `/users/:id`, `/projects/:projectId/members/:memberId`
+- **Wildcard**: `/files/*` (matches `/files/a`, `/files/a/b/c`, etc.)
+
+When `basePath` is set on the gateway, it is prepended to every route path. A
+gateway with `basePath: "/api"` and a route with `path: "/users/:id"` matches
+requests to `/api/users/:id`.
+
+### Methods
+
+The `methods` array controls which HTTP verbs the route responds to. If omitted,
+it defaults to `GatewayConfig.defaultMethods` (which itself defaults to
+`["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]`).
+
+Supported values:
+
+```typescript
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
+```
+
+## PipelineConfig
+
+A pipeline is an ordered chain of policies leading to an upstream.
+
+```typescript
+interface PipelineConfig {
+  /** Policies executed in priority order before the upstream. */
+  policies?: Policy[];
+
+  /** Where to send the request after all policies pass. */
+  upstream: UpstreamConfig;
+}
+```
+
+### Policy merging
+
+When a route defines policies, they are **merged** with the global policies from
+`GatewayConfig.policies`:
+
+1. Global and route-level policies are combined into a single list.
+2. If both levels include a policy with the same `name`, the **route-level
+   policy wins** (the global one is dropped).
+3. The merged list is sorted by `priority` ascending (lower numbers execute
+   first).
+
+This allows you to set defaults globally and override them per-route. For
+example, a global `rateLimit({ max: 100 })` can be replaced by a route-level
+`rateLimit({ max: 1000 })` on high-traffic endpoints.
+
+## UpstreamConfig
+
+The upstream is where the request is forwarded after all policies pass. It is a
+discriminated union with three variants:
+
+```typescript
+type UpstreamConfig = UrlUpstream | ServiceBindingUpstream | HandlerUpstream;
+```
+
+### URL upstream
+
+Proxies the request to a remote HTTP endpoint via `fetch()`.
+
+```typescript
+interface UrlUpstream {
+  type: "url";
+
+  /** Target base URL (e.g. "https://api.example.com"). Validated at config time. */
+  target: string;
+
+  /** Rewrite the request path before forwarding. Must not change the origin. */
+  rewritePath?: (path: string) => string;
+
+  /** Headers to add or override on the forwarded request. */
+  headers?: Record<string, string>;
+}
+```
+
+**SSRF protection**: After applying `rewritePath`, the gateway verifies that the
+resulting URL's origin (protocol + host + port) still matches the configured
+`target`. If it differs, the request is rejected with a 502 error. The proxy
+also sets `redirect: "manual"` to prevent redirect-based SSRF.
+
+**Hop-by-hop headers**: Connection-specific headers (`connection`, `keep-alive`,
+`transfer-encoding`, etc.) are stripped from both the forwarded request and the
+upstream response per RFC 2616.
+
+**Host header**: The `Host` header is automatically set to the upstream target's
+host. Additional headers can be added or overridden via the `headers` field.
+
+Example:
+
+```typescript
+upstream: {
+  type: "url",
+  target: "https://api.internal.example.com",
+  rewritePath: (path) => path.replace("/api/v1", ""),
+  headers: {
+    "X-Forwarded-For": "gateway",
+  },
+}
+```
+
+### Service Binding upstream
+
+Forwards the request to another Cloudflare Worker via a
+[Service Binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/).
+The binding must be configured in the consuming Worker's `wrangler.toml`.
+
+```typescript
+interface ServiceBindingUpstream {
+  type: "service-binding";
+
+  /** Name of the Service Binding as declared in wrangler.toml (e.g. "AUTH_SERVICE"). */
+  service: string;
+
+  /** Rewrite the request path before forwarding. */
+  rewritePath?: (path: string) => string;
+}
+```
+
+The gateway accesses the binding from `c.env[service]` and calls
+`binding.fetch()`. If the binding is not available at runtime, a 502 error is
+returned.
+
+Example `wrangler.toml` configuration:
+
+```toml
+[[services]]
+binding = "AUTH_SERVICE"
+service = "auth-worker"
+```
+
+```typescript
+upstream: {
+  type: "service-binding",
+  service: "AUTH_SERVICE",
+  rewritePath: (path) => path.replace("/api/auth", ""),
+}
+```
+
+### Handler upstream
+
+Runs a function directly without proxying to an external service. Useful for
+health checks, mock responses, or routes that compute a response inline.
+
+```typescript
+interface HandlerUpstream {
+  type: "handler";
+
+  /** Function receiving the Hono Context and returning a Response. */
+  handler: (c: Context) => Response | Promise<Response>;
+}
+```
+
+The handler receives the full Hono `Context`, so it has access to request
+parameters, headers, the gateway context (via `getGatewayContext(c)`), and the
+Worker environment (`c.env`).
+
+Example:
+
+```typescript
+upstream: {
+  type: "handler",
+  handler: (c) => {
+    const id = c.req.param("id");
+    return c.json({ id, source: "inline" });
+  },
+}
+```
+
+:::tip
+For health check endpoints specifically, consider using the built-in `health()`
+factory instead of a manual handler upstream. It returns a complete `RouteConfig`
+with optional upstream probing:
+
+```typescript
+import { createGateway, health } from "@homegrower-club/stoma";
+
+const gateway = createGateway({
+  routes: [
+    health({ path: "/healthz", upstreamProbes: ["https://api.example.com/health"] }),
+    // ...other routes
+  ],
+});
+```
+:::
+
+## GatewayInstance
+
+`createGateway()` returns a `GatewayInstance`:
+
+```typescript
+interface GatewayInstance {
+  /** The configured Hono app, ready to export as a Worker. */
+  app: Hono;
+
+  /** Number of registered route handlers. */
+  routeCount: number;
+
+  /** Gateway name. */
+  name: string;
+
+  /** Internal registry for admin introspection. */
+  _registry: GatewayRegistry;
+}
+```
+
+The `_registry` property provides programmatic access to the gateway's internal
+state. It contains:
+
+```typescript
+interface GatewayRegistry {
+  routes: RegisteredRoute[];   // Path, methods, policy names, upstream type
+  policies: RegisteredPolicy[]; // Name and priority of each unique policy
+  gatewayName: string;
+}
+```
+
+Export `gateway.app` as your application's entry point. On Cloudflare Workers,
+this is the module's default export. On Node.js, pass it to `@hono/node-server`.
+See the [Quick Start](/getting-started/quick-start/) for runtime-specific
+examples.
+
+```typescript
+const gateway = createGateway({ /* ... */ });
+export default gateway.app;
+```
+
+## PolicyContext
+
+The gateway injects a `PolicyContext` into every request, accessible via
+`getGatewayContext(c)` from the main entry point. This provides request metadata,
+W3C Trace Context identifiers, and a debug logger to all policies.
+
+```typescript
+interface PolicyContext {
+  /** Unique request ID for tracing. */
+  requestId: string;
+
+  /** Timestamp when the request entered the gateway. */
+  startTime: number;
+
+  /** Gateway name from config. */
+  gatewayName: string;
+
+  /** Matched route path pattern (e.g. "/users/:id"). */
+  routePath: string;
+
+  /** W3C Trace Context -- 32-hex trace ID (propagated from incoming traceparent header, or generated). */
+  traceId: string;
+
+  /** W3C Trace Context -- 16-hex span ID for this gateway request. */
+  spanId: string;
+
+  /**
+   * Get a debug logger for the given namespace.
+   * Returns a no-op when debug is disabled (zero overhead).
+   */
+  debug: (namespace: string) => DebugLogger;
+}
+```
+
+Usage in a custom policy:
+
+```typescript
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+const handler = async (c, next) => {
+  const ctx = getGatewayContext(c);
+  const debug = ctx?.debug("stoma:policy:my-policy");
+  debug?.("processing request", ctx?.requestId);
+  // ctx?.traceId and ctx?.spanId are available for W3C Trace Context propagation
+  await next();
+};
+```
+
+## Admin introspection API
+
+When `admin` is enabled in `GatewayConfig`, the gateway registers a set of
+`___gateway/*` routes for operational visibility. These routes are separate from
+your application routes and provide runtime insight into the gateway's state.
+
+### Enabling admin routes
+
+```typescript
+// Simple — no auth
+const gateway = createGateway({
+  admin: true,
+  // ...
+});
+
+// Full config — with auth and metrics
+const gateway = createGateway({
+  admin: {
+    enabled: true,
+    prefix: "___gateway",   // default
+    auth: (c) => c.req.header("X-Admin-Key") === env.ADMIN_KEY,
+    metrics: metricsCollector,
+  },
+  // ...
+});
+```
+
+### AdminConfig
+
+```typescript
+interface AdminConfig {
+  /** Enable admin routes. Default: false. */
+  enabled: boolean;
+
+  /** Path prefix for admin routes. Default: "___gateway". */
+  prefix?: string;
+
+  /** Optional auth check -- return false to deny access. */
+  auth?: (c: Context) => boolean | Promise<boolean>;
+
+  /** MetricsCollector instance for the /metrics endpoint. */
+  metrics?: MetricsCollector;
+}
+```
+
+### Available endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /___gateway/routes` | List all registered routes with their methods, policy names, and upstream type |
+| `GET /___gateway/policies` | List all unique policies with their priority |
+| `GET /___gateway/config` | Serialized config with secrets redacted |
+| `GET /___gateway/metrics` | Prometheus text format metrics (requires `admin.metrics`) |
+| `GET /___gateway/health` | Basic health check with route and policy counts |
+
+All admin endpoints return JSON. The `/metrics` endpoint returns Prometheus
+text format (`text/plain; version=0.0.4`). If `admin.auth` is configured,
+all endpoints require passing the auth check (returns 403 on failure).
+
+## Error handling
+
+Stoma uses structured JSON error responses. All errors follow this shape:
+
+```typescript
+interface ErrorResponse {
+  error: string;
+  message: string;
+  statusCode: number;
+  requestId?: string;
+}
+```
+
+There are three error handling paths:
+
+1. **`GatewayError`** -- thrown by policies (auth failure, rate limit exceeded)
+   or config validation. Produces a structured JSON response with the
+   appropriate status code.
+2. **Unexpected errors** -- any non-`GatewayError` exception. Logged to
+   `console.error` and returned as a generic 500 with no internal details
+   exposed.
+3. **Custom handler** -- if `onError` is set on the config, it receives all
+   errors and has full control over the response.
+
+Unmatched routes return a structured 404:
+
+```json
+{
+  "error": "not_found",
+  "message": "No route matches GET /unknown",
+  "statusCode": 404,
+  "gateway": "my-api-gateway"
+}
+```
+
+## Next steps
+
+- [Quick Start](/getting-started/quick-start/) -- see a complete working example.
+- [Policies](/policies/) -- browse all 39 built-in policies and learn how to
+  write custom ones with the Policy SDK.

@@ -1,0 +1,323 @@
+---
+title: Policy System
+draft: false
+sidebar:
+  order: 2
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Policies are the building blocks of Stoma pipelines. Every policy is a named Hono middleware with a numeric priority that determines its execution order within the pipeline. Stoma ships 39 built-in policies across 6 categories, plus a Policy SDK for authoring custom policies.
+
+## Policy Interface
+
+```typescript
+interface Policy {
+  /** Unique policy name (e.g. "jwt-auth", "rate-limit") */
+  name: string;
+  /** The Hono middleware handler */
+  handler: MiddlewareHandler;
+  /** Execution priority -- lower numbers run first. Default: 100. */
+  priority?: number;
+}
+```
+
+A policy factory function accepts a configuration object and returns a `Policy`. The factory validates config at construction time (before any requests arrive) and closes over the config in the returned middleware handler.
+
+```typescript
+import { jwtAuth } from "@homegrower-club/stoma";
+
+// Factory returns a Policy object
+const authPolicy = jwtAuth({
+  secret: env.JWT_SECRET,
+  forwardClaims: { sub: "x-user-id" },
+});
+
+// authPolicy.name     === "jwt-auth"
+// authPolicy.priority === 10
+// authPolicy.handler  === async (c, next) => { ... }
+```
+
+## Priority-Based Ordering
+
+Policies execute in ascending priority order -- lower numbers run first. The gateway merges global and route-level policies, deduplicates by name (route-level wins), and sorts the result.
+
+The following table shows all priority tiers used by the built-in policies, defined as named constants in `Priority`:
+
+| Priority | Constant | Policies |
+|----------|----------|----------|
+| 0 | `OBSERVABILITY` | `requestLog`, `assignMetrics` |
+| 1 | `IP_FILTER` / `METRICS` | `ipFilter`, `geoIpFilter`, `metricsReporter` |
+| 5 | `EARLY` | `cors`, `sslEnforce`, `requestLimit`, `jsonThreatProtection`, `regexThreatProtection`, `timeout`, `overrideMethod`, `latencyInjection` |
+| 10 | `AUTH` | `jwtAuth`, `apiKeyAuth`, `basicAuth`, `oauth2`, `rbac`, `jws`, `verifyHttpSignature`, `requestValidation`, `jsonValidation` |
+| 20 | `RATE_LIMIT` | `rateLimit` |
+| 30 | `CIRCUIT_BREAKER` | `circuitBreaker` |
+| 40 | `CACHE` | `cache` |
+| 50 | `REQUEST_TRANSFORM` | `requestTransform`, `assignAttributes`, `assignContent`, `dynamicRouting`, `httpCallout`, `generateJwt` |
+| 85 | `TIMEOUT` | (available for wrapping upstream calls) |
+| 90 | `RETRY` | `retry` |
+| 92 | `RESPONSE_TRANSFORM` | `responseTransform`, `trafficShadow`, `resourceFilter` |
+| 95 | `PROXY` | `proxy`, `generateHttpSignature` |
+| 100 | `DEFAULT` | Custom policies (when no priority is specified), `interrupt` |
+| 999 | `MOCK` | `mock` |
+
+Custom policies that do not specify a priority receive the gateway's `defaultPolicyPriority` (100 unless overridden via `GatewayConfig.defaultPolicyPriority`).
+
+<Aside type="tip">
+When writing custom policies, choose a priority that places your middleware at the correct point in the pipeline. Authentication should run before rate limiting. Rate limiting should run before caching. Transforms should run close to the upstream boundary.
+</Aside>
+
+## Priority Constants
+
+The `Priority` object exports named constants for all tiers, eliminating magic numbers in policy definitions:
+
+```typescript
+import { Priority } from "@homegrower-club/stoma";
+
+Priority.OBSERVABILITY    // 0
+Priority.IP_FILTER        // 1
+Priority.METRICS          // 1
+Priority.EARLY            // 5
+Priority.AUTH             // 10
+Priority.RATE_LIMIT       // 20
+Priority.CIRCUIT_BREAKER  // 30
+Priority.CACHE            // 40
+Priority.REQUEST_TRANSFORM // 50
+Priority.TIMEOUT          // 85
+Priority.RETRY            // 90
+Priority.RESPONSE_TRANSFORM // 92
+Priority.PROXY            // 95
+Priority.DEFAULT          // 100
+Priority.MOCK             // 999
+```
+
+## Skip Conditions
+
+Every policy config extends `PolicyConfig`, which provides an optional `skip` function for conditional bypass:
+
+```typescript
+interface PolicyConfig {
+  /** Skip this policy when condition returns true */
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+When `skip` returns `true`, the policy calls `next()` immediately without executing its logic. This is useful for exempting certain paths, methods, or request characteristics from a policy:
+
+```typescript
+rateLimit({
+  max: 100,
+  skip: (c) => c.req.path === "/health",
+});
+```
+
+## PolicyContext
+
+The gateway injects a `PolicyContext` onto every request via the context injector middleware. Policies access it through `getGatewayContext(c)`:
+
+```typescript
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+const ctx = getGatewayContext(c);
+// ctx.requestId   -- crypto.randomUUID()
+// ctx.startTime   -- Date.now() at request ingress
+// ctx.gatewayName -- from GatewayConfig.name
+// ctx.routePath   -- the matched route path pattern
+// ctx.traceId     -- W3C Trace Context trace ID (32 hex chars)
+// ctx.spanId      -- W3C Trace Context span ID (16 hex chars)
+// ctx.debug       -- factory for namespaced debug loggers
+```
+
+The full `PolicyContext` interface:
+
+```typescript
+interface PolicyContext {
+  requestId: string;
+  startTime: number;
+  gatewayName: string;
+  routePath: string;
+  traceId: string;
+  spanId: string;
+  debug: (namespace: string) => DebugLogger;
+}
+```
+
+### Debug logging
+
+The `debug` factory creates namespaced loggers that are zero-overhead when debug is disabled. Policies use the `stoma:policy:<name>` namespace convention:
+
+```typescript
+const debug = getGatewayContext(c)?.debug("stoma:policy:cache");
+debug?.("HIT", cacheKey);
+```
+
+Debug output goes to `console.debug()`. On Cloudflare Workers this is captured by `wrangler tail` and Workers Logs; on other runtimes it appears in stdout. Enable debug via `GatewayConfig.debug`:
+
+```typescript
+createGateway({ debug: true, ... })                          // all namespaces
+createGateway({ debug: "stoma:policy:*", ... })               // policies only
+createGateway({ debug: "stoma:gateway,stoma:upstream", ... }) // core only
+```
+
+## Global and Route Policy Merging
+
+Policies can be declared at two levels:
+
+- **Global** -- `GatewayConfig.policies` applies to all routes.
+- **Route-level** -- `PipelineConfig.policies` applies to a single route.
+
+At gateway construction time, global and route-level policies are merged for each route:
+
+1. Global policies are added to a map keyed by `name`.
+2. Route-level policies are added to the same map, overriding any global policy with the same `name`.
+3. The merged policies are sorted by `priority` ascending.
+
+This means a route can override a global policy's configuration by providing a policy with the same name. For example, a route can tighten a global rate limit:
+
+```typescript
+const gateway = createGateway({
+  policies: [
+    rateLimit({ max: 1000 }), // Global: 1000 req/min
+  ],
+  routes: [
+    {
+      path: "/expensive-operation",
+      pipeline: {
+        policies: [
+          rateLimit({ max: 10 }), // Override: 10 req/min for this route
+        ],
+        upstream: { type: "url", target: "https://backend.internal" },
+      },
+    },
+  ],
+});
+```
+
+## Short-Circuiting
+
+A policy short-circuits the pipeline by returning a `Response` without calling `next()`. When this happens, no further policies or the upstream handler execute. The response unwinds through any earlier policies that already called `next()`.
+
+All built-in policies use `GatewayError` to short-circuit with structured JSON error responses:
+
+```typescript
+// Inside a policy handler:
+throw new GatewayError(401, "unauthorized", "Missing authentication token");
+```
+
+The gateway's global error handler catches `GatewayError` instances and converts them to structured JSON responses. See the [Error Handling](/concepts/error-handling/) page for details.
+
+## Per-Policy Timing
+
+The pipeline wrapper automatically records execution duration for each policy. Timing data is accumulated on the Hono context under the `_policyTimings` key as an array of `{ name: string; durationMs: number }` entries. The `metricsReporter` policy can consume this data for observability.
+
+## Policy SDK
+
+The `policies/sdk/` module provides a layered toolkit for authoring custom policies. It eliminates the boilerplate common to every policy implementation.
+
+### `definePolicy()`
+
+The primary convenience wrapper. Takes a `PolicyDefinition` and returns a factory function `(config?) => Policy`. It handles config merging, skip logic, and debug logger injection automatically:
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface TenantFilterConfig extends PolicyConfig {
+  allowedTenants: string[];
+}
+
+export const tenantFilter = definePolicy<TenantFilterConfig>({
+  name: "tenant-filter",
+  priority: Priority.AUTH,
+  defaults: { allowedTenants: [] },
+  handler: async (c, next, { config, debug, gateway }) => {
+    const tenant = c.req.header("x-tenant-id");
+    debug("checking tenant: %s", tenant ?? "none");
+
+    if (!tenant || !config.allowedTenants.includes(tenant)) {
+      throw new GatewayError(403, "forbidden", "Tenant not allowed");
+    }
+
+    await next();
+  },
+});
+
+// Usage: tenantFilter({ allowedTenants: ["acme", "globex"] })
+```
+
+The handler receives three arguments: the Hono context `c`, the `next` function, and a `PolicyHandlerContext` containing:
+
+- `config` -- the fully merged config (defaults + user overrides)
+- `debug` -- a pre-namespaced `DebugLogger` (always callable, zero-overhead when disabled)
+- `gateway` -- the `PolicyContext` (or `undefined` when running outside a gateway pipeline)
+
+### Composable Helpers
+
+For cases where `definePolicy()` is too opinionated, the individual helpers are available:
+
+- **`resolveConfig(defaults, userConfig)`** -- shallow-merge defaults with user config
+- **`policyDebug(c, policyName)`** -- get a pre-namespaced debug logger (returns noop when debug is disabled)
+- **`withSkip(skipFn, handler)`** -- wrap a handler with `PolicyConfig.skip` logic (zero overhead when no skip function is provided)
+
+### Test Harness
+
+`createPolicyTestHarness(policy, options?)` creates a minimal Hono app with context injection, `GatewayError` handling, and a configurable upstream. This eliminates the 15+ lines of boilerplate typically needed to test a policy in isolation:
+
+```typescript
+import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+import { tenantFilter } from "./tenant-filter";
+
+const { request } = createPolicyTestHarness(
+  tenantFilter({ allowedTenants: ["acme"] }),
+);
+
+it("allows valid tenants", async () => {
+  const res = await request("/test", {
+    headers: { "x-tenant-id": "acme" },
+  });
+  expect(res.status).toBe(200);
+});
+
+it("rejects unknown tenants", async () => {
+  const res = await request("/test", {
+    headers: { "x-tenant-id": "evil" },
+  });
+  expect(res.status).toBe(403);
+});
+```
+
+## Writing a Custom Policy (Manual Approach)
+
+If you prefer not to use `definePolicy()`, you can write a policy factory manually. The result is the same `Policy` object:
+
+```typescript
+import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
+import { getGatewayContext, GatewayError } from "@homegrower-club/stoma";
+
+interface MyPolicyConfig extends PolicyConfig {
+  allowedTenants: string[];
+}
+
+export function tenantFilter(config: MyPolicyConfig): Policy {
+  return {
+    name: "tenant-filter",
+    priority: 15,
+    handler: async (c, next) => {
+      if (config.skip && await config.skip(c)) {
+        return next();
+      }
+
+      const debug = getGatewayContext(c)?.debug("stoma:policy:tenant-filter");
+      const tenant = c.req.header("x-tenant-id");
+
+      if (!tenant || !config.allowedTenants.includes(tenant)) {
+        debug?.(`rejected tenant: ${tenant ?? "none"}`);
+        throw new GatewayError(403, "forbidden", "Tenant not allowed");
+      }
+
+      debug?.(`allowed tenant: ${tenant}`);
+      await next();
+    },
+  };
+}
+```

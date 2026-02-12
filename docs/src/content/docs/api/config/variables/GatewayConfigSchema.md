@@ -1,0 +1,10 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "GatewayConfigSchema"
+---
+
+> `const` **GatewayConfigSchema**: `ZodObject`\<\{ `admin`: `ZodOptional`\<`ZodUnion`\<readonly \[`ZodBoolean`, `ZodObject`\<\{ `auth`: `ZodOptional`\<`ZodFunction`\<`$ZodFunctionArgs`, `$ZodFunctionOut`\>\>; `enabled`: `ZodBoolean`; `metrics`: `ZodOptional`\<`ZodAny`\>; `prefix`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>\]\>\>; `basePath`: `ZodOptional`\<`ZodString`\>; `debug`: `ZodOptional`\<`ZodUnion`\<readonly \[`ZodBoolean`, `ZodString`\]\>\>; `defaultErrorMessage`: `ZodOptional`\<`ZodString`\>; `defaultMethods`: `ZodOptional`\<`ZodArray`\<`ZodEnum`\<\{ `DELETE`: `"DELETE"`; `GET`: `"GET"`; `HEAD`: `"HEAD"`; `OPTIONS`: `"OPTIONS"`; `PATCH`: `"PATCH"`; `POST`: `"POST"`; `PUT`: `"PUT"`; \}\>\>\>; `defaultPolicyPriority`: `ZodOptional`\<`ZodNumber`\>; `name`: `ZodOptional`\<`ZodString`\>; `onError`: `ZodOptional`\<`ZodFunction`\<`$ZodFunctionArgs`, `$ZodFunctionOut`\>\>; `policies`: `ZodOptional`\<`ZodArray`\<`ZodObject`\<\{ `handler`: `ZodFunction`\<`$ZodFunctionArgs`, `$ZodFunctionOut`\>; `name`: `ZodString`; `priority`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>\>\>; `requestIdHeader`: `ZodOptional`\<`ZodString`\>; `routes`: `ZodArray`\<`ZodObject`\<\{ `metadata`: `ZodOptional`\<`ZodRecord`\<`ZodString`, `ZodUnknown`\>\>; `methods`: `ZodOptional`\<`ZodArray`\<`ZodEnum`\<\{ `DELETE`: `"DELETE"`; `GET`: `"GET"`; `HEAD`: `"HEAD"`; `OPTIONS`: `"OPTIONS"`; `PATCH`: `"PATCH"`; `POST`: `"POST"`; `PUT`: `"PUT"`; \}\>\>\>; `path`: `ZodString`; `pipeline`: `ZodObject`\<\{ `policies`: `ZodOptional`\<`ZodArray`\<`ZodObject`\<\{ `handler`: ...; `name`: ...; `priority`: ...; \}, `$strip`\>\>\>; `upstream`: `ZodDiscriminatedUnion`\<\[`ZodObject`\<\{ `headers`: ...; `rewritePath`: ...; `target`: ...; `type`: ...; \}, `$strip`\>, `ZodObject`\<\{ `rewritePath`: ...; `service`: ...; `type`: ...; \}, `$strip`\>, `ZodObject`\<\{ `handler`: ...; `type`: ...; \}, `$strip`\>\], `"type"`\>; \}, `$strip`\>; \}, `$strip`\>\>; \}, `$strip`\>
+
+Defined in: src/config/schema.ts:72

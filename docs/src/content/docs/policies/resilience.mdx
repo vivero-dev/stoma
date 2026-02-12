@@ -1,0 +1,155 @@
+---
+title: "Resilience"
+draft: false
+sidebar:
+  order: 3
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Resilience policies protect upstreams and test failure behavior.
+
+## Policy Summary
+
+| Policy | Priority | Purpose |
+|---|---:|---|
+| `latencyInjection` | `5` | Inject synthetic latency (chaos testing). |
+| `circuitBreaker` | `30` | Fail fast after repeated upstream failures. |
+| `timeout` | `85` | Enforce max downstream execution budget. |
+| `retry` | `90` | Retry selected upstream `fetch` failures/status codes. |
+
+---
+
+## timeout
+
+Enforce a time budget by racing `next()` with a timer.
+
+```typescript
+import { timeout } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface TimeoutConfig {
+  timeoutMs?: number;                     // default: 30000
+  message?: string;                       // default: "Gateway timeout"
+  statusCode?: number;                    // default: 504
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+On timeout: throws `GatewayError(statusCode, "gateway_timeout", message)`.
+
+<Aside type="note">
+  `timeout` controls pipeline completion time. It does not forcibly cancel arbitrary downstream work unless that downstream logic cooperates with cancellation.
+</Aside>
+
+---
+
+## retry
+
+Wraps `globalThis.fetch` for the current request and retries matching responses.
+
+```typescript
+import { retry } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RetryConfig {
+  maxRetries?: number;                    // default: 3
+  retryOn?: number[];                     // default: [502, 503, 504]
+  backoff?: "fixed" | "exponential";     // default: "exponential"
+  baseDelayMs?: number;                   // default: 200
+  maxDelayMs?: number;                    // default: 5000
+  retryMethods?: string[];                // default: GET,HEAD,OPTIONS,PUT,DELETE
+  retryCountHeader?: string;              // default: "x-retry-count"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Notes:
+
+- Adds jitter to retry delay.
+- Sets retry count header when retries occurred.
+- For handler upstreams that do not call `fetch`, this policy is effectively a no-op.
+
+---
+
+## circuitBreaker
+
+Three-state breaker with pluggable persistence.
+
+```typescript
+import { circuitBreaker } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface CircuitBreakerConfig {
+  failureThreshold?: number;              // default: 5
+  resetTimeoutMs?: number;                // default: 30000
+  halfOpenMax?: number;                   // default: 1
+  failureOn?: number[];                   // default: [500, 502, 503, 504]
+  store?: CircuitBreakerStore;            // default: InMemoryCircuitBreakerStore
+  key?: (c: Context) => string;           // default: request pathname
+  openStatusCode?: number;                // default: 503
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### States
+
+- `closed`: normal traffic, failures counted.
+- `open`: immediate rejection (`circuit_open`).
+- `half-open`: limited probes allowed.
+
+### Store interface
+
+```typescript
+interface CircuitBreakerStore {
+  getState(key: string): Promise<CircuitBreakerSnapshot>;
+  recordSuccess(key: string): Promise<CircuitBreakerSnapshot>;
+  recordFailure(key: string): Promise<CircuitBreakerSnapshot>;
+  transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot>;
+  reset(key: string): Promise<void>;
+}
+```
+
+Open rejections include `retry-after`.
+
+---
+
+## latencyInjection
+
+Inject fixed/probabilistic latency for chaos testing.
+
+```typescript
+import { latencyInjection } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface LatencyInjectionConfig {
+  delayMs: number;
+  jitter?: number;                        // default: 0
+  probability?: number;                   // default: 1
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+- Jitter applies `+/- jitter * delayMs`.
+- Final delay is clamped to `>= 0`.
+
+---
+
+## Example
+
+```typescript
+import { latencyInjection, circuitBreaker, timeout, retry } from "@homegrower-club/stoma";
+
+[
+  latencyInjection({ delayMs: 100, probability: 0.2 }),
+  circuitBreaker({ failureThreshold: 3, resetTimeoutMs: 10_000 }),
+  timeout({ timeoutMs: 5_000 }),
+  retry({ maxRetries: 2, retryOn: [500, 502, 503, 504] }),
+]
+```

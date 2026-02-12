@@ -1,0 +1,447 @@
+---
+title: Traffic Control
+draft: false
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
+
+Traffic policies control admission, rate, payload safety, upstream shaping, and response filtering.
+
+## Policy Summary
+
+| Policy | Priority | Purpose |
+|---|---:|---|
+| `ipFilter` | `1` | IP allow/deny with CIDR support. |
+| `geoIpFilter` | `1` | Country allow/deny via header (default `cf-ipcountry`). |
+| `sslEnforce` | `5` | Enforce HTTPS and apply HSTS. |
+| `requestLimit` | `5` | Reject large requests via `content-length`. |
+| `jsonThreatProtection` | `5` | Enforce JSON structural/body limits. |
+| `regexThreatProtection` | `5` | Block suspicious patterns in path/query/headers/body. |
+| `rateLimit` | `20` | Sliding-window rate limiting with pluggable store. |
+| `cache` | `40` | Response caching with pluggable store. |
+| `dynamicRouting` | `50` | Evaluate rules and set dynamic routing context values. |
+| `httpCallout` | `50` | Call external services during pipeline execution. |
+| `interrupt` | `100` | Conditionally short-circuit with static response. |
+| `trafficShadow` | `92` | Mirror a sampled subset of traffic to shadow target. |
+| `resourceFilter` | `92` | Remove/allow JSON response fields. |
+
+---
+
+## rateLimit
+
+Sliding-window limiting. Uses `InMemoryRateLimitStore` by default.
+
+```typescript
+import { rateLimit } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface RateLimitConfig {
+  max: number;
+  windowSeconds?: number;                 // default: 60
+  keyBy?: (c: Context) => string | Promise<string>;
+  store?: RateLimitStore;
+  statusCode?: number;                    // default: 429
+  message?: string;                       // default: "Rate limit exceeded"
+  ipHeaders?: string[];                   // default via extractClientIp
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Headers
+
+Every response includes:
+
+- `x-ratelimit-limit`
+- `x-ratelimit-remaining`
+- `x-ratelimit-reset`
+
+Rejected responses also include:
+
+- `retry-after`
+
+### Store Interface
+
+```typescript
+interface RateLimitStore {
+  increment(key: string, windowSeconds: number): Promise<{ count: number; resetAt: number }>;
+  destroy?(): void;
+}
+```
+
+<Aside type="caution">
+  If you instantiate `InMemoryRateLimitStore` in tests, call `destroy()` to clear its cleanup interval.
+</Aside>
+
+---
+
+## ipFilter
+
+Allow/deny by IP or CIDR.
+
+```typescript
+import { ipFilter } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface IpFilterConfig {
+  allow?: string[];
+  deny?: string[];
+  mode?: "allow" | "deny";             // default: "deny"
+  ipHeaders?: string[];
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+- `allow` mode denies unless the IP matches.
+- `deny` mode allows unless the IP matches.
+
+Error: `403` `ip_denied`.
+
+---
+
+## geoIpFilter
+
+Allow/deny by country code from a request header.
+
+```typescript
+import { geoIpFilter } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface GeoIpFilterConfig {
+  allow?: string[];
+  deny?: string[];
+  mode?: "allow" | "deny";             // default: "deny"
+  countryHeader?: string;                 // default: "cf-ipcountry"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Error: `403` `geo_denied`.
+
+---
+
+## cache
+
+Response cache with configurable TTL, method filter, key strategy, and store backend.
+
+```typescript
+import { cache } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface CacheConfig {
+  ttlSeconds?: number;                    // default: 300
+  methods?: string[];                     // default: ["GET"]
+  cacheKeyFn?: (c: Context) => string;
+  varyHeaders?: string[];
+  store?: CacheStore;                     // default: InMemoryCacheStore
+  respectCacheControl?: boolean;          // default: true
+  cacheStatusHeader?: string;             // default: "x-cache"
+  bypassDirectives?: string[];            // default: ["no-store", "no-cache"]
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Store Interface
+
+```typescript
+interface CacheStore {
+  get(key: string): Promise<Response | null>;
+  put(key: string, response: Response, ttlSeconds: number): Promise<void>;
+  delete(key: string): Promise<boolean>;
+}
+```
+
+Responses get `x-cache: HIT|MISS|BYPASS` (or your configured header name).
+
+---
+
+## sslEnforce
+
+Enforce HTTPS and set HSTS on secure responses.
+
+```typescript
+import { sslEnforce } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface SslEnforceConfig {
+  redirect?: boolean;                     // default: true
+  hstsMaxAge?: number;                    // default: 31536000
+  includeSubDomains?: boolean;            // default: false
+  preload?: boolean;                      // default: false
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Behavior:
+
+- Non-HTTPS with `redirect: true`: returns `301` with `Location` on `https://`.
+- Non-HTTPS with `redirect: false`: throws `403` `ssl_required`.
+- HTTPS responses: adds `Strict-Transport-Security`.
+
+---
+
+## requestLimit
+
+Reject requests whose declared `content-length` exceeds `maxBytes`.
+
+```typescript
+import { requestLimit } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RequestLimitConfig {
+  maxBytes: number;
+  message?: string;                       // default: "Request body too large"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+<Aside type="caution">
+  `requestLimit` checks the `content-length` header only. If the header is missing or wrong, this policy will not detect oversize streaming bodies.
+</Aside>
+
+Error: `413` `request_too_large`.
+
+---
+
+## jsonThreatProtection
+
+Validate JSON body structure and size limits before business logic.
+
+```typescript
+import { jsonThreatProtection } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface JsonThreatProtectionConfig {
+  maxDepth?: number;                      // default: 20
+  maxKeys?: number;                       // default: 100
+  maxStringLength?: number;               // default: 10000
+  maxArraySize?: number;                  // default: 100
+  maxBodySize?: number;                   // default: 1048576
+  contentTypes?: string[];                // default: ["application/json"]
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Errors:
+
+- `413` `body_too_large`
+- `400` `invalid_json`
+- `400` `json_threat`
+
+---
+
+## regexThreatProtection
+
+Run regex threat rules against path/query/headers/body.
+
+```typescript
+import { regexThreatProtection } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RegexPatternRule {
+  regex: string;
+  targets: Array<"path" | "headers" | "body" | "query">;
+  message?: string;
+}
+
+interface RegexThreatProtectionConfig {
+  patterns: RegexPatternRule[];
+  flags?: string;                         // default: "i"
+  contentTypes?: string[];                // default: ["application/json", "text/plain"]
+  maxBodyScanLength?: number;             // default: 65536
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Error: `400` `threat_detected`.
+
+---
+
+## interrupt
+
+Conditionally short-circuit the pipeline and return a static response.
+
+```typescript
+import { interrupt } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface InterruptConfig {
+  condition: (c: Context) => boolean | Promise<boolean>;
+  statusCode?: number;                    // default: 200
+  body?: unknown;
+  headers?: Record<string, string>;       // default: {}
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+When condition is `true`, `next()` is not called.
+
+---
+
+## dynamicRouting
+
+Evaluate routing rules and expose match results via context keys.
+
+```typescript
+import { dynamicRouting } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface RoutingRule {
+  name?: string;
+  condition: (c: Context) => boolean | Promise<boolean>;
+  target: string;
+  rewritePath?: (path: string) => string;
+  headers?: Record<string, string>;
+}
+
+interface DynamicRoutingConfig {
+  rules: RoutingRule[];
+  fallthrough?: boolean;                  // default: true
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+When a rule matches, it sets:
+
+- `c.set("_dynamicTarget", string)`
+- `c.set("_dynamicRewrite", (path) => string)` (optional)
+- `c.set("_dynamicHeaders", Record<string,string>)` (optional)
+
+<Aside type="caution">
+  Built-in URL upstream dispatch does not automatically consume `_dynamicTarget`.
+  Use these context values from your own policies/handlers if you need runtime target switching.
+</Aside>
+
+Error when `fallthrough: false` and no rule matches: `404` `no_route`.
+
+---
+
+## httpCallout
+
+Make an external HTTP call during request processing.
+
+```typescript
+import { httpCallout } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface HttpCalloutConfig {
+  url: string | ((c: Context) => string | Promise<string>);
+  method?: string;                        // default: "GET"
+  headers?: Record<string, string | ((c: Context) => string | Promise<string>)>;
+  body?: unknown | ((c: Context) => unknown | Promise<unknown>);
+  timeout?: number;                       // default: 5000
+
+  onResponse: (response: Response, c: Context) => void | Promise<void>;
+  onError?: (error: unknown, c: Context) => void | Promise<void>;
+  abortOnFailure?: boolean;               // default: true
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Default error path throws `502` `callout_failed`.
+
+---
+
+## trafficShadow
+
+Mirror sampled requests to a secondary target after primary response flow.
+
+```typescript
+import { trafficShadow } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface TrafficShadowConfig {
+  target: string;
+  percentage?: number;                    // default: 100
+  methods?: string[];                     // default: ["GET","POST","PUT","PATCH","DELETE"]
+  mirrorBody?: boolean;                   // default: true
+  timeout?: number;                       // default: 5000
+  onError?: (error: unknown) => void;
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+Notes:
+
+- Shadow failures never affect the primary response.
+- If adapter `waitUntil` is available, shadow work is scheduled there.
+
+---
+
+## resourceFilter
+
+Filter JSON response fields in allow or deny mode.
+
+```typescript
+import { resourceFilter } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface ResourceFilterConfig {
+  mode: "allow" | "deny";
+  fields: string[];                       // dot paths, e.g. "user.password"
+  contentTypes?: string[];                // default: ["application/json"]
+  applyToArrayItems?: boolean;            // default: true
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+- `deny`: remove listed fields.
+- `allow`: keep only listed fields.
+
+---
+
+## Example Composition
+
+<Tabs>
+  <TabItem label="Admission + Safety">
+    ```typescript
+    import {
+      ipFilter,
+      sslEnforce,
+      requestLimit,
+      jsonThreatProtection,
+      regexThreatProtection,
+      rateLimit,
+    } from "@homegrower-club/stoma";
+
+    [
+      ipFilter({ deny: ["203.0.113.0/24"] }),
+      sslEnforce({ redirect: true }),
+      requestLimit({ maxBytes: 256_000 }),
+      jsonThreatProtection({ maxDepth: 10, maxBodySize: 256_000 }),
+      regexThreatProtection({ patterns: [{ regex: "<script", targets: ["body", "query"] }] }),
+      rateLimit({ max: 100, windowSeconds: 60 }),
+    ]
+    ```
+  </TabItem>
+  <TabItem label="Cache + Shadow">
+    ```typescript
+    import { cache, trafficShadow } from "@homegrower-club/stoma";
+
+    [
+      cache({ ttlSeconds: 120, varyHeaders: ["accept-language"] }),
+      trafficShadow({ target: "https://shadow.internal", percentage: 10 }),
+    ]
+    ```
+  </TabItem>
+</Tabs>

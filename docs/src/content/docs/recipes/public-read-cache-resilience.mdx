@@ -1,0 +1,44 @@
+---
+title: Public Read API (Cache + Resilience)
+draft: false
+sidebar:
+  order: 4
+---
+
+## Use Case
+
+Serve high-volume public GET endpoints with fast cached responses and graceful degradation when upstreams fail.
+
+## Recipe
+
+```typescript
+{
+  path: "/v1/catalog/*",
+  methods: ["GET"],
+  pipeline: {
+    policies: [
+      rateLimit({ max: 1000, store: stores.rateLimitStore }),
+      cache({ ttlSeconds: 120, store: stores.cacheStore }),
+      circuitBreaker({ store: stores.circuitBreakerStore }),
+      retry({ maxRetries: 2 }),
+      timeout({ timeoutMs: 5000 }),
+      responseTransform({
+        setHeaders: {
+          "cache-control": "public, max-age=60",
+        },
+      }),
+    ],
+    upstream: {
+      type: "url",
+      target: "https://catalog.internal.example.com",
+    },
+  },
+}
+```
+
+## Why it works
+
+- Caching handles bursts and lowers origin load.
+- Retry helps transient failures.
+- Circuit breaker prevents cascading incidents.
+- Timeout prevents hung upstream calls.

@@ -1,0 +1,427 @@
+---
+title: Authentication
+draft: false
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
+
+Stoma has two auth-related groups:
+
+- **Inbound auth/authorization policies** that validate client requests before upstream dispatch.
+- **Outbound signing/token policies** that prepare requests for upstream services.
+
+## Policy Summary
+
+| Policy | Priority | Purpose |
+|---|---:|---|
+| `jwtAuth` | `10` (`Priority.AUTH`) | Verify JWT bearer tokens (HMAC or JWKS RSA). |
+| `apiKeyAuth` | `10` | Validate API keys from header/query. |
+| `basicAuth` | `10` | Validate HTTP Basic credentials. |
+| `oauth2` | `10` | Validate OAuth2 access tokens via introspection or local callback. |
+| `rbac` | `10` | Enforce role/permission checks from forwarded headers. |
+| `jws` | `10` | Verify JWS compact signatures (embedded or detached payload). |
+| `verifyHttpSignature` | `10` | Verify RFC 9421 HTTP Message Signatures. |
+| `generateJwt` | `50` (`Priority.REQUEST_TRANSFORM`) | Mint JWT and attach to upstream request headers. |
+| `generateHttpSignature` | `95` (`Priority.PROXY`) | Sign outbound requests with RFC 9421 headers. |
+
+---
+
+## jwtAuth
+
+Validate JWT tokens from a request header. Supports HMAC (`HS256/384/512`) and RSA via JWKS (`RS256/384/512`).
+
+```typescript
+import { jwtAuth } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface JwtAuthConfig {
+  secret?: string;
+  jwksUrl?: string;
+  issuer?: string;
+  audience?: string;
+  headerName?: string;          // default: "authorization"
+  tokenPrefix?: string;         // default: "Bearer"
+  forwardClaims?: Record<string, string>;
+  jwksCacheTtlMs?: number;      // default: 300000
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+<Aside type="caution">
+  `jwtAuth` requires either `secret` or `jwksUrl`. If both are missing, gateway construction throws a `config_error`.
+</Aside>
+
+### Behavior
+
+- Rejects `alg: "none"` (case-insensitive).
+- Validates `exp` when present, plus `iss` and `aud` when configured.
+- Sanitizes forwarded claims to remove `\r`, `\n`, and `\0`.
+- Caches JWKS responses in-memory per URL.
+
+### Common errors
+
+| Condition | Status | Error code |
+|---|---:|---|
+| Missing token/header | `401` | `unauthorized` |
+| Invalid token format/signature/claims | `401` | `unauthorized` |
+| JWKS fetch failure | `502` | `jwks_error` |
+
+---
+
+## apiKeyAuth
+
+Validate API keys from a header, with optional query fallback.
+
+```typescript
+import { apiKeyAuth } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface ApiKeyAuthConfig {
+  headerName?: string;          // default: "x-api-key"
+  queryParam?: string;          // optional fallback
+  validate: (key: string) => boolean | Promise<boolean>;
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+| Condition | Status | Error code |
+|---|---:|---|
+| Missing API key | `401` | `unauthorized` |
+| Validator returned false | `403` | `forbidden` |
+
+---
+
+## basicAuth
+
+HTTP Basic authentication with browser challenge support (`WWW-Authenticate`).
+
+```typescript
+import { basicAuth } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface BasicAuthConfig {
+  validate: (username: string, password: string, c: Context) => boolean | Promise<boolean>;
+  realm?: string;               // default: "Restricted"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+| Condition | Status | Error code |
+|---|---:|---|
+| Missing/invalid Basic header | `401` | `unauthorized` |
+| Invalid credentials | `403` | `forbidden` |
+
+---
+
+## oauth2
+
+Validate OAuth2 access tokens using either:
+
+- `localValidate(token)` callback, or
+- RFC 7662 introspection endpoint.
+
+If both are provided, `localValidate` takes precedence.
+
+```typescript
+import { oauth2 } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface OAuth2Config {
+  introspectionUrl?: string;
+  clientId?: string;
+  clientSecret?: string;
+  localValidate?: (token: string) => boolean | Promise<boolean>;
+
+  tokenLocation?: "header" | "query";   // default: "header"
+  headerName?: string;                    // default: "authorization"
+  headerPrefix?: string;                  // default: "Bearer"
+  queryParam?: string;                    // default: "access_token"
+
+  forwardTokenInfo?: Record<string, string>;
+  cacheTtlSeconds?: number;               // default: 0 (disabled)
+  requiredScopes?: string[];
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+| Condition | Status | Error code |
+|---|---:|---|
+| Missing token | `401` | `unauthorized` |
+| Inactive/invalid token | `401` | `unauthorized` |
+| Missing required scopes | `403` | `forbidden` |
+| Introspection upstream error | `502` | `introspection_error` |
+| Misconfiguration (no validation strategy) | `500` | `config_error` |
+
+---
+
+## rbac
+
+Role/permission checks from request headers, usually after `jwtAuth` claim forwarding or `oauth2` token info forwarding.
+
+```typescript
+import { rbac } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface RbacConfig {
+  roleHeader?: string;                    // default: "x-user-role"
+  roles?: string[];                       // pass if user has ANY
+
+  permissionHeader?: string;              // default: "x-user-permissions"
+  permissions?: string[];                 // pass if user has ALL
+
+  roleDelimiter?: string;                 // default: ","
+  permissionDelimiter?: string;           // default: ","
+  denyMessage?: string;                   // default: "Access denied: insufficient permissions"
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+When both `roles` and `permissions` are set, both checks must pass.
+
+---
+
+## jws
+
+Verify JWS compact serialization (`header.payload.signature`) using HMAC secret or JWKS RSA keys.
+
+```typescript
+import { jws } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface JwsConfig {
+  secret?: string;
+  jwksUrl?: string;
+
+  headerName?: string;                    // default: "X-JWS-Signature"
+  payloadSource?: "embedded" | "body";  // default: "embedded"
+
+  forwardPayload?: boolean;               // default: false
+  forwardHeaderName?: string;             // default: "X-JWS-Payload"
+  jwksCacheTtlMs?: number;                // default: 300000
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Notes
+
+- `payloadSource: "body"` supports detached payload signatures.
+- Supported algorithms: `HS256/384/512`, `RS256/384/512`.
+
+### Errors
+
+| Condition | Status | Error code |
+|---|---:|---|
+| Missing signature header | `401` | `jws_missing` |
+| Invalid format, alg, key, or signature | `401` | `jws_invalid` |
+| JWKS fetch failure | `502` | `jwks_error` |
+| Misconfiguration | `500` | `config_error` |
+
+---
+
+## verifyHttpSignature
+
+Verify inbound RFC 9421 HTTP Message Signatures from `Signature` + `Signature-Input` headers.
+
+```typescript
+import { verifyHttpSignature } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface VerifyHttpSignatureConfig {
+  keys: Record<string, {
+    secret?: string;
+    publicKey?: JsonWebKey;
+    algorithm: string; // e.g. "hmac-sha256", "rsa-v1_5-sha256", "rsa-pss-sha512"
+  }>;
+
+  requiredComponents?: string[];          // default: ["@method"]
+  maxAge?: number;                        // default: 300 seconds
+
+  signatureHeaderName?: string;           // default: "Signature"
+  signatureInputHeaderName?: string;      // default: "Signature-Input"
+  label?: string;                         // default: "sig1"
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+All verification failures return `401` with `signature_invalid`.
+Misconfiguration (`keys` missing/empty) returns `500` with `config_error`.
+
+---
+
+## generateJwt
+
+Mint a JWT during request processing and attach it to a request header before upstream dispatch.
+
+```typescript
+import { generateJwt } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface GenerateJwtConfig {
+  algorithm: "HS256" | "HS384" | "HS512" | "RS256" | "RS384" | "RS512";
+  secret?: string;
+  privateKey?: JsonWebKey;
+
+  claims?: Record<string, unknown> | ((c: Context) => Record<string, unknown> | Promise<Record<string, unknown>>);
+  expiresIn?: number;                     // default: 3600
+  issuer?: string;
+  audience?: string;
+
+  headerName?: string;                    // default: "Authorization"
+  tokenPrefix?: string;                   // default: "Bearer"
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+- Missing required key material for the chosen algorithm returns `500` `config_error`.
+
+---
+
+## generateHttpSignature
+
+Sign outbound requests with RFC 9421 headers (`Signature-Input`, `Signature`).
+
+```typescript
+import { generateHttpSignature } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface GenerateHttpSignatureConfig {
+  keyId: string;
+  algorithm: string; // "hmac-sha256", "rsa-v1_5-sha256", "rsa-pss-sha512"
+
+  secret?: string;
+  privateKey?: JsonWebKey;
+
+  components?: string[];                  // default: ["@method", "@path", "@authority"]
+  signatureHeaderName?: string;           // default: "Signature"
+  signatureInputHeaderName?: string;      // default: "Signature-Input"
+  label?: string;                         // default: "sig1"
+
+  expires?: number;                       // seconds from created timestamp
+  nonce?: boolean;                        // default: false
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Errors
+
+- Missing signing material returns `500` `config_error`.
+- Unsupported algorithm returns a runtime error from crypto helper validation.
+
+---
+
+## Composition Example
+
+<Tabs>
+  <TabItem label="JWT + RBAC">
+    ```typescript
+    import { createGateway, jwtAuth, rbac } from "@homegrower-club/stoma";
+
+    createGateway({
+      routes: [{
+        path: "/admin/*",
+        pipeline: {
+          policies: [
+            jwtAuth({
+              jwksUrl: env.JWKS_URL,
+              forwardClaims: { roles: "x-user-role", perms: "x-user-permissions" },
+            }),
+            rbac({
+              roles: ["admin"],
+              permissions: ["users:write"],
+            }),
+          ],
+          upstream: { type: "url", target: "https://admin.internal" },
+        },
+      }],
+    });
+    ```
+  </TabItem>
+  <TabItem label="OAuth2 Introspection">
+    ```typescript
+    import { oauth2 } from "@homegrower-club/stoma";
+
+    oauth2({
+      introspectionUrl: "https://auth.example.com/oauth/introspect",
+      clientId: env.CLIENT_ID,
+      clientSecret: env.CLIENT_SECRET,
+      requiredScopes: ["api:read"],
+      forwardTokenInfo: { sub: "x-user-id", client_id: "x-client-id" },
+      cacheTtlSeconds: 30,
+    });
+    ```
+  </TabItem>
+  <TabItem label="Outbound Request Signing">
+    ```typescript
+    import { generateJwt, generateHttpSignature } from "@homegrower-club/stoma";
+
+    [
+      generateJwt({
+        algorithm: "HS256",
+        secret: env.SERVICE_SECRET,
+        claims: { iss: "gateway", scope: "internal" },
+      }),
+      generateHttpSignature({
+        keyId: "gateway-key",
+        algorithm: "hmac-sha256",
+        secret: env.SIGNING_SECRET,
+      }),
+    ]
+    ```
+  </TabItem>
+</Tabs>
+
+## Cache Utilities
+
+You can clear module-level verification caches in tests:
+
+```typescript
+import { clearJwksCache, clearOAuth2Cache, clearJwsJwksCache } from "@homegrower-club/stoma";
+
+clearJwksCache();
+clearOAuth2Cache();
+clearJwsJwksCache();
+```

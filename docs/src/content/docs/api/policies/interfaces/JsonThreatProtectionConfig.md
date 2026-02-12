@@ -1,0 +1,100 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "JsonThreatProtectionConfig"
+---
+
+Defined in: src/policies/traffic/json-threat-protection.ts:14
+
+Configuration for the jsonThreatProtection policy.
+
+## Extends
+
+- [`PolicyConfig`](/api/index/interfaces/policyconfig/)
+
+## Properties
+
+### contentTypes?
+
+> `optional` **contentTypes**: `string`[]
+
+Defined in: src/policies/traffic/json-threat-protection.ts:30
+
+Content types to inspect.
+Requests with other content types pass through without inspection.
+Default: `["application/json"]`.
+
+***
+
+### maxArraySize?
+
+> `optional` **maxArraySize**: `number`
+
+Defined in: src/policies/traffic/json-threat-protection.ts:22
+
+Maximum array length. Default: `100`.
+
+***
+
+### maxBodySize?
+
+> `optional` **maxBodySize**: `number`
+
+Defined in: src/policies/traffic/json-threat-protection.ts:24
+
+Maximum raw body size in bytes. Checked BEFORE parsing. Default: `1048576` (1 MB).
+
+***
+
+### maxDepth?
+
+> `optional` **maxDepth**: `number`
+
+Defined in: src/policies/traffic/json-threat-protection.ts:16
+
+Maximum nesting depth. Default: `20`.
+
+***
+
+### maxKeys?
+
+> `optional` **maxKeys**: `number`
+
+Defined in: src/policies/traffic/json-threat-protection.ts:18
+
+Maximum number of keys per object. Default: `100`.
+
+***
+
+### maxStringLength?
+
+> `optional` **maxStringLength**: `number`
+
+Defined in: src/policies/traffic/json-threat-protection.ts:20
+
+Maximum string value length (also applies to object keys). Default: `10000`.
+
+***
+
+### skip()?
+
+> `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
+
+Defined in: src/policies/types.ts:33
+
+Skip this policy when condition returns true
+
+#### Parameters
+
+##### c
+
+`unknown`
+
+#### Returns
+
+`boolean` \| `Promise`\<`boolean`\>
+
+#### Inherited from
+
+[`PolicyConfig`](/api/index/interfaces/policyconfig/).[`skip`](/api/index/interfaces/policyconfig/#skip)

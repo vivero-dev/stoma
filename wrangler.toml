@@ -1,0 +1,4 @@
+# Minimal config for @cloudflare/vitest-pool-workers
+# The gateway library has no bindings — this file exists solely
+# so the test pool can spin up a workerd runtime.
+compatibility_date = "2025-06-01"

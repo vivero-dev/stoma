@@ -1,0 +1,21 @@
+/* Responsive Tables for TypeDoc output */
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Ensure code blocks don't overflow */
+.sl-markdown-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Adjust TypeDoc specific elements if needed */
+/* Example: Reduce padding on small screens for data lists */
+@media (max-width: 640px) {
+  .sl-markdown-content dl {
+    margin-left: 0;
+  }
+}

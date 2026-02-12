@@ -1,0 +1,93 @@
+---
+title: "Proxy & Mock"
+draft: false
+sidebar:
+  order: 6
+---
+
+`proxy` and `mock` are late-stage pipeline policies used right before terminal dispatch.
+
+## proxy
+
+Apply per-route request header mutation and timeout behavior near the upstream boundary.
+
+```typescript
+import { proxy } from "@homegrower-club/stoma";
+```
+
+### Priority
+
+`95` (`Priority.PROXY`)
+
+### Configuration
+
+```typescript
+interface ProxyPolicyConfig {
+  headers?: Record<string, string>;       // add/overwrite request headers
+  stripHeaders?: string[];                // remove request headers
+  timeout?: number;                       // default: 30000
+  preserveHost?: boolean;                 // default: false
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Behavior
+
+- Mutates request headers by cloning `Request` (Workers-safe).
+- Applies an execution timeout around `next()`.
+- When `preserveHost: true`, URL upstream dispatch keeps the inbound `Host` header instead of rewriting to the target host.
+
+---
+
+## mock
+
+Short-circuit policy that returns a static response without calling `next()`.
+
+```typescript
+import { mock } from "@homegrower-club/stoma";
+```
+
+### Priority
+
+`999` (`Priority.MOCK`)
+
+### Configuration
+
+```typescript
+interface MockConfig {
+  status?: number;                        // default: 200
+  body?: string | Record<string, unknown>;
+  headers?: Record<string, string>;
+  delayMs?: number;                       // default: 0
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Behavior
+
+- Object bodies are JSON-stringified.
+- If object body and no `content-type` provided, sets `application/json`.
+- Useful for local stubs, incident fallback responses, and endpoint prototyping.
+
+---
+
+## Example
+
+```typescript
+import { proxy, mock } from "@homegrower-club/stoma";
+
+// Strip cookies, inject internal credential, preserve inbound Host
+proxy({
+  stripHeaders: ["cookie"],
+  headers: { "x-internal-token": env.INTERNAL_TOKEN },
+  preserveHost: true,
+  timeout: 10_000,
+});
+
+// Maintenance stub
+mock({
+  status: 503,
+  body: { message: "Temporarily unavailable" },
+  headers: { "retry-after": "120" },
+});
+```

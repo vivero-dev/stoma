@@ -1,0 +1,74 @@
+---
+title: Policies
+description: Explore Stoma's 40+ built-in policies for authentication, traffic control, resilience, and more.
+sidebar:
+  order: 0
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+Stoma's power comes from its extensive library of built-in policies. Policies are named, prioritized Hono middleware handlers that you can compose into pipelines to handle every aspect of your API's behavior.
+
+## Policy Categories
+
+Browse policies by category to find the right building blocks for your gateway.
+
+<CardGrid>
+  <Card title="Authentication" icon="lock">
+    Secure your API with industry-standard auth mechanisms.
+    - [JWT & JWKS](/policies/auth/#jwtauth)
+    - [API Key](/policies/auth/#apikeyauth)
+    - [OAuth2 Introspection](/policies/auth/#oauth2)
+    - [RBAC](/policies/auth/#rbac)
+    - [HTTP Signatures (RFC 9421)](/policies/auth/#verifyhttpsignature)
+  </Card>
+  <Card title="Traffic Control" icon="random">
+    Manage and protect your API traffic at scale.
+    - [Rate Limiting](/policies/traffic/#ratelimit)
+    - [Caching](/policies/traffic/#cache)
+    - [IP & Geo Filtering](/policies/traffic/#ipfilter)
+    - [JSON/Regex Threat Protection](/policies/traffic/#jsonthreatprotection)
+    - [Traffic Shadowing](/policies/traffic/#trafficshadow)
+  </Card>
+  <Card title="Resilience" icon="warning">
+    Ensure your API stays healthy even when upstreams fail.
+    - [Circuit Breakers](/policies/resilience/#circuitbreaker)
+    - [Retries](/policies/resilience/#retry)
+    - [Timeouts](/policies/resilience/#timeout)
+    - [Latency Injection](/policies/resilience/#latencyinjection)
+  </Card>
+  <Card title="Transformation" icon="document">
+    Modify requests and responses on the fly.
+    - [CORS](/policies/transform/#cors)
+    - [Request/Response Rewriting](/policies/transform/#requesttransform)
+    - [JSON Validation](/policies/transform/#jsonvalidation)
+    - [Content Assignment](/policies/transform/#assigncontent)
+  </Card>
+  <Card title="Observability" icon="eye">
+    Monitor your gateway's performance and health.
+    - [Structured Logging](/policies/observability/#requestlog)
+    - [Prometheus Metrics](/policies/observability/#metricsreporter)
+    - [Health Checks](/policies/observability/#health)
+  </Card>
+  <Card title="Custom Policies" icon="add-document">
+    Extend Stoma with your own logic using the Policy SDK.
+    - [Writing Custom Policies](/policies/custom-policies/)
+    - [Policy SDK Reference](/policies/custom-policies/#policy-sdk)
+  </Card>
+</CardGrid>
+
+---
+
+## How Policies Execute
+
+Policies in a pipeline execute based on a numeric **priority** (lowest number first). This ensures that critical tasks like logging and authentication always happen before downstream transforms or proxying.
+
+| Priority | Category | Examples |
+| :--- | :--- | :--- |
+| **0** | Observability | `requestLog` |
+| **10** | Authentication | `jwtAuth`, `apiKeyAuth` |
+| **20** | Rate Limiting | `rateLimit` |
+| **40** | Caching | `cache` |
+| **95** | Proxy | `proxy` |
+
+[Learn more about the Policy System](/concepts/policies/)

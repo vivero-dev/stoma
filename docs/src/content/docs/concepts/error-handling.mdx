@@ -1,0 +1,247 @@
+---
+title: Error Handling
+draft: false
+sidebar:
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Stoma provides a structured error system that ensures every error response follows a consistent JSON format. Errors are never leaked as raw stack traces or plain text -- the gateway boundary enforces a uniform shape for both expected policy rejections and unexpected failures.
+
+## GatewayError
+
+`GatewayError` is the structured error class used throughout the gateway. It extends `Error` with an HTTP status code, a machine-readable error code, and optional response headers.
+
+```typescript
+class GatewayError extends Error {
+  readonly statusCode: number;
+  readonly code: string;
+  readonly headers?: Record<string, string>;
+
+  constructor(
+    statusCode: number,
+    code: string,
+    message: string,
+    headers?: Record<string, string>,
+  );
+}
+```
+
+Throw a `GatewayError` from any policy or handler to produce a structured error response:
+
+```typescript
+throw new GatewayError(429, "rate_limited", "Too many requests", {
+  "retry-after": "60",
+  "x-ratelimit-limit": "100",
+  "x-ratelimit-remaining": "0",
+});
+```
+
+## Error Response Format
+
+All gateway errors produce a consistent JSON response body:
+
+```json
+{
+  "error": "rate_limited",
+  "message": "Too many requests",
+  "statusCode": 429,
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+The `ErrorResponse` interface:
+
+```typescript
+interface ErrorResponse {
+  /** Machine-readable error code (e.g. "rate_limited", "unauthorized"). */
+  error: string;
+  /** Human-readable error description. */
+  message: string;
+  /** HTTP status code (e.g. 401, 429, 503). */
+  statusCode: number;
+  /** Request ID for tracing, when available. */
+  requestId?: string;
+}
+```
+
+The `requestId` field is included whenever the error occurs after the context injector has run (i.e., on a matched route). Errors that occur before context injection (e.g., unmatched routes) omit this field.
+
+Custom headers from the `GatewayError` (such as `Retry-After` or `X-RateLimit-*`) are merged into the HTTP response headers.
+
+## Policy Error Codes
+
+Each built-in policy throws `GatewayError` with specific status codes and error codes:
+
+### Authentication (401 / 403)
+
+| Policy | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| `jwtAuth` | 401 | `unauthorized` | Missing token, malformed JWT, expired token, invalid signature, issuer/audience mismatch, `none` algorithm |
+| `jwtAuth` | 502 | `jwks_error` | JWKS endpoint unreachable or returns non-200 |
+| `apiKeyAuth` | 401 | `unauthorized` | Missing API key |
+| `apiKeyAuth` | 403 | `forbidden` | Invalid API key (failed validation) |
+| `basicAuth` | 401 | `unauthorized` | Missing or malformed credentials, invalid username/password |
+| `oauth2` | 401 | `unauthorized` | Missing access token, token validation failed, token not active |
+| `oauth2` | 403 | `forbidden` | Insufficient scope (token missing required scopes) |
+| `oauth2` | 500 | `config_error` | Neither `introspectionUrl` nor `localValidate` configured |
+| `oauth2` | 502 | `introspection_error` | Introspection endpoint returned non-200 |
+| `rbac` | 403 | `forbidden` | User role not in allowed roles, or user missing required permissions |
+
+Authentication errors from `basicAuth` include a `WWW-Authenticate` header to prompt browser credential dialogs:
+
+```json
+{
+  "error": "unauthorized",
+  "message": "Invalid credentials",
+  "statusCode": 401
+}
+```
+
+Response header: `WWW-Authenticate: Basic realm="Restricted"`
+
+### Rate Limiting (429)
+
+| Policy | Status | Error Code | Headers |
+|--------|--------|------------|---------|
+| `rateLimit` | 429 | `rate_limited` | `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After` |
+
+The rate limit policy sets `X-RateLimit-*` headers on every response (not just rejections), so clients can monitor their remaining quota:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 45
+Retry-After: 45
+```
+
+### Traffic Control (301 / 403 / 404 / 413)
+
+| Policy | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| `ipFilter` | 403 | `forbidden` | Client IP not in allowlist, or client IP in denylist |
+| `geoIpFilter` | 403 | `geo_denied` | Country code not in allowlist (allow mode), or country code in denylist (deny mode) |
+| `sslEnforce` | 301 | _(redirect)_ | HTTP request redirected to HTTPS (when `redirect: true`, the default) |
+| `sslEnforce` | 403 | `ssl_required` | HTTP request blocked (when `redirect: false`) |
+| `requestLimit` | 413 | `request_too_large` | `Content-Length` header exceeds configured `maxBytes` |
+| `dynamicRouting` | 404 | `no_route` | No routing rule matched and `fallthrough` is `false` |
+| `interrupt` | _(configurable)_ | _(n/a)_ | Returns a static response with the configured `statusCode` (default 200) when the condition predicate returns true; does not throw `GatewayError` |
+
+### Threat Protection (400 / 413)
+
+| Policy | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| `jsonThreatProtection` | 400 | `json_threat` | JSON exceeds maximum depth, maximum key count, maximum string length, or maximum array size |
+| `jsonThreatProtection` | 400 | `invalid_json` | Request body is not valid JSON |
+| `jsonThreatProtection` | 413 | `body_too_large` | Request body exceeds configured `maxBodySize` |
+| `regexThreatProtection` | 400 | `threat_detected` | Request path, query string, headers, or body matches a configured regex pattern |
+
+### Request Validation (400)
+
+| Policy | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| `requestValidation` | 400 | `validation_failed` | Request body fails user-provided validation function, or body is not valid JSON |
+
+### Method Override (400)
+
+| Policy | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| `overrideMethod` | 400 | `invalid_method_override` | Override header specifies a method not in `allowedMethods` |
+
+### Resilience (502 / 503 / 504)
+
+| Policy | Status | Error Code | Headers |
+|--------|--------|------------|---------|
+| `circuitBreaker` | 503 | `circuit_open` | `Retry-After` |
+| `timeout` | 504 | `gateway_timeout` | -- |
+| `httpCallout` | 502 | `callout_failed` | External callout fetch failed or returned non-2xx (when no custom `onError` is provided) |
+
+The circuit breaker includes a `Retry-After` header indicating how many seconds until the circuit transitions to the half-open state.
+
+### Upstream (502)
+
+| Source | Status | Error Code | Scenarios |
+|--------|--------|------------|-----------|
+| URL upstream | 502 | `upstream_error` | `rewritePath` changed the origin (SSRF protection) |
+| Service Binding | 502 | `upstream_error` | Binding not available in Worker environment |
+
+## Error Handling Pipeline
+
+The gateway processes errors in a specific order:
+
+### 1. GatewayError instances
+
+When a `GatewayError` is thrown (by a policy or handler), the global error handler converts it to a structured JSON response via `errorToResponse()`. The request ID is included if available from the `PolicyContext`.
+
+### 2. Custom error handler
+
+If `GatewayConfig.onError` is provided, it receives the error and the Hono context. The custom handler has full control over the response:
+
+```typescript
+const gateway = createGateway({
+  onError: (error, c) => {
+    // Log to external service
+    console.error("Gateway error:", error);
+
+    // Return custom response
+    return new Response(
+      JSON.stringify({
+        error: "service_error",
+        message: "Something went wrong",
+        statusCode: 500,
+      }),
+      { status: 500, headers: { "content-type": "application/json" } },
+    );
+  },
+  routes: [/* ... */],
+});
+```
+
+When `onError` is defined, it takes precedence over the default error handling for all errors, including `GatewayError` instances.
+
+### 3. Unexpected errors
+
+Errors that are not `GatewayError` instances (and when no custom `onError` is defined) produce a generic 500 response. Internal error details are never leaked to the client:
+
+```json
+{
+  "error": "internal_error",
+  "message": "An unexpected error occurred",
+  "statusCode": 500,
+  "requestId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+The default message can be customized via `GatewayConfig.defaultErrorMessage`. The actual error is logged to `console.error` with the gateway name, HTTP method, and path for operator debugging.
+
+### 4. Unmatched routes
+
+Requests that do not match any registered route receive a structured 404 response (not Hono's default plain-text 404):
+
+```json
+{
+  "error": "not_found",
+  "message": "No route matches GET /unknown/path",
+  "statusCode": 404,
+  "gateway": "my-api"
+}
+```
+
+<Aside type="note">
+Unmatched route responses do not include a `requestId` because the context injector only runs on matched routes.
+</Aside>
+
+## Config Errors
+
+Configuration errors are thrown at gateway construction time (inside `createGateway()`), before any requests are handled. These are programming errors, not runtime failures:
+
+| Condition | Error Code | Message |
+|-----------|------------|---------|
+| No routes provided | `config_error` | "Gateway requires at least one route" |
+| Unknown upstream type | `config_error` | `"Unknown upstream type: {type}"` |
+| Invalid URL upstream target | JavaScript `TypeError` | Thrown by `new URL(target)` |
+| `jwtAuth` missing secret and jwksUrl | `config_error` | "jwtAuth requires either 'secret' or 'jwksUrl'" |
+| `oauth2` missing introspectionUrl and localValidate | `config_error` | "oauth2 requires either introspectionUrl or localValidate" |
+
+Config errors are `GatewayError` instances (except for invalid URL targets, which throw a native `TypeError`). They should be caught during development and CI, not at runtime. The `oauth2` config error is thrown at request time (status 500) rather than construction time because the validation happens inside the policy handler.

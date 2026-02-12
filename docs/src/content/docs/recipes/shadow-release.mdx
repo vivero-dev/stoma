@@ -1,0 +1,43 @@
+---
+title: Shadow Release
+draft: false
+sidebar:
+  order: 5
+---
+
+## Use Case
+
+Mirror production traffic to a new upstream version without affecting user responses.
+
+## Recipe
+
+```typescript
+{
+  path: "/v1/orders/*",
+  methods: ["GET", "POST", "PUT"],
+  pipeline: {
+    policies: [
+      trafficShadow({
+        target: "https://orders-v2.internal.example.com",
+        percentage: 10,
+        methods: ["POST", "PUT"],
+        timeout: 3000,
+      }),
+    ],
+    upstream: {
+      type: "url",
+      target: "https://orders-v1.internal.example.com",
+    },
+  },
+}
+```
+
+## Why it works
+
+- Primary responses still come from stable v1.
+- v2 receives realistic traffic for verification.
+- Shadow failures do not impact users.
+
+## Operational tip
+
+Use the adapter `waitUntil` capability in Cloudflare (`cloudflareAdapter({ executionCtx })`) so shadow requests continue even after the primary response is returned.

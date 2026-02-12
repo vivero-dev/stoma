@@ -1,0 +1,78 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "GatewayAdapter"
+---
+
+Defined in: src/adapters/types.ts:6
+
+Bag of optional store implementations and runtime capabilities for a given runtime.
+
+## Properties
+
+### cacheStore?
+
+> `optional` **cacheStore**: [`CacheStore`](/api/index/interfaces/cachestore/)
+
+Defined in: src/adapters/types.ts:9
+
+***
+
+### circuitBreakerStore?
+
+> `optional` **circuitBreakerStore**: [`CircuitBreakerStore`](/api/index/interfaces/circuitbreakerstore/)
+
+Defined in: src/adapters/types.ts:8
+
+***
+
+### dispatchBinding()?
+
+> `optional` **dispatchBinding**: (`service`, `request`) => `Promise`\<`Response`\>
+
+Defined in: src/adapters/types.ts:14
+
+Dispatch a request to a named service binding or sidecar.
+
+#### Parameters
+
+##### service
+
+`string`
+
+##### request
+
+`Request`
+
+#### Returns
+
+`Promise`\<`Response`\>
+
+***
+
+### rateLimitStore?
+
+> `optional` **rateLimitStore**: [`RateLimitStore`](/api/index/interfaces/ratelimitstore/)
+
+Defined in: src/adapters/types.ts:7
+
+***
+
+### waitUntil()?
+
+> `optional` **waitUntil**: (`promise`) => `void`
+
+Defined in: src/adapters/types.ts:12
+
+Schedule background work that outlives the response (e.g. Cloudflare `executionCtx.waitUntil`).
+
+#### Parameters
+
+##### promise
+
+`Promise`\<`unknown`\>
+
+#### Returns
+
+`void`

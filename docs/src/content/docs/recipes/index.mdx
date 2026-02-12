@@ -1,0 +1,28 @@
+---
+title: Recipes
+draft: false
+sidebar:
+  order: 1
+---
+
+Production-focused gateway patterns you can adapt directly.
+
+Each recipe includes:
+
+- A concrete use case.
+- The policy/upstream composition.
+- Copy/paste starter code.
+- Notes about runtime setup and tradeoffs.
+
+## Included Recipes
+
+1. [Render Any Page to Markdown with Cloudflare Browser Rendering](/recipes/browser-rendering-markdown/)
+2. [Webhook Firewall (Auth + Payload Safety)](/recipes/webhook-firewall/)
+3. [Public Read API with Cache + Resilience Guards](/recipes/public-read-cache-resilience/)
+4. [Shadow Traffic for Safe Releases](/recipes/shadow-release/)
+
+## How to use these
+
+- Start with a recipe route in isolation.
+- Validate behavior with a test harness and staging traffic.
+- Promote shared pieces into your own custom policies.

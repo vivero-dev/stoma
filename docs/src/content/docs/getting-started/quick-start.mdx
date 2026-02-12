@@ -1,0 +1,91 @@
+---
+title: Quick Start
+description: Build your first API gateway with Stoma in minutes.
+sidebar:
+  order: 2
+---
+
+import { Aside, Tabs, TabItem, Steps } from "@astrojs/starlight/components";
+
+In this guide, we'll build a production-grade gateway with authentication, rate limiting, and a health check.
+
+<Steps>
+
+1.  **Initialize your Gateway**
+    Create a new file (e.g., `src/index.ts`) and use `createGateway` to define your infrastructure.
+
+    ```typescript
+    import { createGateway, jwtAuth, rateLimit, requestLog, health } from "@homegrower-club/stoma";
+
+    const gateway = createGateway({
+      name: "my-gateway",
+      basePath: "/v1",
+      policies: [requestLog()],
+      routes: [
+        health(),
+        {
+          path: "/users/*",
+          pipeline: {
+            policies: [
+              jwtAuth({ secret: "env:JWT_SECRET" }),
+              rateLimit({ max: 100, windowSeconds: 60 }),
+            ],
+            upstream: {
+              type: "url",
+              target: "https://users-api.internal.example.com",
+            },
+          },
+        },
+      ],
+    });
+
+    export default gateway.app;
+    ```
+
+2.  **Understand the Core Concepts**
+    - **`createGateway`**: The main entry point. It compiles your config into a Hono app.
+    - **`basePath`**: Prefixes all routes (e.g., `/v1/users/*`).
+    - **Global Policies**: `policies: [requestLog()]` runs on every single request.
+    - **Pipeline**: A chain of policies leading to an `upstream` (where the request ends up).
+
+3.  **Choose your Upstream**
+    Stoma supports three types of upstreams:
+
+    - **`url`**: Proxy to any HTTP endpoint (Universal).
+    - **`service-binding`**: Zero-latency Worker-to-Worker routing (Cloudflare only).
+    - **`handler`**: Inline response logic (Universal).
+
+4.  **Run and Deploy**
+    Since `gateway.app` is a standard Hono instance, you can run it anywhere.
+
+    <Tabs>
+      <TabItem label="Cloudflare Workers">
+        ```typescript
+        export default gateway.app;
+        ```
+        Run with `npx wrangler dev`.
+      </TabItem>
+      <TabItem label="Node.js">
+        ```typescript
+        import { serve } from "@hono/node-server";
+        serve({ fetch: gateway.app.fetch, port: 3000 });
+        ```
+      </TabItem>
+      <TabItem label="Bun / Deno">
+        ```typescript
+        // Bun
+        export default gateway.app;
+
+        // Deno
+        Deno.serve(gateway.app.fetch);
+        ```
+      </TabItem>
+    </Tabs>
+
+</Steps>
+
+## Next Steps
+
+- [Browse 40+ Policies](/policies/auth/)
+- [Learn about Cloudflare integration](/cloudflare/service-bindings/)
+- [See production Recipes](/recipes/)

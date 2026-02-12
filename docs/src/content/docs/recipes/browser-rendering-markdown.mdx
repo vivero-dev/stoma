@@ -1,0 +1,117 @@
+---
+title: Browser Rendering to Markdown
+draft: false
+sidebar:
+  order: 2
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Use Case
+
+Expose a gateway route that accepts a URL, renders it in a real browser via Cloudflare Browser Rendering, and returns markdown.
+
+This is useful for:
+
+- AI/RAG ingestion pipelines.
+- "Reader mode" APIs.
+- Content extraction before indexing.
+
+## Why this is a strong gateway pattern
+
+A traditional gateway usually proxies requests and enforces policies. Stoma can do that **and** orchestrate browser automation directly in a route pipeline.
+
+## Route Implementation
+
+```typescript
+import { createGateway, rateLimit, requestValidation, timeout } from "@homegrower-club/stoma";
+import puppeteer from "@cloudflare/puppeteer";
+
+const gateway = createGateway({
+  routes: [
+    {
+      path: "/v1/render/markdown",
+      methods: ["POST"],
+      pipeline: {
+        policies: [
+          rateLimit({ max: 10, windowSeconds: 60 }),
+          requestValidation({
+            validate: (body) => {
+              const ok = body && typeof body === "object" && typeof (body as any).url === "string";
+              return { valid: ok, errors: ok ? undefined : ["Body must include 'url'"] };
+            },
+          }),
+          timeout({ timeoutMs: 30_000 }),
+        ],
+        upstream: {
+          type: "handler",
+          handler: async (c) => {
+            const browserBinding = (c.env as any)?.MYBROWSER;
+            const body = await c.req.json();
+            
+            const browser = await puppeteer.launch(browserBinding);
+            try {
+              const page = await browser.newPage();
+              await page.goto(body.url, { waitUntil: "networkidle2" });
+              
+              const markdown = await page.evaluate(() => {
+                // ... extraction logic ...
+                return document.body.innerText; 
+              });
+
+              return new Response(markdown, {
+                headers: { "content-type": "text/markdown" }
+              });
+            } finally {
+              await browser.close();
+            }
+          },
+        },
+      },
+    }
+  ]
+});
+```
+
+<Aside type="tip">
+  For a full, high-quality markdown extraction implementation, see the [demo/src/index.ts](https://github.com/HomeGrower-club/stoma/blob/main/demo/src/index.ts) file in the repository.
+</Aside>
+
+## Cloudflare setup
+
+`wrangler.toml`:
+
+```toml
+compatibility_flags = ["nodejs_compat"]
+
+[browser]
+binding = "MYBROWSER"
+remote = true
+```
+
+Install:
+
+```sh
+npm --prefix demo install @cloudflare/puppeteer
+```
+
+<Aside type="note">
+  `remote = true` is recommended for local development so rendering runs in Cloudflare's Browser Rendering service instead of expecting a local browser process.
+</Aside>
+
+## Demo implementation
+
+This recipe is implemented in `demo/src/index.ts`.
+
+Request:
+
+```bash
+curl -X POST http://127.0.0.1:8787/api/v1/render/markdown \
+  -H 'content-type: application/json' \
+  -d '{"url":"https://developers.cloudflare.com/browser-rendering/"}'
+```
+
+Response content type:
+
+- `text/markdown; charset=utf-8`
+

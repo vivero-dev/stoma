@@ -1,0 +1,21 @@
+node_modules
+dist
+coverage
+.turbo
+.claude/
+.wrangler/
+
+# Astro build cache
+docs/.astro/
+docs/dist/
+
+# Internal planning and audit docs
+PLAN.md
+POLICIES_REVIEW_AND_PLAN.md
+SECURITY_AUDIT.md
+CLAUDE.md
+
+*.log
+*.local
+.DS_Store
+*.sw?

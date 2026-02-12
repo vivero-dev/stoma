@@ -1,0 +1,147 @@
+---
+title: "Observability"
+draft: false
+sidebar:
+  order: 5
+---
+
+Observability policies provide request logging, metrics collection, and health endpoints.
+
+## Policy Summary
+
+| Policy | Priority | Purpose |
+|---|---:|---|
+| `requestLog` | `0` (`Priority.OBSERVABILITY`) | Structured request/response logs. |
+| `assignMetrics` | `0` | Attach extra metric tags onto request context. |
+| `metricsReporter` | `1` (`Priority.METRICS`) | Record request counters/histograms/errors. |
+| `health` | route factory (not policy) | Liveness/readiness endpoint route. |
+
+---
+
+## requestLog
+
+Structured JSON logs for each request.
+
+```typescript
+import { requestLog } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface RequestLogConfig {
+  extractFields?: (c: Context) => Record<string, unknown>;
+  sink?: (entry: LogEntry) => void | Promise<void>;   // default: console.log(JSON)
+  ipHeaders?: string[];
+
+  logRequestBody?: boolean;                            // default: false
+  logResponseBody?: boolean;                           // default: false
+  maxBodyLength?: number;                              // default: 8192
+  redactPaths?: string[];
+
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### LogEntry fields
+
+`timestamp`, `requestId`, `method`, `path`, `statusCode`, `durationMs`, `clientIp`, `userAgent`, `gatewayName`, `routePath`, `upstream`, optional `traceId`, `spanId`, `requestBody`, `responseBody`, and `extra`.
+
+---
+
+## assignMetrics
+
+Resolve static/dynamic metric tags and store them as `c.get("_metricsTags")`.
+
+```typescript
+import { assignMetrics } from "@homegrower-club/stoma";
+```
+
+```typescript
+interface AssignMetricsConfig {
+  tags: Record<string, string | ((c: Context) => string | Promise<string>)>;
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+---
+
+## metricsReporter
+
+Record request-level metrics through a `MetricsCollector`.
+
+```typescript
+import { metricsReporter } from "@homegrower-club/stoma";
+```
+
+### Configuration
+
+```typescript
+interface MetricsReporterConfig {
+  collector: MetricsCollector;
+  skip?: (c: Context) => boolean | Promise<boolean>;
+}
+```
+
+### Recorded metrics
+
+- `gateway_requests_total` (counter)
+- `gateway_request_duration_ms` (histogram)
+- `gateway_request_errors_total` (counter for status `>= 400`)
+- `gateway_policy_duration_ms` (histogram, when `_policyTimings` exists)
+
+Tags include `method`, `path`, `status`, and `gateway`, plus custom tags from `assignMetrics`.
+
+### Collector interface
+
+```typescript
+interface MetricsCollector {
+  increment(name: string, value?: number, tags?: Record<string, string>): void;
+  histogram(name: string, value: number, tags?: Record<string, string>): void;
+  gauge(name: string, value: number, tags?: Record<string, string>): void;
+  snapshot(): MetricsSnapshot;
+  reset(): void;
+}
+```
+
+---
+
+## health (Route Factory)
+
+`health()` returns a `RouteConfig`, not a policy. Add it directly to `routes`.
+
+```typescript
+import { createGateway, health } from "@homegrower-club/stoma";
+
+createGateway({
+  routes: [
+    health(),
+    health({
+      path: "/healthz",
+      upstreamProbes: ["https://api.example.com/health"],
+      includeUpstreamStatus: true,
+      probeTimeoutMs: 5000,
+      probeMethod: "HEAD",
+    }),
+  ],
+});
+```
+
+### Configuration
+
+```typescript
+interface HealthConfig {
+  path?: string;                          // default: "/health"
+  upstreamProbes?: string[];
+  includeUpstreamStatus?: boolean;        // default: false
+  probeTimeoutMs?: number;                // default: 5000
+  probeMethod?: string;                   // default: "HEAD"
+  unhealthyStatusCode?: number;           // default: 503
+}
+```
+
+Probe status values:
+
+- `healthy` (all probes healthy)
+- `degraded` (mixed)
+- `unhealthy` (all failed, returns `unhealthyStatusCode`)

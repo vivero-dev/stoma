@@ -1,0 +1,178 @@
+---
+title: KV Rate Limiting
+draft: false
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
+
+The built-in `InMemoryRateLimitStore` works well for single-instance
+deployments, but Cloudflare Workers can run across hundreds of data centers.
+For distributed rate limiting, use Cloudflare KV as the counter store.
+
+## Ready-made adapter
+
+Stoma ships a `KVRateLimitStore` class in the adapters package. It implements
+the `RateLimitStore` interface backed by a KV namespace:
+
+```typescript
+import { rateLimit } from "@homegrower-club/stoma";
+import { KVRateLimitStore } from "@homegrower-club/stoma/adapters";
+
+const gateway = createGateway({
+  routes: [
+    {
+      path: "/api/*",
+      pipeline: {
+        policies: [
+          rateLimit({
+            max: 100,
+            windowSeconds: 60,
+            store: new KVRateLimitStore(env.RATE_LIMIT_KV),
+          }),
+        ],
+        upstream: { type: "url", target: "https://backend.internal" },
+      },
+    },
+  ],
+});
+```
+
+## Wrangler configuration
+
+Bind a KV namespace in your `wrangler.toml`:
+
+```toml
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "your-kv-namespace-id"
+```
+
+Create the namespace via the Cloudflare dashboard or the CLI:
+
+```sh
+npx wrangler kv namespace create RATE_LIMIT_KV
+```
+
+## How it works
+
+The `KVRateLimitStore` stores a JSON object per rate limit key with the
+current count and window expiry timestamp:
+
+```json
+{ "count": 42, "resetAt": 1706745600000 }
+```
+
+On each request:
+
+1. The store reads the current counter from KV via `kv.get(key, "json")`
+2. If the window is still active (`resetAt > Date.now()`), the count is
+   incremented and written back with a TTL matching the remaining window time
+3. If the window has expired (or no entry exists), a new counter is created
+   with `count: 1` and `expirationTtl` set to the full window duration
+4. KV's built-in TTL expiry automatically cleans up expired entries
+
+## The RateLimitStore interface
+
+If you need a custom storage backend, implement this interface:
+
+```typescript
+interface RateLimitStore {
+  increment(
+    key: string,
+    windowSeconds: number,
+  ): Promise<{ count: number; resetAt: number }>;
+}
+```
+
+## Building your own KV store
+
+If you need custom behavior (different key format, logging, metrics), you can
+implement `RateLimitStore` directly against a KV namespace:
+
+```typescript
+import type { RateLimitStore } from "@homegrower-club/stoma";
+
+function customKvStore(kv: KVNamespace): RateLimitStore {
+  return {
+    async increment(key: string, windowSeconds: number) {
+      const now = Date.now();
+      const raw = (await kv.get(key, "json")) as {
+        count: number;
+        resetAt: number;
+      } | null;
+
+      if (raw && raw.resetAt > now) {
+        const updated = { count: raw.count + 1, resetAt: raw.resetAt };
+        const ttl = Math.max(1, Math.ceil((raw.resetAt - now) / 1000));
+        await kv.put(key, JSON.stringify(updated), { expirationTtl: ttl });
+        return updated;
+      }
+
+      const resetAt = now + windowSeconds * 1000;
+      const entry = { count: 1, resetAt };
+      await kv.put(key, JSON.stringify(entry), {
+        expirationTtl: windowSeconds,
+      });
+      return entry;
+    },
+  };
+}
+```
+
+## Using the cloudflareAdapter factory
+
+The `cloudflareAdapter` factory can create all Cloudflare-native stores at
+once. It selects the best available rate limit backend (Durable Objects if
+bound, otherwise KV):
+
+```typescript
+import { createGateway, rateLimit } from "@homegrower-club/stoma";
+import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+
+const adapter = cloudflareAdapter({
+  rateLimitKv: env.RATE_LIMIT_KV,
+});
+
+const gateway = createGateway({
+  routes: [
+    {
+      path: "/api/*",
+      pipeline: {
+        policies: [
+          rateLimit({
+            max: 100,
+            store: adapter.rateLimitStore,
+          }),
+        ],
+        upstream: { type: "url", target: "https://backend.internal" },
+      },
+    },
+  ],
+});
+```
+
+## Trade-offs
+
+<Aside>
+KV is **eventually consistent**. Two concurrent requests to different data
+centers may both read the same counter value and increment independently,
+temporarily allowing slightly more requests than the configured limit.
+</Aside>
+
+For rate limiting, eventual consistency is generally acceptable. The purpose of
+a rate limit is to prevent abuse, not to enforce mathematically exact quotas.
+A small margin of overcounting in a burst scenario is typically harmless.
+
+| Characteristic | KV Store | Durable Objects |
+|----------------|----------|-----------------|
+| Consistency | Eventually consistent | Strongly consistent |
+| Latency | Sub-millisecond reads | ~10-50ms per request |
+| Accuracy | Approximate (fine for rate limiting) | Exact |
+| Cost | Very low (KV pricing) | Higher (DO pricing) |
+| Complexity | Minimal | Requires DO class export |
+
+For use cases that require exact counting (billing, quota enforcement), see
+the [Durable Objects](/cloudflare/durable-objects/) approach.

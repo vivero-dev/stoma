@@ -1,0 +1,118 @@
+---
+editUrl: false
+next: false
+prev: false
+title: "RateLimitConfig"
+---
+
+Defined in: src/policies/traffic/rate-limit.ts:12
+
+Configuration for the rateLimit policy.
+
+## Extends
+
+- [`PolicyConfig`](/api/index/interfaces/policyconfig/)
+
+## Properties
+
+### ipHeaders?
+
+> `optional` **ipHeaders**: `string`[]
+
+Defined in: src/policies/traffic/rate-limit.ts:26
+
+Ordered list of headers to inspect for the client IP (when `keyBy` is not set). Default: `["cf-connecting-ip", "x-forwarded-for"]`.
+
+***
+
+### keyBy()?
+
+> `optional` **keyBy**: (`c`) => `string` \| `Promise`\<`string`\>
+
+Defined in: src/policies/traffic/rate-limit.ts:18
+
+Key extractor — determines the rate limit bucket. Default: client IP.
+
+#### Parameters
+
+##### c
+
+`Context`
+
+#### Returns
+
+`string` \| `Promise`\<`string`\>
+
+***
+
+### max
+
+> **max**: `number`
+
+Defined in: src/policies/traffic/rate-limit.ts:14
+
+Maximum requests per window
+
+***
+
+### message?
+
+> `optional` **message**: `string`
+
+Defined in: src/policies/traffic/rate-limit.ts:24
+
+Custom response body when limited
+
+***
+
+### skip()?
+
+> `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
+
+Defined in: src/policies/types.ts:33
+
+Skip this policy when condition returns true
+
+#### Parameters
+
+##### c
+
+`unknown`
+
+#### Returns
+
+`boolean` \| `Promise`\<`boolean`\>
+
+#### Inherited from
+
+[`PolicyConfig`](/api/index/interfaces/policyconfig/).[`skip`](/api/index/interfaces/policyconfig/#skip)
+
+***
+
+### statusCode?
+
+> `optional` **statusCode**: `number`
+
+Defined in: src/policies/traffic/rate-limit.ts:22
+
+Response status code when limited. Default: 429.
+
+***
+
+### store?
+
+> `optional` **store**: [`RateLimitStore`](/api/index/interfaces/ratelimitstore/)
+
+Defined in: src/policies/traffic/rate-limit.ts:20
+
+Storage backend for counters
+
+***
+
+### windowSeconds?
+
+> `optional` **windowSeconds**: `number`
+
+Defined in: src/policies/traffic/rate-limit.ts:16
+
+Time window in seconds. Default: 60.

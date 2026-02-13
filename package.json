@@ -7,7 +7,27 @@
     "type": "git",
     "url": "git+https://github.com/HomeGrower-club/stoma.git"
   },
+  "homepage": "https://stoma.opensource.homegrower.club",
   "license": "MIT",
+  "author": {
+    "name": "Jonathan Bennett"
+  },
+  "bugs": {
+    "url": "https://github.com/HomeGrower-club/stoma/issues"
+  },
+  "keywords": [
+    "api-gateway",
+    "hono",
+    "cloudflare-workers",
+    "edge",
+    "middleware",
+    "proxy",
+    "rate-limit",
+    "auth",
+    "jwt",
+    "policy",
+    "declarative"
+  ],
   "publishConfig": {
     "access": "public"
   },

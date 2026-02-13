@@ -50,7 +50,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v1.7.0
         with:
           version: yarn changeset version
           publish: yarn changeset publish
@@ -58,6 +58,7 @@ jobs:
           commit: "Version Packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: '' 
     outputs:
       published: ${{ steps.changesets.outputs.published }}
 

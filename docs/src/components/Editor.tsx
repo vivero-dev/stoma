@@ -24,12 +24,17 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 function getInitialParams() {
-  if (typeof window === "undefined") return { code: DEFAULT_CODE, autorun: false, title: null as string | null };
+  if (typeof window === "undefined")
+    return { code: DEFAULT_CODE, autorun: false, title: null as string | null };
   const params = new URLSearchParams(window.location.search);
   const urlCode = params.get("code");
   let code = DEFAULT_CODE;
   if (urlCode) {
-    try { code = atob(urlCode); } catch { /* ignore invalid base64 */ }
+    try {
+      code = atob(urlCode);
+    } catch {
+      /* ignore invalid base64 */
+    }
   }
   return {
     code,

@@ -6,6 +6,7 @@
  * Zero hydration cost (pure Astro component). The base64 encoding
  * happens at build time so no client-side JS is needed.
  */
+// biome-ignore lint/correctness/noUnusedVariables: Astro uses Props implicitly via Astro.props
 interface Props {
   /** TypeScript source code to pre-load in the editor. */
   code: string;
@@ -15,11 +16,13 @@ interface Props {
   title?: string;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: label is used in the Astro template below
 const { code, label = "Open in Editor", title } = Astro.props;
 
 const encoded = btoa(code);
 const params = new URLSearchParams({ code: encoded, autorun: "true" });
 if (title) params.set("title", title);
+// biome-ignore lint/correctness/noUnusedVariables: used in the Astro template
 const href = `/editor?${params.toString()}`;
 ---
 

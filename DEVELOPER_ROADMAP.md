@@ -65,3 +65,68 @@ const adminRoutes = scope({
 ### 10. Framework Integrations
 **Problem:** Stoma is generic.
 **Solution:** Drop-in integrations for Next.js, Remix, or Nuxt to run Stoma as middleware within those frameworks.
+
+## Documentation
+
+### 11. Versioned Documentation via R2
+
+**Problem:** Every docs deploy overwrites the previous version. Users on older releases can't reference docs matching their version.
+
+**Solution:** Archive each release's docs build in Cloudflare R2, served by a thin routing worker alongside the latest docs via Workers Assets.
+
+**Architecture:**
+- **Hybrid Assets + R2**: Latest docs served via Workers Assets (fastest path), versioned archives from R2
+- **HTMLRewriter** rewrites absolute paths in versioned HTML to stay within the version prefix (e.g., `/getting-started/` → `/v/0.1.0/getting-started/`). Zero-copy streaming rewriter built into Workers runtime
+- **Version banner** injected on non-latest pages via HTMLRewriter `body` handler, using Starlight CSS custom properties for theme consistency
+
+**Routing:**
+```
+/                    → env.ASSETS.fetch() (latest)
+/v/0.1.0-rc.0/*     → R2 v/0.1.0-rc.0/* (with HTMLRewriter)
+/api/versions        → R2 versions.json manifest
+```
+
+**R2 layout:**
+```
+stoma-docs/
+  versions.json                    # {"latest":"0.1.0","versions":[...]}
+  v/0.1.0-rc.0/index.html
+  v/0.1.0-rc.0/_astro/...
+  v/0.1.0/index.html
+  ...
+```
+
+**Release flow** (automated via CI):
+1. Build docs → `docs/dist/`
+2. If changesets published: upload `dist/` to R2 at `v/{version}/`, update `versions.json` (pre-releases don't move the `latest` pointer)
+3. `wrangler deploy` pushes worker + static assets (latest)
+
+**Changes required:**
+
+| File | Action |
+|------|--------|
+| `docs/src/worker.ts` | Create — routing worker (~150 lines) with R2 serving, HTMLRewriter, `/api/versions` endpoint |
+| `docs/wrangler.jsonc` | Edit — add `main: "src/worker.ts"`, `assets.binding: "ASSETS"`, `r2_buckets` binding |
+| `docs/scripts/upload-versioned-docs.sh` | Create — iterates `dist/`, uploads to R2 with content-type, updates `versions.json` via `jq` |
+| `.github/workflows/release.yml` | Edit — add version extraction + R2 archive step before wrangler deploy |
+
+**Worker `Env` interface:**
+```typescript
+interface Env {
+  ASSETS: Fetcher;
+  DOCS_BUCKET: R2Bucket;
+}
+```
+
+**HTMLRewriter selectors** (for versioned pages):
+- `a[href]`, `link[href^="/"]`, `script[src^="/"]`, `img[src^="/"]`, `source[src^"/"]`, `source[srcset]`, `form[action^="/"]`
+- `astro-island[component-url]`, `astro-island[renderer-url]` (Astro hydration islands)
+
+**One-time setup:** `cd docs && npx wrangler r2 bucket create stoma-docs`
+
+**Verification:**
+1. `cd docs && npx wrangler dev` — confirm `/` serves latest through custom worker
+2. Upload test version: `bash docs/scripts/upload-versioned-docs.sh 0.0.1-test`
+3. Hit `/v/0.0.1-test/` — verify links stay in version prefix, banner appears
+4. Hit `/api/versions` — verify manifest JSON
+5. DevTools Network tab — all `_astro/` assets load from `/v/.../_astro/`

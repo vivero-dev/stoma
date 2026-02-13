@@ -5,7 +5,7 @@ prev: false
 title: "HealthConfig"
 ---
 
-Defined in: [packages/stoma/src/core/health.ts:8](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L8)
+Defined in: [packages/stoma/src/core/health.ts:8](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L8)
 
 Configuration for the health route factory.
 
@@ -15,7 +15,7 @@ Configuration for the health route factory.
 
 > `optional` **includeUpstreamStatus**: `boolean`
 
-Defined in: [packages/stoma/src/core/health.ts:14](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L14)
+Defined in: [packages/stoma/src/core/health.ts:14](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L14)
 
 Include individual upstream statuses in response. Default: false.
 
@@ -25,7 +25,7 @@ Include individual upstream statuses in response. Default: false.
 
 > `optional` **path**: `string`
 
-Defined in: [packages/stoma/src/core/health.ts:10](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L10)
+Defined in: [packages/stoma/src/core/health.ts:10](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L10)
 
 Health endpoint path. Default: "/health".
 
@@ -35,7 +35,7 @@ Health endpoint path. Default: "/health".
 
 > `optional` **probeMethod**: `string`
 
-Defined in: [packages/stoma/src/core/health.ts:18](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L18)
+Defined in: [packages/stoma/src/core/health.ts:18](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L18)
 
 HTTP method for upstream probes. Default: `"HEAD"`.
 
@@ -45,7 +45,7 @@ HTTP method for upstream probes. Default: `"HEAD"`.
 
 > `optional` **probeTimeoutMs**: `number`
 
-Defined in: [packages/stoma/src/core/health.ts:16](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L16)
+Defined in: [packages/stoma/src/core/health.ts:16](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L16)
 
 Timeout in ms for each upstream probe. Default: 5000.
 
@@ -55,7 +55,7 @@ Timeout in ms for each upstream probe. Default: 5000.
 
 > `optional` **unhealthyStatusCode**: `number`
 
-Defined in: [packages/stoma/src/core/health.ts:20](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L20)
+Defined in: [packages/stoma/src/core/health.ts:20](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L20)
 
 Status code returned when all probes are unhealthy. Default: 503.
 
@@ -65,6 +65,6 @@ Status code returned when all probes are unhealthy. Default: 503.
 
 > `optional` **upstreamProbes**: `string`[]
 
-Defined in: [packages/stoma/src/core/health.ts:12](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/health.ts#L12)
+Defined in: [packages/stoma/src/core/health.ts:12](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/health.ts#L12)
 
 URLs to probe for upstream health.

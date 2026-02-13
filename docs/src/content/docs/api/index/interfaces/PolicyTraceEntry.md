@@ -5,7 +5,7 @@ prev: false
 title: "PolicyTraceEntry"
 ---
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:45
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:45](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L45)
 
 Combined baseline + optional detail for a single policy.
 
@@ -19,7 +19,7 @@ Combined baseline + optional detail for a single policy.
 
 > **calledNext**: `boolean`
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:34
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:34](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L34)
 
 #### Inherited from
 
@@ -31,7 +31,7 @@ Defined in: packages/stoma/src/policies/sdk/trace.ts:34
 
 > `optional` **detail**: [`PolicyTraceDetail`](/api/index/interfaces/policytracedetail/)
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:46
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:46](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L46)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: packages/stoma/src/policies/sdk/trace.ts:46
 
 > **durationMs**: `number`
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:33
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L33)
 
 #### Inherited from
 
@@ -51,7 +51,7 @@ Defined in: packages/stoma/src/policies/sdk/trace.ts:33
 
 > **error**: `string` \| `null`
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:35
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:35](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L35)
 
 #### Inherited from
 
@@ -63,7 +63,7 @@ Defined in: packages/stoma/src/policies/sdk/trace.ts:35
 
 > **name**: `string`
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:31
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:31](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L31)
 
 #### Inherited from
 
@@ -75,7 +75,7 @@ Defined in: packages/stoma/src/policies/sdk/trace.ts:31
 
 > **priority**: `number`
 
-Defined in: packages/stoma/src/policies/sdk/trace.ts:32
+Defined in: [packages/stoma/src/policies/sdk/trace.ts:32](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/trace.ts#L32)
 
 #### Inherited from
 

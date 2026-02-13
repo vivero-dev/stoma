@@ -7,7 +7,7 @@ title: "validateConfig"
 
 > **validateConfig**(`config`): [`GatewayConfig`](/api/index/interfaces/gatewayconfig/)
 
-Defined in: [packages/stoma/src/config/schema.ts:118](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/config/schema.ts#L118)
+Defined in: [packages/stoma/src/config/schema.ts:118](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/config/schema.ts#L118)
 
 Validate a gateway config object, throwing on failure.
 

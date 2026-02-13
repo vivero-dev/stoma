@@ -5,7 +5,7 @@ prev: false
 title: "RateLimitConfig"
 ---
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:12](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L12)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:12](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L12)
 
 Configuration for the rateLimit policy.
 
@@ -19,7 +19,7 @@ Configuration for the rateLimit policy.
 
 > `optional` **ipHeaders**: `string`[]
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:26](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L26)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:26](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L26)
 
 Ordered list of headers to inspect for the client IP (when `keyBy` is not set). Default: `["cf-connecting-ip", "x-forwarded-for"]`.
 
@@ -29,7 +29,7 @@ Ordered list of headers to inspect for the client IP (when `keyBy` is not set). 
 
 > `optional` **keyBy**: (`c`) => `string` \| `Promise`\<`string`\>
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:18](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L18)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:18](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L18)
 
 Key extractor — determines the rate limit bucket. Default: client IP.
 
@@ -49,7 +49,7 @@ Key extractor — determines the rate limit bucket. Default: client IP.
 
 > **max**: `number`
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:14](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L14)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:14](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L14)
 
 Maximum requests per window
 
@@ -59,7 +59,7 @@ Maximum requests per window
 
 > `optional` **message**: `string`
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:24](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L24)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:24](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L24)
 
 Custom response body when limited
 
@@ -69,7 +69,7 @@ Custom response body when limited
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/types.ts#L33)
+Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 
@@ -93,7 +93,7 @@ Skip this policy when condition returns true
 
 > `optional` **statusCode**: `number`
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:22](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L22)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:22](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L22)
 
 Response status code when limited. Default: 429.
 
@@ -103,7 +103,7 @@ Response status code when limited. Default: 429.
 
 > `optional` **store**: [`RateLimitStore`](/api/index/interfaces/ratelimitstore/)
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:20](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L20)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:20](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L20)
 
 Storage backend for counters
 
@@ -113,6 +113,6 @@ Storage backend for counters
 
 > `optional` **windowSeconds**: `number`
 
-Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:16](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/traffic/rate-limit.ts#L16)
+Defined in: [packages/stoma/src/policies/traffic/rate-limit.ts:16](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/rate-limit.ts#L16)
 
 Time window in seconds. Default: 60.

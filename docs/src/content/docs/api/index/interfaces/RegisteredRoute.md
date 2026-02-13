@@ -5,7 +5,7 @@ prev: false
 title: "RegisteredRoute"
 ---
 
-Defined in: [packages/stoma/src/core/types.ts:194](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/types.ts#L194)
+Defined in: [packages/stoma/src/core/types.ts:194](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L194)
 
 Registered route information for admin introspection.
 
@@ -15,7 +15,7 @@ Registered route information for admin introspection.
 
 > **methods**: `string`[]
 
-Defined in: [packages/stoma/src/core/types.ts:196](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/types.ts#L196)
+Defined in: [packages/stoma/src/core/types.ts:196](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L196)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [packages/stoma/src/core/types.ts:196](https://github.com/HomeGrower
 
 > **path**: `string`
 
-Defined in: [packages/stoma/src/core/types.ts:195](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/types.ts#L195)
+Defined in: [packages/stoma/src/core/types.ts:195](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L195)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [packages/stoma/src/core/types.ts:195](https://github.com/HomeGrower
 
 > **policyNames**: `string`[]
 
-Defined in: [packages/stoma/src/core/types.ts:197](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/types.ts#L197)
+Defined in: [packages/stoma/src/core/types.ts:197](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L197)
 
 ***
 
@@ -39,4 +39,4 @@ Defined in: [packages/stoma/src/core/types.ts:197](https://github.com/HomeGrower
 
 > **upstreamType**: `string`
 
-Defined in: [packages/stoma/src/core/types.ts:198](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/core/types.ts#L198)
+Defined in: [packages/stoma/src/core/types.ts:198](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L198)

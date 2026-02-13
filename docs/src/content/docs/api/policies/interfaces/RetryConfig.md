@@ -5,7 +5,7 @@ prev: false
 title: "RetryConfig"
 ---
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:20](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L20)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:20](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L20)
 
 Configuration for the retry policy.
 
@@ -19,7 +19,7 @@ Configuration for the retry policy.
 
 > `optional` **backoff**: `"fixed"` \| `"exponential"`
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:26](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L26)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:26](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L26)
 
 Backoff strategy. Default: "exponential".
 
@@ -29,7 +29,7 @@ Backoff strategy. Default: "exponential".
 
 > `optional` **baseDelayMs**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:28](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L28)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:28](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L28)
 
 Base delay in ms for backoff. Default: 200.
 
@@ -39,7 +39,7 @@ Base delay in ms for backoff. Default: 200.
 
 > `optional` **maxDelayMs**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:30](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L30)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:30](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L30)
 
 Maximum delay in ms. Default: 5000.
 
@@ -49,7 +49,7 @@ Maximum delay in ms. Default: 5000.
 
 > `optional` **maxRetries**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:22](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L22)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:22](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L22)
 
 Maximum number of retries. Default: 3.
 
@@ -59,7 +59,7 @@ Maximum number of retries. Default: 3.
 
 > `optional` **retryCountHeader**: `string`
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:34](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L34)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:34](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L34)
 
 Response header name for the retry count. Default: `"x-retry-count"`.
 
@@ -69,7 +69,7 @@ Response header name for the retry count. Default: `"x-retry-count"`.
 
 > `optional` **retryMethods**: `string`[]
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:32](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L32)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:32](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L32)
 
 HTTP methods eligible for retry. Default: idempotent methods.
 
@@ -79,7 +79,7 @@ HTTP methods eligible for retry. Default: idempotent methods.
 
 > `optional` **retryOn**: `number`[]
 
-Defined in: [packages/stoma/src/policies/resilience/retry.ts:24](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/resilience/retry.ts#L24)
+Defined in: [packages/stoma/src/policies/resilience/retry.ts:24](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/retry.ts#L24)
 
 Status codes that trigger a retry. Default: [502, 503, 504].
 
@@ -89,7 +89,7 @@ Status codes that trigger a retry. Default: [502, 503, 504].
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/84fe1aecb88a4fe423283b627a19d56fda29a9cb/src/policies/types.ts#L33)
+Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 

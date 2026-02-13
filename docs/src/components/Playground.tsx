@@ -205,7 +205,7 @@ function TracePanel({ trace }: { trace: PlaygroundTrace }) {
                       {hasData && <span className="pg-trace-expand-icon">{isExpanded ? " \u25B4" : " \u25BE"}</span>}
                     </span>
                   ) : (
-                    <span className="pg-trace-no-detail">\u2014</span>
+                    <span className="pg-trace-no-detail">-</span>
                   )}
                   {isExpanded && hasData && (
                     <pre className="pg-trace-data">
@@ -297,7 +297,7 @@ export default function Playground() {
     } catch (err) {
       swReady.current = false;
       setStatus("error");
-      setStatusText("Service worker lost \u2014 click Reset to recover");
+      setStatusText("Service worker lost - click Reset to recover");
       setResult({
         req: reqInfo,
         res: { status: 0, statusText: "Network Error", headers: {}, body: String(err), timingMs: 0 },
@@ -321,7 +321,7 @@ export default function Playground() {
       await resetPlayground();
       swReady.current = true;
       setStatus("ready");
-      setStatusText("Ready \u2014 playground state cleared");
+      setStatusText("Ready - playground state cleared");
     } catch (err) {
       setStatus("error");
       setStatusText(`Reset failed: ${err}`);

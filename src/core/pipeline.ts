@@ -94,26 +94,38 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
     // Uses try-finally so timing is recorded even when a policy throws
     // (e.g. timeout throwing GatewayError on deadline exceeded).
     const wrappedHandler: MiddlewareHandler = async (c, next) => {
-      const tracing = c.get(TRACE_REQUESTED_KEY) === true;
       const start = Date.now();
+
+      // Fast path: when tracing is off, avoid allocating trace-only
+      // variables (calledNext, errorMsg) and the tracedNext closure.
+      if (c.get(TRACE_REQUESTED_KEY) !== true) {
+        try {
+          await originalHandler(c, next);
+        } finally {
+          const durationMs = Date.now() - start;
+          const timings = (c.get("_policyTimings") ?? []) as Array<{
+            name: string;
+            durationMs: number;
+          }>;
+          timings.push({ name: policy.name, durationMs });
+          c.set("_policyTimings", timings);
+        }
+        return;
+      }
+
+      // Slow path: tracing active — track calledNext, errors, and
+      // push baseline entries for the context injector to assemble.
       let calledNext = false;
       let errorMsg: string | null = null;
 
       try {
-        if (tracing) {
-          // Wrap next() to detect whether the policy called it
-          const tracedNext = async () => {
-            calledNext = true;
-            await next();
-          };
-          await originalHandler(c, tracedNext);
-        } else {
-          await originalHandler(c, next);
-        }
+        const tracedNext = async () => {
+          calledNext = true;
+          await next();
+        };
+        await originalHandler(c, tracedNext);
       } catch (err) {
-        if (tracing) {
-          errorMsg = err instanceof Error ? err.message : String(err);
-        }
+        errorMsg = err instanceof Error ? err.message : String(err);
         throw err;
       } finally {
         const durationMs = Date.now() - start;
@@ -126,18 +138,16 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
         timings.push({ name: policy.name, durationMs });
         c.set("_policyTimings", timings);
 
-        // Accumulate trace baseline entries when tracing is active
-        if (tracing) {
-          const entries = (c.get(TRACE_ENTRIES_KEY) ?? []) as PolicyTraceBaseline[];
-          entries.push({
-            name: policy.name,
-            priority: policyPriority,
-            durationMs,
-            calledNext,
-            error: errorMsg,
-          });
-          c.set(TRACE_ENTRIES_KEY, entries);
-        }
+        // Accumulate trace baseline entries
+        const entries = (c.get(TRACE_ENTRIES_KEY) ?? []) as PolicyTraceBaseline[];
+        entries.push({
+          name: policy.name,
+          priority: policyPriority,
+          durationMs,
+          calledNext,
+          error: errorMsg,
+        });
+        c.set(TRACE_ENTRIES_KEY, entries);
       }
     };
     return wrappedHandler;

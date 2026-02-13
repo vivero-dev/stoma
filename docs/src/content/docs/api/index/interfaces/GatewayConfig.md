@@ -5,9 +5,20 @@ prev: false
 title: "GatewayConfig"
 ---
 
-Defined in: [src/core/types.ts:17](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L17)
+Defined in: [src/core/types.ts:25](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L25)
 
-Top-level gateway configuration
+Top-level gateway configuration.
+
+## Type Parameters
+
+### TBindings
+
+`TBindings` = `Record`\<`string`, `unknown`\>
+
+Worker bindings type (e.g. your `Env` interface).
+  Defaults to `Record<string, unknown>` so `service` on
+  [ServiceBindingUpstream](/api/index/interfaces/servicebindingupstream/) accepts any string. When you pass your
+  own Env type, `service` autocompletes to valid binding names.
 
 ## Properties
 
@@ -15,7 +26,7 @@ Top-level gateway configuration
 
 > `optional` **adapter**: [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [src/core/types.ts:65](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L65)
+Defined in: [src/core/types.ts:73](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L73)
 
 Runtime adapter providing store implementations and runtime-specific capabilities
 (e.g. `waitUntil`, `dispatchBinding`). Created via adapter factories like
@@ -27,7 +38,7 @@ Runtime adapter providing store implementations and runtime-specific capabilitie
 
 > `optional` **admin**: `boolean` \| [`AdminConfig`](/api/index/interfaces/adminconfig/)
 
-Defined in: [src/core/types.ts:73](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L73)
+Defined in: [src/core/types.ts:81](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L81)
 
 Admin introspection API. Exposes `___gateway/*` routes for operational visibility.
 
@@ -41,7 +52,7 @@ Admin introspection API. Exposes `___gateway/*` routes for operational visibilit
 
 > `optional` **basePath**: `string`
 
-Defined in: [src/core/types.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L21)
+Defined in: [src/core/types.ts:29](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L29)
 
 Base path prefix for all routes (e.g. "/api")
 
@@ -51,7 +62,7 @@ Base path prefix for all routes (e.g. "/api")
 
 > `optional` **debug**: `string` \| `boolean`
 
-Defined in: [src/core/types.ts:48](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L48)
+Defined in: [src/core/types.ts:56](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L56)
 
 Enable internal debug logging for gateway operators.
 
@@ -79,7 +90,7 @@ createGateway({ debug: "stoma:policy:*", ... })              // policies only
 
 > `optional` **debugHeaders**: `boolean` \| [`DebugHeadersConfig`](/api/index/interfaces/debugheadersconfig/)
 
-Defined in: [src/core/types.ts:97](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L97)
+Defined in: [src/core/types.ts:105](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L105)
 
 Enable client-requested debug headers.
 
@@ -110,7 +121,7 @@ x-stoma-cache-ttl: 300
 
 > `optional` **defaultErrorMessage**: `string`
 
-Defined in: [src/core/types.ts:57](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L57)
+Defined in: [src/core/types.ts:65](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L65)
 
 Default error message for unexpected (non-GatewayError) errors. Default: `"An unexpected error occurred"`.
 
@@ -120,7 +131,7 @@ Default error message for unexpected (non-GatewayError) errors. Default: `"An un
 
 > `optional` **defaultMethods**: [`HttpMethod`](/api/index/type-aliases/httpmethod/)[]
 
-Defined in: [src/core/types.ts:55](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L55)
+Defined in: [src/core/types.ts:63](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L63)
 
 Default HTTP methods for routes that don't specify `methods`.
 Default: `["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]`.
@@ -131,7 +142,7 @@ Default: `["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]`.
 
 > `optional` **defaultPolicyPriority**: `number`
 
-Defined in: [src/core/types.ts:59](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L59)
+Defined in: [src/core/types.ts:67](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L67)
 
 Default priority for policies that don't specify one. Default: `100`.
 
@@ -141,7 +152,7 @@ Default priority for policies that don't specify one. Default: `100`.
 
 > `optional` **name**: `string`
 
-Defined in: [src/core/types.ts:19](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L19)
+Defined in: [src/core/types.ts:27](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L27)
 
 Gateway name, used in logs and metrics
 
@@ -151,7 +162,7 @@ Gateway name, used in logs and metrics
 
 > `optional` **onError**: (`error`, `c`) => `Response` \| `Promise`\<`Response`\>
 
-Defined in: [src/core/types.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L27)
+Defined in: [src/core/types.ts:35](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L35)
 
 Global error handler
 
@@ -175,7 +186,7 @@ Global error handler
 
 > `optional` **policies**: [`Policy`](/api/index/interfaces/policy/)[]
 
-Defined in: [src/core/types.ts:25](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L25)
+Defined in: [src/core/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L33)
 
 Global policies applied to all routes
 
@@ -185,7 +196,7 @@ Global policies applied to all routes
 
 > `optional` **requestIdHeader**: `string`
 
-Defined in: [src/core/types.ts:50](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L50)
+Defined in: [src/core/types.ts:58](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L58)
 
 Response header name for the request ID. Default: `"x-request-id"`.
 
@@ -193,8 +204,39 @@ Response header name for the request ID. Default: `"x-request-id"`.
 
 ### routes
 
-> **routes**: [`RouteConfig`](/api/index/interfaces/routeconfig/)[]
+> **routes**: [`RouteConfig`](/api/index/interfaces/routeconfig/)\<`TBindings`\>[]
 
-Defined in: [src/core/types.ts:23](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L23)
+Defined in: [src/core/types.ts:31](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L31)
 
 Route definitions
+
+***
+
+### tracing?
+
+> `optional` **tracing**: [`TracingConfig`](/api/index/interfaces/tracingconfig/)
+
+Defined in: [src/core/types.ts:129](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L129)
+
+OpenTelemetry-compatible distributed tracing.
+
+When configured, the gateway creates a root SERVER span per request,
+INTERNAL child spans per policy, and CLIENT child spans for upstream
+calls. Spans are exported asynchronously via `adapter.waitUntil()`.
+
+Zero overhead when not configured — no span objects are allocated.
+
+#### Example
+
+```ts
+import { createGateway, OTLPSpanExporter } from "@homegrower-club/stoma";
+
+createGateway({
+  tracing: {
+    exporter: new OTLPSpanExporter({ endpoint: "https://otel-collector/v1/traces" }),
+    serviceName: "my-api",
+    sampleRate: 0.1,
+  },
+  // ...routes
+});
+```

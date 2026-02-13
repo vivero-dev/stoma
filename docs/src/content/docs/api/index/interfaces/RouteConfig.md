@@ -5,9 +5,17 @@ prev: false
 title: "RouteConfig"
 ---
 
-Defined in: [src/core/types.ts:109](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L109)
+Defined in: [src/core/types.ts:145](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L145)
 
-Individual route configuration
+Individual route configuration.
+
+## Type Parameters
+
+### TBindings
+
+`TBindings` = `Record`\<`string`, `unknown`\>
+
+Worker bindings type, propagated from [GatewayConfig](/api/index/interfaces/gatewayconfig/).
 
 ## Properties
 
@@ -15,7 +23,7 @@ Individual route configuration
 
 > `optional` **metadata**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/core/types.ts:117](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L117)
+Defined in: [src/core/types.ts:153](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L153)
 
 Route-level metadata for logging/observability
 
@@ -25,7 +33,7 @@ Route-level metadata for logging/observability
 
 > `optional` **methods**: [`HttpMethod`](/api/index/type-aliases/httpmethod/)[]
 
-Defined in: [src/core/types.ts:113](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L113)
+Defined in: [src/core/types.ts:149](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L149)
 
 Allowed HTTP methods. Defaults to all.
 
@@ -35,7 +43,7 @@ Allowed HTTP methods. Defaults to all.
 
 > **path**: `string`
 
-Defined in: [src/core/types.ts:111](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L111)
+Defined in: [src/core/types.ts:147](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L147)
 
 Route path pattern (Hono syntax, e.g. "/users/:id")
 
@@ -43,8 +51,8 @@ Route path pattern (Hono syntax, e.g. "/users/:id")
 
 ### pipeline
 
-> **pipeline**: [`PipelineConfig`](/api/index/interfaces/pipelineconfig/)
+> **pipeline**: [`PipelineConfig`](/api/index/interfaces/pipelineconfig/)\<`TBindings`\>
 
-Defined in: [src/core/types.ts:115](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L115)
+Defined in: [src/core/types.ts:151](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L151)
 
 Pipeline to process this route

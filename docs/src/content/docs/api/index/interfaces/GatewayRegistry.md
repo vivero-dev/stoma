@@ -5,7 +5,7 @@ prev: false
 title: "GatewayRegistry"
 ---
 
-Defined in: [src/core/types.ts:208](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L208)
+Defined in: [src/core/types.ts:255](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L255)
 
 Internal registry for admin introspection.
 
@@ -15,7 +15,7 @@ Internal registry for admin introspection.
 
 > **gatewayName**: `string`
 
-Defined in: [src/core/types.ts:211](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L211)
+Defined in: [src/core/types.ts:258](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L258)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/core/types.ts:211](https://github.com/HomeGrower-club/stoma/blo
 
 > **policies**: [`RegisteredPolicy`](/api/index/interfaces/registeredpolicy/)[]
 
-Defined in: [src/core/types.ts:210](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L210)
+Defined in: [src/core/types.ts:257](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L257)
 
 ***
 
@@ -31,4 +31,4 @@ Defined in: [src/core/types.ts:210](https://github.com/HomeGrower-club/stoma/blo
 
 > **routes**: [`RegisteredRoute`](/api/index/interfaces/registeredroute/)[]
 
-Defined in: [src/core/types.ts:209](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L209)
+Defined in: [src/core/types.ts:256](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L256)

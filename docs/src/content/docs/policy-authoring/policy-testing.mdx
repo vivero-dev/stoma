@@ -1,0 +1,327 @@
+---
+title: Testing Custom Policies
+sidebar:
+  order: 3
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Policies are middleware -- they modify requests, reject bad actors, transform responses, and enforce business rules at the gateway boundary. Testing them in isolation ensures they work correctly before you deploy. The Stoma SDK provides `createPolicyTestHarness()` which eliminates the boilerplate of wiring up a Hono app, error handling, and gateway context injection for every test file.
+
+## The test harness
+
+`createPolicyTestHarness()` from `@homegrower-club/stoma/sdk` creates a minimal Hono app with everything a policy needs to run:
+
+1. **Gateway context injection** -- sets `requestId`, `startTime`, `gatewayName`, `routePath`, `traceId`, and `spanId` on the Hono context, just like a real gateway would.
+2. **GatewayError handling** -- catches `GatewayError` throws and converts them to structured JSON responses.
+3. **A configurable upstream** -- by default, returns `{ ok: true }` with status 200. You can swap it out to verify what the policy passes downstream.
+
+It returns three things:
+
+```typescript
+const { request, app, adapter } = createPolicyTestHarness(policy, options?);
+```
+
+- **`request(path, init?)`** -- makes a test request through the policy pipeline. Same signature as `fetch()`.
+- **`app`** -- the underlying Hono app, for advanced scenarios.
+- **`adapter`** -- a `TestAdapter` that collects `waitUntil()` promises. Call `adapter.waitAll()` to flush background work before asserting.
+
+### Options
+
+```typescript
+interface PolicyTestHarnessOptions {
+  /** Custom upstream handler. Default: returns { ok: true } with status 200. */
+  upstream?: MiddlewareHandler;
+  /** Route path pattern for the test app. Default: "/*". */
+  path?: string;
+  /** Gateway name injected into context. Default: "test-gateway". */
+  gatewayName?: string;
+  /** Custom adapter to use. If not provided, a TestAdapter is created. */
+  adapter?: TestAdapter;
+}
+```
+
+## Basic example: testing a tenant filter
+
+Here is a custom policy that rejects requests without a valid `x-tenant-id` header:
+
+```typescript
+// tenant-filter.ts
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface TenantFilterConfig extends PolicyConfig {
+  allowedTenants: string[];
+}
+
+export const tenantFilter = definePolicy<TenantFilterConfig>({
+  name: "tenant-filter",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    const tenant = c.req.header("x-tenant-id");
+    if (!tenant || !config.allowedTenants.includes(tenant)) {
+      debug("rejected tenant: %s", tenant ?? "none");
+      throw new GatewayError(403, "forbidden", "Tenant not allowed");
+    }
+    debug("allowed tenant: %s", tenant);
+    await next();
+  },
+});
+```
+
+And the test file:
+
+```typescript
+// tenant-filter.test.ts
+import { describe, it, expect } from "vitest";
+import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { tenantFilter } from "./tenant-filter";
+
+describe("tenantFilter", () => {
+  const { request } = createPolicyTestHarness(
+    tenantFilter({ allowedTenants: ["acme", "globex"] }),
+  );
+
+  it("allows valid tenants", async () => {
+    const res = await request("/test", {
+      headers: { "x-tenant-id": "acme" },
+    });
+    expect(res.status).toBe(200);
+  });
+
+  it("rejects unknown tenants", async () => {
+    const res = await request("/test", {
+      headers: { "x-tenant-id": "evil-corp" },
+    });
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.error).toBe("forbidden");
+  });
+
+  it("rejects missing tenant header", async () => {
+    const res = await request("/test");
+    expect(res.status).toBe(403);
+  });
+});
+```
+
+That is all you need. No manual Hono app setup, no error handler wiring, no context injection. The harness does it all.
+
+## Custom upstream
+
+The default upstream returns `{ ok: true }`, but you often need to verify what the policy did to the request before it reached the upstream. Pass a custom `upstream` handler to inspect headers, body, or anything else the policy set:
+
+```typescript
+import { describe, it, expect } from "vitest";
+import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { correlationId } from "./correlation-id";
+
+describe("correlationId", () => {
+  const { request } = createPolicyTestHarness(correlationId(), {
+    upstream: async (c) => {
+      // Verify the policy set the header before reaching upstream
+      const id = c.req.header("x-correlation-id");
+      return c.json({ receivedId: id });
+    },
+  });
+
+  it("passes correlation ID to upstream", async () => {
+    const res = await request("/test", {
+      headers: { "x-correlation-id": "test-123" },
+    });
+    const body = await res.json();
+    expect(body.receivedId).toBe("test-123");
+  });
+
+  it("generates ID when not provided", async () => {
+    const res = await request("/test");
+    const body = await res.json();
+    expect(body.receivedId).toBeDefined();
+    expect(body.receivedId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
+  });
+
+  it("echoes correlation ID on response", async () => {
+    const res = await request("/test", {
+      headers: { "x-correlation-id": "test-456" },
+    });
+    expect(res.headers.get("x-correlation-id")).toBe("test-456");
+  });
+});
+```
+
+This pattern is useful for testing request transforms, header injection, attribute assignment, and any policy that enriches the request before it continues downstream.
+
+## Testing with stores
+
+Policies that use stores -- rate limiting, caching, circuit breaking -- need a `TestAdapter` with the appropriate store attached. You also need to call `adapter.waitAll()` to flush `waitUntil()` promises before making assertions, since store writes often happen asynchronously in the background.
+
+```typescript
+import { describe, it, expect, afterEach } from "vitest";
+import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { TestAdapter } from "@homegrower-club/stoma/adapters";
+import { InMemoryRateLimitStore, rateLimit } from "@homegrower-club/stoma";
+
+describe("rate limit integration", () => {
+  const store = new InMemoryRateLimitStore();
+  const adapter = new TestAdapter();
+  adapter.rateLimitStore = store;
+
+  const { request } = createPolicyTestHarness(
+    rateLimit({ max: 2, windowSeconds: 60 }),
+    { adapter },
+  );
+
+  afterEach(() => {
+    store.destroy(); // Clean up periodic cleanup interval
+  });
+
+  it("allows requests within limit", async () => {
+    const res1 = await request("/test");
+    await adapter.waitAll();
+    expect(res1.status).toBe(200);
+
+    const res2 = await request("/test");
+    await adapter.waitAll();
+    expect(res2.status).toBe(200);
+  });
+
+  it("rejects requests over limit", async () => {
+    await request("/test");
+    await adapter.waitAll();
+    await request("/test");
+    await adapter.waitAll();
+
+    const res = await request("/test");
+    await adapter.waitAll();
+    expect(res.status).toBe(429);
+  });
+});
+```
+
+<Aside type="caution" title="Always destroy InMemoryRateLimitStore">
+`InMemoryRateLimitStore` runs a periodic `setInterval` to clean up expired entries.
+If you forget to call `store.destroy()` in `afterEach` or `afterAll`, the interval
+keeps running after your test finishes, causing test runner warnings about leaked
+timers and potentially flaky results in subsequent tests.
+</Aside>
+
+The same pattern applies to `InMemoryCircuitBreakerStore` and `InMemoryCacheStore` -- create them, attach them to the adapter, and clean up in teardown.
+
+## Testing skip conditions
+
+Every policy built with `definePolicy()` inherits the `skip` field from `PolicyConfig`. When `skip` returns `true`, the policy calls `next()` without running its handler. You can test this directly:
+
+```typescript
+it("skips when skip condition returns true", async () => {
+  const { request } = createPolicyTestHarness(
+    tenantFilter({
+      allowedTenants: ["acme"],
+      skip: () => true, // Always skip
+    }),
+  );
+
+  // No tenant header, but policy is skipped — should pass through
+  const res = await request("/test");
+  expect(res.status).toBe(200);
+});
+
+it("skips based on request path", async () => {
+  const { request } = createPolicyTestHarness(
+    tenantFilter({
+      allowedTenants: ["acme"],
+      skip: (c: any) => new URL(c.req.url).pathname === "/health",
+    }),
+  );
+
+  // Health check bypasses tenant filter
+  const res = await request("/health");
+  expect(res.status).toBe(200);
+
+  // Other paths still require tenant header
+  const res2 = await request("/api/data");
+  expect(res2.status).toBe(403);
+});
+```
+
+## Testing debug output
+
+The debug logger in `definePolicy` uses `console.debug()` under the hood. In tests, you can spy on it to verify your policy logs the right messages.
+
+```typescript
+import { describe, it, expect, vi } from "vitest";
+import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { tenantFilter } from "./tenant-filter";
+
+it("logs debug messages", async () => {
+  const spy = vi.spyOn(console, "debug").mockImplementation(() => {});
+
+  const { request } = createPolicyTestHarness(
+    tenantFilter({ allowedTenants: ["acme"] }),
+  );
+  await request("/test", {
+    headers: { "x-tenant-id": "acme" },
+  });
+
+  expect(spy).toHaveBeenCalled();
+  spy.mockRestore();
+});
+```
+
+<Aside type="tip" title="Debug is a no-op by default">
+The test harness creates gateway context, but debug logging is a no-op unless the
+gateway was configured with `debug: true`. The harness does not enable debug by default,
+so `console.debug` will only be called if the context injector was created with debug
+enabled. For most tests, verifying behavior through request/response assertions is
+more reliable than asserting on debug output.
+</Aside>
+
+## Testing error responses
+
+When a policy throws `GatewayError`, the harness converts it to a structured JSON response. You can assert on the full error shape:
+
+```typescript
+it("returns structured error JSON", async () => {
+  const { request } = createPolicyTestHarness(
+    tenantFilter({ allowedTenants: ["acme"] }),
+  );
+
+  const res = await request("/test", {
+    headers: { "x-tenant-id": "evil-corp" },
+  });
+
+  expect(res.status).toBe(403);
+  expect(res.headers.get("content-type")).toContain("application/json");
+
+  const body = await res.json();
+  expect(body).toMatchObject({
+    error: "forbidden",
+    message: "Tenant not allowed",
+    statusCode: 403,
+  });
+  // requestId is always present in gateway error responses
+  expect(body.requestId).toBeDefined();
+});
+```
+
+## Patterns from real Stoma tests
+
+The built-in policies use the same SDK and the same test patterns documented here. A few things worth knowing:
+
+**`InMemoryRateLimitStore.destroy()`** -- always call it in teardown. The store's cleanup interval is the most common source of leaked timers in test suites.
+
+**`TestAdapter.waitAll()`** -- call it before assertions whenever your policy (or the policy you are testing against) uses `waitUntil()` for background work. Rate limit stores, circuit breaker state updates, and metrics collection all use `waitUntil()`.
+
+**`crypto.subtle` is available in the test pool** -- Stoma tests run in `@cloudflare/vitest-pool-workers`, which provides a Workers-like environment. This means `crypto.subtle` works for HMAC signing, RSA verification, and other Web Crypto operations. If your policy uses `crypto.subtle`, it will work in tests without polyfills.
+
+**`PolicyContext` may be `undefined`** -- when a policy runs outside a gateway (e.g., in a standalone Hono app without the context injector), `getGatewayContext(c)` returns `undefined`. The test harness always injects context, but if you use `policyDebug()` or `getGatewayContext()` directly, be aware that they handle the `undefined` case gracefully (returning a no-op logger).
+
+**Fresh harness per test when state matters** -- for stateful tests (rate limiting, circuit breaking), either create a fresh harness in each test or reset your stores between runs. Shared state across tests leads to ordering-dependent failures.
+
+---
+
+## Next steps
+
+- [Your First Custom Policy](/policy-authoring/your-first-policy/) -- build a policy from scratch, step by step
+- [Custom Policies Reference](/policies/custom-policies/) -- full API reference for `definePolicy`, `Priority`, SDK helpers, and the manual approach

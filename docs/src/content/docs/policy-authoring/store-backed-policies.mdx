@@ -1,0 +1,304 @@
+---
+title: Store-Backed Policies
+sidebar:
+  order: 4
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import EditorLink from "../../../components/EditorLink.astro";
+
+Some policies need to maintain state across requests -- counting requests for
+rate limiting, tracking failures for circuit breaking, caching responses. These
+require **stores** that persist data beyond a single request lifecycle. Stoma's
+adapter pattern lets you swap store implementations (in-memory for development,
+KV or Durable Objects for production) without changing any policy code.
+
+## The adapter pattern
+
+The `GatewayAdapter` interface is the bridge between policies and their backing
+stores. You set an adapter on `GatewayConfig`, and the gateway injects it into
+every request's `PolicyContext`. Policies access it via `getGatewayContext(c)`:
+
+```typescript
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+// Inside a policy handler:
+const adapter = getGatewayContext(c)?.adapter;
+if (!adapter?.rateLimitStore) {
+  // No store available — degrade gracefully
+  await next();
+  return;
+}
+```
+
+The adapter carries optional fields for each built-in store type:
+
+```typescript
+interface GatewayAdapter {
+  rateLimitStore?: RateLimitStore;
+  circuitBreakerStore?: CircuitBreakerStore;
+  cacheStore?: CacheStore;
+  waitUntil?: (promise: Promise<unknown>) => void;
+  dispatchBinding?: (service: string, request: Request) => Promise<Response>;
+}
+```
+
+<Aside type="caution">
+Always handle the case where `getGatewayContext(c)` returns `undefined` (the
+policy is running outside a gateway) or where the specific store field is
+missing (the adapter does not provide that store). A policy that crashes on a
+missing store is worse than one that degrades gracefully.
+</Aside>
+
+## Building a custom store-backed policy
+
+Walk through building a request counter policy step by step -- defining the
+store interface, implementing an in-memory version, wiring it through the
+adapter, and using it in a policy.
+
+### Define the store interface
+
+Start with a minimal contract. Keeping it abstract lets you swap
+implementations later without touching the policy.
+
+```typescript
+interface CounterStore {
+  increment(key: string): Promise<number>;
+  get(key: string): Promise<number>;
+}
+```
+
+### Implement an in-memory version
+
+For development and browser-based playground demos, an in-memory store is all
+you need:
+
+```typescript
+class InMemoryCounterStore implements CounterStore {
+  private counts = new Map<string, number>();
+
+  async increment(key: string): Promise<number> {
+    const current = (this.counts.get(key) ?? 0) + 1;
+    this.counts.set(key, current);
+    return current;
+  }
+
+  async get(key: string): Promise<number> {
+    return this.counts.get(key) ?? 0;
+  }
+}
+```
+
+### Wire through the adapter
+
+Extend `GatewayAdapter` with your custom store field. TypeScript will enforce
+that any code accessing it goes through the adapter, keeping the policy
+decoupled from the implementation.
+
+```typescript
+import type { GatewayAdapter } from "@homegrower-club/stoma";
+
+interface AppAdapter extends GatewayAdapter {
+  counterStore?: CounterStore;
+}
+```
+
+### Build the policy
+
+Use `safeCall` from the SDK to wrap store operations. If the store throws
+(network timeout, serialization error, etc.), the request continues instead of
+failing hard.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { safeCall } from "@homegrower-club/stoma/sdk";
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+const requestCounter = definePolicy({
+  name: "request-counter",
+  priority: Priority.OBSERVABILITY,
+  handler: async (c, next, { debug }) => {
+    const adapter = getGatewayContext(c)?.adapter as AppAdapter | undefined;
+    const store = adapter?.counterStore;
+
+    let count = 0;
+    if (store) {
+      count = await safeCall(
+        () => store.increment(c.req.path),
+        0,
+        debug,
+        "counterStore.increment()",
+      );
+      debug("request #%d to %s", count, c.req.path);
+    }
+
+    await next();
+
+    if (count > 0) {
+      c.res.headers.set("x-request-count", String(count));
+    }
+  },
+});
+```
+
+`safeCall(fn, fallback, debug?, label?)` catches any error thrown by `fn`,
+logs it through the debug logger with the provided label, and returns the
+`fallback` value. The request proceeds as if the store did not exist.
+
+### Try it
+
+export const COUNTER_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+import type { GatewayAdapter } from "@homegrower-club/stoma";
+import { getGatewayContext } from "@homegrower-club/stoma";
+import { safeCall } from "@homegrower-club/stoma/sdk";
+
+// --- Store interface ---
+interface CounterStore {
+  increment(key: string): Promise<number>;
+  get(key: string): Promise<number>;
+}
+
+// --- In-memory implementation ---
+class InMemoryCounterStore implements CounterStore {
+  private counts = new Map<string, number>();
+  async increment(key: string): Promise<number> {
+    const current = (this.counts.get(key) ?? 0) + 1;
+    this.counts.set(key, current);
+    return current;
+  }
+  async get(key: string): Promise<number> {
+    return this.counts.get(key) ?? 0;
+  }
+}
+
+// --- Extended adapter ---
+interface AppAdapter extends GatewayAdapter {
+  counterStore?: CounterStore;
+}
+
+// --- Policy ---
+const requestCounter = definePolicy({
+  name: "request-counter",
+  priority: Priority.OBSERVABILITY,
+  handler: async (c, next, { debug }) => {
+    const adapter = getGatewayContext(c)?.adapter as AppAdapter | undefined;
+    const store = adapter?.counterStore;
+
+    let count = 0;
+    if (store) {
+      count = await safeCall(
+        () => store.increment(c.req.path),
+        0,
+        debug,
+        "counterStore.increment()",
+      );
+      debug("request #%d to %s", count, c.req.path);
+    }
+
+    await next();
+
+    if (count > 0) {
+      c.res.headers.set("x-request-count", String(count));
+    }
+  },
+});
+
+// --- Gateway ---
+export async function createPlaygroundGateway() {
+  const counterStore = new InMemoryCounterStore();
+  const adapter: AppAdapter = { counterStore };
+
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    adapter,
+    debug: true,
+    routes: [
+      {
+        path: "/count",
+        methods: ["GET"],
+        pipeline: {
+          policies: [requestCounter()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Hit this endpoint multiple times!" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+<EditorLink code={COUNTER_CODE} label="Try the counter policy" title="Store-Backed Counter Policy" />
+
+Hit `/api/count` several times. Each response includes an `x-request-count`
+header with the running total for that path.
+
+## Store lifecycle
+
+### Cleanup intervals
+
+Some in-memory stores run periodic cleanup to evict expired entries.
+`InMemoryRateLimitStore`, for example, starts a `setInterval` that sweeps
+stale sliding-window entries every 60 seconds by default. If you use these
+stores in tests, you **must** call `.destroy()` in your teardown to clear the
+interval -- otherwise the test process hangs or leaks timers:
+
+```typescript
+import { InMemoryRateLimitStore } from "@homegrower-club/stoma";
+
+const store = new InMemoryRateLimitStore();
+// ... use the store in tests ...
+
+afterAll(() => {
+  store.destroy(); // clears the cleanup interval
+});
+```
+
+If your custom store uses intervals or open connections, follow the same
+pattern: expose a `destroy()` method and document the cleanup requirement.
+
+### Background work with `waitUntil`
+
+Some store operations (writing a cache entry, persisting metrics) should
+complete even after the HTTP response is sent. The adapter provides an optional
+`waitUntil` function for this. On Cloudflare Workers it maps to
+`executionCtx.waitUntil()`; on other runtimes it may be a no-op or collect
+promises for manual draining.
+
+```typescript
+const adapter = getGatewayContext(c)?.adapter;
+if (adapter?.waitUntil) {
+  adapter.waitUntil(store.persistAsync(key, value));
+}
+```
+
+<Aside type="tip">
+For testing, use `TestAdapter` from `@homegrower-club/stoma/adapters`. It
+collects all `waitUntil` promises so you can flush them with
+`await adapter.waitAll()` before asserting on side effects.
+</Aside>
+
+## Real-world backends
+
+The in-memory stores are great for development, but production workloads need
+durable storage. Stoma ships adapters for several runtimes:
+
+- **Cloudflare KV** -- eventually consistent, high-throughput counter storage.
+  See [KV Rate Limiting](/cloudflare/kv-rate-limiting/).
+- **Cloudflare Durable Objects** -- strongly consistent state for circuit
+  breakers and coordination. See [Durable Objects](/cloudflare/durable-objects/).
+- **Deno, Bun, Node** -- runtime-specific adapters available at
+  `@homegrower-club/stoma/adapters/deno`, `@homegrower-club/stoma/adapters/bun`,
+  and `@homegrower-club/stoma/adapters/node`.
+
+Each adapter implements the same `GatewayAdapter` interface. Swap the adapter
+in your gateway config and every store-backed policy picks up the new
+implementation automatically.
+
+## What's next?
+
+- [Testing Custom Policies](/policy-authoring/policy-testing/) -- testing
+  store-backed policies with `createPolicyTestHarness()` and `TestAdapter`.
+- [Cross-Policy Communication](/policy-authoring/cross-policy-communication/) --
+  sharing data between policies via Hono context keys.

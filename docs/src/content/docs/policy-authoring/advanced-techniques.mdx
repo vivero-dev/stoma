@@ -1,0 +1,482 @@
+---
+title: Advanced Policy Techniques
+sidebar:
+  order: 6
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import EditorLink from "../../../components/EditorLink.astro";
+
+export const RESPONSE_TRANSFORM_CODE = `import { createGateway, definePolicy, Priority, cors } from "@homegrower-club/stoma";
+
+const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+    const contentType = c.res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) return;
+    const original = await c.res.json();
+    const wrapped = {
+      data: original,
+      meta: { timestamp: new Date().toISOString() },
+    };
+    debug("wrapped response in envelope");
+    c.res = new Response(JSON.stringify(wrapped), {
+      status: c.res.status,
+      headers: c.res.headers,
+    });
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    debug: true,
+    policies: [cors()],
+    routes: [
+      {
+        path: "/data",
+        methods: ["GET"],
+        pipeline: {
+          policies: [jsonEnvelope()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ users: ["alice", "bob"], count: 2 }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const WAITUNTIL_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+const backgroundLogger = definePolicy({
+  name: "background-logger",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+
+    const ctx = getGatewayContext(c);
+    const logEntry = {
+      path: c.req.path,
+      method: c.req.method,
+      status: c.res.status,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Simulate background work (e.g. sending to a webhook)
+    const work = new Promise((resolve) => {
+      setTimeout(() => {
+        debug("background log saved: %s %s -> %d", logEntry.method, logEntry.path, logEntry.status);
+        resolve(undefined);
+      }, 100);
+    });
+
+    ctx?.adapter?.waitUntil?.(work);
+    debug("queued background logging");
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/hello",
+        methods: ["GET"],
+        pipeline: {
+          policies: [backgroundLogger()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Response sent immediately, logging happens in background!" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+This page covers advanced techniques for policy authors who are comfortable
+with the basics of `definePolicy()` and the standard request/response
+lifecycle. Each section addresses a pattern that goes beyond the fundamentals
+covered in [Your First Custom Policy](/policy-authoring/your-first-policy/)
+and [Common Policy Patterns](/policy-authoring/policy-patterns/).
+
+---
+
+## Construction-time validation
+
+The `validate` field in a `PolicyDefinition` runs once when the factory
+function is called -- at gateway construction time, before any requests are
+processed. Use it to catch configuration errors as early as possible.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface RateLimitByHeaderConfig extends PolicyConfig {
+  headerName: string;
+  maxPerWindow: number;
+  windowSeconds: number;
+}
+
+const rateLimitByHeader = definePolicy<RateLimitByHeaderConfig>({
+  name: "rate-limit-by-header",
+  priority: Priority.RATE_LIMIT,
+  validate: (config) => {
+    if (!config.headerName) {
+      throw new Error("rateLimitByHeader requires a headerName");
+    }
+    if (config.maxPerWindow <= 0) {
+      throw new Error("maxPerWindow must be positive");
+    }
+    if (config.windowSeconds <= 0) {
+      throw new Error("windowSeconds must be positive");
+    }
+  },
+  handler: async (c, next, { config, debug }) => {
+    const key = c.req.header(config.headerName) ?? "anonymous";
+    debug("rate limiting by %s: %s", config.headerName, key);
+    await next();
+  },
+});
+```
+
+Validation errors throw at **gateway construction time** -- not on the first
+request. This follows the fail-fast principle: a misconfigured policy causes
+`createGateway()` to throw immediately, making the problem visible during
+deployment or startup rather than hiding until traffic arrives.
+
+The `validate` function receives the fully merged config (defaults + user
+overrides). Throw a plain `Error` for config issues -- these are developer
+mistakes, not runtime conditions, so they do not need the structured
+`GatewayError` format.
+
+<Aside type="tip">
+Construction-time validation is especially valuable for policies that accept
+complex config (regex patterns, URL lists, certificate paths). Validating
+these eagerly avoids cryptic runtime failures.
+</Aside>
+
+---
+
+## Response body transformation
+
+Transforming a response body is a common need -- wrapping JSON in an envelope,
+redacting fields, or injecting metadata. The pattern requires care because
+`c.res` is backed by a one-shot readable stream. Once you read it, you must
+create a new `Response`.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+
+const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+
+    const contentType = c.res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) return;
+
+    // Read the original body (consumes the stream)
+    const original = await c.res.json();
+
+    // Build the wrapped response
+    const wrapped = {
+      data: original,
+      meta: {
+        timestamp: new Date().toISOString(),
+      },
+    };
+
+    debug("wrapped response in envelope");
+
+    // Create a new Response with the same status and headers
+    c.res = new Response(JSON.stringify(wrapped), {
+      status: c.res.status,
+      headers: c.res.headers,
+    });
+  },
+});
+```
+
+<Aside type="caution">
+Reading the response body with `c.res.json()`, `c.res.text()`, or
+`c.res.arrayBuffer()` **consumes the stream**. You cannot read it twice.
+Always create a new `Response` and assign it back to `c.res` after reading.
+</Aside>
+
+The content-type guard ensures non-JSON responses (HTML error pages, binary
+data, streamed responses) pass through untouched. Without it, calling
+`c.res.json()` on a non-JSON body would throw.
+
+<EditorLink code={RESPONSE_TRANSFORM_CODE} label="Try response transformation" title="Advanced: Response Body Transform" />
+
+---
+
+## Composing policies into a policy pack
+
+When several policies always deploy together, bundle them into a single
+factory that returns `Policy[]`. This keeps gateway configs clean and ensures
+related policies are never accidentally separated.
+
+```typescript
+import { definePolicy, Priority, cors } from "@homegrower-club/stoma";
+import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
+
+interface SecurityPackConfig {
+  allowedOrigins?: string[];
+  requireHttps?: boolean;
+}
+
+function securityPack(config: SecurityPackConfig = {}): Policy[] {
+  const policies: Policy[] = [];
+
+  // Always add CORS
+  policies.push(
+    cors({ origins: config.allowedOrigins ?? ["*"] }),
+  );
+
+  // Add HTTPS enforcement if enabled
+  if (config.requireHttps) {
+    const httpsEnforce = definePolicy({
+      name: "https-enforce",
+      priority: Priority.EARLY,
+      handler: async (c, next) => {
+        const proto = c.req.header("x-forwarded-proto");
+        if (proto && proto !== "https") {
+          return c.redirect(`https://${c.req.header("host")}${c.req.path}`, 301);
+        }
+        await next();
+      },
+    });
+    policies.push(httpsEnforce());
+  }
+
+  // Security headers
+  const securityHeaders = definePolicy({
+    name: "security-headers",
+    priority: Priority.RESPONSE_TRANSFORM,
+    handler: async (c, next) => {
+      await next();
+      c.res.headers.set("x-content-type-options", "nosniff");
+      c.res.headers.set("x-frame-options", "DENY");
+      c.res.headers.set("referrer-policy", "strict-origin-when-cross-origin");
+    },
+  });
+  policies.push(securityHeaders());
+
+  return policies;
+}
+```
+
+Spread the pack into the pipeline's `policies` array:
+
+```typescript
+// In a route's pipeline:
+policies: [...securityPack({ allowedOrigins: ["https://app.example.com"] })],
+```
+
+Because each policy in the array has its own `name` and `priority`, the
+gateway's deduplication and ordering logic works exactly as if you had listed
+them individually. If a route also declares a `cors()` policy, the route-level
+one wins (route policies override global policies with the same name).
+
+<Aside type="tip">
+Policy packs are a good place to codify your organization's baseline
+requirements. A `compliancePack()` might bundle rate limiting, request
+logging, and security headers so every route gets them by default.
+</Aside>
+
+---
+
+## Dynamic priority selection
+
+`definePolicy()` assigns a static priority at definition time. For cases where
+the priority should vary based on config, use the manual `Policy` object
+pattern instead:
+
+```typescript
+function dynamicPolicy(config: { critical?: boolean }): Policy {
+  return {
+    name: "dynamic",
+    priority: config.critical ? Priority.EARLY : Priority.DEFAULT,
+    handler: async (c, next) => {
+      await next();
+    },
+  };
+}
+```
+
+This works because a `Policy` is just `{ name, priority, handler }`. The
+`definePolicy()` SDK is a convenience layer on top of this -- when you need
+control it does not offer, drop down to the raw interface.
+
+You can also combine both approaches by using `definePolicy()` for its config
+merging and debug injection, then overriding the priority on the returned
+object:
+
+```typescript
+const flexibleBase = definePolicy<{ runEarly?: boolean } & PolicyConfig>({
+  name: "flexible",
+  priority: Priority.DEFAULT,
+  defaults: { runEarly: false },
+  handler: async (c, next, { config, debug }) => {
+    debug("running with priority override: %s", config.runEarly ? "early" : "default");
+    await next();
+  },
+});
+
+// Wrapper that adjusts priority after creation
+function flexible(config?: { runEarly?: boolean }): Policy {
+  const policy = flexibleBase(config);
+  if (config?.runEarly) {
+    return { ...policy, priority: Priority.EARLY };
+  }
+  return policy;
+}
+```
+
+---
+
+## Async initialization in factories
+
+Some policies need to perform async work before they can handle requests --
+loading a blocklist, fetching a remote config, or warming a cache. Since
+`createGateway()` is synchronous, the async work must happen in the factory.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { Policy } from "@homegrower-club/stoma";
+
+async function blocklist(url: string): Promise<Policy> {
+  // Fetch blocklist at construction time (once, not per-request)
+  const response = await fetch(url);
+  const blocked = new Set((await response.json()) as string[]);
+
+  return definePolicy({
+    name: "blocklist",
+    priority: Priority.IP_FILTER,
+    handler: async (c, next, { debug }) => {
+      const ip = c.req.header("x-forwarded-for")?.split(",")[0].trim();
+      if (ip && blocked.has(ip)) {
+        debug("blocked IP: %s", ip);
+        throw new GatewayError(403, "blocked", "IP is blocked");
+      }
+      await next();
+    },
+  })();
+}
+```
+
+Because the factory is async, you must `await` it when building the gateway:
+
+```typescript
+const gw = createGateway({
+  routes: [{
+    path: "/*",
+    methods: ["GET", "POST"],
+    pipeline: {
+      policies: [await blocklist("https://example.com/blocked.json")],
+      upstream: { type: "handler", handler: (c) => c.text("OK") },
+    },
+  }],
+});
+```
+
+<Aside type="note">
+The blocklist is fetched once at construction time and closed over by the
+handler. This means the data is static for the lifetime of the gateway
+instance. In a Cloudflare Worker this is fine -- each isolate is short-lived.
+For long-running servers, consider adding a periodic refresh mechanism or
+using a store-backed approach.
+</Aside>
+
+---
+
+## Background work with `waitUntil()`
+
+Edge runtimes like Cloudflare Workers terminate the isolate as soon as the
+response is sent. To perform fire-and-forget work (webhooks, analytics,
+logging) that outlives the response, use the adapter's `waitUntil()` method.
+
+```typescript
+import { definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+const webhookNotifier = definePolicy<{ webhookUrl: string } & PolicyConfig>({
+  name: "webhook-notifier",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { config, debug }) => {
+    await next();
+
+    // Fire-and-forget webhook -- don't block the response
+    const ctx = getGatewayContext(c);
+    const payload = JSON.stringify({
+      path: c.req.path,
+      method: c.req.method,
+      status: c.res.status,
+      timestamp: new Date().toISOString(),
+    });
+
+    const work = fetch(config.webhookUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: payload,
+    }).catch((err) => {
+      debug("webhook failed: %s", err instanceof Error ? err.message : String(err));
+    });
+
+    // Use waitUntil so the runtime keeps the worker alive
+    ctx?.adapter?.waitUntil?.(work);
+    debug("queued webhook notification");
+  },
+});
+```
+
+`getGatewayContext(c)` returns the `PolicyContext` which includes the
+`adapter` set on `GatewayConfig`. The `waitUntil` method tells the runtime
+to keep the isolate alive until the promise settles, even though the response
+has already been sent to the client.
+
+The optional chaining (`ctx?.adapter?.waitUntil?.()`) is intentional -- when
+running outside a gateway (e.g., in a test harness without an adapter), the
+call is safely skipped. The `.catch()` on the fetch ensures a webhook failure
+does not crash the worker.
+
+<Aside type="caution">
+`waitUntil()` is a runtime feature, not a Stoma feature. It is available on
+Cloudflare Workers, Deno Deploy, and other edge runtimes. On Node.js, the
+process stays alive anyway, so you can fire promises without `waitUntil` --
+but the adapter pattern keeps your policy portable across runtimes.
+</Aside>
+
+<EditorLink code={WAITUNTIL_CODE} label="Try background work" title="Advanced: waitUntil()" />
+
+---
+
+## Summary
+
+| Technique | When to use it | Key principle |
+|-----------|----------------|---------------|
+| Construction-time validation | Complex or error-prone configs | Fail fast at build time |
+| Response body transformation | Enveloping, redacting, enriching JSON | Consume stream, create new `Response` |
+| Policy packs | Groups of policies that always deploy together | Return `Policy[]` from a factory |
+| Dynamic priority | Priority depends on config or environment | Drop to raw `Policy` object |
+| Async initialization | Loading remote data before first request | `async` factory returning `Promise<Policy>` |
+| `waitUntil()` background work | Analytics, webhooks, logging after response | `adapter.waitUntil()` keeps isolate alive |
+
+---
+
+## What's next
+
+- [Store-Backed Policies](/policy-authoring/store-backed-policies/) -- policies that use adapters for persistent state (rate limits, circuit breakers).
+- [Custom Policies Reference](/policies/custom-policies/) -- full SDK reference including `resolveConfig`, `policyDebug`, `withSkip`, and the manual approach.
+- [Recipes](/recipes/) -- complete gateway configurations combining multiple patterns.

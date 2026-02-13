@@ -5,7 +5,7 @@ prev: false
 title: "JsonThreatProtectionConfig"
 ---
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:14](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L14)
+Defined in: [src/policies/traffic/json-threat-protection.ts:15](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L15)
 
 Configuration for the jsonThreatProtection policy.
 
@@ -19,7 +19,7 @@ Configuration for the jsonThreatProtection policy.
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:30](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L30)
+Defined in: [src/policies/traffic/json-threat-protection.ts:31](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L31)
 
 Content types to inspect.
 Requests with other content types pass through without inspection.
@@ -31,7 +31,7 @@ Default: `["application/json"]`.
 
 > `optional` **maxArraySize**: `number`
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:22](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L22)
+Defined in: [src/policies/traffic/json-threat-protection.ts:23](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L23)
 
 Maximum array length. Default: `100`.
 
@@ -41,7 +41,7 @@ Maximum array length. Default: `100`.
 
 > `optional` **maxBodySize**: `number`
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:24](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L24)
+Defined in: [src/policies/traffic/json-threat-protection.ts:25](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L25)
 
 Maximum raw body size in bytes. Checked BEFORE parsing. Default: `1048576` (1 MB).
 
@@ -51,7 +51,7 @@ Maximum raw body size in bytes. Checked BEFORE parsing. Default: `1048576` (1 MB
 
 > `optional` **maxDepth**: `number`
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:16](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L16)
+Defined in: [src/policies/traffic/json-threat-protection.ts:17](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L17)
 
 Maximum nesting depth. Default: `20`.
 
@@ -61,7 +61,7 @@ Maximum nesting depth. Default: `20`.
 
 > `optional` **maxKeys**: `number`
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:18](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L18)
+Defined in: [src/policies/traffic/json-threat-protection.ts:19](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L19)
 
 Maximum number of keys per object. Default: `100`.
 
@@ -71,7 +71,7 @@ Maximum number of keys per object. Default: `100`.
 
 > `optional` **maxStringLength**: `number`
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:20](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L20)
+Defined in: [src/policies/traffic/json-threat-protection.ts:21](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L21)
 
 Maximum string value length (also applies to object keys). Default: `10000`.
 
@@ -81,7 +81,7 @@ Maximum string value length (also applies to object keys). Default: `10000`.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

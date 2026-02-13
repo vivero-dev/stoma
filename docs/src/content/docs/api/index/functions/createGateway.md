@@ -5,9 +5,9 @@ prev: false
 title: "createGateway"
 ---
 
-> **createGateway**(`config`): [`GatewayInstance`](/api/index/interfaces/gatewayinstance/)
+> **createGateway**\<`TBindings`\>(`config`): [`GatewayInstance`](/api/index/interfaces/gatewayinstance/)
 
-Defined in: [src/core/gateway.ts:93](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/gateway.ts#L93)
+Defined in: [src/core/gateway.ts:95](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/gateway.ts#L95)
 
 Create a gateway instance from a declarative configuration.
 
@@ -16,11 +16,17 @@ Registers all routes on a Hono app, builds per-route policy pipelines
 Returns a [GatewayInstance](/api/index/interfaces/gatewayinstance/) whose `.app` property is the Hono app
 ready to be exported as a Cloudflare Worker default export.
 
+## Type Parameters
+
+### TBindings
+
+`TBindings` = `Record`\<`string`, `unknown`\>
+
 ## Parameters
 
 ### config
 
-[`GatewayConfig`](/api/index/interfaces/gatewayconfig/)
+[`GatewayConfig`](/api/index/interfaces/gatewayconfig/)\<`TBindings`\>
 
 Full gateway configuration including routes, policies, and options.
 

@@ -1,0 +1,887 @@
+---
+title: Policy Cookbook
+sidebar:
+  order: 7
+---
+
+import EditorLink from "../../../components/EditorLink.astro";
+
+Copy-paste recipes for common gateway scenarios. Each recipe is a self-contained policy with usage example. Click "Open in Editor" to try it live.
+
+export const RECIPE1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface ApiVersionConfig extends PolicyConfig {
+  required: string;
+  header?: string;
+}
+
+const apiVersionGate = definePolicy<ApiVersionConfig>({
+  name: "api-version-gate",
+  priority: Priority.AUTH,
+  defaults: { header: "x-api-version" },
+  handler: async (c, next, { config }) => {
+    const version = c.req.header(config.header!);
+    if (version !== config.required) {
+      throw new GatewayError(400, "invalid_version",
+        \`API version \${config.required} required, got \${version ?? "none"}\`);
+    }
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-version-gate",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/demo",
+        methods: ["GET"],
+        pipeline: {
+          policies: [apiVersionGate({ required: "2024" })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "API v2024 response" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE2_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface MaintenanceConfig extends PolicyConfig {
+  enabled?: boolean;
+  message?: string;
+  retryAfter?: number;
+}
+
+const maintenanceMode = definePolicy<MaintenanceConfig>({
+  name: "maintenance-mode",
+  priority: Priority.EARLY,
+  defaults: { enabled: false, message: "Service under maintenance", retryAfter: 300 },
+  handler: async (c, next, { config }) => {
+    if (config.enabled) {
+      throw new GatewayError(503, "maintenance", config.message!, {
+        "retry-after": String(config.retryAfter),
+      });
+    }
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-maintenance",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/status",
+        methods: ["GET"],
+        pipeline: {
+          policies: [maintenanceMode({ enabled: true, retryAfter: 600 })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ status: "operational" }),
+          },
+        },
+      },
+      {
+        path: "/healthy",
+        methods: ["GET"],
+        pipeline: {
+          policies: [maintenanceMode({ enabled: false })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ status: "operational" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE3_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+
+const requestIdPassthrough = definePolicy({
+  name: "request-id-passthrough",
+  priority: Priority.EARLY,
+  handler: async (c, next, { debug }) => {
+    const id = c.req.header("x-request-id") ?? crypto.randomUUID();
+    c.req.raw.headers.set("x-request-id", id);
+    await next();
+    c.res.headers.set("x-request-id", id);
+    debug("request-id: %s", id);
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-request-id",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/demo",
+        methods: ["GET"],
+        pipeline: {
+          policies: [requestIdPassthrough()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({
+              message: "Check the x-request-id response header",
+              echoedId: c.req.header("x-request-id"),
+            }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE4_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+
+const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next) => {
+    await next();
+    const ct = c.res.headers.get("content-type") ?? "";
+    if (!ct.includes("application/json")) return;
+    const original = await c.res.json();
+    c.res = new Response(JSON.stringify({
+      data: original,
+      meta: { timestamp: new Date().toISOString() },
+    }), { status: c.res.status, headers: c.res.headers });
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-envelope",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/users",
+        methods: ["GET"],
+        pipeline: {
+          policies: [jsonEnvelope()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json([
+              { id: 1, name: "Alice" },
+              { id: 2, name: "Bob" },
+            ]),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface IpAllowlistConfig extends PolicyConfig {
+  allowed: string[];
+}
+
+const ipAllowlist = definePolicy<IpAllowlistConfig>({
+  name: "ip-allowlist",
+  priority: Priority.IP_FILTER,
+  handler: async (c, next, { config, debug }) => {
+    const ip = c.req.header("x-forwarded-for")?.split(",")[0].trim();
+    if (!ip || !config.allowed.includes(ip)) {
+      debug("blocked IP: %s", ip ?? "unknown");
+      throw new GatewayError(403, "ip_blocked", "IP not in allowlist");
+    }
+    debug("allowed IP: %s", ip);
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-ip-allowlist",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/demo",
+        methods: ["GET"],
+        pipeline: {
+          policies: [ipAllowlist({ allowed: ["10.0.0.1", "127.0.0.1"] })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "IP allowed!", ip: c.req.header("x-forwarded-for") }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE6_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface HmacConfig extends PolicyConfig {
+  secret: string;
+  signatureHeader?: string;
+}
+
+const hmacVerify = definePolicy<HmacConfig>({
+  name: "hmac-verify",
+  priority: Priority.AUTH,
+  defaults: { signatureHeader: "x-signature-256" },
+  handler: async (c, next, { config, debug }) => {
+    const signature = c.req.header(config.signatureHeader!);
+    if (!signature) {
+      throw new GatewayError(401, "missing_signature", "Signature header required");
+    }
+    const body = await c.req.text();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(config.secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(body));
+    const expected = "sha256=" + Array.from(new Uint8Array(mac))
+      .map(b => b.toString(16).padStart(2, "0")).join("");
+    if (signature !== expected) {
+      debug("HMAC mismatch");
+      throw new GatewayError(401, "invalid_signature", "Signature verification failed");
+    }
+    debug("HMAC verified");
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-hmac",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/webhook",
+        methods: ["POST"],
+        pipeline: {
+          policies: [hmacVerify({ secret: "my-webhook-secret" })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Webhook received and verified!" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE7_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface SizeLimitConfig extends PolicyConfig {
+  maxBytes?: number;
+}
+
+const bodySizeLimit = definePolicy<SizeLimitConfig>({
+  name: "body-size-limit",
+  priority: Priority.EARLY,
+  defaults: { maxBytes: 1_048_576 },
+  handler: async (c, next, { config, debug }) => {
+    const contentLength = c.req.header("content-length");
+    if (contentLength && parseInt(contentLength, 10) > config.maxBytes!) {
+      debug("rejected: body too large (%s bytes)", contentLength);
+      throw new GatewayError(413, "payload_too_large",
+        \`Request body exceeds \${config.maxBytes} bytes\`);
+    }
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-body-limit",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/upload",
+        methods: ["POST"],
+        pipeline: {
+          policies: [bodySizeLimit({ maxBytes: 512_000 })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Upload accepted" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE8_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface HeaderCacheConfig extends PolicyConfig {
+  headerName: string;
+  ttlSeconds?: number;
+}
+
+const headerCache = definePolicy<HeaderCacheConfig>({
+  name: "header-cache",
+  priority: Priority.CACHE,
+  defaults: { ttlSeconds: 60 },
+  handler: async (c, next, { config, debug }) => {
+    const cacheKey = \`\${c.req.path}:\${c.req.header(config.headerName) ?? "default"}\`;
+    debug("cache key: %s", cacheKey);
+    await next();
+    c.res.headers.set("x-cache-key", cacheKey);
+    c.res.headers.set("cache-control", \`max-age=\${config.ttlSeconds}\`);
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-header-cache",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/data",
+        methods: ["GET"],
+        pipeline: {
+          policies: [headerCache({ headerName: "x-tenant-id", ttlSeconds: 120 })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({
+              tenant: c.req.header("x-tenant-id") ?? "default",
+              data: [1, 2, 3],
+            }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE9_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface FeatureFlagConfig extends PolicyConfig {
+  flag: string;
+  flags: Record<string, boolean>;
+}
+
+const featureFlag = definePolicy<FeatureFlagConfig>({
+  name: "feature-flag",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    if (!config.flags[config.flag]) {
+      debug("feature %s is disabled", config.flag);
+      throw new GatewayError(404, "feature_disabled",
+        \`Feature "\${config.flag}" is not available\`);
+    }
+    debug("feature %s is enabled", config.flag);
+    await next();
+  },
+});
+
+const FLAGS = { "v2-api": true, "beta": false };
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-feature-flag",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/v2/users",
+        methods: ["GET"],
+        pipeline: {
+          policies: [featureFlag({ flag: "v2-api", flags: FLAGS })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "v2 API response", users: ["Alice", "Bob"] }),
+          },
+        },
+      },
+      {
+        path: "/beta/insights",
+        methods: ["GET"],
+        pipeline: {
+          policies: [featureFlag({ flag: "beta", flags: FLAGS })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Beta insights" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const RECIPE10_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface LatencyBudgetConfig extends PolicyConfig {
+  budgetMs?: number;
+}
+
+const latencyBudget = definePolicy<LatencyBudgetConfig>({
+  name: "latency-budget",
+  priority: Priority.OBSERVABILITY,
+  defaults: { budgetMs: 500 },
+  handler: async (c, next, { config, debug }) => {
+    const start = Date.now();
+    await next();
+    const elapsed = Date.now() - start;
+    c.res.headers.set("x-latency-ms", String(elapsed));
+    if (elapsed > config.budgetMs!) {
+      debug("BUDGET EXCEEDED: %dms > %dms budget", elapsed, config.budgetMs);
+      c.res.headers.set("x-latency-budget-exceeded", "true");
+    }
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "cookbook-latency-budget",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/fast",
+        methods: ["GET"],
+        pipeline: {
+          policies: [latencyBudget({ budgetMs: 200 })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Fast response" }),
+          },
+        },
+      },
+      {
+        path: "/slow",
+        methods: ["GET"],
+        pipeline: {
+          policies: [latencyBudget({ budgetMs: 200 })],
+          upstream: {
+            type: "handler",
+            handler: async (c) => {
+              await new Promise((r) => setTimeout(r, 300));
+              return c.json({ message: "Slow response" });
+            },
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+---
+
+## API Version Gate
+
+Require a specific API version header. Requests without the correct version receive a structured 400 error.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface ApiVersionConfig extends PolicyConfig {
+  required: string;
+  header?: string;
+}
+
+export const apiVersionGate = definePolicy<ApiVersionConfig>({
+  name: "api-version-gate",
+  priority: Priority.AUTH,
+  defaults: { header: "x-api-version" },
+  handler: async (c, next, { config }) => {
+    const version = c.req.header(config.header!);
+    if (version !== config.required) {
+      throw new GatewayError(400, "invalid_version",
+        `API version ${config.required} required, got ${version ?? "none"}`);
+    }
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+apiVersionGate({ required: "2024" })
+```
+
+<EditorLink code={RECIPE1_CODE} label="Open in Editor" title="Recipe: API Version Gate" />
+
+---
+
+## Maintenance Mode
+
+Return 503 with a `Retry-After` header when enabled. Requests to the route are short-circuited before reaching the upstream.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface MaintenanceConfig extends PolicyConfig {
+  enabled?: boolean;
+  message?: string;
+  retryAfter?: number;
+}
+
+export const maintenanceMode = definePolicy<MaintenanceConfig>({
+  name: "maintenance-mode",
+  priority: Priority.EARLY,
+  defaults: { enabled: false, message: "Service under maintenance", retryAfter: 300 },
+  handler: async (c, next, { config }) => {
+    if (config.enabled) {
+      throw new GatewayError(503, "maintenance", config.message!, {
+        "retry-after": String(config.retryAfter),
+      });
+    }
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+maintenanceMode({ enabled: true })
+```
+
+<EditorLink code={RECIPE2_CODE} label="Open in Editor" title="Recipe: Maintenance Mode" />
+
+---
+
+## Request ID Passthrough
+
+Forward an incoming `x-request-id` header or generate a new UUID. The same value is set on both the request (for downstream policies and the upstream) and the response (for client correlation).
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+
+export const requestIdPassthrough = definePolicy({
+  name: "request-id-passthrough",
+  priority: Priority.EARLY,
+  handler: async (c, next, { debug }) => {
+    const id = c.req.header("x-request-id") ?? crypto.randomUUID();
+    c.req.raw.headers.set("x-request-id", id);
+    await next();
+    c.res.headers.set("x-request-id", id);
+    debug("request-id: %s", id);
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+requestIdPassthrough()
+```
+
+<EditorLink code={RECIPE3_CODE} label="Open in Editor" title="Recipe: Request ID Passthrough" />
+
+---
+
+## JSON Response Envelope
+
+Wrap all JSON responses in a `{ data, meta }` structure. Non-JSON responses pass through untouched.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+
+export const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next) => {
+    await next();
+    const ct = c.res.headers.get("content-type") ?? "";
+    if (!ct.includes("application/json")) return;
+    const original = await c.res.json();
+    c.res = new Response(JSON.stringify({
+      data: original,
+      meta: { timestamp: new Date().toISOString() },
+    }), { status: c.res.status, headers: c.res.headers });
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+jsonEnvelope()
+```
+
+<EditorLink code={RECIPE4_CODE} label="Open in Editor" title="Recipe: JSON Response Envelope" />
+
+---
+
+## IP Allowlist from Header
+
+Allow only requests whose `x-forwarded-for` IP is in a configured allowlist. All other requests receive a 403.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface IpAllowlistConfig extends PolicyConfig {
+  allowed: string[];
+}
+
+export const ipAllowlist = definePolicy<IpAllowlistConfig>({
+  name: "ip-allowlist",
+  priority: Priority.IP_FILTER,
+  handler: async (c, next, { config, debug }) => {
+    const ip = c.req.header("x-forwarded-for")?.split(",")[0].trim();
+    if (!ip || !config.allowed.includes(ip)) {
+      debug("blocked IP: %s", ip ?? "unknown");
+      throw new GatewayError(403, "ip_blocked", "IP not in allowlist");
+    }
+    debug("allowed IP: %s", ip);
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+ipAllowlist({ allowed: ["10.0.0.1", "10.0.0.2"] })
+```
+
+<EditorLink code={RECIPE5_CODE} label="Open in Editor" title="Recipe: IP Allowlist" />
+
+---
+
+## Webhook HMAC Verification
+
+Verify webhook payloads using HMAC-SHA256. The policy reads the raw request body, computes the expected signature, and compares it to the value in the signature header.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface HmacConfig extends PolicyConfig {
+  secret: string;
+  signatureHeader?: string;
+}
+
+export const hmacVerify = definePolicy<HmacConfig>({
+  name: "hmac-verify",
+  priority: Priority.AUTH,
+  defaults: { signatureHeader: "x-signature-256" },
+  handler: async (c, next, { config, debug }) => {
+    const signature = c.req.header(config.signatureHeader!);
+    if (!signature) {
+      throw new GatewayError(401, "missing_signature", "Signature header required");
+    }
+    const body = await c.req.text();
+    const key = await crypto.subtle.importKey(
+      "raw",
+      new TextEncoder().encode(config.secret),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(body));
+    const expected = "sha256=" + Array.from(new Uint8Array(mac))
+      .map(b => b.toString(16).padStart(2, "0")).join("");
+    if (signature !== expected) {
+      debug("HMAC mismatch");
+      throw new GatewayError(401, "invalid_signature", "Signature verification failed");
+    }
+    debug("HMAC verified");
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+hmacVerify({ secret: env.WEBHOOK_SECRET })
+```
+
+<EditorLink code={RECIPE6_CODE} label="Open in Editor" title="Recipe: Webhook HMAC Verification" />
+
+---
+
+## Request Body Size Limiter
+
+Reject requests whose `Content-Length` exceeds a configured byte limit. Returns 413 Payload Too Large.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface SizeLimitConfig extends PolicyConfig {
+  maxBytes?: number;
+}
+
+export const bodySizeLimit = definePolicy<SizeLimitConfig>({
+  name: "body-size-limit",
+  priority: Priority.EARLY,
+  defaults: { maxBytes: 1_048_576 }, // 1MB
+  handler: async (c, next, { config, debug }) => {
+    const contentLength = c.req.header("content-length");
+    if (contentLength && parseInt(contentLength, 10) > config.maxBytes!) {
+      debug("rejected: body too large (%s bytes)", contentLength);
+      throw new GatewayError(413, "payload_too_large",
+        `Request body exceeds ${config.maxBytes} bytes`);
+    }
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+bodySizeLimit({ maxBytes: 512_000 })
+```
+
+<EditorLink code={RECIPE7_CODE} label="Open in Editor" title="Recipe: Body Size Limiter" />
+
+---
+
+## Response Caching by Header
+
+Generate a cache key based on the request path and a specific header value. Useful for multi-tenant APIs where each tenant gets isolated cache entries.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface HeaderCacheConfig extends PolicyConfig {
+  headerName: string;
+  ttlSeconds?: number;
+}
+
+export const headerCache = definePolicy<HeaderCacheConfig>({
+  name: "header-cache",
+  priority: Priority.CACHE,
+  defaults: { ttlSeconds: 60 },
+  handler: async (c, next, { config, debug }) => {
+    const cacheKey = `${c.req.path}:${c.req.header(config.headerName) ?? "default"}`;
+    debug("cache key: %s", cacheKey);
+    await next();
+    c.res.headers.set("x-cache-key", cacheKey);
+    c.res.headers.set("cache-control", `max-age=${config.ttlSeconds}`);
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+headerCache({ headerName: "x-tenant-id", ttlSeconds: 120 })
+```
+
+<EditorLink code={RECIPE8_CODE} label="Open in Editor" title="Recipe: Response Caching by Header" />
+
+---
+
+## Feature Flag Gate
+
+Block access to a route when a feature flag is disabled. Returns 404 so the endpoint appears nonexistent to clients without the feature.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface FeatureFlagConfig extends PolicyConfig {
+  flag: string;
+  flags: Record<string, boolean>;
+}
+
+export const featureFlag = definePolicy<FeatureFlagConfig>({
+  name: "feature-flag",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    if (!config.flags[config.flag]) {
+      debug("feature %s is disabled", config.flag);
+      throw new GatewayError(404, "feature_disabled",
+        `Feature "${config.flag}" is not available`);
+    }
+    debug("feature %s is enabled", config.flag);
+    await next();
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+featureFlag({ flag: "v2-api", flags: { "v2-api": true, "beta": false } })
+```
+
+<EditorLink code={RECIPE9_CODE} label="Open in Editor" title="Recipe: Feature Flag Gate" />
+
+---
+
+## Latency Budget Logger
+
+Measure total request processing time and flag responses that exceed a time budget. Adds `x-latency-ms` to every response and `x-latency-budget-exceeded: true` when the budget is blown.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface LatencyBudgetConfig extends PolicyConfig {
+  budgetMs?: number;
+}
+
+export const latencyBudget = definePolicy<LatencyBudgetConfig>({
+  name: "latency-budget",
+  priority: Priority.OBSERVABILITY,
+  defaults: { budgetMs: 500 },
+  handler: async (c, next, { config, debug }) => {
+    const start = Date.now();
+    await next();
+    const elapsed = Date.now() - start;
+    c.res.headers.set("x-latency-ms", String(elapsed));
+    if (elapsed > config.budgetMs!) {
+      debug("BUDGET EXCEEDED: %dms > %dms budget", elapsed, config.budgetMs);
+      c.res.headers.set("x-latency-budget-exceeded", "true");
+    }
+  },
+});
+```
+
+**Usage:**
+
+```typescript
+latencyBudget({ budgetMs: 200 })
+```
+
+<EditorLink code={RECIPE10_CODE} label="Open in Editor" title="Recipe: Latency Budget Logger" />
+
+---
+
+## Quick Reference
+
+| Recipe | Priority | Status code | Key technique |
+|--------|----------|-------------|---------------|
+| API Version Gate | `AUTH` (10) | 400 | Validate header before `next()` |
+| Maintenance Mode | `EARLY` (5) | 503 | Short-circuit with custom headers |
+| Request ID Passthrough | `EARLY` (5) | -- | Set header before and after `next()` |
+| JSON Response Envelope | `RESPONSE_TRANSFORM` (92) | -- | Read and replace `c.res` after `next()` |
+| IP Allowlist | `IP_FILTER` (1) | 403 | Extract IP from `x-forwarded-for` |
+| Webhook HMAC | `AUTH` (10) | 401 | `crypto.subtle` HMAC-SHA256 verification |
+| Body Size Limiter | `EARLY` (5) | 413 | Check `content-length` before `next()` |
+| Header Cache | `CACHE` (40) | -- | Key cache by path + header value |
+| Feature Flag Gate | `AUTH` (10) | 404 | Conditional short-circuit by flag |
+| Latency Budget | `OBSERVABILITY` (0) | -- | Measure elapsed time around `next()` |

@@ -7,7 +7,7 @@ title: "jsonThreatProtection"
 
 > `const` **jsonThreatProtection**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/json-threat-protection.ts:126](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/json-threat-protection.ts#L126)
+Defined in: [src/policies/traffic/json-threat-protection.ts:119](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/json-threat-protection.ts#L119)
 
 JSON threat protection policy.
 

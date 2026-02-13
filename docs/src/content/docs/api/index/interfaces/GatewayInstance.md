@@ -5,7 +5,7 @@ prev: false
 title: "GatewayInstance"
 ---
 
-Defined in: [src/core/types.ts:215](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L215)
+Defined in: [src/core/types.ts:262](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L262)
 
 The instantiated gateway — a configured Hono app
 
@@ -15,7 +15,7 @@ The instantiated gateway — a configured Hono app
 
 > **\_registry**: [`GatewayRegistry`](/api/index/interfaces/gatewayregistry/)
 
-Defined in: [src/core/types.ts:223](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L223)
+Defined in: [src/core/types.ts:270](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L270)
 
 Internal registry for admin introspection
 
@@ -25,7 +25,7 @@ Internal registry for admin introspection
 
 > **app**: `Hono`
 
-Defined in: [src/core/types.ts:217](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L217)
+Defined in: [src/core/types.ts:264](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L264)
 
 The underlying Hono app, ready to be exported as a Worker
 
@@ -35,7 +35,7 @@ The underlying Hono app, ready to be exported as a Worker
 
 > **name**: `string`
 
-Defined in: [src/core/types.ts:221](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L221)
+Defined in: [src/core/types.ts:268](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L268)
 
 Gateway name
 
@@ -45,6 +45,6 @@ Gateway name
 
 > **routeCount**: `number`
 
-Defined in: [src/core/types.ts:219](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L219)
+Defined in: [src/core/types.ts:266](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L266)
 
 Registered route count

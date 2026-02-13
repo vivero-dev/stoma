@@ -5,7 +5,7 @@ prev: false
 title: "RateLimitStore"
 ---
 
-Defined in: [src/policies/traffic/rate-limit.ts:30](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L30)
+Defined in: [src/policies/traffic/rate-limit.ts:38](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L38)
 
 Pluggable storage backend for rate limit counters
 
@@ -15,7 +15,7 @@ Pluggable storage backend for rate limit counters
 
 > `optional` **destroy**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:34](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L34)
+Defined in: [src/policies/traffic/rate-limit.ts:45](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L45)
 
 Optional: cleanup resources (like intervals) used by the store
 
@@ -29,7 +29,7 @@ Optional: cleanup resources (like intervals) used by the store
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [src/policies/traffic/rate-limit.ts:32](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L32)
+Defined in: [src/policies/traffic/rate-limit.ts:40](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L40)
 
 Increment the counter for a key, returning the new count and TTL
 

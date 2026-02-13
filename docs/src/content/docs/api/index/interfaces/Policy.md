@@ -5,20 +5,44 @@ prev: false
 title: "Policy"
 ---
 
-Defined in: [src/policies/types.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L21)
+Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L33)
 
-A Policy is a named Hono middleware with metadata.
-Policies are the building blocks of gateway pipelines.
+A Policy is a named middleware with priority ordering and optional
+protocol-agnostic evaluation.
+
+- [handler](/api/index/interfaces/policy/#handler) — HTTP runtime entry point (Hono middleware).
+  Used by [createGateway](/api/index/functions/creategateway/).
+- [evaluate](/api/index/interfaces/policy/#evaluate) — Protocol-agnostic entry point. Used by non-HTTP
+  runtimes (ext_proc, WebSocket) to invoke the policy without Hono.
+- [phases](/api/index/interfaces/policy/#phases) — Which processing phases this policy participates in.
+  Used by phase-based runtimes to skip irrelevant policies.
 
 ## Properties
+
+### evaluate?
+
+> `optional` **evaluate**: [`PolicyEvaluator`](/api/index/interfaces/policyevaluator/)
+
+Defined in: [src/policies/types.ts:51](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L51)
+
+Protocol-agnostic evaluation entry point.
+
+Used by non-HTTP runtimes (ext_proc, WebSocket) to invoke this
+policy without Hono. The HTTP runtime ([createGateway](/api/index/functions/creategateway/)) uses
+[handler](/api/index/interfaces/policy/#handler) directly and ignores this field.
+
+Policies that implement `evaluate` work across all runtimes.
+Policies that only implement `handler` are HTTP-only.
+
+***
 
 ### handler
 
 > **handler**: `MiddlewareHandler`
 
-Defined in: [src/policies/types.ts:25](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L25)
+Defined in: [src/policies/types.ts:37](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L37)
 
-The Hono middleware handler
+The Hono middleware handler — HTTP runtime entry point.
 
 ***
 
@@ -26,9 +50,26 @@ The Hono middleware handler
 
 > **name**: `string`
 
-Defined in: [src/policies/types.ts:23](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L23)
+Defined in: [src/policies/types.ts:35](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L35)
 
 Unique policy name (e.g. "jwt-auth", "rate-limit")
+
+***
+
+### phases?
+
+> `optional` **phases**: [`ProcessingPhase`](/api/index/type-aliases/processingphase/)[]
+
+Defined in: [src/policies/types.ts:63](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L63)
+
+Processing phases this policy participates in.
+
+Used by phase-based runtimes (ext_proc) to skip policies that don't
+apply to the current processing phase. For example, a JWT auth policy
+only needs `"request-headers"`, while a response transform policy
+needs `"response-headers"` and `"response-body"`.
+
+Default: `["request-headers"]` (most policies only inspect request headers).
 
 ***
 
@@ -36,6 +77,6 @@ Unique policy name (e.g. "jwt-auth", "rate-limit")
 
 > `optional` **priority**: `number`
 
-Defined in: [src/policies/types.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L27)
+Defined in: [src/policies/types.ts:39](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L39)
 
 Policy priority — lower numbers execute first. Default: 100.

@@ -5,9 +5,9 @@ prev: false
 title: "health"
 ---
 
-> **health**(`config?`): [`RouteConfig`](/api/index/interfaces/routeconfig/)
+> **health**\<`TBindings`\>(`config?`): [`RouteConfig`](/api/index/interfaces/routeconfig/)\<`TBindings`\>
 
-Defined in: [src/core/health.ts:76](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/health.ts#L76)
+Defined in: [src/core/health.ts:76](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/health.ts#L76)
 
 Create a health check route for liveness and upstream probing.
 
@@ -19,6 +19,12 @@ requests (5s timeout each) and reports aggregate status:
 - `"degraded"` — some probes failed
 - `"unhealthy"` — all probes failed (returns 503)
 
+## Type Parameters
+
+### TBindings
+
+`TBindings` = `Record`\<`string`, `unknown`\>
+
 ## Parameters
 
 ### config?
@@ -29,7 +35,7 @@ Endpoint path, upstream probe URLs, and status detail toggle. All fields optiona
 
 ## Returns
 
-[`RouteConfig`](/api/index/interfaces/routeconfig/)
+[`RouteConfig`](/api/index/interfaces/routeconfig/)\<`TBindings`\>
 
 A [RouteConfig](/api/index/interfaces/routeconfig/) for a GET health endpoint.
 

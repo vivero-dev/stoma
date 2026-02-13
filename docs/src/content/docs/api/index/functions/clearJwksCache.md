@@ -7,7 +7,7 @@ title: "clearJwksCache"
 
 > **clearJwksCache**(): `void`
 
-Defined in: [src/policies/auth/crypto.ts:111](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/crypto.ts#L111)
+Defined in: [src/policies/auth/crypto.ts:136](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/auth/crypto.ts#L136)
 
 Clear the unified JWKS cache. Exported for testing.
 

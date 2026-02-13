@@ -1,0 +1,598 @@
+---
+title: Common Policy Patterns
+sidebar:
+  order: 2
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import EditorLink from "../../../components/EditorLink.astro";
+
+export const PATTERN1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface ApiVersionConfig extends PolicyConfig {
+  requiredVersion?: string;
+  headerName?: string;
+}
+
+const apiVersionGate = definePolicy<ApiVersionConfig>({
+  name: "api-version-gate",
+  priority: Priority.AUTH,
+  defaults: { requiredVersion: "2024", headerName: "x-api-version" },
+  handler: async (c, next, { config, debug }) => {
+    const version = c.req.header(config.headerName!);
+    if (version !== config.requiredVersion) {
+      debug("rejected version: %s (required: %s)", version ?? "none", config.requiredVersion);
+      throw new GatewayError(400, "invalid_version", \`API version \${config.requiredVersion} required\`);
+    }
+    debug("accepted version: %s", version);
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "version-gate-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/versioned",
+        methods: ["GET"],
+        pipeline: {
+          policies: [apiVersionGate()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "API v2024 response" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const PATTERN2_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+
+const correlationId = definePolicy({
+  name: "correlation-id",
+  priority: Priority.EARLY,
+  handler: async (c, next, { debug }) => {
+    const id = c.req.header("x-correlation-id") ?? crypto.randomUUID();
+    debug("correlation-id: %s", id);
+    c.req.raw.headers.set("x-correlation-id", id);
+    await next();
+    c.res.headers.set("x-correlation-id", id);
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "correlation-id-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/hello",
+        methods: ["GET"],
+        pipeline: {
+          policies: [correlationId()],
+          upstream: {
+            type: "handler",
+            handler: (c) =>
+              c.json({
+                message: "Hello!",
+                echoedCorrelationId: c.req.header("x-correlation-id"),
+              }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const PATTERN3_CODE = `import { createGateway, definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
+
+const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+    const contentType = c.res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) return;
+
+    const original = await c.res.json();
+    const ctx = getGatewayContext(c);
+    const wrapped = {
+      data: original,
+      meta: { requestId: ctx?.requestId },
+    };
+    debug("wrapped response with envelope");
+    c.res = new Response(JSON.stringify(wrapped), {
+      status: c.res.status,
+      headers: c.res.headers,
+    });
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "json-envelope-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/users",
+        methods: ["GET"],
+        pipeline: {
+          policies: [jsonEnvelope()],
+          upstream: {
+            type: "handler",
+            handler: (c) =>
+              c.json([
+                { id: 1, name: "Alice" },
+                { id: 2, name: "Bob" },
+              ]),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const PATTERN4_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface MaintenanceConfig extends PolicyConfig {
+  enabled?: boolean;
+  message?: string;
+  retryAfter?: number;
+}
+
+const maintenanceMode = definePolicy<MaintenanceConfig>({
+  name: "maintenance-mode",
+  priority: Priority.EARLY,
+  defaults: { enabled: false, message: "Service under maintenance", retryAfter: 300 },
+  handler: async (c, next, { config, debug }) => {
+    if (config.enabled) {
+      debug("maintenance mode active, returning 503");
+      throw new GatewayError(503, "maintenance", config.message!, {
+        "retry-after": String(config.retryAfter),
+      });
+    }
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "maintenance-mode-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/status",
+        methods: ["GET"],
+        pipeline: {
+          policies: [maintenanceMode({ enabled: true, retryAfter: 600 })],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ status: "operational" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const PATTERN5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface TokenAuthConfig extends PolicyConfig {
+  tokens: Record<string, { userId: string; role: string }>;
+}
+
+const tokenAuth = definePolicy<TokenAuthConfig>({
+  name: "token-auth",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    const token = c.req.header("authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new GatewayError(401, "unauthorized", "Missing authorization header");
+    }
+    const claims = config.tokens[token];
+    if (!claims) {
+      debug("rejected unknown token");
+      throw new GatewayError(401, "unauthorized", "Invalid token");
+    }
+    c.req.raw.headers.set("x-user-id", claims.userId);
+    c.req.raw.headers.set("x-user-role", claims.role);
+    debug("authenticated user %s with role %s", claims.userId, claims.role);
+    await next();
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "token-auth-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/protected",
+        methods: ["GET"],
+        pipeline: {
+          policies: [
+            tokenAuth({
+              tokens: {
+                "demo-token-abc": { userId: "user-1", role: "admin" },
+                "demo-token-xyz": { userId: "user-2", role: "viewer" },
+              },
+            }),
+          ],
+          upstream: {
+            type: "handler",
+            handler: (c) =>
+              c.json({
+                message: "Authenticated!",
+                userId: c.req.header("x-user-id"),
+                role: c.req.header("x-user-role"),
+              }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+export const PATTERN6_CODE = `import { createGateway } from "@homegrower-club/stoma";
+import type { Policy } from "@homegrower-club/stoma";
+
+function poweredByPolicy(): Policy {
+  return {
+    name: "powered-by",
+    priority: 93,
+    handler: async (c, next) => {
+      await next();
+      c.res.headers.set("x-powered-by", "Stoma");
+    },
+  };
+}
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "hono-middleware-demo",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/hello",
+        methods: ["GET"],
+        pipeline: {
+          policies: [poweredByPolicy()],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({ message: "Check the response headers" }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+This page covers six recurring patterns you will encounter when writing custom
+policies with Stoma's `definePolicy()` SDK. Each pattern includes a standalone
+example and an editor link so you can run it immediately.
+
+<Aside type="tip" title="Prerequisites">
+These patterns assume familiarity with the Policy SDK basics covered in
+[Custom Policies](/policies/custom-policies/). If you have not read that page
+yet, start there first.
+</Aside>
+
+---
+
+## Request Validation
+
+Reject requests early when a required header or value is missing. This is useful
+for API version gates, content-type enforcement, or any precondition that must
+hold before further processing.
+
+The policy below requires an `x-api-version: 2024` header on every request.
+Requests without it receive a structured 400 error.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface ApiVersionConfig extends PolicyConfig {
+  requiredVersion?: string;
+  headerName?: string;
+}
+
+const apiVersionGate = definePolicy<ApiVersionConfig>({
+  name: "api-version-gate",
+  priority: Priority.AUTH,
+  defaults: { requiredVersion: "2024", headerName: "x-api-version" },
+  handler: async (c, next, { config, debug }) => {
+    const version = c.req.header(config.headerName!);
+    if (version !== config.requiredVersion) {
+      debug("rejected version: %s (required: %s)", version ?? "none", config.requiredVersion);
+      throw new GatewayError(400, "invalid_version", `API version ${config.requiredVersion} required`);
+    }
+    debug("accepted version: %s", version);
+    await next();
+  },
+});
+```
+
+**How it works:** The handler reads the header before calling `next()`. If the
+value does not match, it throws a `GatewayError` which short-circuits the
+pipeline and returns a structured JSON error response. The `defaults` object
+means callers can instantiate the policy with `apiVersionGate()` and get
+sensible behavior out of the box, or override with
+`apiVersionGate({ requiredVersion: "2025" })`.
+
+<EditorLink code={PATTERN1_CODE} label="Try request validation in the editor" title="Pattern: Request Validation" />
+
+---
+
+## Header Injection
+
+Add or propagate headers across the request/response boundary. This pattern
+uses the `await next()` boundary to operate on both the request (before `next`)
+and the response (after `next`).
+
+The policy below ensures every request carries an `x-correlation-id`. If the
+client did not send one, a UUID is generated. The same value is echoed back on
+the response so clients can correlate requests with logs.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+
+const correlationId = definePolicy({
+  name: "correlation-id",
+  priority: Priority.EARLY,
+  handler: async (c, next, { debug }) => {
+    const id = c.req.header("x-correlation-id") ?? crypto.randomUUID();
+    debug("correlation-id: %s", id);
+
+    // Make available to downstream policies and upstream
+    c.req.raw.headers.set("x-correlation-id", id);
+
+    await next();
+
+    // Echo back on response
+    c.res.headers.set("x-correlation-id", id);
+  },
+});
+```
+
+**How it works:** Everything before `await next()` runs during the request
+phase -- downstream policies and the upstream handler can read the injected
+header. Everything after `await next()` runs during the response phase, after
+the upstream has produced a response. This pre/post split is the fundamental
+Hono middleware pattern and works identically in Stoma policies.
+
+<Aside type="note">
+`Priority.EARLY` (5) ensures this policy runs before authentication and rate
+limiting, so the correlation ID is available to all downstream policies for
+logging and debugging.
+</Aside>
+
+<EditorLink code={PATTERN2_CODE} label="Try header injection in the editor" title="Pattern: Header Injection" />
+
+---
+
+## Response Modification
+
+Transform or wrap the upstream response after it has been produced. This runs
+in the response phase (after `await next()`) and replaces `c.res` with a new
+`Response` object.
+
+The policy below wraps every JSON response in a `{ data, meta }` envelope,
+injecting the gateway request ID into the metadata.
+
+```typescript
+import { definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
+
+const jsonEnvelope = definePolicy({
+  name: "json-envelope",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+
+    const contentType = c.res.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) return;
+
+    const original = await c.res.json();
+    const ctx = getGatewayContext(c);
+    const wrapped = {
+      data: original,
+      meta: { requestId: ctx?.requestId },
+    };
+    debug("wrapped response with envelope");
+    c.res = new Response(JSON.stringify(wrapped), {
+      status: c.res.status,
+      headers: c.res.headers,
+    });
+  },
+});
+```
+
+**How it works:** After `next()` completes, the policy reads the original JSON
+body, wraps it, and assigns a new `Response` to `c.res`. The content-type
+check ensures non-JSON responses (HTML error pages, binary data) pass through
+untouched. `getGatewayContext(c)` provides the request ID from the gateway
+context injector -- it returns `undefined` when running outside a gateway, so
+the optional chain handles that gracefully.
+
+<Aside type="caution">
+Response modification consumes the original response body. If another policy
+downstream also needs to read the body, you must re-create the `Response` with
+the same content, as shown above.
+</Aside>
+
+<EditorLink code={PATTERN3_CODE} label="Try response modification in the editor" title="Pattern: Response Modification" />
+
+---
+
+## Conditional Short-Circuit
+
+Return a response immediately without calling `next()`, preventing the rest of
+the pipeline and the upstream from executing. This is the standard way to
+implement maintenance modes, feature flags, or emergency kill switches.
+
+The policy below returns a 503 with a `Retry-After` header when maintenance
+mode is enabled.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface MaintenanceConfig extends PolicyConfig {
+  enabled?: boolean;
+  message?: string;
+  retryAfter?: number;
+}
+
+const maintenanceMode = definePolicy<MaintenanceConfig>({
+  name: "maintenance-mode",
+  priority: Priority.EARLY,
+  defaults: { enabled: false, message: "Service under maintenance", retryAfter: 300 },
+  handler: async (c, next, { config, debug }) => {
+    if (config.enabled) {
+      debug("maintenance mode active, returning 503");
+      throw new GatewayError(503, "maintenance", config.message!, {
+        "retry-after": String(config.retryAfter),
+      });
+    }
+    await next();
+  },
+});
+```
+
+**How it works:** When `config.enabled` is `true`, the handler throws a
+`GatewayError` with a 503 status and custom headers. The gateway's error
+handler converts this into a structured JSON response with the `Retry-After`
+header included. Because `next()` is never called, no downstream policies or
+the upstream handler execute. When maintenance mode is off, the policy calls
+`next()` and becomes transparent.
+
+<Aside type="tip">
+In production, you would typically read the `enabled` flag from a KV store or
+environment variable rather than hardcoding it. The policy config is evaluated
+at construction time, so for dynamic flags you can wrap the factory call or use
+a `skip` function.
+</Aside>
+
+<EditorLink code={PATTERN4_CODE} label="Try conditional short-circuit in the editor" title="Pattern: Conditional Short-Circuit" />
+
+---
+
+## Custom Authentication
+
+Validate credentials and forward identity claims to the upstream via headers.
+This pattern combines early rejection (short-circuit on failure) with header
+injection (forwarding claims on success).
+
+The policy below validates bearer tokens against a static lookup table and
+sets `x-user-id` and `x-user-role` headers for the upstream to consume.
+
+```typescript
+import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface TokenAuthConfig extends PolicyConfig {
+  tokens: Record<string, { userId: string; role: string }>;
+}
+
+const tokenAuth = definePolicy<TokenAuthConfig>({
+  name: "token-auth",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    const token = c.req.header("authorization")?.replace("Bearer ", "");
+    if (!token) {
+      throw new GatewayError(401, "unauthorized", "Missing authorization header");
+    }
+
+    const claims = config.tokens[token];
+    if (!claims) {
+      debug("rejected unknown token");
+      throw new GatewayError(401, "unauthorized", "Invalid token");
+    }
+
+    // Forward claims as headers to upstream
+    c.req.raw.headers.set("x-user-id", claims.userId);
+    c.req.raw.headers.set("x-user-role", claims.role);
+    debug("authenticated user %s with role %s", claims.userId, claims.role);
+    await next();
+  },
+});
+```
+
+**How it works:** The handler extracts the bearer token, looks it up in the
+configured map, and either rejects with a 401 or injects identity headers and
+calls `next()`. Using `Priority.AUTH` (10) ensures this runs before rate
+limiting and caching, so unauthenticated requests are rejected as early as
+possible. In a real system, you would replace the static token map with a
+database lookup, JWT verification, or an external identity provider call.
+
+<EditorLink code={PATTERN5_CODE} label="Try custom authentication in the editor" title="Pattern: Custom Authentication" />
+
+---
+
+## Wrapping Hono Middleware
+
+Any existing Hono middleware can become a Stoma policy by wrapping it in an
+object with `name` and `priority`. This lets you reuse the entire Hono
+middleware ecosystem without rewriting anything.
+
+```typescript
+import type { Policy } from "@homegrower-club/stoma";
+
+function poweredByPolicy(): Policy {
+  return {
+    name: "powered-by",
+    priority: 93,
+    handler: async (c, next) => {
+      await next();
+      c.res.headers.set("x-powered-by", "Stoma");
+    },
+  };
+}
+```
+
+**How it works:** A `Policy` is just `{ name, priority, handler }` where
+`handler` is a standard Hono `MiddlewareHandler`. You can wrap any existing
+middleware -- whether from `hono/compress`, a third-party package, or your own
+codebase -- by returning it as the `handler` field. The `name` is used for
+deduplication when merging global and route-level policies, and `priority`
+controls where in the pipeline it executes.
+
+<Aside type="note">
+When wrapping third-party middleware, choose a priority that matches its
+function. For example, a compression middleware belongs near
+`Priority.RESPONSE_TRANSFORM` (92), while a request logger belongs at
+`Priority.OBSERVABILITY` (0).
+</Aside>
+
+<EditorLink code={PATTERN6_CODE} label="Try Hono middleware wrapping in the editor" title="Pattern: Wrapping Hono Middleware" />
+
+---
+
+## Summary
+
+| Pattern | Priority | Key technique |
+|---------|----------|---------------|
+| Request validation | `AUTH` (10) | Check before `next()`, throw `GatewayError` on failure |
+| Header injection | `EARLY` (5) | Set headers before and after `next()` |
+| Response modification | `RESPONSE_TRANSFORM` (92) | Read and replace `c.res` after `next()` |
+| Conditional short-circuit | `EARLY` (5) | Throw `GatewayError` without calling `next()` |
+| Custom authentication | `AUTH` (10) | Validate credentials, inject identity headers |
+| Wrapping Hono middleware | Varies | Return `{ name, priority, handler }` object |
+
+These patterns compose naturally. A real gateway route might combine a
+correlation ID policy, token authentication, request validation, and a
+response envelope -- each running at its own priority level in the pipeline.
+See the [Recipes](/recipes/) section for complete gateway configurations that
+combine multiple patterns.

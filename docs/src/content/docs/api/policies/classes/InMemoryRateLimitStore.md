@@ -5,7 +5,7 @@ prev: false
 title: "InMemoryRateLimitStore"
 ---
 
-Defined in: [src/policies/traffic/rate-limit.ts:45](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L45)
+Defined in: [src/policies/traffic/rate-limit.ts:56](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L56)
 
 Sliding-window rate limiting with pluggable counter storage (priority 20).
 
@@ -19,7 +19,7 @@ Sliding-window rate limiting with pluggable counter storage (priority 20).
 
 > **new InMemoryRateLimitStore**(`options?`): `InMemoryRateLimitStore`
 
-Defined in: [src/policies/traffic/rate-limit.ts:52](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L52)
+Defined in: [src/policies/traffic/rate-limit.ts:63](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L63)
 
 #### Parameters
 
@@ -37,7 +37,7 @@ Defined in: [src/policies/traffic/rate-limit.ts:52](https://github.com/HomeGrowe
 
 > **destroy**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:106](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L106)
+Defined in: [src/policies/traffic/rate-limit.ts:123](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L123)
 
 Stop the cleanup interval (for testing)
 
@@ -55,7 +55,7 @@ Stop the cleanup interval (for testing)
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [src/policies/traffic/rate-limit.ts:69](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L69)
+Defined in: [src/policies/traffic/rate-limit.ts:83](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L83)
 
 Increment the counter for a key, returning the new count and TTL
 
@@ -83,7 +83,7 @@ Increment the counter for a key, returning the new count and TTL
 
 > **reset**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:114](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/rate-limit.ts#L114)
+Defined in: [src/policies/traffic/rate-limit.ts:131](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/rate-limit.ts#L131)
 
 Reset all counters (for testing)
 

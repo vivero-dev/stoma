@@ -5,7 +5,7 @@ prev: false
 title: "IpFilterConfig"
 ---
 
-Defined in: [src/policies/traffic/ip-filter.ts:12](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ip-filter.ts#L12)
+Defined in: [src/policies/traffic/ip-filter.ts:13](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/ip-filter.ts#L13)
 
 Configuration for the ipFilter policy.
 
@@ -19,7 +19,7 @@ Configuration for the ipFilter policy.
 
 > `optional` **allow**: `string`[]
 
-Defined in: [src/policies/traffic/ip-filter.ts:14](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ip-filter.ts#L14)
+Defined in: [src/policies/traffic/ip-filter.ts:15](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/ip-filter.ts#L15)
 
 IPs or CIDR ranges to allow (allowlist mode).
 
@@ -29,7 +29,7 @@ IPs or CIDR ranges to allow (allowlist mode).
 
 > `optional` **deny**: `string`[]
 
-Defined in: [src/policies/traffic/ip-filter.ts:16](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ip-filter.ts#L16)
+Defined in: [src/policies/traffic/ip-filter.ts:17](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/ip-filter.ts#L17)
 
 IPs or CIDR ranges to deny (denylist mode).
 
@@ -39,7 +39,7 @@ IPs or CIDR ranges to deny (denylist mode).
 
 > `optional` **ipHeaders**: `string`[]
 
-Defined in: [src/policies/traffic/ip-filter.ts:20](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ip-filter.ts#L20)
+Defined in: [src/policies/traffic/ip-filter.ts:21](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/ip-filter.ts#L21)
 
 Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-ip", "x-forwarded-for"]`.
 
@@ -49,7 +49,7 @@ Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-
 
 > `optional` **mode**: `"allow"` \| `"deny"`
 
-Defined in: [src/policies/traffic/ip-filter.ts:18](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ip-filter.ts#L18)
+Defined in: [src/policies/traffic/ip-filter.ts:19](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/traffic/ip-filter.ts#L19)
 
 Filter mode. Default: "deny".
 
@@ -59,7 +59,7 @@ Filter mode. Default: "deny".
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

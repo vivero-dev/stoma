@@ -1,0 +1,442 @@
+---
+title: Cross-Policy Communication
+sidebar:
+  order: 5
+---
+
+import { Aside } from "@astrojs/starlight/components";
+import EditorLink from "../../../components/EditorLink.astro";
+
+Policies in Stoma run as Hono middleware in priority order. They share data
+through Hono's built-in context -- `c.set(key, value)` to write and
+`c.get(key)` to read. Because the pipeline is sequential, earlier policies
+(lower priority numbers) can set values that later policies depend on.
+
+This page covers the patterns and APIs for cross-policy communication:
+context sharing, debug headers, and policy tracing.
+
+## Hono context as shared state
+
+Every policy handler receives the Hono `Context` object as its first argument.
+The context acts as a per-request key-value store:
+
+```typescript
+// Auth policy (priority 10) -- sets user info
+c.set("userId", claims.sub);
+c.set("userRole", claims.role);
+
+// Rate limit policy (priority 20) -- reads user info for per-user limiting
+const userId = c.get("userId") as string | undefined;
+const key = userId ?? c.req.header("x-forwarded-for") ?? "anonymous";
+```
+
+Values set with `c.set()` are available to every handler that runs after,
+including the upstream handler itself. The upstream can read context values
+with `c.get()` just like any policy.
+
+<Aside type="caution">
+Hono context values are untyped by default. Always use `as Type | undefined`
+when reading values and handle the `undefined` case -- the policy that sets
+the value might be disabled, skipped, or not present on every route.
+</Aside>
+
+## Built-in context keys
+
+Stoma sets several context keys automatically. The `"gateway"` key is always
+available and contains the `PolicyContext` with request metadata, the debug
+logger factory, and the adapter. Access it via `getGatewayContext()`:
+
+```typescript
+import { getGatewayContext } from "@homegrower-club/stoma";
+
+const ctx = getGatewayContext(c);
+// ctx.requestId  -- unique ID for this request
+// ctx.startTime  -- high-resolution start timestamp
+// ctx.gatewayName -- from GatewayConfig.name
+// ctx.routePath  -- matched route path
+// ctx.traceId    -- W3C trace context trace ID
+// ctx.spanId     -- W3C trace context span ID
+// ctx.adapter    -- GatewayAdapter with stores
+// ctx.debug      -- debug logger factory
+```
+
+The full set of built-in context keys:
+
+| Key | Set by | Read by | Purpose |
+|---|---|---|---|
+| `"gateway"` | `createContextInjector()` | All policies | `PolicyContext` with requestId, startTime, adapter, etc. |
+| `"_proxyRequest"` | `createUrlUpstream()` | `retry` | Cloned proxy request for retry re-issue |
+| `"_timeoutSignal"` | `timeout` policy | `createUrlUpstream()` | `AbortSignal` for cancelling in-flight fetch |
+
+<Aside type="note">
+Keys prefixed with `_` are internal implementation details. Do not read or
+write them in custom policies -- their shape and presence may change between
+versions.
+</Aside>
+
+## Pattern: Auth to downstream policies
+
+The most common cross-policy pattern is an auth policy that extracts user
+identity and a downstream policy that consumes it. Here two custom policies
+work together -- `simpleAuth` validates a token and sets user context,
+`userInfo` reads it and adds response headers:
+
+export const AUTH_DOWNSTREAM_CODE = `import {
+  createGateway,
+  definePolicy,
+  Priority,
+  GatewayError,
+} from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+interface SimpleAuthConfig extends PolicyConfig {
+  tokens: Record<string, { userId: string; plan: string }>;
+}
+
+const simpleAuth = definePolicy<SimpleAuthConfig>({
+  name: "simple-auth",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    const token = c.req.header("authorization")?.replace("Bearer ", "");
+    if (!token || !config.tokens[token]) {
+      throw new GatewayError(401, "unauthorized", "Invalid token");
+    }
+    const user = config.tokens[token];
+    c.set("userId", user.userId);
+    c.set("userPlan", user.plan);
+    debug("authenticated user %s (plan: %s)", user.userId, user.plan);
+    await next();
+  },
+});
+
+const userInfo = definePolicy({
+  name: "user-info",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+    const userId = c.get("userId") as string | undefined;
+    const plan = c.get("userPlan") as string | undefined;
+    if (userId) {
+      c.res.headers.set("x-user-id", userId);
+      c.res.headers.set("x-user-plan", plan ?? "unknown");
+      debug("added user headers for %s", userId);
+    }
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    debug: true,
+    routes: [
+      {
+        path: "/profile",
+        methods: ["GET"],
+        pipeline: {
+          policies: [
+            simpleAuth({
+              tokens: {
+                "token-alice": { userId: "alice", plan: "pro" },
+                "token-bob": { userId: "bob", plan: "free" },
+              },
+            }),
+            userInfo(),
+          ],
+          upstream: {
+            type: "handler",
+            handler: (c) => c.json({
+              message: "Welcome!",
+              userId: c.get("userId"),
+              plan: c.get("userPlan"),
+            }),
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+```typescript
+import {
+  createGateway,
+  definePolicy,
+  Priority,
+  GatewayError,
+} from "@homegrower-club/stoma";
+import type { PolicyConfig } from "@homegrower-club/stoma";
+
+// Auth policy -- validates token and sets user context
+interface SimpleAuthConfig extends PolicyConfig {
+  tokens: Record<string, { userId: string; plan: string }>;
+}
+
+const simpleAuth = definePolicy<SimpleAuthConfig>({
+  name: "simple-auth",
+  priority: Priority.AUTH,
+  handler: async (c, next, { config, debug }) => {
+    const token = c.req.header("authorization")?.replace("Bearer ", "");
+    if (!token || !config.tokens[token]) {
+      throw new GatewayError(401, "unauthorized", "Invalid token");
+    }
+    const user = config.tokens[token];
+    c.set("userId", user.userId);
+    c.set("userPlan", user.plan);
+    debug("authenticated user %s (plan: %s)", user.userId, user.plan);
+    await next();
+  },
+});
+
+// Response transform -- reads auth context, adds headers
+const userInfo = definePolicy({
+  name: "user-info",
+  priority: Priority.RESPONSE_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    await next();
+    const userId = c.get("userId") as string | undefined;
+    const plan = c.get("userPlan") as string | undefined;
+    if (userId) {
+      c.res.headers.set("x-user-id", userId);
+      c.res.headers.set("x-user-plan", plan ?? "unknown");
+      debug("added user headers for %s", userId);
+    }
+  },
+});
+```
+
+The `simpleAuth` policy runs at `Priority.AUTH` (10) and sets `"userId"` and
+`"userPlan"` on the context. The `userInfo` policy runs at
+`Priority.RESPONSE_TRANSFORM` (92) -- after the upstream returns -- and reads
+those values to add response headers. The upstream handler itself also reads
+the context values directly.
+
+<EditorLink code={AUTH_DOWNSTREAM_CODE} label="Try auth to response pattern" title="Cross-Policy: Auth Context" />
+
+<Aside type="tip">
+Send a request with the header `Authorization: Bearer token-alice` to see the
+auth context flow through. Without a valid token, the auth policy
+short-circuits with a 401 before any downstream policy runs.
+</Aside>
+
+## Pattern: Debug headers
+
+Stoma supports **client-requested debug headers** -- a mechanism where the
+client asks for specific debug data and policies contribute values that appear
+as response headers.
+
+Two SDK functions power this:
+
+- **`setDebugHeader(c, name, value)`** -- Store a debug value. Only takes
+  effect when the client requested that specific header name (or `*`).
+  When debug headers are not active, this is a no-op with a single Map lookup.
+- **`isDebugRequested(c)`** -- Returns `true` when the client sent a valid
+  `x-stoma-debug` request header. Useful for conditional debug logic.
+
+Both are available from `@homegrower-club/stoma/sdk`. `setDebugHeader` is
+also re-exported from the main `@homegrower-club/stoma` entry point.
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { setDebugHeader, isDebugRequested } from "@homegrower-club/stoma/sdk";
+
+const debuggablePolicy = definePolicy({
+  name: "debuggable",
+  priority: Priority.REQUEST_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    const startTime = Date.now();
+
+    await next();
+
+    const elapsed = Date.now() - startTime;
+    setDebugHeader(c, "x-stoma-debuggable-time", elapsed);
+
+    if (isDebugRequested(c)) {
+      debug("debug mode active -- added timing header");
+    }
+  },
+});
+```
+
+Debug headers require `debugHeaders: true` on the gateway config. Without it,
+`setDebugHeader` calls are silently ignored.
+
+export const DEBUG_HEADERS_CODE = `import {
+  createGateway,
+  definePolicy,
+  Priority,
+  requestLog,
+  cors,
+  setDebugHeader,
+} from "@homegrower-club/stoma";
+
+const timingPolicy = definePolicy({
+  name: "timing",
+  priority: Priority.REQUEST_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    setDebugHeader(c, "x-stoma-upstream-time", ms);
+    debug("upstream took %dms", ms);
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    debug: true,
+    debugHeaders: true,
+    policies: [requestLog(), cors()],
+    routes: [
+      {
+        path: "/debug-me",
+        methods: ["GET"],
+        pipeline: {
+          policies: [timingPolicy()],
+          upstream: {
+            type: "handler",
+            handler: async (c) => {
+              await new Promise(r => setTimeout(r, 50));
+              return c.json({ message: "Check the response headers!" });
+            },
+          },
+        },
+      },
+    ],
+  });
+}`;
+
+Here is a full gateway that enables debug headers and includes a custom timing
+policy:
+
+```typescript
+import {
+  createGateway,
+  definePolicy,
+  Priority,
+  requestLog,
+  cors,
+  setDebugHeader,
+} from "@homegrower-club/stoma";
+
+const timingPolicy = definePolicy({
+  name: "timing",
+  priority: Priority.REQUEST_TRANSFORM,
+  handler: async (c, next, { debug }) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    setDebugHeader(c, "x-stoma-upstream-time", ms);
+    debug("upstream took %dms", ms);
+  },
+});
+
+export async function createPlaygroundGateway() {
+  return createGateway({
+    name: "tutorial",
+    basePath: "/api",
+    debug: true,
+    debugHeaders: true,
+    policies: [requestLog(), cors()],
+    routes: [
+      {
+        path: "/debug-me",
+        methods: ["GET"],
+        pipeline: {
+          policies: [timingPolicy()],
+          upstream: {
+            type: "handler",
+            handler: async (c) => {
+              await new Promise((r) => setTimeout(r, 50));
+              return c.json({ message: "Check the response headers!" });
+            },
+          },
+        },
+      },
+    ],
+  });
+}
+```
+
+<EditorLink code={DEBUG_HEADERS_CODE} label="Try debug headers" title="Cross-Policy: Debug Headers" />
+
+<Aside type="tip">
+Add the request header `x-stoma-debug: *` to see all debug headers in the
+response. You can also request specific headers:
+`x-stoma-debug: x-stoma-upstream-time`.
+</Aside>
+
+## Pattern: Policy trace
+
+When a client sends `x-stoma-debug: trace`, Stoma activates its trace system.
+The pipeline automatically records baseline data for every policy (name,
+priority, duration, whether it called `next()`). Policies can opt in to
+richer tracing by calling the `trace` reporter provided by `definePolicy`:
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma";
+
+const myPolicy = definePolicy({
+  name: "my-policy",
+  priority: Priority.AUTH,
+  handler: async (c, next, { trace, debug }) => {
+    // Record what this policy decided
+    trace("allowed", { reason: "valid-token", userId: "alice" });
+    await next();
+  },
+});
+```
+
+The `trace` function accepts an action string and an optional data object.
+When tracing is not active, it is a no-op constant with zero overhead -- no
+allocations, no Map lookups.
+
+Trace data is collected across all policies and emitted as a structured JSON
+payload in the `x-stoma-trace` response header. Each entry includes:
+
+- **Baseline** (automatic): policy name, priority, duration in milliseconds,
+  whether `next()` was called, and any error message.
+- **Detail** (opt-in): the action string and data object from `trace()`.
+
+See [Distributed Tracing](/concepts/tracing/) for the full tracing
+configuration, sampling, and the `TracingConfig` reference.
+
+## Best practices
+
+- **Namespace context keys.** Use descriptive, unique keys like
+  `"myapp:userId"` to avoid collisions with built-in keys or other policies.
+  Stoma reserves the `"gateway"` key and all keys prefixed with `_stoma`.
+
+- **Document reads and writes.** When building a policy that sets or reads
+  context keys, document them in the policy's JSDoc or README so consumers
+  know what to expect.
+
+- **Handle missing values.** Always use `as Type | undefined` when reading
+  context and handle the `undefined` case. The setting policy may not be
+  present on every route.
+
+- **Prefer typed wrappers.** Create helper functions that encapsulate the
+  `c.get()` call and type cast:
+
+  ```typescript
+  function getUserId(c: Context): string | undefined {
+    return c.get("myapp:userId") as string | undefined;
+  }
+  ```
+
+- **Don't mutate context values.** Set new keys rather than mutating objects
+  stored in context. If you need to augment existing data, read, copy, and
+  set a new value.
+
+- **Respect priority ordering.** If policy B reads a value set by policy A,
+  make sure A has a lower priority number than B. Use the `Priority` enum
+  constants to make the ordering explicit.
+
+## Next steps
+
+- [Advanced Techniques](/policy-authoring/advanced-techniques/) -- response
+  body transformation, policy composition, and conditional pipelines.
+- [Custom Policies Reference](/policies/custom-policies/) -- full SDK
+  reference including `definePolicy`, `resolveConfig`, `policyDebug`,
+  `withSkip`, and the test harness.

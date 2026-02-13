@@ -5,10 +5,19 @@ prev: false
 title: "ServiceBindingUpstream"
 ---
 
-Defined in: [src/core/types.ts:153](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L153)
+Defined in: [src/core/types.ts:200](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L200)
 
 Forward to another Cloudflare Worker via a Service Binding.
 The binding must be configured in the consumer's `wrangler.toml`.
+
+## Type Parameters
+
+### TBindings
+
+`TBindings` = `Record`\<`string`, `unknown`\>
+
+Worker bindings type. When provided, `service`
+  autocompletes to valid binding names from your Env interface.
 
 ## Properties
 
@@ -16,7 +25,7 @@ The binding must be configured in the consumer's `wrangler.toml`.
 
 > `optional` **rewritePath**: (`path`) => `string`
 
-Defined in: [src/core/types.ts:158](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L158)
+Defined in: [src/core/types.ts:205](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L205)
 
 Rewrite the path before forwarding to the bound service.
 
@@ -34,9 +43,9 @@ Rewrite the path before forwarding to the bound service.
 
 ### service
 
-> **service**: `string`
+> **service**: `Extract`\<keyof `TBindings`, `string`\>
 
-Defined in: [src/core/types.ts:156](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L156)
+Defined in: [src/core/types.ts:203](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L203)
 
 Name of the Service Binding in `wrangler.toml` (e.g. `"AUTH_SERVICE"`).
 
@@ -46,4 +55,4 @@ Name of the Service Binding in `wrangler.toml` (e.g. `"AUTH_SERVICE"`).
 
 > **type**: `"service-binding"`
 
-Defined in: [src/core/types.ts:154](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L154)
+Defined in: [src/core/types.ts:201](https://github.com/HomeGrower-club/stoma/blob/4764d83fea90804e5e2c02d8c0ed4153d64e412b/src/core/types.ts#L201)

@@ -8,11 +8,11 @@
  * @module define-policy
  */
 import type { Context, Next } from "hono";
-import type { Policy, PolicyConfig, PolicyContext } from "../types";
-import type { DebugLogger } from "../../utils/debug";
 import { getGatewayContext } from "../../core/pipeline";
+import type { DebugLogger } from "../../utils/debug";
+import type { Policy, PolicyConfig, PolicyContext } from "../types";
+import { policyDebug, resolveConfig, withSkip } from "./helpers";
 import { Priority } from "./priority";
-import { resolveConfig, policyDebug, withSkip } from "./helpers";
 import { policyTrace, type TraceReporter } from "./trace";
 
 /**
@@ -35,9 +35,7 @@ export interface PolicyHandlerContext<TConfig> {
 /**
  * Declarative policy definition passed to {@link definePolicy}.
  */
-export interface PolicyDefinition<
-  TConfig extends PolicyConfig = PolicyConfig,
-> {
+export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
   /** Unique policy name (e.g. `"my-auth"`, `"custom-cache"`). */
   name: string;
   /** Execution priority. Use {@link Priority} constants. Default: `Priority.DEFAULT` (100). */
@@ -59,7 +57,7 @@ export interface PolicyDefinition<
   handler: (
     c: Context,
     next: Next,
-    ctx: PolicyHandlerContext<TConfig>,
+    ctx: PolicyHandlerContext<TConfig>
   ) => Promise<void> | void;
 }
 
@@ -92,15 +90,13 @@ export interface PolicyDefinition<
  * @param definition - Policy name, priority, defaults, and handler.
  * @returns A factory function: `(config?) => Policy`.
  */
-export function definePolicy<
-  TConfig extends PolicyConfig = PolicyConfig,
->(
-  definition: PolicyDefinition<TConfig>,
+export function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(
+  definition: PolicyDefinition<TConfig>
 ): (config?: TConfig) => Policy {
   return (userConfig?: TConfig): Policy => {
     const config = resolveConfig<TConfig>(
       (definition.defaults ?? {}) as Partial<TConfig>,
-      userConfig as Partial<TConfig> | undefined,
+      userConfig as Partial<TConfig> | undefined
     );
 
     // Construction-time validation — fail fast on bad config

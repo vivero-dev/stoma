@@ -5,7 +5,7 @@ prev: false
 title: "OAuth2Config"
 ---
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:13](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L13)
+Defined in: [src/policies/auth/oauth2.ts:13](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L13)
 
 Configuration for the oauth2 policy.
 
@@ -19,7 +19,7 @@ Configuration for the oauth2 policy.
 
 > `optional` **cacheTtlSeconds**: `number`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L33)
+Defined in: [src/policies/auth/oauth2.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L33)
 
 Cache introspection results for this many seconds. Default: 0 (no cache).
 
@@ -29,7 +29,7 @@ Cache introspection results for this many seconds. Default: 0 (no cache).
 
 > `optional` **clientId**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:17](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L17)
+Defined in: [src/policies/auth/oauth2.ts:17](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L17)
 
 Client ID for authenticating with the introspection endpoint.
 
@@ -39,7 +39,7 @@ Client ID for authenticating with the introspection endpoint.
 
 > `optional` **clientSecret**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:19](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L19)
+Defined in: [src/policies/auth/oauth2.ts:19](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L19)
 
 Client secret for authenticating with the introspection endpoint.
 
@@ -49,7 +49,7 @@ Client secret for authenticating with the introspection endpoint.
 
 > `optional` **forwardTokenInfo**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:31](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L31)
+Defined in: [src/policies/auth/oauth2.ts:31](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L31)
 
 Map introspection response fields to request headers. Only applies with introspection.
 
@@ -59,7 +59,7 @@ Map introspection response fields to request headers. Only applies with introspe
 
 > `optional` **headerName**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:25](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L25)
+Defined in: [src/policies/auth/oauth2.ts:25](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L25)
 
 Header name when tokenLocation is "header". Default: "authorization".
 
@@ -69,7 +69,7 @@ Header name when tokenLocation is "header". Default: "authorization".
 
 > `optional` **headerPrefix**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:27](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L27)
+Defined in: [src/policies/auth/oauth2.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L27)
 
 Prefix to strip from header value. Default: "Bearer".
 
@@ -79,7 +79,7 @@ Prefix to strip from header value. Default: "Bearer".
 
 > `optional` **introspectionTimeoutMs**: `number`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:37](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L37)
+Defined in: [src/policies/auth/oauth2.ts:37](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L37)
 
 Introspection endpoint fetch timeout in milliseconds. Default: 5000.
 
@@ -89,7 +89,7 @@ Introspection endpoint fetch timeout in milliseconds. Default: 5000.
 
 > `optional` **introspectionUrl**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:15](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L15)
+Defined in: [src/policies/auth/oauth2.ts:15](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L15)
 
 OAuth2 token introspection endpoint (RFC 7662).
 
@@ -99,7 +99,7 @@ OAuth2 token introspection endpoint (RFC 7662).
 
 > `optional` **localValidate**: (`token`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:21](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L21)
+Defined in: [src/policies/auth/oauth2.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L21)
 
 Local validation function as alternative to introspection. Takes precedence if both provided.
 
@@ -119,7 +119,7 @@ Local validation function as alternative to introspection. Takes precedence if b
 
 > `optional` **queryParam**: `string`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:29](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L29)
+Defined in: [src/policies/auth/oauth2.ts:29](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L29)
 
 Query param name when tokenLocation is "query". Default: "access_token".
 
@@ -129,7 +129,7 @@ Query param name when tokenLocation is "query". Default: "access_token".
 
 > `optional` **requiredScopes**: `string`[]
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:35](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L35)
+Defined in: [src/policies/auth/oauth2.ts:35](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L35)
 
 Required scopes — token must have ALL of these (space-separated scope string).
 
@@ -139,7 +139,7 @@ Required scopes — token must have ALL of these (space-separated scope string).
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 
@@ -163,6 +163,6 @@ Skip this policy when condition returns true
 
 > `optional` **tokenLocation**: `"query"` \| `"header"`
 
-Defined in: [packages/stoma/src/policies/auth/oauth2.ts:23](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/auth/oauth2.ts#L23)
+Defined in: [src/policies/auth/oauth2.ts:23](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/auth/oauth2.ts#L23)
 
 Where to look for the token. Default: "header".

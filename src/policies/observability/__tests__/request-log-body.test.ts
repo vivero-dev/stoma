@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
-import { type LogEntry, requestLog } from "../request-log";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createContextInjector } from "../../../core/pipeline";
+import { type LogEntry, requestLog } from "../request-log";
 
 describe("requestLog — body logging", () => {
   afterEach(() => {
@@ -127,9 +127,7 @@ describe("requestLog — body logging", () => {
 
     app.use("/*", injector);
     app.use("/*", policy.handler);
-    app.get("/test", (c) =>
-      c.json({ user: "alice", token: "secret-jwt" }),
-    );
+    app.get("/test", (c) => c.json({ user: "alice", token: "secret-jwt" }));
 
     await app.request("/test");
 
@@ -159,7 +157,7 @@ describe("requestLog — body logging", () => {
     const entry: LogEntry = sink.mock.calls[0][0];
     expect(typeof entry.requestBody).toBe("string");
     expect((entry.requestBody as string).length).toBeLessThan(100);
-    expect((entry.requestBody as string)).toContain("...[truncated]");
+    expect(entry.requestBody as string).toContain("...[truncated]");
   });
 
   // --- Both request and response ---
@@ -189,7 +187,11 @@ describe("requestLog — body logging", () => {
     const sink = vi.fn();
     const app = new Hono();
     const injector = createContextInjector("test-gw", "/test");
-    const policy = requestLog({ sink, logRequestBody: true, logResponseBody: true });
+    const policy = requestLog({
+      sink,
+      logRequestBody: true,
+      logResponseBody: true,
+    });
 
     app.use("/*", injector);
     app.use("/*", policy.handler);

@@ -16,7 +16,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test", {
@@ -41,7 +41,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test", {
@@ -60,9 +60,8 @@ describe("assignContent", () => {
         response: { gateway: "stoma" },
       }),
       {
-        upstream: async (c) =>
-          c.json({ data: "hello" }),
-      },
+        upstream: async (c) => c.json({ data: "hello" }),
+      }
     );
 
     const res = await request("/test");
@@ -86,7 +85,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/api/users", {
@@ -107,7 +106,7 @@ describe("assignContent", () => {
       }),
       {
         upstream: async (c) => c.json({ ok: true }),
-      },
+      }
     );
 
     const res = await request("/test", { method: "POST" });
@@ -132,7 +131,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test", {
@@ -156,7 +155,7 @@ describe("assignContent", () => {
           receivedRawBody = await c.req.text();
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test", {
@@ -181,7 +180,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     // GET with application/json content-type but no body
@@ -206,7 +205,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ original: true });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -232,7 +231,7 @@ describe("assignContent", () => {
       }),
       {
         upstream: async (c) => c.json({ upstream: true }),
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -259,7 +258,7 @@ describe("assignContent", () => {
           receivedBody = (await c.req.json()) as Record<string, unknown>;
           return c.json({ upstream: true });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -286,7 +285,7 @@ describe("assignContent", () => {
       }),
       {
         upstream: async (c) => c.json({ clean: true }),
-      },
+      }
     );
 
     const res = await request("/test");

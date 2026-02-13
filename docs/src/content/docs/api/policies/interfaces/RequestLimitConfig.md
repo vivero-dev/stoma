@@ -5,7 +5,7 @@ prev: false
 title: "RequestLimitConfig"
 ---
 
-Defined in: [packages/stoma/src/policies/traffic/request-limit.ts:10](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/request-limit.ts#L10)
+Defined in: [src/policies/traffic/request-limit.ts:10](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/request-limit.ts#L10)
 
 Configuration for the requestLimit policy.
 
@@ -19,7 +19,7 @@ Configuration for the requestLimit policy.
 
 > **maxBytes**: `number`
 
-Defined in: [packages/stoma/src/policies/traffic/request-limit.ts:12](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/request-limit.ts#L12)
+Defined in: [src/policies/traffic/request-limit.ts:12](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/request-limit.ts#L12)
 
 Maximum allowed body size in bytes (based on Content-Length).
 
@@ -29,7 +29,7 @@ Maximum allowed body size in bytes (based on Content-Length).
 
 > `optional` **message**: `string`
 
-Defined in: [packages/stoma/src/policies/traffic/request-limit.ts:14](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/request-limit.ts#L14)
+Defined in: [src/policies/traffic/request-limit.ts:14](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/request-limit.ts#L14)
 
 Custom error message. Default: "Request body too large".
 
@@ -39,7 +39,7 @@ Custom error message. Default: "Request body too large".
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 

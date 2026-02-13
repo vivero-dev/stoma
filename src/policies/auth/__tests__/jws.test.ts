@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { jws } from "../jws";
-import type { JwsConfig } from "../jws";
 import { createPolicyTestHarness } from "../../sdk";
+import type { JwsConfig } from "../jws";
+import { jws } from "../jws";
 
 const TEST_SECRET = "super-secret-test-key-that-is-long-enough";
 
@@ -14,7 +14,10 @@ function base64UrlEncodeBytes(data: Uint8Array): string {
   for (let i = 0; i < data.length; i++) {
     binary += String.fromCharCode(data[i]);
   }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 /** Create a JWS compact serialization with HMAC */
@@ -22,7 +25,7 @@ async function createTestJws(
   payload: string,
   secret: string,
   alg: "HS256" | "HS384" | "HS512" = "HS256",
-  options?: { detached?: boolean },
+  options?: { detached?: boolean }
 ): Promise<string> {
   const header = { alg, typ: "JOSE" };
   const encodedHeader = base64UrlEncode(JSON.stringify(header));
@@ -38,12 +41,12 @@ async function createTestJws(
     encoder.encode(secret),
     { name: "HMAC", hash: hashAlg },
     false,
-    ["sign"],
+    ["sign"]
   );
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,
-    encoder.encode(signingInput),
+    encoder.encode(signingInput)
   );
   const encodedSignature = base64UrlEncodeBytes(new Uint8Array(signature));
 
@@ -62,9 +65,7 @@ describe("jws", () => {
     const testPayload = JSON.stringify({ data: "test" });
     const jwsToken = await createTestJws(testPayload, TEST_SECRET);
 
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": jwsToken },
@@ -76,9 +77,7 @@ describe("jws", () => {
     const testPayload = "hello-world";
     const jwsToken = await createTestJws(testPayload, TEST_SECRET, "HS384");
 
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": jwsToken },
@@ -90,9 +89,7 @@ describe("jws", () => {
     const testPayload = "payload-data";
     const jwsToken = await createTestJws(testPayload, TEST_SECRET, "HS512");
 
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": jwsToken },
@@ -115,18 +112,18 @@ describe("jws", () => {
       encoder.encode(TEST_SECRET),
       { name: "HMAC", hash: "SHA-256" },
       false,
-      ["sign"],
+      ["sign"]
     );
     const signature = await crypto.subtle.sign(
       "HMAC",
       key,
-      encoder.encode(signingInput),
+      encoder.encode(signingInput)
     );
     const encodedSignature = base64UrlEncodeBytes(new Uint8Array(signature));
     const detachedJws = `${encodedHeader}..${encodedSignature}`;
 
     const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET, payloadSource: "body" }),
+      jws({ secret: TEST_SECRET, payloadSource: "body" })
     );
 
     const res = await request("/test", {
@@ -156,7 +153,7 @@ describe("jws", () => {
           forwardedPayload = c.req.header("X-Verified-Data") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -181,7 +178,7 @@ describe("jws", () => {
           forwardedPayload = c.req.header("X-JWS-Payload") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -196,7 +193,7 @@ describe("jws", () => {
     const jwsToken = await createTestJws(testPayload, TEST_SECRET);
 
     const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET, headerName: "X-Custom-Sig" }),
+      jws({ secret: TEST_SECRET, headerName: "X-Custom-Sig" })
     );
 
     const res = await request("/test", {
@@ -208,9 +205,7 @@ describe("jws", () => {
   // --- Error handling ---
 
   it("should return 401 when JWS header is missing", async () => {
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test");
     expect(res.status).toBe(401);
@@ -222,12 +217,10 @@ describe("jws", () => {
     const testPayload = "test-data";
     const jwsToken = await createTestJws(
       testPayload,
-      "wrong-secret-completely-different-key",
+      "wrong-secret-completely-different-key"
     );
 
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": jwsToken },
@@ -238,9 +231,7 @@ describe("jws", () => {
   });
 
   it("should return 401 for malformed JWS (not 3 parts)", async () => {
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": "only-two.parts" },
@@ -252,9 +243,7 @@ describe("jws", () => {
   });
 
   it("should return 401 for JWS with invalid header encoding", async () => {
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": "!!!invalid.payload.sig" },
@@ -265,7 +254,9 @@ describe("jws", () => {
   });
 
   it("should throw config error at construction when neither secret nor jwksUrl provided", () => {
-    expect(() => jws({} as JwsConfig)).toThrow("jws requires either 'secret' or 'jwksUrl'");
+    expect(() => jws({} as JwsConfig)).toThrow(
+      "jws requires either 'secret' or 'jwksUrl'"
+    );
   });
 
   it("should return 401 for unsupported algorithm", async () => {
@@ -274,9 +265,7 @@ describe("jws", () => {
     const payload = base64UrlEncode("test");
     const fakeJws = `${header}.${payload}.fakesig`;
 
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": fakeJws },
@@ -294,7 +283,7 @@ describe("jws", () => {
       jws({
         secret: TEST_SECRET,
         skip: () => true,
-      }),
+      })
     );
 
     // No JWS header — should pass because policy is skipped
@@ -311,9 +300,7 @@ describe("jws", () => {
   });
 
   it("should return 401 for JWS with 4 parts", async () => {
-    const { request } = createPolicyTestHarness(
-      jws({ secret: TEST_SECRET }),
-    );
+    const { request } = createPolicyTestHarness(jws({ secret: TEST_SECRET }));
 
     const res = await request("/test", {
       headers: { "X-JWS-Signature": "a.b.c.d" },

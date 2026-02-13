@@ -22,7 +22,7 @@
  * policy first), which is the natural reading order for a waterfall.
  */
 export function toSelfTimes<T extends { durationMs: number }>(
-  timings: T[],
+  timings: T[]
 ): T[] {
   const selfTimes = timings.map((entry, i) => ({
     ...entry,

@@ -4,9 +4,15 @@
  * @module jwt-auth
  */
 import { GatewayError } from "../../core/errors";
-import type { Policy, PolicyConfig } from "../types";
 import { Priority, policyDebug, withSkip } from "../sdk";
-import { base64UrlDecode, base64UrlToBuffer, hmacAlgorithm, rsaAlgorithm, fetchJwks } from "./crypto";
+import type { Policy, PolicyConfig } from "../types";
+import {
+  base64UrlDecode,
+  base64UrlToBuffer,
+  fetchJwks,
+  hmacAlgorithm,
+  rsaAlgorithm,
+} from "./crypto";
 
 export interface JwtAuthConfig extends PolicyConfig {
   /** JWT secret for HMAC verification */
@@ -81,7 +87,11 @@ interface JwtPayload {
  */
 export function jwtAuth(config: JwtAuthConfig): Policy {
   if (!config.secret && !config.jwksUrl) {
-    throw new GatewayError(500, "config_error", "jwtAuth requires either 'secret' or 'jwksUrl'");
+    throw new GatewayError(
+      500,
+      "config_error",
+      "jwtAuth requires either 'secret' or 'jwksUrl'"
+    );
   }
 
   const headerName = config.headerName ?? "authorization";
@@ -92,14 +102,22 @@ export function jwtAuth(config: JwtAuthConfig): Policy {
     const authHeader = c.req.header(headerName);
 
     if (!authHeader) {
-      throw new GatewayError(401, "unauthorized", "Missing authentication token");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "Missing authentication token"
+      );
     }
 
     // Extract token
     let token: string;
     if (tokenPrefix) {
       if (!authHeader.startsWith(`${tokenPrefix} `)) {
-        throw new GatewayError(401, "unauthorized", `Expected ${tokenPrefix} token`);
+        throw new GatewayError(
+          401,
+          "unauthorized",
+          `Expected ${tokenPrefix} token`
+        );
       }
       token = authHeader.slice(tokenPrefix.length + 1);
     } else {
@@ -113,7 +131,11 @@ export function jwtAuth(config: JwtAuthConfig): Policy {
     // Decode (without verifying yet)
     const parts = token.split(".");
     if (parts.length !== 3) {
-      throw new GatewayError(401, "unauthorized", "Malformed JWT: expected 3 parts");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "Malformed JWT: expected 3 parts"
+      );
     }
 
     let header: JwtHeader;
@@ -122,12 +144,20 @@ export function jwtAuth(config: JwtAuthConfig): Policy {
       header = JSON.parse(base64UrlDecode(parts[0]));
       payload = JSON.parse(base64UrlDecode(parts[1]));
     } catch {
-      throw new GatewayError(401, "unauthorized", "Malformed JWT: invalid base64 encoding");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "Malformed JWT: invalid base64 encoding"
+      );
     }
 
     // Block "none" algorithm (case-insensitive to prevent bypass)
     if (header.alg.toLowerCase() === "none") {
-      throw new GatewayError(401, "unauthorized", "JWT algorithm 'none' is not allowed");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "JWT algorithm 'none' is not allowed"
+      );
     }
 
     // Verify signature
@@ -135,8 +165,18 @@ export function jwtAuth(config: JwtAuthConfig): Policy {
       debug(`HMAC verification (alg=${header.alg})`);
       await verifyHmac(config.secret, parts[0], parts[1], parts[2], header.alg);
     } else if (config.jwksUrl) {
-      debug(`JWKS verification (alg=${header.alg}, kid=${header.kid ?? "none"})`);
-      await verifyJwks(config.jwksUrl, parts[0], parts[1], parts[2], header, config.jwksCacheTtlMs, config.jwksTimeoutMs);
+      debug(
+        `JWKS verification (alg=${header.alg}, kid=${header.kid ?? "none"})`
+      );
+      await verifyJwks(
+        config.jwksUrl,
+        parts[0],
+        parts[1],
+        parts[2],
+        header,
+        config.jwksCacheTtlMs,
+        config.jwksTimeoutMs
+      );
     }
 
     // Validate claims
@@ -144,7 +184,11 @@ export function jwtAuth(config: JwtAuthConfig): Policy {
     const skew = config.clockSkewSeconds ?? 0;
 
     if (config.requireExp && payload.exp === undefined) {
-      throw new GatewayError(401, "unauthorized", "JWT must contain an 'exp' claim");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "JWT must contain an 'exp' claim"
+      );
     }
 
     if (payload.exp !== undefined && payload.exp < now - skew) {
@@ -198,11 +242,15 @@ async function verifyHmac(
   headerB64: string,
   payloadB64: string,
   signatureB64: string,
-  alg: string,
+  alg: string
 ): Promise<void> {
   const algorithm = hmacAlgorithm(alg);
   if (!algorithm) {
-    throw new GatewayError(401, "unauthorized", `Unsupported JWT algorithm: ${alg}`);
+    throw new GatewayError(
+      401,
+      "unauthorized",
+      `Unsupported JWT algorithm: ${alg}`
+    );
   }
 
   const encoder = new TextEncoder();
@@ -211,7 +259,7 @@ async function verifyHmac(
     encoder.encode(secret),
     { name: "HMAC", hash: algorithm },
     false,
-    ["verify"],
+    ["verify"]
   );
 
   const data = encoder.encode(`${headerB64}.${payloadB64}`);
@@ -230,11 +278,13 @@ async function verifyJwks(
   signatureB64: string,
   header: JwtHeader,
   cacheTtlMs?: number,
-  timeoutMs?: number,
+  timeoutMs?: number
 ): Promise<void> {
   const keys = await fetchJwks(jwksUrl, cacheTtlMs, timeoutMs);
   const matchingKey = header.kid
-    ? keys.find((k) => (k as unknown as Record<string, unknown>).kid === header.kid)
+    ? keys.find(
+        (k) => (k as unknown as Record<string, unknown>).kid === header.kid
+      )
     : keys[0];
 
   if (!matchingKey) {
@@ -243,7 +293,11 @@ async function verifyJwks(
 
   const algorithm = rsaAlgorithm(header.alg);
   if (!algorithm) {
-    throw new GatewayError(401, "unauthorized", `Unsupported JWT algorithm: ${header.alg}`);
+    throw new GatewayError(
+      401,
+      "unauthorized",
+      `Unsupported JWT algorithm: ${header.alg}`
+    );
   }
 
   const key = await crypto.subtle.importKey(
@@ -251,19 +305,14 @@ async function verifyJwks(
     matchingKey,
     algorithm,
     false,
-    ["verify"],
+    ["verify"]
   );
 
   const encoder = new TextEncoder();
   const data = encoder.encode(`${headerB64}.${payloadB64}`);
   const signature = base64UrlToBuffer(signatureB64);
 
-  const valid = await crypto.subtle.verify(
-    algorithm,
-    key,
-    signature,
-    data,
-  );
+  const valid = await crypto.subtle.verify(algorithm, key, signature, data);
 
   if (!valid) {
     throw new GatewayError(401, "unauthorized", "Invalid JWT signature");

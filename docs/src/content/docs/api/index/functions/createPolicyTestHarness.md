@@ -7,7 +7,7 @@ title: "createPolicyTestHarness"
 
 > **createPolicyTestHarness**(`policy`, `options?`): `object`
 
-Defined in: [packages/stoma/src/policies/sdk/testing.ts:55](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/sdk/testing.ts#L55)
+Defined in: [src/policies/sdk/testing.ts:55](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/sdk/testing.ts#L55)
 
 Create a minimal test app with a single policy, error handling,
 gateway context injection, and a configurable upstream.

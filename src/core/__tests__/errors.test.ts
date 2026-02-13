@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  GatewayError,
-  defaultErrorResponse,
-  errorToResponse,
-} from "../errors";
+import { defaultErrorResponse, errorToResponse, GatewayError } from "../errors";
 
 describe("GatewayError", () => {
   it("should create GatewayError with statusCode, code, message", () => {

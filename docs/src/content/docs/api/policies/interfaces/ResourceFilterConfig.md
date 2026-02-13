@@ -5,7 +5,7 @@ prev: false
 title: "ResourceFilterConfig"
 ---
 
-Defined in: [packages/stoma/src/policies/traffic/resource-filter.ts:13](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/resource-filter.ts#L13)
+Defined in: [src/policies/traffic/resource-filter.ts:13](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/resource-filter.ts#L13)
 
 Configuration for the resourceFilter policy.
 
@@ -19,7 +19,7 @@ Configuration for the resourceFilter policy.
 
 > `optional` **applyToArrayItems**: `boolean`
 
-Defined in: [packages/stoma/src/policies/traffic/resource-filter.ts:21](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/resource-filter.ts#L21)
+Defined in: [src/policies/traffic/resource-filter.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/resource-filter.ts#L21)
 
 Apply filtering to array items. Default: true
 
@@ -29,7 +29,7 @@ Apply filtering to array items. Default: true
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [packages/stoma/src/policies/traffic/resource-filter.ts:19](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/resource-filter.ts#L19)
+Defined in: [src/policies/traffic/resource-filter.ts:19](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/resource-filter.ts#L19)
 
 Content types to filter. Default: ["application/json"]
 
@@ -39,7 +39,7 @@ Content types to filter. Default: ["application/json"]
 
 > **fields**: `string`[]
 
-Defined in: [packages/stoma/src/policies/traffic/resource-filter.ts:17](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/resource-filter.ts#L17)
+Defined in: [src/policies/traffic/resource-filter.ts:17](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/resource-filter.ts#L17)
 
 Field paths to filter. Supports dot-notation (e.g. "user.password")
 
@@ -49,7 +49,7 @@ Field paths to filter. Supports dot-notation (e.g. "user.password")
 
 > **mode**: `"allow"` \| `"deny"`
 
-Defined in: [packages/stoma/src/policies/traffic/resource-filter.ts:15](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/resource-filter.ts#L15)
+Defined in: [src/policies/traffic/resource-filter.ts:15](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/resource-filter.ts#L15)
 
 Filter mode: "deny" removes listed fields, "allow" keeps only listed fields
 
@@ -59,7 +59,7 @@ Filter mode: "deny" removes listed fields, "allow" keeps only listed fields
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 

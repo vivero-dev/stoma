@@ -5,7 +5,7 @@ prev: false
 title: "AdminConfig"
 ---
 
-Defined in: [packages/stoma/src/core/types.ts:182](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L182)
+Defined in: [src/core/types.ts:182](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L182)
 
 Configuration for the admin introspection API.
 
@@ -15,7 +15,7 @@ Configuration for the admin introspection API.
 
 > `optional` **auth**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/core/types.ts:188](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L188)
+Defined in: [src/core/types.ts:188](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L188)
 
 Optional auth check — return `false` to deny access.
 
@@ -35,7 +35,7 @@ Optional auth check — return `false` to deny access.
 
 > **enabled**: `boolean`
 
-Defined in: [packages/stoma/src/core/types.ts:184](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L184)
+Defined in: [src/core/types.ts:184](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L184)
 
 Enable admin routes. Default: `false`.
 
@@ -45,7 +45,7 @@ Enable admin routes. Default: `false`.
 
 > `optional` **metrics**: [`MetricsCollector`](/api/index/interfaces/metricscollector/)
 
-Defined in: [packages/stoma/src/core/types.ts:190](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L190)
+Defined in: [src/core/types.ts:190](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L190)
 
 MetricsCollector instance for the `/metrics` endpoint.
 
@@ -55,6 +55,6 @@ MetricsCollector instance for the `/metrics` endpoint.
 
 > `optional` **prefix**: `string`
 
-Defined in: [packages/stoma/src/core/types.ts:186](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L186)
+Defined in: [src/core/types.ts:186](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L186)
 
 Path prefix for admin routes. Default: `"___gateway"`.

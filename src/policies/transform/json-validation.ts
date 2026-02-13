@@ -7,9 +7,10 @@
  *
  * @module json-validation
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 /** Result shape returned by the user-provided validation function. */
 export interface JsonValidationResult {
@@ -19,7 +20,9 @@ export interface JsonValidationResult {
 
 export interface JsonValidationConfig extends PolicyConfig {
   /** Custom validation function. Takes parsed body, returns validation result. */
-  validate?: (body: unknown) => JsonValidationResult | Promise<JsonValidationResult>;
+  validate?: (
+    body: unknown
+  ) => JsonValidationResult | Promise<JsonValidationResult>;
   /** Content types to validate. Default: ["application/json"] */
   contentTypes?: string[];
   /** HTTP status code on validation failure. Default: 422 */
@@ -66,11 +69,15 @@ export const jsonValidation = definePolicy<JsonValidationConfig>({
   handler: async (c, next, { config, debug }) => {
     const contentType = c.req.header("content-type") ?? "";
     const matchedType = config.contentTypes!.some((ct) =>
-      contentType.includes(ct),
+      contentType.includes(ct)
     );
 
     if (!matchedType) {
-      debug("skipping — content type %s not in %o", contentType, config.contentTypes);
+      debug(
+        "skipping — content type %s not in %o",
+        contentType,
+        config.contentTypes
+      );
       await next();
       return;
     }
@@ -86,7 +93,7 @@ export const jsonValidation = definePolicy<JsonValidationConfig>({
         throw new GatewayError(
           config.rejectStatus!,
           "validation_failed",
-          "Request body is empty",
+          "Request body is empty"
         );
       }
       parsed = JSON.parse(text);
@@ -96,7 +103,7 @@ export const jsonValidation = definePolicy<JsonValidationConfig>({
       throw new GatewayError(
         config.rejectStatus!,
         "validation_failed",
-        "Request body is not valid JSON",
+        "Request body is not valid JSON"
       );
     }
 
@@ -110,11 +117,16 @@ export const jsonValidation = definePolicy<JsonValidationConfig>({
     const result = await config.validate(parsed);
 
     if (!result.valid) {
-      const message = config.errorDetail && result.errors && result.errors.length > 0
-        ? `Validation failed: ${result.errors.join("; ")}`
-        : "Validation failed";
+      const message =
+        config.errorDetail && result.errors && result.errors.length > 0
+          ? `Validation failed: ${result.errors.join("; ")}`
+          : "Validation failed";
       debug("validation failed: %s", message);
-      throw new GatewayError(config.rejectStatus!, "validation_failed", message);
+      throw new GatewayError(
+        config.rejectStatus!,
+        "validation_failed",
+        message
+      );
     }
 
     debug("validation passed");

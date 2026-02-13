@@ -1,10 +1,13 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createGateway } from "../core/gateway";
-import { jwtAuth } from "../policies/auth/jwt-auth";
-import { rateLimit, InMemoryRateLimitStore } from "../policies/traffic/rate-limit";
-import { mock } from "../policies/mock";
-import type { Policy } from "../policies/types";
 import type { HttpMethod } from "../core/types";
+import { jwtAuth } from "../policies/auth/jwt-auth";
+import { mock } from "../policies/mock";
+import {
+  InMemoryRateLimitStore,
+  rateLimit,
+} from "../policies/traffic/rate-limit";
+import type { Policy } from "../policies/types";
 
 // ---------------------------------------------------------------------------
 // JWT helpers
@@ -16,7 +19,7 @@ function base64UrlEncode(str: string): string {
 
 async function createTestJwt(
   payload: Record<string, unknown>,
-  secret: string,
+  secret: string
 ): Promise<string> {
   const header = { alg: "HS256", typ: "JWT" };
   const encodedHeader = base64UrlEncode(JSON.stringify(header));
@@ -28,15 +31,11 @@ async function createTestJwt(
     encoder.encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"],
+    ["sign"]
   );
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    encoder.encode(data),
-  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
   const encodedSignature = base64UrlEncode(
-    String.fromCharCode(...new Uint8Array(signature)),
+    String.fromCharCode(...new Uint8Array(signature))
   );
   return `${data}.${encodedSignature}`;
 }
@@ -67,7 +66,14 @@ function createStore() {
  * method calls to avoid "app[m] is not a function" when the gateway
  * registers routes with its default full method list.
  */
-const SAFE_METHODS: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const SAFE_METHODS: HttpMethod[] = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "OPTIONS",
+];
 
 function handlerUpstream(body: unknown, status = 200) {
   return {
@@ -201,7 +207,7 @@ describe("Gateway integration — full lifecycle", () => {
     expect(requestId).toBeTruthy();
     // UUID v4 format
     expect(requestId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
     );
   });
 });
@@ -421,7 +427,7 @@ describe("Gateway integration — auth + rate limit combined", () => {
     const store = createStore();
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      JWT_SECRET,
+      JWT_SECRET
     );
 
     const gw = createGateway({
@@ -464,7 +470,7 @@ describe("Gateway integration — auth + rate limit combined", () => {
     const store = createStore();
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      JWT_SECRET,
+      JWT_SECRET
     );
 
     const gw = createGateway({
@@ -504,7 +510,7 @@ describe("Gateway integration — multi-route gateway", () => {
   it("should apply different policies to different routes (public vs protected)", async () => {
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      JWT_SECRET,
+      JWT_SECRET
     );
 
     const gw = createGateway({
@@ -657,9 +663,7 @@ describe("Gateway integration — error handling end-to-end", () => {
           path: "/limited",
           methods: ["GET"],
           pipeline: {
-            policies: [
-              rateLimit({ max: 0, store, keyBy: () => "k" }),
-            ],
+            policies: [rateLimit({ max: 0, store, keyBy: () => "k" })],
             upstream: handlerUpstream({ ok: true }),
           },
         },
@@ -711,7 +715,7 @@ describe("Gateway integration — error handling end-to-end", () => {
       onError: (err, _c) => {
         return new Response(
           JSON.stringify({ custom: true, msg: err.message }),
-          { status: 503, headers: { "content-type": "application/json" } },
+          { status: 503, headers: { "content-type": "application/json" } }
         );
       },
       routes: [
@@ -766,13 +770,13 @@ describe("Gateway integration — error handling end-to-end", () => {
     const authRes = await gw.app.request("/auth-err");
     const authBody = (await authRes.json()) as Record<string, unknown>;
     expect(authBody.requestId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
     );
 
     const handlerRes = await gw.app.request("/handler-err");
     const handlerBody = (await handlerRes.json()) as Record<string, unknown>;
     expect(handlerBody.requestId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
     );
   });
 });
@@ -881,7 +885,7 @@ describe("Gateway integration — handler upstream", () => {
                     customHeader,
                     body,
                   }),
-                  { headers: { "content-type": "application/json" } },
+                  { headers: { "content-type": "application/json" } }
                 );
               },
             },

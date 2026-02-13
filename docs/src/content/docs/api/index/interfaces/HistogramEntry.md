@@ -5,7 +5,7 @@ prev: false
 title: "HistogramEntry"
 ---
 
-Defined in: [packages/stoma/src/observability/metrics.ts:19](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L19)
+Defined in: [src/observability/metrics.ts:19](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L19)
 
 A histogram data point with accumulated values.
 
@@ -15,7 +15,7 @@ A histogram data point with accumulated values.
 
 > `optional` **tags**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/stoma/src/observability/metrics.ts:21](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L21)
+Defined in: [src/observability/metrics.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L21)
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: [packages/stoma/src/observability/metrics.ts:21](https://github.com/
 
 > **values**: `number`[]
 
-Defined in: [packages/stoma/src/observability/metrics.ts:20](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L20)
+Defined in: [src/observability/metrics.ts:20](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L20)

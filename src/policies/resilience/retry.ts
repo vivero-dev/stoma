@@ -14,8 +14,9 @@
  *
  * @module retry
  */
-import type { Policy, PolicyConfig } from "../types";
+
 import { Priority, policyDebug, resolveConfig, withSkip } from "../sdk";
+import type { Policy, PolicyConfig } from "../types";
 
 export interface RetryConfig extends PolicyConfig {
   /** Maximum number of retries. Default: 3. */
@@ -44,7 +45,7 @@ function computeDelay(
   attempt: number,
   strategy: "fixed" | "exponential",
   baseMs: number,
-  maxMs: number,
+  maxMs: number
 ): number {
   const jitter = Math.random() * baseMs;
   return strategy === "fixed"
@@ -84,8 +85,16 @@ function computeDelay(
  */
 export function retry(config?: RetryConfig): Policy {
   const resolved = resolveConfig<RetryConfig>(
-    { maxRetries: 3, retryOn: [502, 503, 504], backoff: "exponential" as const, baseDelayMs: 200, maxDelayMs: 5_000, retryMethods: DEFAULT_RETRY_METHODS, retryCountHeader: "x-retry-count" },
-    config,
+    {
+      maxRetries: 3,
+      retryOn: [502, 503, 504],
+      backoff: "exponential" as const,
+      baseDelayMs: 200,
+      maxDelayMs: 5_000,
+      retryMethods: DEFAULT_RETRY_METHODS,
+      retryCountHeader: "x-retry-count",
+    },
+    config
   );
 
   const handler: import("hono").MiddlewareHandler = async (c, next) => {
@@ -116,9 +125,14 @@ export function retry(config?: RetryConfig): Policy {
         break;
       }
 
-      const delay = computeDelay(attempt, resolved.backoff!, resolved.baseDelayMs!, resolved.maxDelayMs!);
+      const delay = computeDelay(
+        attempt,
+        resolved.backoff!,
+        resolved.baseDelayMs!,
+        resolved.maxDelayMs!
+      );
       debug(
-        `attempt ${attempt + 1}/${resolved.maxRetries} failed (status=${c.res.status}), retrying in ${Math.round(delay)}ms`,
+        `attempt ${attempt + 1}/${resolved.maxRetries} failed (status=${c.res.status}), retrying in ${Math.round(delay)}ms`
       );
 
       // Cancel the body of the failed response to release resources

@@ -10,7 +10,7 @@ describe("requestValidation", () => {
           const obj = body as Record<string, unknown>;
           return obj.name !== undefined;
         },
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -24,7 +24,7 @@ describe("requestValidation", () => {
     const { request } = createPolicyTestHarness(
       requestValidation({
         validate: () => false,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -43,7 +43,7 @@ describe("requestValidation", () => {
           valid: false,
           errors: ["name is required", "age must be a number"],
         }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -64,7 +64,7 @@ describe("requestValidation", () => {
           const obj = body as Record<string, unknown>;
           return { valid: typeof obj.email === "string" };
         },
-      }),
+      })
     );
 
     const passing = await request("/test", {
@@ -87,7 +87,7 @@ describe("requestValidation", () => {
       requestValidation({
         validate: () => false, // sync always fails
         validateAsync: async () => true, // async always passes
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -101,7 +101,7 @@ describe("requestValidation", () => {
     const { request } = createPolicyTestHarness(
       requestValidation({
         validate: () => false, // would fail if called
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -116,7 +116,7 @@ describe("requestValidation", () => {
       requestValidation({
         contentTypes: ["application/xml"],
         validate: () => false,
-      }),
+      })
     );
 
     // XML content type should be validated (and fail)
@@ -140,7 +140,7 @@ describe("requestValidation", () => {
     const { request } = createPolicyTestHarness(
       requestValidation({
         validate: () => true,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -158,7 +158,7 @@ describe("requestValidation", () => {
       requestValidation({
         validate: () => false,
         errorMessage: "Schema mismatch",
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -174,7 +174,7 @@ describe("requestValidation", () => {
     const { request } = createPolicyTestHarness(
       requestValidation({
         validate: () => true,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -191,7 +191,7 @@ describe("requestValidation", () => {
           valid: false,
           errors: ["field 'x' is invalid"],
         }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -208,7 +208,7 @@ describe("requestValidation", () => {
       requestValidation({
         validate: () => false, // would fail if not skipped
         skip: () => true,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -219,9 +219,7 @@ describe("requestValidation", () => {
   });
 
   it("should pass through when no validator is configured", async () => {
-    const { request } = createPolicyTestHarness(
-      requestValidation({}),
-    );
+    const { request } = createPolicyTestHarness(requestValidation({}));
     const res = await request("/test", {
       method: "POST",
       headers: { "content-type": "application/json" },

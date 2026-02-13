@@ -9,8 +9,8 @@
  * @module override-method
  */
 import { GatewayError } from "../../core/errors";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface OverrideMethodConfig extends PolicyConfig {
   /** Header name to read the override method from. Default: `"X-HTTP-Method-Override"`. */
@@ -62,14 +62,14 @@ export const overrideMethod = definePolicy<OverrideMethodConfig>({
 
     const method = overrideValue.toUpperCase();
     const allowed = new Set(
-      (config.allowedMethods ?? []).map((m) => m.toUpperCase()),
+      (config.allowedMethods ?? []).map((m) => m.toUpperCase())
     );
 
     if (!allowed.has(method)) {
       throw new GatewayError(
         400,
         "invalid_method_override",
-        `Method override not allowed: ${method}`,
+        `Method override not allowed: ${method}`
       );
     }
 

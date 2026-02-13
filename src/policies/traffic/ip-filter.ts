@@ -3,11 +3,12 @@
  *
  * @module ip-filter
  */
-import { type ParsedCIDR, isInRange, parseCIDR } from "../../utils/cidr";
-import { extractClientIp } from "../../utils/ip";
+
 import { GatewayError } from "../../core/errors";
-import type { Policy, PolicyConfig } from "../types";
+import { isInRange, type ParsedCIDR, parseCIDR } from "../../utils/cidr";
+import { extractClientIp } from "../../utils/ip";
 import { Priority, withSkip } from "../sdk";
+import type { Policy, PolicyConfig } from "../types";
 
 export interface IpFilterConfig extends PolicyConfig {
   /** IPs or CIDR ranges to allow (allowlist mode). */

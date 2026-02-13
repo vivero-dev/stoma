@@ -3,9 +3,10 @@
  *
  * @module request-limit
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 export interface RequestLimitConfig extends PolicyConfig {
   /** Maximum allowed body size in bytes (based on Content-Length). */

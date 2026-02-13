@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { verifyHttpSignature } from "../verify-http-signature";
-import type { VerifyHttpSignatureConfig } from "../verify-http-signature";
 import { createPolicyTestHarness } from "../../sdk";
 import {
+  algorithmToCrypto,
   buildSignatureBase,
   buildSignatureParams,
-  algorithmToCrypto,
   toBase64,
 } from "../http-signature-base";
+import type { VerifyHttpSignatureConfig } from "../verify-http-signature";
+import { verifyHttpSignature } from "../verify-http-signature";
 
 const TEST_SECRET = "test-hmac-secret-key-for-http-signatures";
 const TEST_KEY_ID = "test-key-1";
@@ -28,7 +28,7 @@ async function signRequest(
     nonce?: string;
     created?: number;
     headers?: Record<string, string>;
-  },
+  }
 ): Promise<{ signature: string; signatureInput: string }> {
   const keyId = opts?.keyId ?? TEST_KEY_ID;
   const secret = opts?.secret ?? TEST_SECRET;
@@ -59,7 +59,7 @@ async function signRequest(
   const signatureBase = buildSignatureBase(
     components,
     signatureParamsStr,
-    fakeRequest,
+    fakeRequest
   );
 
   const { importAlg, signAlg } = algorithmToCrypto(algorithm);
@@ -69,12 +69,12 @@ async function signRequest(
     encoder.encode(secret),
     importAlg,
     false,
-    ["sign"],
+    ["sign"]
   );
   const signatureBytes = await crypto.subtle.sign(
     signAlg,
     key,
-    encoder.encode(signatureBase),
+    encoder.encode(signatureBase)
   );
 
   const signatureB64 = toBase64(signatureBytes);
@@ -86,7 +86,7 @@ async function signRequest(
 }
 
 function makeConfig(
-  overrides?: Partial<VerifyHttpSignatureConfig>,
+  overrides?: Partial<VerifyHttpSignatureConfig>
 ): VerifyHttpSignatureConfig {
   return {
     keys: {
@@ -103,11 +103,11 @@ describe("verifyHttpSignature", () => {
   it("should verify an HMAC-signed request", async () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/api/test",
-      "GET",
+      "GET"
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/api/test", {
@@ -122,11 +122,11 @@ describe("verifyHttpSignature", () => {
   it("should reject missing Signature header", async () => {
     const { signatureInput } = await signRequest(
       "http://localhost/test",
-      "GET",
+      "GET"
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -139,13 +139,10 @@ describe("verifyHttpSignature", () => {
   });
 
   it("should reject missing Signature-Input header", async () => {
-    const { signature } = await signRequest(
-      "http://localhost/test",
-      "GET",
-    );
+    const { signature } = await signRequest("http://localhost/test", "GET");
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -162,11 +159,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { created: oldCreated },
+      { created: oldCreated }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig({ maxAge: 300 })),
+      verifyHttpSignature(makeConfig({ maxAge: 300 }))
     );
 
     const res = await request("/test", {
@@ -185,11 +182,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { expires: pastExpiry },
+      { expires: pastExpiry }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -207,11 +204,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { keyId: "unknown-key" },
+      { keyId: "unknown-key" }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -229,13 +226,13 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { components: ["@method"] }, // only @method, missing @path
+      { components: ["@method"] } // only @method, missing @path
     );
 
     const { request } = createPolicyTestHarness(
       verifyHttpSignature(
-        makeConfig({ requiredComponents: ["@method", "@path"] }),
-      ),
+        makeConfig({ requiredComponents: ["@method", "@path"] })
+      )
     );
 
     const res = await request("/test", {
@@ -253,11 +250,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { secret: "wrong-secret-key-completely-different" },
+      { secret: "wrong-secret-key-completely-different" }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -274,7 +271,7 @@ describe("verifyHttpSignature", () => {
   it("should accept custom header names", async () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
-      "GET",
+      "GET"
     );
 
     const { request } = createPolicyTestHarness(
@@ -282,8 +279,8 @@ describe("verifyHttpSignature", () => {
         makeConfig({
           signatureHeaderName: "X-Sig",
           signatureInputHeaderName: "X-Sig-Input",
-        }),
-      ),
+        })
+      )
     );
 
     const res = await request("/test", {
@@ -297,7 +294,7 @@ describe("verifyHttpSignature", () => {
 
   it("should respect skip logic", async () => {
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig({ skip: () => true })),
+      verifyHttpSignature(makeConfig({ skip: () => true }))
     );
 
     // No signature headers at all — should pass because skipped
@@ -307,7 +304,7 @@ describe("verifyHttpSignature", () => {
 
   it("should throw config error when keys map is empty", async () => {
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature({ keys: {} } as VerifyHttpSignatureConfig),
+      verifyHttpSignature({ keys: {} } as VerifyHttpSignatureConfig)
     );
 
     const res = await request("/test", {
@@ -325,11 +322,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { label: "my-sig" },
+      { label: "my-sig" }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig({ label: "my-sig" })),
+      verifyHttpSignature(makeConfig({ label: "my-sig" }))
     );
 
     const res = await request("/test", {
@@ -348,11 +345,11 @@ describe("verifyHttpSignature", () => {
       {
         components: ["@method", "@path", "content-type"],
         headers: { "content-type": "application/json" },
-      },
+      }
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig()),
+      verifyHttpSignature(makeConfig())
     );
 
     const res = await request("/test", {
@@ -377,11 +374,11 @@ describe("verifyHttpSignature", () => {
     const { signature, signatureInput } = await signRequest(
       "http://localhost/test",
       "GET",
-      { created: Math.floor(Date.now() / 1000) - 10 }, // 10 seconds ago
+      { created: Math.floor(Date.now() / 1000) - 10 } // 10 seconds ago
     );
 
     const { request } = createPolicyTestHarness(
-      verifyHttpSignature(makeConfig({ maxAge: 300 })),
+      verifyHttpSignature(makeConfig({ maxAge: 300 }))
     );
 
     const res = await request("/test", {

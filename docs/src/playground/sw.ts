@@ -55,6 +55,6 @@ self.addEventListener("fetch", (event) => {
     (async () => {
       const gateway = await gatewayPromise;
       return gateway.app.fetch(event.request);
-    })(),
+    })()
   );
 });

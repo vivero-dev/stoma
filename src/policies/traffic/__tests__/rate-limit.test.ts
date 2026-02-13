@@ -1,12 +1,14 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
-import { InMemoryRateLimitStore, rateLimit } from "../rate-limit";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GatewayError } from "../../../core/errors";
+import { InMemoryRateLimitStore, rateLimit } from "../rate-limit";
 
 describe("rateLimit", () => {
   const activeStores: InMemoryRateLimitStore[] = [];
 
-  function createStore(options?: number | { maxKeys?: number; cleanupIntervalMs?: number }) {
+  function createStore(
+    options?: number | { maxKeys?: number; cleanupIntervalMs?: number }
+  ) {
     const store = new InMemoryRateLimitStore(options);
     activeStores.push(store);
     return store;
@@ -31,7 +33,7 @@ describe("rateLimit", () => {
         if (err instanceof GatewayError) {
           const res = c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 429,
+            err.statusCode as 429
           );
           // Apply error-attached headers (e.g. rate-limit headers)
           if (err.headers) {
@@ -196,7 +198,9 @@ describe("rateLimit", () => {
       max: 1,
       store,
       keyBy: (c: unknown) => {
-        const ctx = c as { req: { header: (name: string) => string | undefined } };
+        const ctx = c as {
+          req: { header: (name: string) => string | undefined };
+        };
         return ctx.req.header("x-user-id") ?? "anonymous";
       },
     });
@@ -334,7 +338,9 @@ describe("rateLimit", () => {
 
   it("should fail-open when store.increment() throws", async () => {
     const crashingStore: import("../rate-limit").RateLimitStore = {
-      increment: () => { throw new Error("store unavailable"); },
+      increment: () => {
+        throw new Error("store unavailable");
+      },
     };
     const app = createApp({ max: 1, store: crashingStore });
 
@@ -362,7 +368,9 @@ describe("rateLimit", () => {
 
   it("should still return response body when store crashes", async () => {
     const crashingStore: import("../rate-limit").RateLimitStore = {
-      increment: () => { throw new Error("boom"); },
+      increment: () => {
+        throw new Error("boom");
+      },
     };
     const app = createApp({ max: 1, store: crashingStore });
 

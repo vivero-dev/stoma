@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createGateway, InMemoryMetricsCollector } from "../../index";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- test convenience
+// biome-ignore lint/suspicious/noExplicitAny: test convenience for JSON parsing
 type Json = any;
 
 describe("Admin introspection API", () => {
@@ -74,7 +74,9 @@ describe("Admin introspection API", () => {
     const body: Json = await res.json();
     expect(body.gateway).toBe("test-gw");
     expect(body.policies.length).toBeGreaterThanOrEqual(1);
-    expect(body.policies.find((p: { name: string }) => p.name === "jwt-auth")).toBeDefined();
+    expect(
+      body.policies.find((p: { name: string }) => p.name === "jwt-auth")
+    ).toBeDefined();
   });
 
   // --- Config ---

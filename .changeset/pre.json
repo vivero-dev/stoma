@@ -2,16 +2,7 @@
   "mode": "pre",
   "tag": "rc",
   "initialVersions": {
-    "@homegrower-club/homegrower-club-app": "0.0.0",
-    "@homegrower-club/acinfinity-ts": "0.2.1",
-    "@homegrower-club/core": "0.0.1",
-    "@homegrower-club/homeassistant-ts": "0.1.0",
-    "@homegrower-club/i18n": "0.0.1",
-    "@homegrower-club/lint": "0.0.1",
-    "@homegrower-club/stoma": "0.0.1",
-    "@homegrower-club/types": "0.0.0",
-    "@homegrower-club/typescript-config": "0.0.1",
-    "@homegrower-club/ui": "0.0.0"
+    "@homegrower-club/stoma": "0.0.1"
   },
   "changesets": []
 }

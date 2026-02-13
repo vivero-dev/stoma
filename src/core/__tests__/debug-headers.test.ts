@@ -1,16 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { createGateway } from "../gateway";
-import { cache } from "../../policies/traffic/cache";
 import { setDebugHeader } from "../../policies/sdk";
+import { cache } from "../../policies/traffic/cache";
 import type { Policy } from "../../policies/types";
+import { createGateway } from "../gateway";
 
 /**
  * Helper: create a gateway with debugHeaders enabled and a policy that
  * contributes debug data via setDebugHeader().
  */
 function createDebugApp(
-  gatewayDebugHeaders: boolean | { requestHeader?: string; allow?: string[] } = true,
-  policyHeaders: Record<string, string | number | boolean> = {},
+  gatewayDebugHeaders:
+    | boolean
+    | { requestHeader?: string; allow?: string[] } = true,
+  policyHeaders: Record<string, string | number | boolean> = {}
 ) {
   const testPolicy: Policy = {
     name: "test-policy",
@@ -59,7 +61,9 @@ describe("debug headers", () => {
     });
 
     expect(res.status).toBe(200);
-    expect(res.headers.get("x-stoma-cache-key")).toBe("GET:http://example.com/test");
+    expect(res.headers.get("x-stoma-cache-key")).toBe(
+      "GET:http://example.com/test"
+    );
     expect(res.headers.get("x-stoma-cache-ttl")).toBe("300");
   });
 
@@ -193,7 +197,7 @@ describe("debug headers", () => {
       {
         "x-stoma-cache-key": "allowed-value",
         "x-stoma-cache-ttl": 300,
-      },
+      }
     );
 
     const res = await app.request("/test", {
@@ -213,7 +217,7 @@ describe("debug headers", () => {
   it("should use custom request header name", async () => {
     const app = createDebugApp(
       { requestHeader: "x-debug" },
-      { "x-stoma-cache-key": "custom-header-test" },
+      { "x-stoma-cache-key": "custom-header-test" }
     );
 
     // Using custom header name
@@ -227,7 +231,7 @@ describe("debug headers", () => {
   it("should not respond to default header name when custom is configured", async () => {
     const app = createDebugApp(
       { requestHeader: "x-debug" },
-      { "x-stoma-cache-key": "custom-header-test" },
+      { "x-stoma-cache-key": "custom-header-test" }
     );
 
     // Using default header name — should not work when custom is configured
@@ -263,7 +267,7 @@ describe("debug headers", () => {
         "x-stoma-cache-key": "key1",
         "x-stoma-cache-ttl": 300,
         "x-stoma-circuit-state": "closed",
-      },
+      }
     );
 
     const res = await app.request("/test", {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { generateJwt } from "../generate-jwt";
-import type { GenerateJwtConfig } from "../generate-jwt";
 import { createPolicyTestHarness } from "../../sdk";
+import type { GenerateJwtConfig } from "../generate-jwt";
+import { generateJwt } from "../generate-jwt";
 
 const TEST_SECRET = "super-secret-test-key-that-is-long-enough";
 
@@ -15,7 +15,7 @@ function base64UrlDecode(str: string): string {
 async function verifyHmacJwt(
   token: string,
   secret: string,
-  alg: "HS256" | "HS384" | "HS512" = "HS256",
+  alg: "HS256" | "HS384" | "HS512" = "HS256"
 ): Promise<boolean> {
   const parts = token.split(".");
   if (parts.length !== 3) return false;
@@ -28,13 +28,12 @@ async function verifyHmacJwt(
     encoder.encode(secret),
     { name: "HMAC", hash: hashAlg },
     false,
-    ["verify"],
+    ["verify"]
   );
 
   const data = encoder.encode(`${parts[0]}.${parts[1]}`);
-  const sigBytes = Uint8Array.from(
-    base64UrlDecode(parts[2]),
-    (ch) => ch.charCodeAt(0),
+  const sigBytes = Uint8Array.from(base64UrlDecode(parts[2]), (ch) =>
+    ch.charCodeAt(0)
   );
   return crypto.subtle.verify("HMAC", key, sigBytes, data);
 }
@@ -62,7 +61,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -90,7 +89,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -113,7 +112,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -140,7 +139,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -167,7 +166,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -193,7 +192,7 @@ describe("generateJwt", () => {
           capturedHeader = c.req.header("X-Internal-Token") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -214,7 +213,7 @@ describe("generateJwt", () => {
           capturedHeader = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -236,7 +235,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test");
@@ -264,7 +263,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test");
@@ -290,7 +289,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/test");
@@ -305,7 +304,7 @@ describe("generateJwt", () => {
     const { request } = createPolicyTestHarness(
       generateJwt({
         algorithm: "HS256",
-      } as GenerateJwtConfig),
+      } as GenerateJwtConfig)
     );
 
     const res = await request("/test");
@@ -319,7 +318,7 @@ describe("generateJwt", () => {
     const { request } = createPolicyTestHarness(
       generateJwt({
         algorithm: "RS256",
-      } as GenerateJwtConfig),
+      } as GenerateJwtConfig)
     );
 
     const res = await request("/test");
@@ -344,7 +343,7 @@ describe("generateJwt", () => {
           const auth = c.req.header("Authorization");
           return c.json({ hasAuth: !!auth });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -364,10 +363,13 @@ describe("generateJwt", () => {
         hash: "SHA-256",
       },
       true,
-      ["sign", "verify"],
+      ["sign", "verify"]
     );
 
-    const privateKeyJwk = await crypto.subtle.exportKey("jwk", (keyPair as CryptoKeyPair).privateKey) as JsonWebKey;
+    const privateKeyJwk = (await crypto.subtle.exportKey(
+      "jwk",
+      (keyPair as CryptoKeyPair).privateKey
+    )) as JsonWebKey;
 
     let capturedToken = "";
     const { request } = createPolicyTestHarness(
@@ -381,7 +383,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -394,16 +396,15 @@ describe("generateJwt", () => {
     // Verify with the public key
     const encoder = new TextEncoder();
     const data = encoder.encode(`${parts[0]}.${parts[1]}`);
-    const sigBytes = Uint8Array.from(
-      base64UrlDecode(parts[2]),
-      (ch) => ch.charCodeAt(0),
+    const sigBytes = Uint8Array.from(base64UrlDecode(parts[2]), (ch) =>
+      ch.charCodeAt(0)
     );
 
     const valid = await crypto.subtle.verify(
       "RSASSA-PKCS1-v1_5",
       (keyPair as CryptoKeyPair).publicKey,
       sigBytes,
-      data,
+      data
     );
     expect(valid).toBe(true);
 
@@ -436,7 +437,7 @@ describe("generateJwt", () => {
           capturedToken = c.req.header("Authorization") ?? "";
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");

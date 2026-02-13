@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createPolicyTestHarness } from "../../sdk";
 import { trafficShadow } from "../traffic-shadow";
 
@@ -7,11 +7,14 @@ describe("trafficShadow", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    fetchSpy = vi.fn().mockResolvedValue(new Response("shadow ok", { status: 200 }));
+    fetchSpy = vi
+      .fn()
+      .mockResolvedValue(new Response("shadow ok", { status: 200 }));
     // We need to preserve the original fetch for the test harness while
     // intercepting shadow calls. The shadow URL starts with our target.
     globalThis.fetch = ((...args: Parameters<typeof fetch>) => {
-      const url = typeof args[0] === "string" ? args[0] : (args[0] as Request).url;
+      const url =
+        typeof args[0] === "string" ? args[0] : (args[0] as Request).url;
       if (url.startsWith("https://shadow.internal")) {
         return fetchSpy(...args);
       }
@@ -29,7 +32,7 @@ describe("trafficShadow", () => {
       trafficShadow({
         target: "https://shadow.internal",
         percentage: 100,
-      }),
+      })
     );
 
     const res = await request("/api/data?foo=bar");
@@ -51,7 +54,7 @@ describe("trafficShadow", () => {
       }),
       {
         upstream: async (c) => c.json({ primary: true }),
-      },
+      }
     );
 
     const res = await request("/test");
@@ -67,7 +70,7 @@ describe("trafficShadow", () => {
       trafficShadow({
         target: "https://shadow.internal",
         percentage: 0,
-      }),
+      })
     );
 
     // Make several requests — none should be mirrored
@@ -84,7 +87,7 @@ describe("trafficShadow", () => {
       trafficShadow({
         target: "https://shadow.internal",
         percentage: 100,
-      }),
+      })
     );
 
     await request("/test");
@@ -99,7 +102,7 @@ describe("trafficShadow", () => {
         target: "https://shadow.internal",
         percentage: 100,
         methods: ["POST"],
-      }),
+      })
     );
 
     // GET should not be mirrored
@@ -120,7 +123,7 @@ describe("trafficShadow", () => {
       trafficShadow({
         target: "https://shadow.internal",
         percentage: 100,
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -136,7 +139,7 @@ describe("trafficShadow", () => {
       trafficShadow({
         target: "https://shadow.internal",
         percentage: 100,
-      }),
+      })
     );
 
     await request("/api/v2/users?page=2&limit=10");
@@ -145,7 +148,7 @@ describe("trafficShadow", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [shadowUrl] = fetchSpy.mock.calls[0] as [string];
     expect(shadowUrl).toBe(
-      "https://shadow.internal/api/v2/users?page=2&limit=10",
+      "https://shadow.internal/api/v2/users?page=2&limit=10"
     );
   });
 
@@ -155,7 +158,7 @@ describe("trafficShadow", () => {
         target: "https://shadow.internal",
         percentage: 100,
         timeout: 1000,
-      }),
+      })
     );
 
     await request("/test");
@@ -176,7 +179,7 @@ describe("trafficShadow", () => {
         target: "https://shadow.internal",
         percentage: 100,
         onError,
-      }),
+      })
     );
 
     await request("/test");
@@ -192,7 +195,7 @@ describe("trafficShadow", () => {
         target: "https://shadow.internal",
         percentage: 100,
         skip: () => true,
-      }),
+      })
     );
 
     await request("/test");

@@ -31,8 +31,18 @@
  * export default gateway.app;
  * ```
  */
-import { Hono, type Context } from "hono";
+import { type Context, Hono } from "hono";
 import type { GatewayAdapter } from "../adapters/types";
+import { registerAdminRoutes } from "../observability/admin";
+import { createDebugFactory, noopDebugLogger } from "../utils/debug";
+import { formatTraceparent, generateSpanId } from "../utils/trace-context";
+import { defaultErrorResponse, errorToResponse, GatewayError } from "./errors";
+import {
+  buildPolicyChain,
+  createContextInjector,
+  getGatewayContext,
+  policiesToMiddleware,
+} from "./pipeline";
 import type {
   AdminConfig,
   GatewayConfig,
@@ -46,16 +56,6 @@ import type {
   ServiceBindingUpstream,
   UrlUpstream,
 } from "./types";
-import { registerAdminRoutes } from "../observability/admin";
-import { GatewayError, defaultErrorResponse, errorToResponse } from "./errors";
-import {
-  buildPolicyChain,
-  createContextInjector,
-  getGatewayContext,
-  policiesToMiddleware,
-} from "./pipeline";
-import { createDebugFactory, noopDebugLogger } from "../utils/debug";
-import { formatTraceparent, generateSpanId } from "../utils/trace-context";
 
 /**
  * Create a gateway instance from a declarative configuration.
@@ -92,7 +92,11 @@ import { formatTraceparent, generateSpanId } from "../utils/trace-context";
  */
 export function createGateway(config: GatewayConfig): GatewayInstance {
   if (!config.routes || config.routes.length === 0) {
-    throw new GatewayError(500, "config_error", "Gateway requires at least one route");
+    throw new GatewayError(
+      500,
+      "config_error",
+      "Gateway requires at least one route"
+    );
   }
 
   const gatewayName = config.name ?? "edge-gateway";
@@ -118,7 +122,7 @@ export function createGateway(config: GatewayConfig): GatewayInstance {
     // Log unexpected errors — these are bugs, not expected policy rejections
     console.error(
       `[${gatewayName}] Unhandled error on ${c.req.method} ${c.req.path}:`,
-      err,
+      err
     );
 
     return defaultErrorResponse(ctx?.requestId, config.defaultErrorMessage);
@@ -134,7 +138,7 @@ export function createGateway(config: GatewayConfig): GatewayInstance {
         statusCode: 404,
         gateway: gatewayName,
       },
-      404,
+      404
     );
   });
 
@@ -148,27 +152,41 @@ export function createGateway(config: GatewayConfig): GatewayInstance {
     const fullPath = joinPaths(config.basePath, route.path);
 
     // Build the policy chain: context injector + merged policies
-    const contextInjector = createContextInjector(gatewayName, route.path, debugFactory, config.requestIdHeader, config.adapter, config.debugHeaders);
+    const contextInjector = createContextInjector(
+      gatewayName,
+      route.path,
+      debugFactory,
+      config.requestIdHeader,
+      config.adapter,
+      config.debugHeaders
+    );
     const mergedPolicies = buildPolicyChain(
       config.policies ?? [],
       route.pipeline.policies ?? [],
       debugPipeline,
-      config.defaultPolicyPriority,
+      config.defaultPolicyPriority
     );
     const middlewareChain = policiesToMiddleware(mergedPolicies);
 
     // Build the upstream handler
-    const upstreamHandler = createUpstreamHandler(route, debugUpstream, config.adapter);
+    const upstreamHandler = createUpstreamHandler(
+      route,
+      debugUpstream,
+      config.adapter
+    );
 
     // All middleware in order: context → policies → upstream
     const allHandlers = [contextInjector, ...middlewareChain, upstreamHandler];
 
-    const methods = route.methods ?? config.defaultMethods ?? (["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] as HttpMethod[]);
+    const methods =
+      route.methods ??
+      config.defaultMethods ??
+      (["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] as HttpMethod[]);
 
     // Use app.on() for safe method registration — avoids missing method issues
     // (Hono handles HEAD automatically when GET is registered)
     const methodNames = methods.map((m) => m.toUpperCase());
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Hono's overloaded .on() types don't infer well with dynamic method arrays
+    // biome-ignore lint/suspicious/noExplicitAny: Hono's overloaded .on() types don't infer well with dynamic method arrays
     (app as any).on(methodNames, fullPath, ...allHandlers);
     routeCount += methods.length;
 
@@ -192,14 +210,14 @@ export function createGateway(config: GatewayConfig): GatewayInstance {
     }
 
     debug(
-      `route ${fullPath} [${methodNames.join(",")}]${policyNames.length ? ` policies=[${policyNames.join(", ")}]` : ""} upstream=${route.pipeline.upstream.type}`,
+      `route ${fullPath} [${methodNames.join(",")}]${policyNames.length ? ` policies=[${policyNames.join(", ")}]` : ""} upstream=${route.pipeline.upstream.type}`
     );
   }
 
   const registry: GatewayRegistry = {
     routes: registeredRoutes,
     policies: Array.from(allPoliciesMap.values()).sort(
-      (a, b) => a.priority - b.priority,
+      (a, b) => a.priority - b.priority
     ),
     gatewayName,
   };
@@ -207,15 +225,17 @@ export function createGateway(config: GatewayConfig): GatewayInstance {
   // Register admin introspection routes if configured
   if (config.admin) {
     const adminConfig: AdminConfig =
-      typeof config.admin === "boolean"
-        ? { enabled: true }
-        : config.admin;
+      typeof config.admin === "boolean" ? { enabled: true } : config.admin;
     if (adminConfig.enabled) {
       if (!adminConfig.auth) {
-        console.warn(`[stoma:${gatewayName}] admin routes enabled without authentication`);
+        console.warn(
+          `[stoma:${gatewayName}] admin routes enabled without authentication`
+        );
       }
       registerAdminRoutes(app, adminConfig, registry);
-      debug(`admin routes registered at /${adminConfig.prefix ?? "___gateway"}/*`);
+      debug(
+        `admin routes registered at /${adminConfig.prefix ?? "___gateway"}/*`
+      );
     }
   }
 
@@ -236,7 +256,7 @@ function joinPaths(basePath: string | undefined, routePath: string): string {
 function createUpstreamHandler(
   route: RouteConfig,
   debug = noopDebugLogger,
-  adapter?: GatewayAdapter,
+  adapter?: GatewayAdapter
 ) {
   const upstream = route.pipeline.upstream;
 
@@ -251,7 +271,7 @@ function createUpstreamHandler(
       throw new GatewayError(
         500,
         "config_error",
-        `Unknown upstream type: ${(upstream as { type: string }).type}`,
+        `Unknown upstream type: ${(upstream as { type: string }).type}`
       );
   }
 }
@@ -289,14 +309,14 @@ const HOP_BY_HOP_HEADERS = [
 function createServiceBindingUpstream(
   upstream: ServiceBindingUpstream,
   debug = noopDebugLogger,
-  adapter?: GatewayAdapter,
+  adapter?: GatewayAdapter
 ) {
   return async (c: Context) => {
     if (!adapter?.dispatchBinding) {
       throw new GatewayError(
         502,
         "config_error",
-        `Service binding "${upstream.service}" requires adapter.dispatchBinding — pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`,
+        `Service binding "${upstream.service}" requires adapter.dispatchBinding — pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
       );
     }
 
@@ -313,7 +333,9 @@ function createServiceBindingUpstream(
     // Build the forwarded URL preserving query string
     const targetUrl = new URL(targetPath + incomingUrl.search, c.req.url);
 
-    debug(`service-binding "${upstream.service}": ${c.req.method} ${targetUrl.pathname}${targetUrl.search}`);
+    debug(
+      `service-binding "${upstream.service}": ${c.req.method} ${targetUrl.pathname}${targetUrl.search}`
+    );
 
     // Clone headers, strip hop-by-hop
     const headers = new Headers(c.req.raw.headers);
@@ -332,7 +354,7 @@ function createServiceBindingUpstream(
           traceId: ctx.traceId,
           parentId: upstreamSpanId,
           flags: "01",
-        }),
+        })
       );
     }
 
@@ -345,9 +367,14 @@ function createServiceBindingUpstream(
     });
 
     const startTime = Date.now();
-    const response = await adapter.dispatchBinding(upstream.service, proxyRequest);
+    const response = await adapter.dispatchBinding(
+      upstream.service,
+      proxyRequest
+    );
 
-    debug(`service-binding responded: ${response.status} (${Date.now() - startTime}ms)`);
+    debug(
+      `service-binding responded: ${response.status} (${Date.now() - startTime}ms)`
+    );
 
     // Strip hop-by-hop headers from the upstream response
     const responseHeaders = new Headers(response.headers);
@@ -364,10 +391,7 @@ function createServiceBindingUpstream(
 }
 
 /** URL upstream — proxy the request to a remote URL */
-function createUrlUpstream(
-  upstream: UrlUpstream,
-  debug = noopDebugLogger,
-) {
+function createUrlUpstream(upstream: UrlUpstream, debug = noopDebugLogger) {
   // Pre-validate the target URL at config time
   const targetBase = new URL(upstream.target);
 
@@ -387,11 +411,13 @@ function createUrlUpstream(
     // SSRF protection: ensure the rewritten URL still points to the
     // configured upstream origin (protocol + host + port).
     if (targetUrl.origin !== targetBase.origin) {
-      debug(`SSRF blocked: rewritten URL origin ${targetUrl.origin} != ${targetBase.origin}`);
+      debug(
+        `SSRF blocked: rewritten URL origin ${targetUrl.origin} != ${targetBase.origin}`
+      );
       throw new GatewayError(
         502,
         "upstream_error",
-        "Rewritten URL must not change the upstream origin",
+        "Rewritten URL must not change the upstream origin"
       );
     }
 
@@ -427,7 +453,7 @@ function createUrlUpstream(
           traceId: ctx.traceId,
           parentId: upstreamSpanId,
           flags: "01",
-        }),
+        })
       );
     }
 
@@ -448,8 +474,13 @@ function createUrlUpstream(
     const timeoutSignal = c.get("_timeoutSignal") as AbortSignal | undefined;
 
     const startTime = Date.now();
-    const response = await fetch(proxyRequest, timeoutSignal ? { signal: timeoutSignal } : undefined);
-    debug(`upstream responded: ${response.status} (${Date.now() - startTime}ms)`);
+    const response = await fetch(
+      proxyRequest,
+      timeoutSignal ? { signal: timeoutSignal } : undefined
+    );
+    debug(
+      `upstream responded: ${response.status} (${Date.now() - startTime}ms)`
+    );
 
     // Strip hop-by-hop headers from the upstream response before returning
     const responseHeaders = new Headers(response.headers);

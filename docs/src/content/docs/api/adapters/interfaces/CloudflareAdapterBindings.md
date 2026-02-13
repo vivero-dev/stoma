@@ -5,7 +5,7 @@ prev: false
 title: "CloudflareAdapterBindings"
 ---
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:94](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L94)
+Defined in: [src/adapters/cloudflare.ts:94](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L94)
 
 Bindings accepted by `cloudflareAdapter()` — KV, DO, Cache, ExecutionContext, and env.
 
@@ -15,7 +15,7 @@ Bindings accepted by `cloudflareAdapter()` — KV, DO, Cache, ExecutionContext, 
 
 > `optional` **cache**: `Cache`
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:97](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L97)
+Defined in: [src/adapters/cloudflare.ts:97](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L97)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [packages/stoma/src/adapters/cloudflare.ts:97](https://github.com/Ho
 
 > `optional` **cacheOrigin**: `string`
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:99](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L99)
+Defined in: [src/adapters/cloudflare.ts:99](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L99)
 
 Synthetic origin used for Cache API cache keys. Default: `"https://edge-gateway.internal"`.
 
@@ -33,7 +33,7 @@ Synthetic origin used for Cache API cache keys. Default: `"https://edge-gateway.
 
 > `optional` **env**: `Record`\<`string`, `unknown`\>
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:103](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L103)
+Defined in: [src/adapters/cloudflare.ts:103](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L103)
 
 Workers `env` object — enables `dispatchBinding` for service binding dispatch via the adapter.
 
@@ -43,7 +43,7 @@ Workers `env` object — enables `dispatchBinding` for service binding dispatch 
 
 > `optional` **executionCtx**: `ExecutionContext`\<`unknown`\>
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:101](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L101)
+Defined in: [src/adapters/cloudflare.ts:101](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L101)
 
 Workers `ExecutionContext` — enables `waitUntil` for background work (e.g. traffic shadow).
 
@@ -53,7 +53,7 @@ Workers `ExecutionContext` — enables `waitUntil` for background work (e.g. tra
 
 > `optional` **rateLimitDo**: `DurableObjectNamespace`\<`undefined`\>
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:96](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L96)
+Defined in: [src/adapters/cloudflare.ts:96](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L96)
 
 ***
 
@@ -61,4 +61,4 @@ Defined in: [packages/stoma/src/adapters/cloudflare.ts:96](https://github.com/Ho
 
 > `optional` **rateLimitKv**: `KVNamespace`\<`string`\>
 
-Defined in: [packages/stoma/src/adapters/cloudflare.ts:95](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/cloudflare.ts#L95)
+Defined in: [src/adapters/cloudflare.ts:95](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/cloudflare.ts#L95)

@@ -7,8 +7,8 @@
  * @module assign-metrics
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority, safeCall } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface AssignMetricsConfig extends PolicyConfig {
   /**
@@ -49,7 +49,12 @@ export const assignMetrics = definePolicy<AssignMetricsConfig>({
     for (const [key, value] of Object.entries(config.tags)) {
       if (typeof value === "function") {
         // Tag resolver failure must never prevent the request from proceeding
-        resolvedTags[key] = await safeCall(() => Promise.resolve(value(c)), "unknown", debug, `tag resolver(${key})`);
+        resolvedTags[key] = await safeCall(
+          () => Promise.resolve(value(c)),
+          "unknown",
+          debug,
+          `tag resolver(${key})`
+        );
         debug("tag %s = %s (dynamic)", key, resolvedTags[key]);
       } else {
         resolvedTags[key] = value;

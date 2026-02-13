@@ -17,7 +17,7 @@ function makeApp(config: Parameters<typeof basicAuth>[0]): Hono {
     if (err instanceof GatewayError) {
       return c.json(
         { error: err.code, message: err.message },
-        err.statusCode as 401,
+        err.statusCode as 401
       );
     }
     throw err;
@@ -30,7 +30,8 @@ describe("basicAuth", () => {
 
   it("should allow request with valid credentials", async () => {
     const app = makeApp({
-      validate: (username, password) => username === "admin" && password === "secret",
+      validate: (username, password) =>
+        username === "admin" && password === "secret",
     });
     const res = await app.request("/test", {
       headers: { authorization: encodeBasic("admin", "secret") },
@@ -61,7 +62,9 @@ describe("basicAuth", () => {
       headers: { authorization: encodeBasic("admin", "wrong") },
     });
     expect(res.status).toBe(403);
-    expect(res.headers.get("www-authenticate")).toBe('Basic realm="Admin Area"');
+    expect(res.headers.get("www-authenticate")).toBe(
+      'Basic realm="Admin Area"'
+    );
   });
 
   // --- Error handling ---
@@ -72,7 +75,9 @@ describe("basicAuth", () => {
     });
     const res = await app.request("/test");
     expect(res.status).toBe(401);
-    expect(res.headers.get("www-authenticate")).toBe('Basic realm="Restricted"');
+    expect(res.headers.get("www-authenticate")).toBe(
+      'Basic realm="Restricted"'
+    );
   });
 
   it("should reject request with non-Basic auth scheme (401)", async () => {
@@ -83,7 +88,9 @@ describe("basicAuth", () => {
       headers: { authorization: "Bearer some-token" },
     });
     expect(res.status).toBe(401);
-    expect(res.headers.get("www-authenticate")).toBe('Basic realm="Restricted"');
+    expect(res.headers.get("www-authenticate")).toBe(
+      'Basic realm="Restricted"'
+    );
   });
 
   it("should reject request with invalid base64 (401)", async () => {
@@ -98,7 +105,8 @@ describe("basicAuth", () => {
 
   it("should reject request with invalid credentials (403)", async () => {
     const app = makeApp({
-      validate: (username, password) => username === "admin" && password === "secret",
+      validate: (username, password) =>
+        username === "admin" && password === "secret",
     });
     const res = await app.request("/test", {
       headers: { authorization: encodeBasic("admin", "wrong") },
@@ -143,7 +151,8 @@ describe("basicAuth", () => {
 
   it("should handle empty username", async () => {
     const app = makeApp({
-      validate: (username, password) => username === "" && password === "secret",
+      validate: (username, password) =>
+        username === "" && password === "secret",
     });
     const res = await app.request("/test", {
       headers: { authorization: encodeBasic("", "secret") },

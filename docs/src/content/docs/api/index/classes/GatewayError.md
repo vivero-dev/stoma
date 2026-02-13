@@ -5,7 +5,7 @@ prev: false
 title: "GatewayError"
 ---
 
-Defined in: [packages/stoma/src/core/errors.ts:27](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/errors.ts#L27)
+Defined in: [src/core/errors.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/errors.ts#L27)
 
 Structured gateway error with HTTP status code, machine-readable code,
 and optional response headers (e.g. `Retry-After`, `X-RateLimit-*`).
@@ -32,7 +32,7 @@ throw new GatewayError(429, "rate_limited", "Too many requests", {
 
 > **new GatewayError**(`statusCode`, `code`, `message`, `headers?`): `GatewayError`
 
-Defined in: [packages/stoma/src/core/errors.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/errors.ts#L33)
+Defined in: [src/core/errors.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/errors.ts#L33)
 
 #### Parameters
 
@@ -66,7 +66,7 @@ Defined in: [packages/stoma/src/core/errors.ts:33](https://github.com/HomeGrower
 
 > `optional` **cause**: `unknown`
 
-Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
+Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 #### Inherited from
 
@@ -78,7 +78,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: `string`
 
-Defined in: [packages/stoma/src/core/errors.ts:29](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/errors.ts#L29)
+Defined in: [src/core/errors.ts:29](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/errors.ts#L29)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [packages/stoma/src/core/errors.ts:29](https://github.com/HomeGrower
 
 > `readonly` `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [packages/stoma/src/core/errors.ts:31](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/errors.ts#L31)
+Defined in: [src/core/errors.ts:31](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/errors.ts#L31)
 
 Optional headers to include in the error response (e.g. rate-limit headers)
 
@@ -96,7 +96,7 @@ Optional headers to include in the error response (e.g. rate-limit headers)
 
 > **message**: `string`
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
+Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 #### Inherited from
 
@@ -108,7 +108,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 > **name**: `string`
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
+Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Inherited from
 
@@ -120,7 +120,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > `optional` **stack**: `string`
 
-Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
+Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Inherited from
 
@@ -132,4 +132,4 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > `readonly` **statusCode**: `number`
 
-Defined in: [packages/stoma/src/core/errors.ts:28](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/errors.ts#L28)
+Defined in: [src/core/errors.ts:28](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/errors.ts#L28)

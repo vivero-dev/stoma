@@ -6,10 +6,18 @@
  *
  * @module jws
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
-import { base64UrlDecode, base64UrlToBuffer, base64UrlEncodeBytes, hmacAlgorithm, rsaAlgorithm, fetchJwks } from "./crypto";
+import {
+  base64UrlDecode,
+  base64UrlEncodeBytes,
+  base64UrlToBuffer,
+  fetchJwks,
+  hmacAlgorithm,
+  rsaAlgorithm,
+} from "./crypto";
 
 export interface JwsConfig extends PolicyConfig {
   /** HMAC secret for verification */
@@ -74,7 +82,7 @@ export const jws = definePolicy<JwsConfig>({
       throw new GatewayError(
         500,
         "config_error",
-        "jws requires either 'secret' or 'jwksUrl'",
+        "jws requires either 'secret' or 'jwksUrl'"
       );
     }
   },
@@ -85,7 +93,7 @@ export const jws = definePolicy<JwsConfig>({
       throw new GatewayError(
         401,
         "jws_missing",
-        `Missing JWS header: ${config.headerName}`,
+        `Missing JWS header: ${config.headerName}`
       );
     }
 
@@ -95,7 +103,7 @@ export const jws = definePolicy<JwsConfig>({
       throw new GatewayError(
         401,
         "jws_invalid",
-        "Malformed JWS: expected 3 parts",
+        "Malformed JWS: expected 3 parts"
       );
     }
 
@@ -109,13 +117,17 @@ export const jws = definePolicy<JwsConfig>({
       throw new GatewayError(
         401,
         "jws_invalid",
-        "Malformed JWS: invalid header encoding",
+        "Malformed JWS: invalid header encoding"
       );
     }
 
     // Block "none" algorithm (case-insensitive to prevent bypass)
     if (header.alg.toLowerCase() === "none") {
-      throw new GatewayError(401, "jws_invalid", "JWS algorithm 'none' is not allowed");
+      throw new GatewayError(
+        401,
+        "jws_invalid",
+        "JWS algorithm 'none' is not allowed"
+      );
     }
 
     // Resolve the payload for verification
@@ -131,7 +143,7 @@ export const jws = definePolicy<JwsConfig>({
         throw new GatewayError(
           401,
           "jws_invalid",
-          "JWS has empty payload but payloadSource is 'embedded'",
+          "JWS has empty payload but payloadSource is 'embedded'"
         );
       }
       verifyPayloadB64 = payloadB64;
@@ -148,7 +160,7 @@ export const jws = definePolicy<JwsConfig>({
         throw new GatewayError(
           401,
           "jws_invalid",
-          `Unsupported JWS algorithm: ${header.alg}`,
+          `Unsupported JWS algorithm: ${header.alg}`
         );
       }
 
@@ -158,10 +170,15 @@ export const jws = definePolicy<JwsConfig>({
         encoder.encode(config.secret),
         { name: "HMAC", hash },
         false,
-        ["verify"],
+        ["verify"]
       );
 
-      const valid = await crypto.subtle.verify("HMAC", key, signature, signingInput);
+      const valid = await crypto.subtle.verify(
+        "HMAC",
+        key,
+        signature,
+        signingInput
+      );
       if (!valid) {
         throw new GatewayError(401, "jws_invalid", "Invalid JWS signature");
       }
@@ -171,36 +188,45 @@ export const jws = definePolicy<JwsConfig>({
         throw new GatewayError(
           401,
           "jws_invalid",
-          `Unsupported JWS algorithm: ${header.alg}`,
+          `Unsupported JWS algorithm: ${header.alg}`
         );
       }
 
-      const keys = await fetchJwks(config.jwksUrl, config.jwksCacheTtlMs, config.jwksTimeoutMs);
+      const keys = await fetchJwks(
+        config.jwksUrl,
+        config.jwksCacheTtlMs,
+        config.jwksTimeoutMs
+      );
       const matchingKey = (header as JwsHeader).kid
         ? keys.find(
-            (k) =>
-              (k as unknown as Record<string, unknown>).kid === header.kid,
+            (k) => (k as unknown as Record<string, unknown>).kid === header.kid
           )
         : keys[0];
 
       if (!matchingKey) {
-        throw new GatewayError(401, "jws_invalid", "No matching JWKS key found");
+        throw new GatewayError(
+          401,
+          "jws_invalid",
+          "No matching JWKS key found"
+        );
       }
 
-      debug(`JWKS verification (alg=${header.alg}, kid=${header.kid ?? "none"})`);
+      debug(
+        `JWKS verification (alg=${header.alg}, kid=${header.kid ?? "none"})`
+      );
       const key = await crypto.subtle.importKey(
         "jwk",
         matchingKey,
         algorithm,
         false,
-        ["verify"],
+        ["verify"]
       );
 
       const valid = await crypto.subtle.verify(
         algorithm,
         key,
         signature,
-        signingInput,
+        signingInput
       );
       if (!valid) {
         throw new GatewayError(401, "jws_invalid", "Invalid JWS signature");

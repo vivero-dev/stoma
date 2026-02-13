@@ -3,9 +3,10 @@
  *
  * @module ssl-enforce
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 export interface SslEnforceConfig extends PolicyConfig {
   /** Redirect HTTP to HTTPS (301). If false, block with 403. Default: true. */
@@ -37,7 +38,9 @@ export const sslEnforce = definePolicy<SslEnforceConfig>({
     preload: false,
   },
   handler: async (c, next, { config }) => {
-    const proto = c.req.header("x-forwarded-proto") ?? new URL(c.req.url).protocol.replace(":", "");
+    const proto =
+      c.req.header("x-forwarded-proto") ??
+      new URL(c.req.url).protocol.replace(":", "");
     const isHttps = proto === "https";
 
     if (!isHttps) {

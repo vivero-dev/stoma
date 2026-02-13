@@ -8,15 +8,18 @@
  * @module assign-attributes
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface AssignAttributesConfig extends PolicyConfig {
   /**
    * Key-value pairs to set on the Hono context.
    * Values can be static strings or functions that receive the context.
    */
-  attributes: Record<string, string | ((c: Context) => string | Promise<string>)>;
+  attributes: Record<
+    string,
+    string | ((c: Context) => string | Promise<string>)
+  >;
 }
 
 /**

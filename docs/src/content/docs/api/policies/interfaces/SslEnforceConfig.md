@@ -5,7 +5,7 @@ prev: false
 title: "SslEnforceConfig"
 ---
 
-Defined in: [packages/stoma/src/policies/traffic/ssl-enforce.ts:10](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/ssl-enforce.ts#L10)
+Defined in: [src/policies/traffic/ssl-enforce.ts:10](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ssl-enforce.ts#L10)
 
 Configuration for the sslEnforce policy.
 
@@ -19,7 +19,7 @@ Configuration for the sslEnforce policy.
 
 > `optional` **hstsMaxAge**: `number`
 
-Defined in: [packages/stoma/src/policies/traffic/ssl-enforce.ts:14](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/ssl-enforce.ts#L14)
+Defined in: [src/policies/traffic/ssl-enforce.ts:14](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ssl-enforce.ts#L14)
 
 HSTS max-age in seconds. Default: 31536000 (1 year).
 
@@ -29,7 +29,7 @@ HSTS max-age in seconds. Default: 31536000 (1 year).
 
 > `optional` **includeSubDomains**: `boolean`
 
-Defined in: [packages/stoma/src/policies/traffic/ssl-enforce.ts:16](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/ssl-enforce.ts#L16)
+Defined in: [src/policies/traffic/ssl-enforce.ts:16](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ssl-enforce.ts#L16)
 
 Add includeSubDomains to HSTS header. Default: false.
 
@@ -39,7 +39,7 @@ Add includeSubDomains to HSTS header. Default: false.
 
 > `optional` **preload**: `boolean`
 
-Defined in: [packages/stoma/src/policies/traffic/ssl-enforce.ts:18](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/ssl-enforce.ts#L18)
+Defined in: [src/policies/traffic/ssl-enforce.ts:18](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ssl-enforce.ts#L18)
 
 Add preload to HSTS header. Default: false.
 
@@ -49,7 +49,7 @@ Add preload to HSTS header. Default: false.
 
 > `optional` **redirect**: `boolean`
 
-Defined in: [packages/stoma/src/policies/traffic/ssl-enforce.ts:12](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/traffic/ssl-enforce.ts#L12)
+Defined in: [src/policies/traffic/ssl-enforce.ts:12](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/traffic/ssl-enforce.ts#L12)
 
 Redirect HTTP to HTTPS (301). If false, block with 403. Default: true.
 
@@ -59,7 +59,7 @@ Redirect HTTP to HTTPS (301). If false, block with 403. Default: true.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [packages/stoma/src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/types.ts#L33)
+Defined in: [src/policies/types.ts:33](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/types.ts#L33)
 
 Skip this policy when condition returns true
 

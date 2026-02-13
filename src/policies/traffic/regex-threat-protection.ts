@@ -7,9 +7,10 @@
  *
  * @module regex-threat-protection
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 /** A single pattern rule with target areas and optional custom message. */
 export interface RegexPatternRule {
@@ -39,14 +40,11 @@ interface CompiledPattern {
   message: string;
 }
 
-const patternCache = new WeakMap<
-  RegexPatternRule[],
-  CompiledPattern[]
->();
+const patternCache = new WeakMap<RegexPatternRule[], CompiledPattern[]>();
 
 function getCompiledPatterns(
   patterns: RegexPatternRule[],
-  flags: string,
+  flags: string
 ): CompiledPattern[] {
   let compiled = patternCache.get(patterns);
   if (!compiled) {
@@ -54,7 +52,9 @@ function getCompiledPatterns(
     // stateful lastIndex issues across calls.
     const sanitizedFlags = flags.replace(/g/g, "");
     if (sanitizedFlags !== flags) {
-      console.warn("[stoma:regex-threat-protection] Stripped 'g' flag — not meaningful with .test()");
+      console.warn(
+        "[stoma:regex-threat-protection] Stripped 'g' flag — not meaningful with .test()"
+      );
     }
     compiled = patterns.map((p) => ({
       regex: new RegExp(p.regex, sanitizedFlags),
@@ -93,105 +93,101 @@ function getCompiledPatterns(
  * });
  * ```
  */
-export const regexThreatProtection =
-  definePolicy<RegexThreatProtectionConfig>({
-    name: "regex-threat-protection",
-    priority: Priority.EARLY,
-    defaults: {
-      patterns: [],
-      flags: "i",
-      contentTypes: ["application/json", "text/plain"],
-      maxBodyScanLength: 65536,
-    },
-    handler: async (c, next, { config, debug }) => {
-      const compiled = getCompiledPatterns(
-        config.patterns,
-        config.flags ?? "i",
+export const regexThreatProtection = definePolicy<RegexThreatProtectionConfig>({
+  name: "regex-threat-protection",
+  priority: Priority.EARLY,
+  defaults: {
+    patterns: [],
+    flags: "i",
+    contentTypes: ["application/json", "text/plain"],
+    maxBodyScanLength: 65536,
+  },
+  handler: async (c, next, { config, debug }) => {
+    const compiled = getCompiledPatterns(config.patterns, config.flags ?? "i");
+
+    if (compiled.length === 0) {
+      debug("no patterns configured — passing through");
+      await next();
+      return;
+    }
+
+    // Pre-compute whether any pattern targets body so we only read it once
+    const anyTargetsBody = compiled.some((p) => p.targets.includes("body"));
+    let bodyText: string | null = null;
+
+    if (anyTargetsBody) {
+      const contentType = c.req.header("content-type") ?? "";
+      const matchedType = config.contentTypes!.some((ct) =>
+        contentType.includes(ct)
       );
 
-      if (compiled.length === 0) {
-        debug("no patterns configured — passing through");
-        await next();
-        return;
-      }
+      if (matchedType) {
+        const cloned = c.req.raw.clone();
+        const reader = cloned.body?.getReader();
+        if (reader) {
+          let text = "";
+          const maxLen = config.maxBodyScanLength!;
+          let done = false;
+          const decoder = new TextDecoder();
 
-      // Pre-compute whether any pattern targets body so we only read it once
-      const anyTargetsBody = compiled.some((p) => p.targets.includes("body"));
-      let bodyText: string | null = null;
-
-      if (anyTargetsBody) {
-        const contentType = c.req.header("content-type") ?? "";
-        const matchedType = config.contentTypes!.some((ct) =>
-          contentType.includes(ct),
-        );
-
-        if (matchedType) {
-          const cloned = c.req.raw.clone();
-          const reader = cloned.body?.getReader();
-          if (reader) {
-            let text = "";
-            const maxLen = config.maxBodyScanLength!;
-            let done = false;
-            const decoder = new TextDecoder();
-
-            while (!done && text.length < maxLen) {
-              const result = await reader.read();
-              if (result.done) {
-                done = true;
-              } else {
-                text += decoder.decode(result.value, { stream: true });
-              }
+          while (!done && text.length < maxLen) {
+            const result = await reader.read();
+            if (result.done) {
+              done = true;
+            } else {
+              text += decoder.decode(result.value, { stream: true });
             }
-            reader.cancel();
-
-            if (text.length > maxLen) {
-              text = text.slice(0, maxLen);
-            }
-
-            bodyText = text || null;
           }
+          reader.cancel();
+
+          if (text.length > maxLen) {
+            text = text.slice(0, maxLen);
+          }
+
+          bodyText = text || null;
+        }
+      }
+    }
+
+    for (const pattern of compiled) {
+      // Check path
+      if (pattern.targets.includes("path")) {
+        if (pattern.regex.test(c.req.path)) {
+          debug("path matched pattern: %s", pattern.regex.source);
+          throw new GatewayError(400, "threat_detected", pattern.message);
         }
       }
 
-      for (const pattern of compiled) {
-        // Check path
-        if (pattern.targets.includes("path")) {
-          if (pattern.regex.test(c.req.path)) {
-            debug("path matched pattern: %s", pattern.regex.source);
-            throw new GatewayError(400, "threat_detected", pattern.message);
-          }
+      // Check query string (decoded so URL-encoded payloads are caught)
+      if (pattern.targets.includes("query")) {
+        const url = new URL(c.req.url);
+        const queryString = decodeURIComponent(url.search.slice(1));
+        if (queryString && pattern.regex.test(queryString)) {
+          debug("query matched pattern: %s", pattern.regex.source);
+          throw new GatewayError(400, "threat_detected", pattern.message);
         }
+      }
 
-        // Check query string (decoded so URL-encoded payloads are caught)
-        if (pattern.targets.includes("query")) {
-          const url = new URL(c.req.url);
-          const queryString = decodeURIComponent(url.search.slice(1));
-          if (queryString && pattern.regex.test(queryString)) {
-            debug("query matched pattern: %s", pattern.regex.source);
-            throw new GatewayError(400, "threat_detected", pattern.message);
-          }
-        }
-
-        // Check headers
-        if (pattern.targets.includes("headers")) {
-          for (const [, value] of c.req.raw.headers.entries()) {
-            if (pattern.regex.test(value)) {
-              debug("header matched pattern: %s", pattern.regex.source);
-              throw new GatewayError(400, "threat_detected", pattern.message);
-            }
-          }
-        }
-
-        // Check body (using the pre-read body text)
-        if (pattern.targets.includes("body") && bodyText) {
-          if (pattern.regex.test(bodyText)) {
-            debug("body matched pattern: %s", pattern.regex.source);
+      // Check headers
+      if (pattern.targets.includes("headers")) {
+        for (const [, value] of c.req.raw.headers.entries()) {
+          if (pattern.regex.test(value)) {
+            debug("header matched pattern: %s", pattern.regex.source);
             throw new GatewayError(400, "threat_detected", pattern.message);
           }
         }
       }
 
-      debug("all patterns passed");
-      await next();
-    },
-  });
+      // Check body (using the pre-read body text)
+      if (pattern.targets.includes("body") && bodyText) {
+        if (pattern.regex.test(bodyText)) {
+          debug("body matched pattern: %s", pattern.regex.source);
+          throw new GatewayError(400, "threat_detected", pattern.message);
+        }
+      }
+    }
+
+    debug("all patterns passed");
+    await next();
+  },
+});

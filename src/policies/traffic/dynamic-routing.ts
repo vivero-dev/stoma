@@ -8,9 +8,9 @@
  * @module dynamic-routing
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
-import { definePolicy, Priority } from "../sdk";
 import { GatewayError } from "../../core/errors";
+import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface RoutingRule {
   /** Human-readable rule name for debugging. */
@@ -70,7 +70,7 @@ export const dynamicRouting = definePolicy<DynamicRoutingConfig>({
       if (matched) {
         debug(
           `matched rule ${rule.name ? `"${rule.name}"` : "(unnamed)"}` +
-            ` → target=${rule.target}`,
+            ` → target=${rule.target}`
         );
         c.set("_dynamicTarget", rule.target);
         if (rule.rewritePath) {

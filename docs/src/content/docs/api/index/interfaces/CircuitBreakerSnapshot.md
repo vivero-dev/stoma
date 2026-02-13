@@ -5,7 +5,7 @@ prev: false
 title: "CircuitBreakerSnapshot"
 ---
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:21](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L21)
+Defined in: [src/policies/resilience/circuit-breaker.ts:21](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L21)
 
 Point-in-time snapshot of a circuit's state and counters.
 
@@ -15,7 +15,7 @@ Point-in-time snapshot of a circuit's state and counters.
 
 > **failureCount**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:25](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L25)
+Defined in: [src/policies/resilience/circuit-breaker.ts:25](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L25)
 
 Number of consecutive failures since last reset.
 
@@ -25,7 +25,7 @@ Number of consecutive failures since last reset.
 
 > **lastFailureTime**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:29](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L29)
+Defined in: [src/policies/resilience/circuit-breaker.ts:29](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L29)
 
 Epoch ms of the most recent failure. `0` if no failures recorded.
 
@@ -35,7 +35,7 @@ Epoch ms of the most recent failure. `0` if no failures recorded.
 
 > **lastStateChange**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:31](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L31)
+Defined in: [src/policies/resilience/circuit-breaker.ts:31](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L31)
 
 Epoch ms of the most recent state transition.
 
@@ -45,7 +45,7 @@ Epoch ms of the most recent state transition.
 
 > **state**: [`CircuitState`](/api/index/type-aliases/circuitstate/)
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:23](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L23)
+Defined in: [src/policies/resilience/circuit-breaker.ts:23](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L23)
 
 Current circuit state.
 
@@ -55,6 +55,6 @@ Current circuit state.
 
 > **successCount**: `number`
 
-Defined in: [packages/stoma/src/policies/resilience/circuit-breaker.ts:27](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/resilience/circuit-breaker.ts#L27)
+Defined in: [src/policies/resilience/circuit-breaker.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/resilience/circuit-breaker.ts#L27)
 
 Number of successful probes in half-open state.

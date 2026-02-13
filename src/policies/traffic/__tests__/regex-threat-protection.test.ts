@@ -13,7 +13,7 @@ describe("regexThreatProtection", () => {
             message: "SQL injection detected",
           },
         ],
-      }),
+      })
     );
     const res = await request("/api/users/union select");
     expect(res.status).toBe(400);
@@ -32,7 +32,7 @@ describe("regexThreatProtection", () => {
             message: "XSS detected",
           },
         ],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { "x-custom": "<script>alert('xss')</script>" },
@@ -52,7 +52,7 @@ describe("regexThreatProtection", () => {
             targets: ["body"],
           },
         ],
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -75,7 +75,7 @@ describe("regexThreatProtection", () => {
             message: "SQL injection in query",
           },
         ],
-      }),
+      })
     );
     const res = await request("/test?q=1%20union%20select%20*");
     expect(res.status).toBe(400);
@@ -97,7 +97,7 @@ describe("regexThreatProtection", () => {
             targets: ["path", "headers", "body", "query"],
           },
         ],
-      }),
+      })
     );
     const res = await request("/api/users?page=1", {
       method: "POST",
@@ -122,7 +122,7 @@ describe("regexThreatProtection", () => {
             message: "Custom message B",
           },
         ],
-      }),
+      })
     );
 
     const resA = await request("/pattern-a");
@@ -144,7 +144,7 @@ describe("regexThreatProtection", () => {
             message: "Custom message B",
           },
         ],
-      }),
+      })
     );
     const resB = await request2("/pattern-b");
     expect(resB.status).toBe(400);
@@ -167,7 +167,7 @@ describe("regexThreatProtection", () => {
             message: "Second",
           },
         ],
-      }),
+      })
     );
     const res = await request("/first-match");
     expect(res.status).toBe(400);
@@ -178,10 +178,8 @@ describe("regexThreatProtection", () => {
   it("should match case-insensitively by default", async () => {
     const { request } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "drop\\s+table", targets: ["path"] },
-        ],
-      }),
+        patterns: [{ regex: "drop\\s+table", targets: ["path"] }],
+      })
     );
     const res = await request("/DROP TABLE");
     expect(res.status).toBe(400);
@@ -190,11 +188,9 @@ describe("regexThreatProtection", () => {
   it("should respect custom flags", async () => {
     const { request } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "DROP", targets: ["path"] },
-        ],
+        patterns: [{ regex: "DROP", targets: ["path"] }],
         flags: "", // no flags = case-sensitive
-      }),
+      })
     );
     // Lowercase should pass with case-sensitive matching
     const passRes = await request("/drop");
@@ -203,11 +199,9 @@ describe("regexThreatProtection", () => {
     // Uppercase should fail
     const { request: request2 } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "DROP", targets: ["path"] },
-        ],
+        patterns: [{ regex: "DROP", targets: ["path"] }],
         flags: "",
-      }),
+      })
     );
     const failRes = await request2("/DROP");
     expect(failRes.status).toBe(400);
@@ -216,11 +210,9 @@ describe("regexThreatProtection", () => {
   it("should respect content-type filter for body scanning", async () => {
     const { request } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "malicious", targets: ["body"] },
-        ],
+        patterns: [{ regex: "malicious", targets: ["body"] }],
         contentTypes: ["application/json"],
-      }),
+      })
     );
     // text/plain body should not be scanned
     const res = await request("/test", {
@@ -233,11 +225,9 @@ describe("regexThreatProtection", () => {
     // application/json body should be scanned
     const { request: request2 } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "malicious", targets: ["body"] },
-        ],
+        patterns: [{ regex: "malicious", targets: ["body"] }],
         contentTypes: ["application/json"],
-      }),
+      })
     );
     const res2 = await request2("/test", {
       method: "POST",
@@ -250,15 +240,13 @@ describe("regexThreatProtection", () => {
   it("should respect maxBodyScanLength", async () => {
     const { request } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "EVIL", targets: ["body"] },
-        ],
+        patterns: [{ regex: "EVIL", targets: ["body"] }],
         maxBodyScanLength: 20,
         contentTypes: ["text/plain"],
-      }),
+      })
     );
     // Place pattern beyond the scan limit
-    const body = "A".repeat(30) + "EVIL";
+    const body = `${"A".repeat(30)}EVIL`;
     const res = await request("/test", {
       method: "POST",
       headers: { "content-type": "text/plain" },
@@ -271,11 +259,9 @@ describe("regexThreatProtection", () => {
   it("should support skip logic", async () => {
     const { request } = createPolicyTestHarness(
       regexThreatProtection({
-        patterns: [
-          { regex: "blocked", targets: ["path"] },
-        ],
+        patterns: [{ regex: "blocked", targets: ["path"] }],
         skip: () => true,
-      }),
+      })
     );
     const res = await request("/blocked");
     expect(res.status).toBe(200);

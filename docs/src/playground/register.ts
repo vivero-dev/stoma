@@ -56,13 +56,13 @@ export async function registerPlaygroundSW(): Promise<ServiceWorkerRegistration>
   if (!("serviceWorker" in navigator)) {
     throw new Error(
       "Service Workers are not supported in this browser. " +
-        "Try Chrome, Firefox, or Safari.",
+        "Try Chrome, Firefox, or Safari."
     );
   }
 
   const registration = await navigator.serviceWorker.register(
     "/playground-sw.js",
-    { scope: "/", type: "module" },
+    { scope: "/", type: "module" }
   );
 
   // Wait until the SW is both activated AND controlling this page.
@@ -75,7 +75,11 @@ export async function registerPlaygroundSW(): Promise<ServiceWorkerRegistration>
   // wait for the `controllerchange` event.
   if (!navigator.serviceWorker.controller) {
     await new Promise<void>((resolve) => {
-      navigator.serviceWorker.addEventListener("controllerchange", () => resolve(), { once: true });
+      navigator.serviceWorker.addEventListener(
+        "controllerchange",
+        () => resolve(),
+        { once: true }
+      );
     });
   }
 
@@ -100,7 +104,7 @@ export async function registerPlaygroundSW(): Promise<ServiceWorkerRegistration>
 export async function sendPlaygroundRequest(
   method: string,
   path: string,
-  opts?: { headers?: Record<string, string>; body?: string },
+  opts?: { headers?: Record<string, string>; body?: string }
 ): Promise<PlaygroundResponse> {
   const url = `/playground/api${path}`;
 
@@ -122,9 +126,7 @@ export async function sendPlaygroundRequest(
   // Prefer the gateway's own X-Response-Time header (more accurate),
   // falling back to client-side measurement
   const serverTime = res.headers.get("x-response-time");
-  const timingMs = serverTime
-    ? Number.parseFloat(serverTime)
-    : clientTimingMs;
+  const timingMs = serverTime ? Number.parseFloat(serverTime) : clientTimingMs;
 
   // Collect all response headers into a plain object
   const headers: Record<string, string> = {};

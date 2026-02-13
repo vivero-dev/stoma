@@ -8,8 +8,13 @@ describe("resourceFilter", () => {
       resourceFilter({ mode: "deny", fields: ["password", "secret"] }),
       {
         upstream: async (c) =>
-          c.json({ username: "alice", password: "s3cret", secret: "key", role: "admin" }),
-      },
+          c.json({
+            username: "alice",
+            password: "s3cret",
+            secret: "key",
+            role: "admin",
+          }),
+      }
     );
     const res = await request("/test");
     expect(res.status).toBe(200);
@@ -25,8 +30,13 @@ describe("resourceFilter", () => {
       resourceFilter({ mode: "allow", fields: ["id", "name"] }),
       {
         upstream: async (c) =>
-          c.json({ id: 1, name: "Alice", email: "a@b.com", password: "s3cret" }),
-      },
+          c.json({
+            id: 1,
+            name: "Alice",
+            email: "a@b.com",
+            password: "s3cret",
+          }),
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -42,9 +52,14 @@ describe("resourceFilter", () => {
       {
         upstream: async (c) =>
           c.json({
-            user: { name: "Alice", password: "s3cret", ssn: "123-45-6789", email: "a@b.com" },
+            user: {
+              name: "Alice",
+              password: "s3cret",
+              ssn: "123-45-6789",
+              email: "a@b.com",
+            },
           }),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -64,7 +79,7 @@ describe("resourceFilter", () => {
             user: { name: "Alice", email: "a@b.com", password: "s3cret" },
             metadata: { created: "2024-01-01" },
           }),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -84,7 +99,7 @@ describe("resourceFilter", () => {
             { name: "Alice", password: "a" },
             { name: "Bob", password: "b" },
           ]),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Array<Record<string, unknown>>;
@@ -108,7 +123,7 @@ describe("resourceFilter", () => {
             { name: "Alice", password: "a" },
             { name: "Bob", password: "b" },
           ]),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Array<Record<string, unknown>>;
@@ -122,9 +137,8 @@ describe("resourceFilter", () => {
     const { request } = createPolicyTestHarness(
       resourceFilter({ mode: "deny", fields: ["password"] }),
       {
-        upstream: async (c) =>
-          c.text("plain text response"),
-      },
+        upstream: async (c) => c.text("plain text response"),
+      }
     );
     const res = await request("/test");
     expect(res.status).toBe(200);
@@ -138,7 +152,7 @@ describe("resourceFilter", () => {
       {
         upstream: async (c) =>
           c.json({ username: "alice", password: "s3cret" }),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -152,7 +166,7 @@ describe("resourceFilter", () => {
       {
         upstream: async (c) =>
           c.json({ a: { b: { c: "secret", d: "keep" }, x: "keep" } }),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -167,9 +181,8 @@ describe("resourceFilter", () => {
     const { request } = createPolicyTestHarness(
       resourceFilter({ mode: "deny", fields: ["nonexistent", "a.b.c"] }),
       {
-        upstream: async (c) =>
-          c.json({ name: "Alice", role: "admin" }),
-      },
+        upstream: async (c) => c.json({ name: "Alice", role: "admin" }),
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -186,7 +199,7 @@ describe("resourceFilter", () => {
           c.header("x-custom", "preserved");
           return c.json({ name: "Alice", password: "s3cret" });
         },
-      },
+      }
     );
     const res = await request("/test");
     expect(res.status).toBe(201);
@@ -204,9 +217,8 @@ describe("resourceFilter", () => {
         skip: () => true,
       }),
       {
-        upstream: async (c) =>
-          c.json({ name: "Alice", password: "s3cret" }),
-      },
+        upstream: async (c) => c.json({ name: "Alice", password: "s3cret" }),
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -232,7 +244,7 @@ describe("resourceFilter", () => {
           // Respond with standard JSON content type — should not be filtered
           return c.json({ name: "Alice", password: "s3cret" });
         },
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;

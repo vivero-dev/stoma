@@ -8,12 +8,13 @@
  *
  * @module testing
  */
-import { Hono } from "hono";
+
 import type { MiddlewareHandler } from "hono";
-import type { Policy } from "../types";
-import { GatewayError, errorToResponse } from "../../core/errors";
-import { createContextInjector } from "../../core/pipeline";
+import { Hono } from "hono";
 import { TestAdapter } from "../../adapters/testing";
+import { errorToResponse, GatewayError } from "../../core/errors";
+import { createContextInjector } from "../../core/pipeline";
+import type { Policy } from "../types";
 
 export interface PolicyTestHarnessOptions {
   /**
@@ -54,7 +55,7 @@ export interface PolicyTestHarnessOptions {
  */
 export function createPolicyTestHarness(
   policy: Policy,
-  options?: PolicyTestHarnessOptions,
+  options?: PolicyTestHarnessOptions
 ) {
   const path = options?.path ?? "/*";
   const gatewayName = options?.gatewayName ?? "test-gateway";
@@ -63,7 +64,10 @@ export function createPolicyTestHarness(
   const app = new Hono();
 
   // 1. Inject gateway context (requestId, debug factory, etc.)
-  app.use(path, createContextInjector(gatewayName, path, undefined, undefined, adapter));
+  app.use(
+    path,
+    createContextInjector(gatewayName, path, undefined, undefined, adapter)
+  );
 
   // 2. Run the policy with GatewayError → structured JSON handling
   app.use(path, async (c, next) => {

@@ -7,9 +7,9 @@
  * @module http-callout
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
-import { definePolicy, Priority } from "../sdk";
 import { GatewayError } from "../../core/errors";
+import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface HttpCalloutConfig extends PolicyConfig {
   /** Target URL — static string or dynamic function. Required. */
@@ -89,8 +89,7 @@ export const httpCallout = definePolicy<HttpCalloutConfig>({
           ? await (config.body as (c: Context) => unknown | Promise<unknown>)(c)
           : config.body;
       if (raw !== undefined && raw !== null) {
-        resolvedBody =
-          typeof raw === "string" ? raw : JSON.stringify(raw);
+        resolvedBody = typeof raw === "string" ? raw : JSON.stringify(raw);
         if (typeof raw !== "string" && !resolvedHeaders["content-type"]) {
           resolvedHeaders["content-type"] = "application/json";
         }
@@ -116,7 +115,7 @@ export const httpCallout = definePolicy<HttpCalloutConfig>({
       throw new GatewayError(
         502,
         "callout_failed",
-        `External callout failed: ${error instanceof Error ? error.message : String(error)}`,
+        `External callout failed: ${error instanceof Error ? error.message : String(error)}`
       );
     }
 
@@ -125,7 +124,7 @@ export const httpCallout = definePolicy<HttpCalloutConfig>({
       if (config.onError) {
         await config.onError(
           new Error(`External callout returned ${response.status}`),
-          c,
+          c
         );
         await next();
         return;
@@ -133,7 +132,7 @@ export const httpCallout = definePolicy<HttpCalloutConfig>({
       throw new GatewayError(
         502,
         "callout_failed",
-        `External callout returned ${response.status}`,
+        `External callout returned ${response.status}`
       );
     }
 

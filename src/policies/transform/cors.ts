@@ -4,8 +4,8 @@
  * @module cors
  */
 import { cors as honoCors } from "hono/cors";
-import type { Policy, PolicyConfig } from "../types";
 import { Priority, withSkip } from "../sdk";
+import type { Policy, PolicyConfig } from "../types";
 
 export interface CorsConfig extends PolicyConfig {
   /** Allowed origins. Default: "*" */
@@ -60,9 +60,7 @@ export interface CorsConfig extends PolicyConfig {
 export function cors(config?: CorsConfig): Policy {
   const origin = config?.origins ?? "*";
   const honoMiddleware = honoCors({
-    origin: typeof origin === "function"
-      ? (o) => (origin(o) ? o : "")
-      : origin,
+    origin: typeof origin === "function" ? (o) => (origin(o) ? o : "") : origin,
     allowMethods: config?.methods,
     allowHeaders: config?.allowHeaders,
     exposeHeaders: config?.exposeHeaders,

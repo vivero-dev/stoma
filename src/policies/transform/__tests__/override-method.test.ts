@@ -100,7 +100,7 @@ describe("overrideMethod", () => {
         upstream: async (c) => {
           return c.json({ method: c.req.method });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -135,7 +135,7 @@ describe("overrideMethod", () => {
         upstream: async (c) => {
           return c.json({ method: c.req.method });
         },
-      },
+      }
     );
 
     const res = await request("/test", {

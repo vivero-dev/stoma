@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CacheStore } from "../cache";
-import { InMemoryCacheStore, cache } from "../cache";
+import { cache, InMemoryCacheStore } from "../cache";
 
 describe("cache", () => {
   let store: InMemoryCacheStore;
@@ -21,7 +21,7 @@ describe("cache", () => {
       req: { method: string; url: string; json: () => Promise<unknown> };
       json: (data: unknown, status?: number) => Response;
       res: Response & { headers: Headers };
-    }) => Response,
+    }) => Response
   ) {
     const app = new Hono();
     const policy = cache(config);
@@ -73,7 +73,9 @@ describe("cache", () => {
 
     app.get("/binary", () => {
       callCount++;
-      const bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+      const bytes = new Uint8Array([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+      ]);
       return new Response(bytes, {
         status: 200,
         headers: { "content-type": "image/png" },
@@ -623,7 +625,7 @@ describe("cache", () => {
         (c) => {
           c.res.headers.set("cache-control", "no-store");
           return c.json({ data: "cached anyway" });
-        },
+        }
       );
 
       await app.request("/test");
@@ -652,7 +654,10 @@ describe("cache", () => {
 
     it("should handle Cache-Control with multiple directives", async () => {
       const { app } = createApp({ store }, (c) => {
-        c.res.headers.set("cache-control", "public, max-age=3600, must-revalidate");
+        c.res.headers.set(
+          "cache-control",
+          "public, max-age=3600, must-revalidate"
+        );
         return c.json({ data: "ok" });
       });
 
@@ -671,7 +676,7 @@ describe("cache", () => {
         (c) => {
           c.res.headers.set("cache-control", "private");
           return c.json({ data: "private" });
-        },
+        }
       );
 
       await app.request("/test");
@@ -714,7 +719,9 @@ describe("cache", () => {
 
       expect(getCallCount()).toBe(2); // separate entries
 
-      const res = await app.request("/test", { headers: { "accept-language": "en" } });
+      const res = await app.request("/test", {
+        headers: { "accept-language": "en" },
+      });
       expect(res.headers.get("x-cache")).toBe("HIT");
       expect(getCallCount()).toBe(2); // no additional upstream call
     });

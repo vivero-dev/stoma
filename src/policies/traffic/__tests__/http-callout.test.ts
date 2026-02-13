@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createPolicyTestHarness } from "../../sdk";
 import { httpCallout } from "../http-callout";
 
@@ -14,7 +14,7 @@ describe("httpCallout", () => {
       new Response(JSON.stringify({ userId: "123" }), {
         status: 200,
         headers: { "content-type": "application/json" },
-      }),
+      })
     );
 
     const { request } = createPolicyTestHarness(
@@ -27,7 +27,7 @@ describe("httpCallout", () => {
       }),
       {
         upstream: async (c) => c.json({ userId: c.get("userId") }),
-      },
+      }
     );
 
     const res = await request("/test");
@@ -37,9 +37,11 @@ describe("httpCallout", () => {
   });
 
   it("should make POST callout with JSON body", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ ok: true }), { status: 200 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ ok: true }), { status: 200 })
+      );
 
     const { request } = createPolicyTestHarness(
       httpCallout({
@@ -52,7 +54,7 @@ describe("httpCallout", () => {
       }),
       {
         upstream: async (c) => c.json({ notified: c.get("notified") }),
-      },
+      }
     );
 
     const res = await request("/test");
@@ -62,20 +64,20 @@ describe("httpCallout", () => {
       .calls[0];
     expect(fetchCall[1].method).toBe("POST");
     expect(fetchCall[1].body).toBe(
-      JSON.stringify({ event: "request", path: "/test" }),
+      JSON.stringify({ event: "request", path: "/test" })
     );
   });
 
   it("should resolve dynamic URL", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("ok", { status: 200 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("ok", { status: 200 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
         url: (c) => `https://auth.example.com/check?path=${c.req.path}`,
         onResponse: async () => {},
-      }),
+      })
     );
 
     await request("/my-path");
@@ -85,9 +87,9 @@ describe("httpCallout", () => {
   });
 
   it("should resolve dynamic headers", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("ok", { status: 200 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("ok", { status: 200 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
@@ -97,7 +99,7 @@ describe("httpCallout", () => {
           authorization: (c) => c.req.header("authorization") ?? "",
         },
         onResponse: async () => {},
-      }),
+      })
     );
 
     await request("/test", {
@@ -117,7 +119,7 @@ describe("httpCallout", () => {
       new Response(JSON.stringify({ role: "admin", tier: "premium" }), {
         status: 200,
         headers: { "content-type": "application/json" },
-      }),
+      })
     );
 
     const { request } = createPolicyTestHarness(
@@ -138,7 +140,7 @@ describe("httpCallout", () => {
             role: c.get("userRole"),
             tier: c.get("userTier"),
           }),
-      },
+      }
     );
 
     const res = await request("/test");
@@ -148,16 +150,16 @@ describe("httpCallout", () => {
   });
 
   it("should throw 502 on non-2xx response with abortOnFailure=true", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("Forbidden", { status: 403 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("Forbidden", { status: 403 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
         url: "https://auth.example.com/check",
         abortOnFailure: true,
         onResponse: async () => {},
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -168,9 +170,11 @@ describe("httpCallout", () => {
   });
 
   it("should call onResponse on non-2xx when abortOnFailure=false", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ denied: true }), { status: 403 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ denied: true }), { status: 403 })
+      );
 
     const { request } = createPolicyTestHarness(
       httpCallout({
@@ -183,7 +187,7 @@ describe("httpCallout", () => {
       {
         upstream: async (c) =>
           c.json({ calloutStatus: c.get("calloutStatus") }),
-      },
+      }
     );
 
     const res = await request("/test");
@@ -193,9 +197,9 @@ describe("httpCallout", () => {
   });
 
   it("should call custom onError handler on failure", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("Server Error", { status: 500 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("Server Error", { status: 500 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
@@ -207,9 +211,8 @@ describe("httpCallout", () => {
         },
       }),
       {
-        upstream: async (c) =>
-          c.json({ fallbackUsed: c.get("fallbackUsed") }),
-      },
+        upstream: async (c) => c.json({ fallbackUsed: c.get("fallbackUsed") }),
+      }
     );
 
     const res = await request("/test");
@@ -233,9 +236,8 @@ describe("httpCallout", () => {
         },
       }),
       {
-        upstream: async (c) =>
-          c.json({ errorHandled: c.get("errorHandled") }),
-      },
+        upstream: async (c) => c.json({ errorHandled: c.get("errorHandled") }),
+      }
     );
 
     const res = await request("/test");
@@ -245,13 +247,15 @@ describe("httpCallout", () => {
   });
 
   it("should throw 502 on fetch network error without onError", async () => {
-    globalThis.fetch = vi.fn().mockRejectedValue(new Error("DNS lookup failed"));
+    globalThis.fetch = vi
+      .fn()
+      .mockRejectedValue(new Error("DNS lookup failed"));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
         url: "https://auth.example.com/check",
         onResponse: async () => {},
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -262,16 +266,16 @@ describe("httpCallout", () => {
   });
 
   it("should support skip logic", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("ok", { status: 200 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("ok", { status: 200 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
         url: "https://auth.example.com/check",
         skip: () => true,
         onResponse: async () => {},
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -280,15 +284,15 @@ describe("httpCallout", () => {
   });
 
   it("should default method to GET", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue(
-      new Response("ok", { status: 200 }),
-    );
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response("ok", { status: 200 }));
 
     const { request } = createPolicyTestHarness(
       httpCallout({
         url: "https://auth.example.com/check",
         onResponse: async () => {},
-      }),
+      })
     );
 
     await request("/test");

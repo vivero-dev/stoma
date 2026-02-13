@@ -13,10 +13,10 @@
  * @module server-timing
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
-import { definePolicy, Priority, isDebugRequested } from "../sdk";
 import { GatewayError } from "../../core/errors";
 import { toSelfTimes } from "../../utils/timing";
+import { definePolicy, isDebugRequested, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 /** Visibility mode controlling when timing headers are emitted. */
 export type ServerTimingVisibility = "always" | "debug-only" | "conditional";
@@ -50,7 +50,7 @@ function formatEntry(
   name: string,
   durationMs: number,
   precision: number,
-  descriptionFn?: (name: string) => string,
+  descriptionFn?: (name: string) => string
 ): string {
   const sanitized = sanitizeMetricName(name);
   const dur = durationMs.toFixed(precision);
@@ -85,11 +85,14 @@ export const serverTiming = definePolicy<ServerTimingConfig>({
     visibility: "debug-only",
   },
   validate: (config) => {
-    if (config.visibility === "conditional" && typeof config.visibilityFn !== "function") {
+    if (
+      config.visibility === "conditional" &&
+      typeof config.visibilityFn !== "function"
+    ) {
       throw new GatewayError(
         500,
         "config-error",
-        'serverTiming: visibility "conditional" requires a visibilityFn',
+        'serverTiming: visibility "conditional" requires a visibilityFn'
       );
     }
   },
@@ -107,7 +110,6 @@ export const serverTiming = definePolicy<ServerTimingConfig>({
       case "conditional":
         visible = await config.visibilityFn!(c);
         break;
-      case "debug-only":
       default:
         visible = isDebugRequested(c);
         break;
@@ -133,12 +135,16 @@ export const serverTiming = definePolicy<ServerTimingConfig>({
       const entries: string[] = [];
 
       if (config.includeTotal) {
-        entries.push(formatEntry("total", totalMs, precision, config.descriptionFn));
+        entries.push(
+          formatEntry("total", totalMs, precision, config.descriptionFn)
+        );
       }
 
       if (selfTimings) {
         for (const t of selfTimings) {
-          entries.push(formatEntry(t.name, t.durationMs, precision, config.descriptionFn));
+          entries.push(
+            formatEntry(t.name, t.durationMs, precision, config.descriptionFn)
+          );
         }
       }
 

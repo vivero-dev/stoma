@@ -11,50 +11,70 @@
   "publishConfig": {
     "access": "public"
   },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./policies": {
-      "types": "./src/policies/index.ts",
-      "default": "./src/policies/index.ts"
+      "types": "./dist/policies/index.d.ts",
+      "import": "./dist/policies/index.js",
+      "default": "./dist/policies/index.js"
     },
     "./config": {
-      "types": "./src/config/index.ts",
-      "default": "./src/config/index.ts"
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js",
+      "default": "./dist/config/index.js"
     },
     "./sdk": {
-      "types": "./src/policies/sdk/index.ts",
-      "default": "./src/policies/sdk/index.ts"
+      "types": "./dist/sdk/index.d.ts",
+      "import": "./dist/sdk/index.js",
+      "default": "./dist/sdk/index.js"
     },
     "./adapters": {
-      "types": "./src/adapters/index.ts",
-      "default": "./src/adapters/index.ts"
+      "types": "./dist/adapters/index.d.ts",
+      "import": "./dist/adapters/index.js",
+      "default": "./dist/adapters/index.js"
     },
     "./adapters/cloudflare": {
-      "types": "./src/adapters/cloudflare.ts",
-      "default": "./src/adapters/cloudflare.ts"
+      "types": "./dist/adapters/cloudflare.d.ts",
+      "import": "./dist/adapters/cloudflare.js",
+      "default": "./dist/adapters/cloudflare.js"
     },
     "./adapters/deno": {
-      "types": "./src/adapters/deno.ts",
-      "default": "./src/adapters/deno.ts"
+      "types": "./dist/adapters/deno.d.ts",
+      "import": "./dist/adapters/deno.js",
+      "default": "./dist/adapters/deno.js"
     },
     "./adapters/bun": {
-      "types": "./src/adapters/bun.ts",
-      "default": "./src/adapters/bun.ts"
+      "types": "./dist/adapters/bun.d.ts",
+      "import": "./dist/adapters/bun.js",
+      "default": "./dist/adapters/bun.js"
     },
     "./adapters/node": {
-      "types": "./src/adapters/node.ts",
-      "default": "./src/adapters/node.ts"
+      "types": "./dist/adapters/node.d.ts",
+      "import": "./dist/adapters/node.js",
+      "default": "./dist/adapters/node.js"
     },
     "./adapters/memory": {
-      "types": "./src/adapters/memory.ts",
-      "default": "./src/adapters/memory.ts"
+      "types": "./dist/adapters/memory.d.ts",
+      "import": "./dist/adapters/memory.js",
+      "default": "./dist/adapters/memory.js"
     }
   },
   "scripts": {
-    "lint": "echo 'No linter configured'",
+    "build": "tsup",
+    "lint": "biome check src/ docs/src/",
+    "lint:fix": "biome check --write src/ docs/src/",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run",
@@ -65,12 +85,10 @@
     "docs:preview": "cd docs && npx astro preview",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish"
+    "changeset:publish": "changeset publish",
+    "prepublishOnly": "yarn build"
   },
-  "dependencies": {
-    "hono": "^4.7.0",
-    "react-json-pretty": "^2.2.0"
-  },
+  "packageManager": "yarn@4.12.0",
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
@@ -84,6 +102,8 @@
     "@vitest/snapshot": "3.2.4",
     "@vitest/spy": "3.2.4",
     "@vitest/utils": "3.2.4",
+    "hono": "^4.7.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "3.2.4",
     "wrangler": "^4.65.0",
@@ -91,7 +111,7 @@
   },
   "peerDependencies": {
     "hono": ">=4.0.0",
-    "zod": ">=3.0.0"
+    "zod": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "zod": {

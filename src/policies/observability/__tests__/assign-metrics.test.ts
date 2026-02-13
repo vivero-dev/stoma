@@ -19,7 +19,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags");
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -39,7 +39,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags");
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -62,7 +62,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags");
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -84,7 +84,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags");
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/hello");
@@ -109,7 +109,7 @@ describe("assignMetrics", () => {
             region: tags.region,
           });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -119,15 +119,12 @@ describe("assignMetrics", () => {
   });
 
   it("should pass through with empty tags object", async () => {
-    const { request } = createPolicyTestHarness(
-      assignMetrics({ tags: {} }),
-      {
-        upstream: async (c) => {
-          const tags = c.get("_metricsTags");
-          return c.json({ tags });
-        },
+    const { request } = createPolicyTestHarness(assignMetrics({ tags: {} }), {
+      upstream: async (c) => {
+        const tags = c.get("_metricsTags");
+        return c.json({ tags });
       },
-    );
+    });
 
     const res = await request("/test");
     expect(res.status).toBe(200);
@@ -146,7 +143,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags") ?? null;
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -165,7 +162,7 @@ describe("assignMetrics", () => {
           const tags = c.get("_metricsTags");
           return c.json({ tags });
         },
-      },
+      }
     );
 
     const res = await request("/test");

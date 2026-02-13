@@ -7,7 +7,7 @@ describe("geoIpFilter", () => {
 
   it("should allow requests from allowed countries in allow mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "allow", allow: ["US", "CA", "GB"] }),
+      geoIpFilter({ mode: "allow", allow: ["US", "CA", "GB"] })
     );
 
     const res = await request("/test", {
@@ -18,7 +18,7 @@ describe("geoIpFilter", () => {
 
   it("should block requests from non-allowed countries in allow mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "allow", allow: ["US", "CA"] }),
+      geoIpFilter({ mode: "allow", allow: ["US", "CA"] })
     );
 
     const res = await request("/test", {
@@ -33,7 +33,7 @@ describe("geoIpFilter", () => {
 
   it("should block requests from denied countries in deny mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "deny", deny: ["CN", "RU"] }),
+      geoIpFilter({ mode: "deny", deny: ["CN", "RU"] })
     );
 
     const res = await request("/test", {
@@ -46,7 +46,7 @@ describe("geoIpFilter", () => {
 
   it("should allow requests from non-denied countries in deny mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "deny", deny: ["CN", "RU"] }),
+      geoIpFilter({ mode: "deny", deny: ["CN", "RU"] })
     );
 
     const res = await request("/test", {
@@ -59,7 +59,7 @@ describe("geoIpFilter", () => {
 
   it("should match country codes case-insensitively", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "deny", deny: ["cn", "ru"] }),
+      geoIpFilter({ mode: "deny", deny: ["cn", "ru"] })
     );
 
     const res = await request("/test", {
@@ -70,7 +70,7 @@ describe("geoIpFilter", () => {
 
   it("should match lowercase header values against uppercase config", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "allow", allow: ["US", "CA"] }),
+      geoIpFilter({ mode: "allow", allow: ["US", "CA"] })
     );
 
     const res = await request("/test", {
@@ -83,7 +83,7 @@ describe("geoIpFilter", () => {
 
   it("should deny when country header is missing in allow mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "allow", allow: ["US"] }),
+      geoIpFilter({ mode: "allow", allow: ["US"] })
     );
 
     const res = await request("/test");
@@ -92,7 +92,7 @@ describe("geoIpFilter", () => {
 
   it("should allow when country header is missing in deny mode", async () => {
     const { request } = createPolicyTestHarness(
-      geoIpFilter({ mode: "deny", deny: ["CN"] }),
+      geoIpFilter({ mode: "deny", deny: ["CN"] })
     );
 
     const res = await request("/test");
@@ -107,7 +107,7 @@ describe("geoIpFilter", () => {
         mode: "deny",
         deny: ["DE"],
         countryHeader: "x-country-code",
-      }),
+      })
     );
 
     const res = await request("/test", {
@@ -124,7 +124,7 @@ describe("geoIpFilter", () => {
         mode: "deny",
         deny: ["CN"],
         skip: () => true,
-      }),
+      })
     );
 
     const res = await request("/test", {
@@ -136,9 +136,7 @@ describe("geoIpFilter", () => {
   // --- Defaults ---
 
   it("should default to deny mode", async () => {
-    const { request } = createPolicyTestHarness(
-      geoIpFilter({ deny: ["CN"] }),
-    );
+    const { request } = createPolicyTestHarness(geoIpFilter({ deny: ["CN"] }));
 
     const res = await request("/test", {
       headers: { "cf-ipcountry": "CN" },

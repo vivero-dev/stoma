@@ -7,9 +7,10 @@
  *
  * @module request-validation
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 /** Result shape returned by validation functions that provide error details. */
 interface ValidationResult {
@@ -27,9 +28,7 @@ export interface RequestValidationConfig extends PolicyConfig {
    * Async validation function (e.g., for remote schema validation).
    * If both `validate` and `validateAsync` are provided, `validateAsync` takes precedence.
    */
-  validateAsync?: (
-    body: unknown,
-  ) => Promise<boolean | ValidationResult>;
+  validateAsync?: (body: unknown) => Promise<boolean | ValidationResult>;
   /**
    * Only validate these content types.
    * Requests with other content types pass through without validation.
@@ -43,9 +42,7 @@ export interface RequestValidationConfig extends PolicyConfig {
 /**
  * Normalize a validation return value into a `{ valid, errors? }` shape.
  */
-function normalizeResult(
-  result: boolean | ValidationResult,
-): ValidationResult {
+function normalizeResult(result: boolean | ValidationResult): ValidationResult {
   if (typeof result === "boolean") {
     return { valid: result };
   }
@@ -88,11 +85,15 @@ export const requestValidation = definePolicy<RequestValidationConfig>({
   handler: async (c, next, { config, debug }) => {
     const contentType = c.req.header("content-type") ?? "";
     const matchedType = config.contentTypes!.some((ct) =>
-      contentType.includes(ct),
+      contentType.includes(ct)
     );
 
     if (!matchedType) {
-      debug("skipping — content type %s not in %o", contentType, config.contentTypes);
+      debug(
+        "skipping — content type %s not in %o",
+        contentType,
+        config.contentTypes
+      );
       await next();
       return;
     }
@@ -108,7 +109,7 @@ export const requestValidation = definePolicy<RequestValidationConfig>({
       throw new GatewayError(
         400,
         "validation_failed",
-        `${config.errorMessage!}: invalid JSON`,
+        `${config.errorMessage!}: invalid JSON`
       );
     }
 

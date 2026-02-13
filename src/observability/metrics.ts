@@ -188,7 +188,10 @@ export function toPrometheusText(snapshot: MetricsSnapshot): string {
 
 /** Escape a label value per Prometheus exposition format spec. */
 function escapeLabelValue(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n");
 }
 
 function formatLabels(tags?: Record<string, string>): string {

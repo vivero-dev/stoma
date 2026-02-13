@@ -8,9 +8,16 @@
  */
 import type { Context } from "hono";
 import { GatewayError } from "../../core/errors";
-import type { Policy, PolicyConfig } from "../types";
-import { Priority, policyDebug, resolveConfig, safeCall, setDebugHeader, withSkip } from "../sdk";
 import type { DebugLogger } from "../../utils/debug";
+import {
+  Priority,
+  policyDebug,
+  resolveConfig,
+  safeCall,
+  setDebugHeader,
+  withSkip,
+} from "../sdk";
+import type { Policy, PolicyConfig } from "../types";
 
 // --- Store interface ---
 
@@ -91,7 +98,10 @@ export class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
     return { ...snap };
   }
 
-  async transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot> {
+  async transition(
+    key: string,
+    to: CircuitState
+  ): Promise<CircuitBreakerSnapshot> {
     const snap = this.getOrCreate(key);
     snap.state = to;
     snap.lastStateChange = Date.now();
@@ -142,7 +152,11 @@ export interface CircuitBreakerConfig extends PolicyConfig {
    * @param from - The previous circuit state.
    * @param to - The new circuit state.
    */
-  onStateChange?: (key: string, from: CircuitState, to: CircuitState) => void | Promise<void>;
+  onStateChange?: (
+    key: string,
+    from: CircuitState,
+    to: CircuitState
+  ) => void | Promise<void>;
 }
 
 /**
@@ -157,11 +171,21 @@ async function transitionAndNotify(
   from: CircuitState,
   to: CircuitState,
   onStateChange: CircuitBreakerConfig["onStateChange"],
-  debug: DebugLogger,
+  debug: DebugLogger
 ): Promise<void> {
-  await safeCall(() => resolvedStore.transition(key, to), undefined, debug, "store.transition()");
+  await safeCall(
+    () => resolvedStore.transition(key, to),
+    undefined,
+    debug,
+    "store.transition()"
+  );
   if (onStateChange) {
-    await safeCall(() => Promise.resolve(onStateChange(key, from, to)), undefined, debug, "onStateChange()");
+    await safeCall(
+      () => Promise.resolve(onStateChange(key, from, to)),
+      undefined,
+      debug,
+      "onStateChange()"
+    );
   }
 }
 
@@ -204,8 +228,14 @@ async function transitionAndNotify(
  */
 export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
   const resolved = resolveConfig<CircuitBreakerConfig>(
-    { failureThreshold: 5, resetTimeoutMs: 30_000, halfOpenMax: 1, failureOn: [500, 502, 503, 504], openStatusCode: 503 },
-    config,
+    {
+      failureThreshold: 5,
+      resetTimeoutMs: 30_000,
+      halfOpenMax: 1,
+      failureOn: [500, 502, 503, 504],
+      openStatusCode: 503,
+    },
+    config
   );
 
   let store = config?.store;
@@ -220,9 +250,7 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
 
   const handler: import("hono").MiddlewareHandler = async (c, next) => {
     const debug = policyDebug(c, "circuit-breaker");
-    const key = config?.key
-      ? config.key(c)
-      : new URL(c.req.url).pathname;
+    const key = config?.key ? config.key(c) : new URL(c.req.url).pathname;
 
     // Resilient to store failures — fail-open (assume closed) if the
     // store is unreachable, so a broken store never blocks traffic.
@@ -230,7 +258,7 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
       () => resolvedStore.getState(key),
       defaultSnapshot(),
       debug,
-      "store.getState()",
+      "store.getState()"
     );
     const now = Date.now();
     setDebugHeader(c, "x-stoma-circuit-key", key);
@@ -242,30 +270,41 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
       if (now - snap.lastStateChange >= resolved.resetTimeoutMs!) {
         // Transition to half-open
         debug(`open -> half-open (key=${key})`);
-        await transitionAndNotify(resolvedStore, key, "open", "half-open", onStateChange, debug);
+        await transitionAndNotify(
+          resolvedStore,
+          key,
+          "open",
+          "half-open",
+          onStateChange,
+          debug
+        );
         halfOpenProbes.set(key, 0);
       } else {
         const retryAfter = Math.ceil(
-          (resolved.resetTimeoutMs! - (now - snap.lastStateChange)) / 1000,
+          (resolved.resetTimeoutMs! - (now - snap.lastStateChange)) / 1000
         );
         throw new GatewayError(
           resolved.openStatusCode!,
           "circuit_open",
           "Service temporarily unavailable",
-          { "retry-after": String(retryAfter) },
+          { "retry-after": String(retryAfter) }
         );
       }
     }
 
     // --- HALF-OPEN: limit concurrent probes ---
-    if (snap.state === "half-open" || (snap.state === "open" && now - snap.lastStateChange >= resolved.resetTimeoutMs!)) {
+    if (
+      snap.state === "half-open" ||
+      (snap.state === "open" &&
+        now - snap.lastStateChange >= resolved.resetTimeoutMs!)
+    ) {
       const inFlight = halfOpenProbes.get(key) ?? 0;
       if (inFlight >= resolved.halfOpenMax!) {
         throw new GatewayError(
           resolved.openStatusCode!,
           "circuit_open",
           "Service temporarily unavailable",
-          { "retry-after": String(Math.ceil(resolved.resetTimeoutMs! / 1000)) },
+          { "retry-after": String(Math.ceil(resolved.resetTimeoutMs! / 1000)) }
         );
       }
       halfOpenProbes.set(key, inFlight + 1);
@@ -275,19 +314,57 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
 
         const isFailure = resolved.failureOn!.includes(c.res.status);
         if (isFailure) {
-          debug(`half-open probe failed (key=${key}, status=${c.res.status}) -> open`);
-          await safeCall(() => resolvedStore.recordFailure(key), undefined, debug, "store.recordFailure()");
-          await transitionAndNotify(resolvedStore, key, "half-open", "open", onStateChange, debug);
+          debug(
+            `half-open probe failed (key=${key}, status=${c.res.status}) -> open`
+          );
+          await safeCall(
+            () => resolvedStore.recordFailure(key),
+            undefined,
+            debug,
+            "store.recordFailure()"
+          );
+          await transitionAndNotify(
+            resolvedStore,
+            key,
+            "half-open",
+            "open",
+            onStateChange,
+            debug
+          );
         } else {
           debug(`half-open probe succeeded (key=${key}) -> closed`);
-          await safeCall(() => resolvedStore.recordSuccess(key), undefined, debug, "store.recordSuccess()");
-          await transitionAndNotify(resolvedStore, key, "half-open", "closed", onStateChange, debug);
+          await safeCall(
+            () => resolvedStore.recordSuccess(key),
+            undefined,
+            debug,
+            "store.recordSuccess()"
+          );
+          await transitionAndNotify(
+            resolvedStore,
+            key,
+            "half-open",
+            "closed",
+            onStateChange,
+            debug
+          );
           halfOpenProbes.delete(key);
         }
       } catch (err) {
         debug(`half-open probe threw (key=${key}) -> open`);
-        await safeCall(() => resolvedStore.recordFailure(key), undefined, debug, "store.recordFailure()");
-        await transitionAndNotify(resolvedStore, key, "half-open", "open", onStateChange, debug);
+        await safeCall(
+          () => resolvedStore.recordFailure(key),
+          undefined,
+          debug,
+          "store.recordFailure()"
+        );
+        await transitionAndNotify(
+          resolvedStore,
+          key,
+          "half-open",
+          "open",
+          onStateChange,
+          debug
+        );
         throw err;
       } finally {
         const current = halfOpenProbes.get(key) ?? 1;
@@ -306,22 +383,55 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
     } catch (err) {
       // If recordFailure fails, skip the threshold check entirely —
       // we have no snapshot to compare against.
-      const updated = await safeCall(() => resolvedStore.recordFailure(key), null, debug, "store.recordFailure()");
+      const updated = await safeCall(
+        () => resolvedStore.recordFailure(key),
+        null,
+        debug,
+        "store.recordFailure()"
+      );
       if (updated && updated.failureCount >= resolved.failureThreshold!) {
-        debug(`closed -> open (key=${key}, failures=${updated.failureCount}/${resolved.failureThreshold})`);
-        await transitionAndNotify(resolvedStore, key, "closed", "open", onStateChange, debug);
+        debug(
+          `closed -> open (key=${key}, failures=${updated.failureCount}/${resolved.failureThreshold})`
+        );
+        await transitionAndNotify(
+          resolvedStore,
+          key,
+          "closed",
+          "open",
+          onStateChange,
+          debug
+        );
       }
       throw err;
     }
 
     if (resolved.failureOn!.includes(c.res.status)) {
-      const updated = await safeCall(() => resolvedStore.recordFailure(key), null, debug, "store.recordFailure()");
+      const updated = await safeCall(
+        () => resolvedStore.recordFailure(key),
+        null,
+        debug,
+        "store.recordFailure()"
+      );
       if (updated && updated.failureCount >= resolved.failureThreshold!) {
-        debug(`closed -> open (key=${key}, failures=${updated.failureCount}/${resolved.failureThreshold})`);
-        await transitionAndNotify(resolvedStore, key, "closed", "open", onStateChange, debug);
+        debug(
+          `closed -> open (key=${key}, failures=${updated.failureCount}/${resolved.failureThreshold})`
+        );
+        await transitionAndNotify(
+          resolvedStore,
+          key,
+          "closed",
+          "open",
+          onStateChange,
+          debug
+        );
       }
     } else {
-      await safeCall(() => resolvedStore.recordSuccess(key), undefined, debug, "store.recordSuccess()");
+      await safeCall(
+        () => resolvedStore.recordSuccess(key),
+        undefined,
+        debug,
+        "store.recordSuccess()"
+      );
     }
   };
 

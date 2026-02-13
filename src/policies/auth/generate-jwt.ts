@@ -7,9 +7,9 @@
  * @module generate-jwt
  */
 import type { Context } from "hono";
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 export interface GenerateJwtConfig extends PolicyConfig {
   /** Signing algorithm */
@@ -21,7 +21,9 @@ export interface GenerateJwtConfig extends PolicyConfig {
   /** Claims to include. Static record or dynamic function. */
   claims?:
     | Record<string, unknown>
-    | ((c: Context) => Record<string, unknown> | Promise<Record<string, unknown>>);
+    | ((
+        c: Context
+      ) => Record<string, unknown> | Promise<Record<string, unknown>>);
   /** Token lifetime in seconds. Default: 3600 (1 hour) */
   expiresIn?: number;
   /** Issuer claim */
@@ -39,16 +41,17 @@ function base64UrlEncode(data: Uint8Array): string {
   for (let i = 0; i < data.length; i++) {
     binary += String.fromCharCode(data[i]);
   }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 function base64UrlEncodeString(str: string): string {
   return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function getHashAlgorithm(
-  alg: GenerateJwtConfig["algorithm"],
-): string {
+function getHashAlgorithm(alg: GenerateJwtConfig["algorithm"]): string {
   switch (alg) {
     case "HS256":
     case "RS256":
@@ -97,7 +100,7 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
         throw new GatewayError(
           500,
           "config_error",
-          "generateJwt with HMAC algorithm requires 'secret'",
+          "generateJwt with HMAC algorithm requires 'secret'"
         );
       }
     } else {
@@ -105,7 +108,7 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
         throw new GatewayError(
           500,
           "config_error",
-          "generateJwt with RSA algorithm requires 'privateKey'",
+          "generateJwt with RSA algorithm requires 'privateKey'"
         );
       }
     }
@@ -148,7 +151,7 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
         encoder.encode(config.secret!),
         { name: "HMAC", hash },
         false,
-        ["sign"],
+        ["sign"]
       );
       signature = await crypto.subtle.sign("HMAC", key, data);
     } else {
@@ -157,7 +160,7 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
         config.privateKey!,
         { name: "RSASSA-PKCS1-v1_5", hash },
         false,
-        ["sign"],
+        ["sign"]
       );
       signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, data);
     }

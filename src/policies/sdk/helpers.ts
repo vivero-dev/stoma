@@ -11,9 +11,9 @@
  * @module helpers
  */
 import type { Context, MiddlewareHandler, Next } from "hono";
+import { getGatewayContext } from "../../core/pipeline";
 import type { DebugLogger } from "../../utils/debug";
 import { noopDebugLogger } from "../../utils/debug";
-import { getGatewayContext } from "../../core/pipeline";
 import { TRACE_REQUESTED_KEY } from "./trace";
 
 /**
@@ -28,7 +28,7 @@ import { TRACE_REQUESTED_KEY } from "./trace";
  */
 export function resolveConfig<TConfig>(
   defaults: Partial<TConfig>,
-  userConfig?: Partial<TConfig>,
+  userConfig?: Partial<TConfig>
 ): TConfig {
   if (!userConfig) return { ...defaults } as TConfig;
   return { ...defaults, ...userConfig } as TConfig;
@@ -47,8 +47,7 @@ export function resolveConfig<TConfig>(
  */
 export function policyDebug(c: Context, policyName: string): DebugLogger {
   return (
-    getGatewayContext(c)?.debug(`stoma:policy:${policyName}`) ??
-    noopDebugLogger
+    getGatewayContext(c)?.debug(`stoma:policy:${policyName}`) ?? noopDebugLogger
   );
 }
 
@@ -68,7 +67,7 @@ export function policyDebug(c: Context, policyName: string): DebugLogger {
  */
 export function withSkip(
   skipFn: ((c: unknown) => boolean | Promise<boolean>) | undefined,
-  handler: MiddlewareHandler,
+  handler: MiddlewareHandler
 ): MiddlewareHandler {
   if (!skipFn) return handler;
 
@@ -109,13 +108,15 @@ export async function safeCall<T>(
   fn: () => Promise<T>,
   fallback: T,
   debug?: DebugLogger,
-  label?: string,
+  label?: string
 ): Promise<T> {
   try {
     return await fn();
   } catch (err) {
     if (debug && label) {
-      debug(`${label} failed: ${err instanceof Error ? err.message : String(err)}`);
+      debug(
+        `${label} failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
     return fallback;
   }
@@ -147,12 +148,13 @@ const DEBUG_REQUESTED_KEY = "_stomaDebugRequested";
 export function setDebugHeader(
   c: Context,
   name: string,
-  value: string | number | boolean,
+  value: string | number | boolean
 ): void {
   const requested = c.get(DEBUG_REQUESTED_KEY) as Set<string> | undefined;
   if (!requested || !(requested.has(name) || requested.has("*"))) return;
 
-  const headers = (c.get(DEBUG_HEADERS_KEY) ?? new Map<string, string>()) as Map<string, string>;
+  const headers = (c.get(DEBUG_HEADERS_KEY) ??
+    new Map<string, string>()) as Map<string, string>;
   headers.set(name, String(value));
   c.set(DEBUG_HEADERS_KEY, headers);
 }
@@ -172,12 +174,15 @@ export function setDebugHeader(
 export function parseDebugRequest(
   c: Context,
   requestHeaderName: string,
-  allow?: string[],
+  allow?: string[]
 ): void {
   const raw = c.req.header(requestHeaderName);
   if (!raw) return;
 
-  const names = raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  const names = raw
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
   if (names.length === 0) return;
 
   const allowSet = allow ? new Set(allow.map((a) => a.toLowerCase())) : null;
@@ -222,7 +227,7 @@ export function parseDebugRequest(
  * @internal
  */
 export function getCollectedDebugHeaders(
-  c: Context,
+  c: Context
 ): Map<string, string> | undefined {
   return c.get(DEBUG_HEADERS_KEY) as Map<string, string> | undefined;
 }

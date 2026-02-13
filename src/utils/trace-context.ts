@@ -20,7 +20,8 @@ export interface TraceContext {
   flags: string;
 }
 
-const TRACEPARENT_REGEX = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
+const TRACEPARENT_REGEX =
+  /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
 
 /**
  * Parse a `traceparent` header value into its components.

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { retry } from "../retry";
 import { createGateway } from "../../../core/gateway";
+import { retry } from "../retry";
 
 describe("retry", () => {
   let originalFetch: typeof globalThis.fetch;
@@ -40,7 +40,7 @@ describe("retry", () => {
   }
 
   function mockFetchResponses(
-    responses: Array<{ status: number; body?: Record<string, unknown> }>,
+    responses: Array<{ status: number; body?: Record<string, unknown> }>
   ) {
     let callCount = 0;
     const mock = vi.fn(async () => {
@@ -178,10 +178,7 @@ describe("retry", () => {
 
   it("should set x-retry-count header after retries", async () => {
     const app = createApp({ maxRetries: 3, baseDelayMs: 1 });
-    mockFetchResponses([
-      { status: 503 },
-      { status: 200, body: { ok: true } },
-    ]);
+    mockFetchResponses([{ status: 503 }, { status: 200, body: { ok: true } }]);
 
     const res = await app.request("/test");
     expect(res.headers.get("x-retry-count")).toBe("1");

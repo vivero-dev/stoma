@@ -3,8 +3,9 @@
  *
  * @module mock
  */
-import type { PolicyConfig } from "./types";
+
 import { definePolicy, Priority } from "./sdk";
+import type { PolicyConfig } from "./types";
 
 export interface MockConfig extends PolicyConfig {
   /** HTTP status code to return. Default: 200. */
@@ -65,7 +66,9 @@ export const mock = definePolicy<MockConfig>({
   defaults: { status: 200, delayMs: 0 },
   validate: (config) => {
     if (!config.allowInProduction) {
-      console.warn("[stoma] mock policy active — intended for development/testing only");
+      console.warn(
+        "[stoma] mock policy active — intended for development/testing only"
+      );
     }
   },
   handler: async (c, _next, { config }) => {

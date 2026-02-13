@@ -4,8 +4,8 @@
  * @module interrupt
  */
 import type { Context } from "hono";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface InterruptConfig extends PolicyConfig {
   /** Predicate that determines whether to short-circuit. Required. */

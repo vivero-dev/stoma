@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
 import { cors } from "../cors";
 
 describe("cors", () => {
@@ -23,7 +23,7 @@ describe("cors", () => {
     });
 
     expect(res.headers.get("access-control-allow-origin")).toBe(
-      "https://example.com",
+      "https://example.com"
     );
   });
 
@@ -45,7 +45,7 @@ describe("cors", () => {
 
     expect(res.status).toBe(204);
     expect(res.headers.get("access-control-allow-origin")).toBe(
-      "https://example.com",
+      "https://example.com"
     );
     expect(res.headers.get("access-control-allow-methods")).toContain("GET");
     expect(res.headers.get("access-control-allow-methods")).toContain("POST");
@@ -92,14 +92,14 @@ describe("cors", () => {
       headers: { origin: "https://a.com" },
     });
     expect(res1.headers.get("access-control-allow-origin")).toBe(
-      "https://a.com",
+      "https://a.com"
     );
 
     const res2 = await app.request("/test", {
       headers: { origin: "https://b.com" },
     });
     expect(res2.headers.get("access-control-allow-origin")).toBe(
-      "https://b.com",
+      "https://b.com"
     );
   });
 
@@ -114,7 +114,7 @@ describe("cors", () => {
       headers: { origin: "https://allowed.com" },
     });
     expect(resAllowed.headers.get("access-control-allow-origin")).toBe(
-      "https://allowed.com",
+      "https://allowed.com"
     );
 
     const resDisallowed = await app.request("/test", {
@@ -122,7 +122,7 @@ describe("cors", () => {
     });
     // When origin function returns false, Hono's cors omits the header entirely
     const disallowedOrigin = resDisallowed.headers.get(
-      "access-control-allow-origin",
+      "access-control-allow-origin"
     );
     expect(disallowedOrigin).toBeNull();
   });

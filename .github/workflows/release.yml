@@ -44,6 +44,9 @@ jobs:
       - name: Test
         run: yarn test
 
+      - name: Build
+        run: yarn build
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
@@ -82,6 +85,9 @@ jobs:
       - name: Install dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: yarn install --immutable
+
+      - name: Install docs dependencies
+        run: cd docs && yarn install --immutable
 
       - name: Build docs
         run: yarn docs:build

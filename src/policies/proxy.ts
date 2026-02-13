@@ -3,8 +3,9 @@
  *
  * @module proxy
  */
-import type { Policy, PolicyConfig } from "./types";
+
 import { Priority, withSkip } from "./sdk";
+import type { Policy, PolicyConfig } from "./types";
 
 export interface ProxyPolicyConfig extends PolicyConfig {
   /** Headers to add to the proxied request */

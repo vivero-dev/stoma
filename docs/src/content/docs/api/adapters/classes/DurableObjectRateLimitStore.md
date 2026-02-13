@@ -5,7 +5,7 @@ prev: false
 title: "DurableObjectRateLimitStore"
 ---
 
-Defined in: [packages/stoma/src/adapters/durable-object.ts:87](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/durable-object.ts#L87)
+Defined in: [src/adapters/durable-object.ts:87](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/durable-object.ts#L87)
 
 Rate limit store backed by a Durable Object.
 
@@ -32,7 +32,7 @@ rateLimit({ max: 100, store });
 
 > **new DurableObjectRateLimitStore**(`namespace`): `DurableObjectRateLimitStore`
 
-Defined in: [packages/stoma/src/adapters/durable-object.ts:88](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/durable-object.ts#L88)
+Defined in: [src/adapters/durable-object.ts:88](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/durable-object.ts#L88)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [packages/stoma/src/adapters/durable-object.ts:88](https://github.co
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [packages/stoma/src/adapters/durable-object.ts:90](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/adapters/durable-object.ts#L90)
+Defined in: [src/adapters/durable-object.ts:90](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/adapters/durable-object.ts#L90)
 
 Increment the counter for a key, returning the new count and TTL
 

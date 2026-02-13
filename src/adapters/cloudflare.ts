@@ -14,10 +14,10 @@ export class KVRateLimitStore implements RateLimitStore {
 
   async increment(
     key: string,
-    windowSeconds: number,
+    windowSeconds: number
   ): Promise<{ count: number; resetAt: number }> {
     const now = Date.now();
-    const raw = await this.kv.get(key, "json") as {
+    const raw = (await this.kv.get(key, "json")) as {
       count: number;
       resetAt: number;
     } | null;
@@ -68,7 +68,7 @@ export class CacheApiCacheStore implements CacheStore {
   async put(
     key: string,
     response: Response,
-    ttlSeconds: number,
+    ttlSeconds: number
   ): Promise<void> {
     const cacheKey = new Request(`${this.origin}/${encodeURIComponent(key)}`);
     const headers = new Headers(response.headers);
@@ -112,7 +112,7 @@ export interface CloudflareAdapterBindings {
  * Pass `env` to enable `dispatchBinding` (for service binding dispatch via the adapter).
  */
 export function cloudflareAdapter(
-  bindings: CloudflareAdapterBindings,
+  bindings: CloudflareAdapterBindings
 ): GatewayAdapter {
   let rateLimitStore: RateLimitStore | undefined;
   if (bindings.rateLimitDo) {
@@ -132,10 +132,12 @@ export function cloudflareAdapter(
       : undefined,
     dispatchBinding: bindings.env
       ? async (service, request) => {
-          const binding = bindings.env![service] as { fetch: typeof fetch } | undefined;
+          const binding = bindings.env![service] as
+            | { fetch: typeof fetch }
+            | undefined;
           if (!binding || typeof binding.fetch !== "function") {
             throw new Error(
-              `Service binding "${service}" is not available in the Worker environment`,
+              `Service binding "${service}" is not available in the Worker environment`
             );
           }
           return binding.fetch(request);

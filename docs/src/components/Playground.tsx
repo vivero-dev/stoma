@@ -11,18 +11,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./Playground.css";
+
+import JSONPretty from "react-json-pretty";
 import {
-  registerPlaygroundSW,
-  sendPlaygroundRequest,
-  resetPlayground,
   type PlaygroundResponse,
-  type PlaygroundTrace,
-  type PlaygroundTraceEntry,
+  registerPlaygroundSW,
+  resetPlayground,
+  sendPlaygroundRequest,
 } from "../playground/register";
+import "react-json-pretty/themes/monikai.css";
 
-import JSONPretty from 'react-json-pretty';
-import 'react-json-pretty/themes/monikai.css';
-
+import { HeadersTable } from "./shared/HeadersTable";
+import { parseServerTiming, TimingWaterfall } from "./shared/TimingWaterfall";
+import { TracePanel } from "./shared/TracePanel";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,32 +50,20 @@ interface PresetButton {
   tag?: string;
 }
 
-interface TimingEntry {
-  name: string;
-  durMs: number;
-}
-
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-const HIGHLIGHT_HEADERS = new Set([
-  "x-ratelimit-limit",
-  "x-ratelimit-remaining",
-  "x-ratelimit-reset",
-  "x-cache",
-  "x-request-id",
-  "retry-after",
-  "x-response-time",
-  "server-timing",
-  "x-stoma-trace",
-]);
 
 const PRESETS: PresetButton[] = [
   { method: "GET", path: "/echo" },
   { method: "POST", path: "/echo", body: '{"hello":"world"}' },
   { method: "GET", path: "/protected" },
-  { method: "GET", path: "/protected", headers: { "x-api-key": "demo-key" }, tag: "+ api key" },
+  {
+    method: "GET",
+    path: "/protected",
+    headers: { "x-api-key": "demo-key" },
+    tag: "+ api key",
+  },
   { method: "GET", path: "/slow" },
   { method: "GET", path: "/health" },
 ];
@@ -85,166 +74,8 @@ const STATUS_TEXT: Record<SwStatus, string> = {
   error: "Service worker failed",
 };
 
-const TIP_TEXT = "Open the browser's console logs to see real request logging from Stoma.";
-
-// ---------------------------------------------------------------------------
-// Server-Timing parser
-// ---------------------------------------------------------------------------
-
-/**
- * Parse a W3C `Server-Timing` header value into structured entries.
- *
- * Format: `name;dur=123.4;desc="optional", name2;dur=5.6`
- */
-function parseServerTiming(header: string | undefined): TimingEntry[] {
-  if (!header) return [];
-
-  return header.split(",").reduce<TimingEntry[]>((entries, raw) => {
-    const parts = raw.trim().split(";");
-    const name = parts[0]?.trim();
-    if (!name) return entries;
-
-    const durPart = parts.find((p) => p.trim().startsWith("dur="));
-    const durMs = durPart ? Number.parseFloat(durPart.trim().slice(4)) : 0;
-
-    if (!Number.isNaN(durMs)) {
-      entries.push({ name, durMs });
-    }
-    return entries;
-  }, []);
-}
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-function TimingWaterfall({ entries }: { entries: TimingEntry[] }) {
-  // Separate total from policy entries
-  const total = entries.find((e) => e.name === "total");
-  const policies = entries.filter((e) => e.name !== "total");
-
-  // Scale bars relative to the longest policy (not total)
-  const maxPolicyDur = policies.reduce((m, e) => Math.max(m, e.durMs), 0);
-  const scale = maxPolicyDur > 0 ? maxPolicyDur : 1;
-
-  return (
-    <div className="pg-timing-waterfall">
-      {total && (
-        <div className="pg-timing-total">
-          <span className="pg-timing-total-label">Gateway total</span>
-          <span className="pg-timing-total-value">{total.durMs.toFixed(1)}ms</span>
-        </div>
-      )}
-      {policies.length > 0 && (
-        <div className="pg-timing-rows">
-          {policies.map((entry) => {
-            const pct = Math.max((entry.durMs / scale) * 100, 1);
-            return (
-              <div className="pg-timing-row" key={entry.name}>
-                <span className="pg-timing-name">{entry.name}</span>
-                <span className="pg-timing-bar-track">
-                  <span
-                    className="pg-timing-bar-fill"
-                    style={{ width: `${pct}%` }}
-                  />
-                </span>
-                <span className="pg-timing-dur">{entry.durMs.toFixed(1)}ms</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {!total && policies.length === 0 && (
-        <div className="pg-timing-empty">No timing data</div>
-      )}
-    </div>
-  );
-}
-
-function TracePanel({ trace }: { trace: PlaygroundTrace }) {
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
-
-  return (
-    <div className="pg-trace-panel">
-      <table className="pg-trace-table">
-        <thead>
-          <tr>
-            <th>Policy</th>
-            <th>Self-time</th>
-            <th>Next?</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {trace.entries.map((entry) => {
-            const isExpanded = expandedRow === entry.name;
-            const hasData = entry.detail?.data && Object.keys(entry.detail.data).length > 0;
-            return (
-              <tr key={entry.name} className="pg-trace-group">
-                <td className="pg-trace-name">
-                  {entry.name}
-                  <span className="pg-trace-priority">p{entry.priority}</span>
-                </td>
-                <td className="pg-trace-dur">{entry.durationMs.toFixed(1)}ms</td>
-                <td className="pg-trace-next">
-                  {entry.calledNext ? (
-                    <span className="pg-trace-check" title="Called next()">&#10003;</span>
-                  ) : (
-                    <span className="pg-trace-x" title="Short-circuited">&#10007;</span>
-                  )}
-                </td>
-                <td className={`pg-trace-action${entry.error ? " pg-trace-action--error" : ""}`}>
-                  {entry.error ? (
-                    <span className="pg-trace-error">{entry.error}</span>
-                  ) : entry.detail ? (
-                    <span
-                      className={hasData ? "pg-trace-action-text pg-trace-action-text--clickable" : "pg-trace-action-text"}
-                      onClick={hasData ? () => setExpandedRow(isExpanded ? null : entry.name) : undefined}
-                    >
-                      {entry.detail.action}
-                      {hasData && <span className="pg-trace-expand-icon">{isExpanded ? " \u25B4" : " \u25BE"}</span>}
-                    </span>
-                  ) : (
-                    <span className="pg-trace-no-detail">-</span>
-                  )}
-                  {isExpanded && hasData && (
-                    <pre className="pg-trace-data">
-                      {JSON.stringify(entry.detail!.data, null, 2)}
-                    </pre>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function HeadersTable({
-  headers,
-  highlight = false,
-}: {
-  headers: Record<string, string>;
-  highlight?: boolean;
-}) {
-  return (
-    <table className="pg-headers-table">
-      <tbody>
-        {Object.entries(headers).map(([name, value]) => (
-          <tr
-            key={name}
-            className={highlight && HIGHLIGHT_HEADERS.has(name.toLowerCase()) ? "pg-header--highlight" : undefined}
-          >
-            <td>{name}</td>
-            <td>{value}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
+const TIP_TEXT =
+  "Open the browser's console logs to see real request logging from Stoma.";
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -273,39 +104,48 @@ export default function Playground() {
       });
   }, []);
 
-  const handlePreset = useCallback(async (preset: PresetButton) => {
-    if (!swReady.current || busy) return;
+  const handlePreset = useCallback(
+    async (preset: PresetButton) => {
+      if (!swReady.current || busy) return;
 
-    const mergedHeaders = preset.body
-      ? { "content-type": "application/json", ...preset.headers }
-      : preset.headers;
+      const mergedHeaders = preset.body
+        ? { "content-type": "application/json", ...preset.headers }
+        : preset.headers;
 
-    const reqInfo: RequestInfo = {
-      method: preset.method,
-      path: preset.path,
-      headers: mergedHeaders,
-    };
-
-    setBusy(true);
-
-    try {
-      const res = await sendPlaygroundRequest(preset.method, preset.path, {
+      const reqInfo: RequestInfo = {
+        method: preset.method,
+        path: preset.path,
         headers: mergedHeaders,
-        body: preset.body,
-      });
-      setResult({ req: reqInfo, res });
-    } catch (err) {
-      swReady.current = false;
-      setStatus("error");
-      setStatusText("Service worker lost - click Reset to recover");
-      setResult({
-        req: reqInfo,
-        res: { status: 0, statusText: "Network Error", headers: {}, body: String(err), timingMs: 0 },
-      });
-    } finally {
-      setBusy(false);
-    }
-  }, [busy]);
+      };
+
+      setBusy(true);
+
+      try {
+        const res = await sendPlaygroundRequest(preset.method, preset.path, {
+          headers: mergedHeaders,
+          body: preset.body,
+        });
+        setResult({ req: reqInfo, res });
+      } catch (err) {
+        swReady.current = false;
+        setStatus("error");
+        setStatusText("Service worker lost - click Reset to recover");
+        setResult({
+          req: reqInfo,
+          res: {
+            status: 0,
+            statusText: "Network Error",
+            headers: {},
+            body: String(err),
+            timingMs: 0,
+          },
+        });
+      } finally {
+        setBusy(false);
+      }
+    },
+    [busy]
+  );
 
   const handleReset = useCallback(async () => {
     if (resetting) return;
@@ -344,11 +184,15 @@ export default function Playground() {
   // Parse Server-Timing entries from response headers
   const timingEntries = useMemo(
     () => parseServerTiming(result?.res.headers["server-timing"]),
-    [result],
+    [result]
   );
 
   const statusClass = result
-    ? result.res.status < 300 ? "pg-badge--2xx" : result.res.status < 500 ? "pg-badge--4xx" : "pg-badge--5xx"
+    ? result.res.status < 300
+      ? "pg-badge--2xx"
+      : result.res.status < 500
+        ? "pg-badge--4xx"
+        : "pg-badge--5xx"
     : "";
 
   const buttonsDisabled = status !== "ready" || busy;
@@ -359,9 +203,7 @@ export default function Playground() {
         <span className="pg-dot" />
         <span>{statusText}</span>
       </div>
-      {status === "ready" && (
-        <div className="pg-status-tip">{TIP_TEXT}</div>
-      )}
+      {status === "ready" && <div className="pg-status-tip">{TIP_TEXT}</div>}
 
       <div className="pg-buttons">
         {PRESETS.map((preset, i) => (
@@ -371,7 +213,13 @@ export default function Playground() {
             disabled={buttonsDisabled}
             onClick={() => handlePreset(preset)}
           >
-            <span className={preset.method === "POST" ? "pg-btn-method pg-btn-method--post" : "pg-btn-method"}>
+            <span
+              className={
+                preset.method === "POST"
+                  ? "pg-btn-method pg-btn-method--post"
+                  : "pg-btn-method"
+              }
+            >
               {preset.method}
             </span>
             <span className="pg-btn-path">{preset.path}</span>
@@ -384,7 +232,9 @@ export default function Playground() {
       <div className="pg-result">
         <div className="pg-topbar">
           <span className="pg-req-line">
-            {result ? `${result.req.method} /playground/api${result.req.path}` : "Make a request"}
+            {result
+              ? `${result.req.method} /playground/api${result.req.path}`
+              : "Make a request"}
           </span>
           <span className="pg-topbar-right">
             {result && (
@@ -402,13 +252,16 @@ export default function Playground() {
           <div className="pg-col-headers">
             <div className="pg-section">
               <div className="pg-section-label">Request</div>
-              {result?.req.headers && Object.keys(result.req.headers).length > 0 && (
-                <HeadersTable headers={result.req.headers} />
-              )}
+              {result?.req.headers &&
+                Object.keys(result.req.headers).length > 0 && (
+                  <HeadersTable headers={result.req.headers} />
+                )}
             </div>
             <div className="pg-section">
               <div className="pg-section-label">Response</div>
-              {result && <HeadersTable headers={result.res.headers} highlight />}
+              {result && (
+                <HeadersTable headers={result.res.headers} highlight />
+              )}
             </div>
           </div>
 

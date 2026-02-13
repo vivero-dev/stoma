@@ -5,7 +5,7 @@ prev: false
 title: "PipelineConfig"
 ---
 
-Defined in: [packages/stoma/src/core/types.ts:121](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L121)
+Defined in: [src/core/types.ts:121](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L121)
 
 Pipeline: ordered chain of policies leading to an upstream
 
@@ -15,7 +15,7 @@ Pipeline: ordered chain of policies leading to an upstream
 
 > `optional` **policies**: [`Policy`](/api/index/interfaces/policy/)[]
 
-Defined in: [packages/stoma/src/core/types.ts:123](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L123)
+Defined in: [src/core/types.ts:123](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L123)
 
 Policies executed in order before the upstream
 
@@ -25,6 +25,6 @@ Policies executed in order before the upstream
 
 > **upstream**: [`UpstreamConfig`](/api/index/type-aliases/upstreamconfig/)
 
-Defined in: [packages/stoma/src/core/types.ts:125](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L125)
+Defined in: [src/core/types.ts:125](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L125)
 
 Upstream target configuration

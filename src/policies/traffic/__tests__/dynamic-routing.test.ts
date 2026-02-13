@@ -14,9 +14,8 @@ describe("dynamicRouting", () => {
         ],
       }),
       {
-        upstream: async (c) =>
-          c.json({ target: c.get("_dynamicTarget") }),
-      },
+        upstream: async (c) => c.json({ target: c.get("_dynamicTarget") }),
+      }
     );
     const res = await request("/test");
     expect(res.status).toBe(200);
@@ -35,9 +34,8 @@ describe("dynamicRouting", () => {
         ],
       }),
       {
-        upstream: async (c) =>
-          c.json({ target: c.get("_dynamicTarget") }),
-      },
+        upstream: async (c) => c.json({ target: c.get("_dynamicTarget") }),
+      }
     );
     const res = await request("/test", {
       headers: { "x-version": "2" },
@@ -57,9 +55,8 @@ describe("dynamicRouting", () => {
         ],
       }),
       {
-        upstream: async (c) =>
-          c.json({ target: c.get("_dynamicTarget") }),
-      },
+        upstream: async (c) => c.json({ target: c.get("_dynamicTarget") }),
+      }
     );
     const res = await request("/admin/users");
     const body = (await res.json()) as Record<string, unknown>;
@@ -87,7 +84,7 @@ describe("dynamicRouting", () => {
             rewrite: rewrite?.("/api/users"),
           });
         },
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -112,7 +109,7 @@ describe("dynamicRouting", () => {
             target: c.get("_dynamicTarget"),
             headers: c.get("_dynamicHeaders"),
           }),
-      },
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -136,9 +133,8 @@ describe("dynamicRouting", () => {
         ],
       }),
       {
-        upstream: async (c) =>
-          c.json({ target: c.get("_dynamicTarget") }),
-      },
+        upstream: async (c) => c.json({ target: c.get("_dynamicTarget") }),
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -162,7 +158,7 @@ describe("dynamicRouting", () => {
             target: c.get("_dynamicTarget") ?? null,
             ok: true,
           }),
-      },
+      }
     );
     const res = await request("/test");
     expect(res.status).toBe(200);
@@ -181,7 +177,7 @@ describe("dynamicRouting", () => {
           },
         ],
         fallthrough: false,
-      }),
+      })
     );
     const res = await request("/test");
     expect(res.status).toBe(404);
@@ -204,9 +200,8 @@ describe("dynamicRouting", () => {
         ],
       }),
       {
-        upstream: async (c) =>
-          c.json({ target: c.get("_dynamicTarget") }),
-      },
+        upstream: async (c) => c.json({ target: c.get("_dynamicTarget") }),
+      }
     );
     const res = await request("/test");
     const body = (await res.json()) as Record<string, unknown>;
@@ -223,7 +218,7 @@ describe("dynamicRouting", () => {
             target: "https://api.internal",
           },
         ],
-      }),
+      })
     );
     // Just verify it completes without error — debug logging is internal
     const res = await request("/test");
@@ -245,7 +240,7 @@ describe("dynamicRouting", () => {
       {
         upstream: async (c) =>
           c.json({ target: c.get("_dynamicTarget") ?? null }),
-      },
+      }
     );
     // Skip means the policy doesn't run — no target set, no 404 thrown
     const res = await request("/test");
@@ -264,7 +259,7 @@ describe("dynamicRouting", () => {
           },
         ],
         // No explicit fallthrough — should default to true
-      }),
+      })
     );
     const res = await request("/test");
     expect(res.status).toBe(200);

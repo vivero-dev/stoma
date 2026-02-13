@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
+import { GatewayError } from "../../../core/errors";
+import { createContextInjector } from "../../../core/pipeline";
+import { noopDebugLogger } from "../../../utils/debug";
+import type { PolicyConfig, PolicyContext } from "../../types";
 import { definePolicy } from "../define-policy";
 import { Priority } from "../priority";
-import { createContextInjector } from "../../../core/pipeline";
-import { GatewayError } from "../../../core/errors";
-import type { PolicyConfig, PolicyContext } from "../../types";
-import { noopDebugLogger } from "../../../utils/debug";
 
 interface TestPolicyConfig extends PolicyConfig {
   headerName?: string;
@@ -17,7 +17,9 @@ describe("definePolicy", () => {
     const factory = definePolicy<TestPolicyConfig>({
       name: "test-policy",
       priority: Priority.AUTH,
-      handler: async (_c, next) => { await next(); },
+      handler: async (_c, next) => {
+        await next();
+      },
     });
 
     const policy = factory();
@@ -29,7 +31,9 @@ describe("definePolicy", () => {
   it("should use Priority.DEFAULT when no priority specified", () => {
     const factory = definePolicy({
       name: "default-priority",
-      handler: async (_c, next) => { await next(); },
+      handler: async (_c, next) => {
+        await next();
+      },
     });
 
     const policy = factory();
@@ -119,9 +123,12 @@ describe("definePolicy", () => {
     const policy = factory();
 
     const app = new Hono();
-    app.use("/*", createContextInjector("test-gw", "/*", () => {
-      return (_msg: string) => {};
-    }));
+    app.use(
+      "/*",
+      createContextInjector("test-gw", "/*", () => {
+        return (_msg: string) => {};
+      })
+    );
     app.use("/*", policy.handler);
     app.get("/test", (c) => c.json({ ok: true }));
     await app.request("/test");
@@ -289,7 +296,7 @@ describe("definePolicy", () => {
         if (err instanceof GatewayError) {
           return c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 403,
+            err.statusCode as 403
           );
         }
         throw err;
@@ -299,7 +306,7 @@ describe("definePolicy", () => {
 
     const res = await app.request("/test");
     expect(res.status).toBe(403);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as Record<string, unknown>;
     expect(body.error).toBe("forbidden");
   });
 });

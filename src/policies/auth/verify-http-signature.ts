@@ -6,15 +6,16 @@
  *
  * @module verify-http-signature
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 import {
-  buildSignatureBase,
-  parseSignatureParams,
   algorithmToCrypto,
-  importVerifyKey,
+  buildSignatureBase,
   fromBase64,
+  importVerifyKey,
+  parseSignatureParams,
 } from "./http-signature-base";
 
 export interface HttpSignatureKey {
@@ -57,7 +58,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         500,
         "config_error",
-        "verifyHttpSignature requires at least one key in 'keys'",
+        "verifyHttpSignature requires at least one key in 'keys'"
       );
     }
 
@@ -69,7 +70,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         401,
         "signature_invalid",
-        "Missing Signature-Input header",
+        "Missing Signature-Input header"
       );
     }
 
@@ -79,7 +80,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         401,
         "signature_invalid",
-        "Missing Signature header",
+        "Missing Signature header"
       );
     }
 
@@ -89,7 +90,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         401,
         "signature_invalid",
-        `Missing signature label "${label}" in Signature-Input header`,
+        `Missing signature label "${label}" in Signature-Input header`
       );
     }
     const inputValue = signatureInputHeader.slice(inputPrefix.length);
@@ -99,11 +100,14 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
 
     // 4. Parse the labelled Signature: label=:<base64>:
     const sigPrefix = `${label}=:`;
-    if (!signatureHeader.startsWith(sigPrefix) || !signatureHeader.endsWith(":")) {
+    if (
+      !signatureHeader.startsWith(sigPrefix) ||
+      !signatureHeader.endsWith(":")
+    ) {
       throw new GatewayError(
         401,
         "signature_invalid",
-        `Invalid Signature header format for label "${label}"`,
+        `Invalid Signature header format for label "${label}"`
       );
     }
     const signatureB64 = signatureHeader.slice(sigPrefix.length, -1);
@@ -116,7 +120,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
         throw new GatewayError(
           401,
           "signature_invalid",
-          "Signature has expired (maxAge exceeded)",
+          "Signature has expired (maxAge exceeded)"
         );
       }
     }
@@ -128,7 +132,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
         throw new GatewayError(
           401,
           "signature_invalid",
-          "Signature has expired (expires parameter)",
+          "Signature has expired (expires parameter)"
         );
       }
     }
@@ -139,7 +143,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
         throw new GatewayError(
           401,
           "signature_invalid",
-          `Required component "${required}" not found in signature`,
+          `Required component "${required}" not found in signature`
         );
       }
     }
@@ -150,7 +154,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         401,
         "signature_invalid",
-        "Missing keyid in signature parameters",
+        "Missing keyid in signature parameters"
       );
     }
 
@@ -159,7 +163,7 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       throw new GatewayError(
         401,
         "signature_invalid",
-        "Unknown key identifier",
+        "Unknown key identifier"
       );
     }
 
@@ -168,14 +172,14 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
     const signatureBase = buildSignatureBase(
       components,
       signatureParamsStr,
-      c.req.raw,
+      c.req.raw
     );
 
     // 10. Verify the signature
     const key = await importVerifyKey(
       keyEntry.algorithm,
       keyEntry.secret,
-      keyEntry.publicKey,
+      keyEntry.publicKey
     );
     const { signAlg } = algorithmToCrypto(keyEntry.algorithm);
     const encoder = new TextEncoder();
@@ -185,14 +189,14 @@ export const verifyHttpSignature = definePolicy<VerifyHttpSignatureConfig>({
       signAlg,
       key,
       signatureBytes,
-      encoder.encode(signatureBase),
+      encoder.encode(signatureBase)
     );
 
     if (!valid) {
       throw new GatewayError(
         401,
         "signature_invalid",
-        "Signature verification failed",
+        "Signature verification failed"
       );
     }
 

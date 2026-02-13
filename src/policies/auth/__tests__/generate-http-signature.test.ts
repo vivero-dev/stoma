@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { generateHttpSignature } from "../generate-http-signature";
-import type { GenerateHttpSignatureConfig } from "../generate-http-signature";
 import { createPolicyTestHarness } from "../../sdk";
+import type { GenerateHttpSignatureConfig } from "../generate-http-signature";
+import { generateHttpSignature } from "../generate-http-signature";
 import {
   algorithmToCrypto,
+  buildSignatureBase,
   fromBase64,
   parseSignatureParams,
-  buildSignatureBase,
 } from "../http-signature-base";
 
 const TEST_SECRET = "test-hmac-secret-key-for-http-signatures";
 const TEST_KEY_ID = "test-key-1";
 
 function makeConfig(
-  overrides?: Partial<GenerateHttpSignatureConfig>,
+  overrides?: Partial<GenerateHttpSignatureConfig>
 ): GenerateHttpSignatureConfig {
   return {
     keyId: TEST_KEY_ID,
@@ -33,7 +33,7 @@ describe("generateHttpSignature", () => {
           const sigInput = c.req.header("Signature-Input");
           return c.json({ signature: sig, signatureInput: sigInput });
         },
-      },
+      }
     );
 
     const res = await request("/api/users");
@@ -59,7 +59,7 @@ describe("generateHttpSignature", () => {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test/path");
@@ -72,13 +72,13 @@ describe("generateHttpSignature", () => {
   it("should include custom components including header values", async () => {
     const { request } = createPolicyTestHarness(
       generateHttpSignature(
-        makeConfig({ components: ["@method", "content-type", "x-custom"] }),
+        makeConfig({ components: ["@method", "content-type", "x-custom"] })
       ),
       {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test", {
@@ -105,7 +105,7 @@ describe("generateHttpSignature", () => {
             signatureInput: c.req.header("Signature-Input"),
           });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -124,7 +124,7 @@ describe("generateHttpSignature", () => {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -139,7 +139,7 @@ describe("generateHttpSignature", () => {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -152,7 +152,7 @@ describe("generateHttpSignature", () => {
       generateHttpSignature({
         keyId: TEST_KEY_ID,
         algorithm: "hmac-sha256",
-      } as GenerateHttpSignatureConfig),
+      } as GenerateHttpSignatureConfig)
     );
 
     const res = await request("/test");
@@ -163,16 +163,14 @@ describe("generateHttpSignature", () => {
 
   it("should respect skip logic", async () => {
     const { request } = createPolicyTestHarness(
-      generateHttpSignature(
-        makeConfig({ skip: () => true }),
-      ),
+      generateHttpSignature(makeConfig({ skip: () => true })),
       {
         upstream: async (c) => {
           return c.json({
             hasSignature: c.req.header("Signature") !== undefined,
           });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -187,7 +185,7 @@ describe("generateHttpSignature", () => {
         makeConfig({
           signatureHeaderName: "X-Sig",
           signatureInputHeaderName: "X-Sig-Input",
-        }),
+        })
       ),
       {
         upstream: async (c) => {
@@ -197,7 +195,7 @@ describe("generateHttpSignature", () => {
             regularSig: c.req.header("Signature") ?? null,
           });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -227,7 +225,7 @@ describe("generateHttpSignature", () => {
           capturedMethod = c.req.method;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     await request("/api/test", { method: "GET" });
@@ -252,13 +250,13 @@ describe("generateHttpSignature", () => {
       encoder.encode(TEST_SECRET),
       importAlg,
       false,
-      ["verify"],
+      ["verify"]
     );
     const valid = await crypto.subtle.verify(
       signAlg,
       key,
       signatureBytes,
-      encoder.encode(base),
+      encoder.encode(base)
     );
     expect(valid).toBe(true);
   });
@@ -270,7 +268,7 @@ describe("generateHttpSignature", () => {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -286,7 +284,7 @@ describe("generateHttpSignature", () => {
         upstream: async (c) => {
           return c.json({ signatureInput: c.req.header("Signature-Input") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -301,7 +299,7 @@ describe("generateHttpSignature", () => {
   it("should handle POST request with body", async () => {
     const { request } = createPolicyTestHarness(
       generateHttpSignature(
-        makeConfig({ components: ["@method", "@path", "content-type"] }),
+        makeConfig({ components: ["@method", "@path", "content-type"] })
       ),
       {
         upstream: async (c) => {
@@ -310,7 +308,7 @@ describe("generateHttpSignature", () => {
             signatureInput: c.req.header("Signature-Input"),
           });
         },
-      },
+      }
     );
 
     const res = await request("/api/data", {

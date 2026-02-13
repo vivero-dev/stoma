@@ -31,7 +31,7 @@ export const DEFAULT_IP_HEADERS = ["cf-connecting-ip", "x-forwarded-for"];
  */
 export function extractClientIp(
   headers: { get(name: string): string | null | undefined },
-  ipHeaders: readonly string[] = DEFAULT_IP_HEADERS,
+  ipHeaders: readonly string[] = DEFAULT_IP_HEADERS
 ): string {
   for (const header of ipHeaders) {
     const value = headers.get(header);

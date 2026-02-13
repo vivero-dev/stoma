@@ -3,8 +3,9 @@
  *
  * @module latency-injection
  */
-import type { PolicyConfig } from "../types";
+
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface LatencyInjectionConfig extends PolicyConfig {
   /** Base delay in milliseconds. Required. */

@@ -10,9 +10,23 @@
  */
 import type { Context, MiddlewareHandler } from "hono";
 import type { GatewayAdapter } from "../adapters/types";
+import {
+  getCollectedDebugHeaders,
+  parseDebugRequest,
+} from "../policies/sdk/helpers";
+import {
+  type PolicyTrace,
+  type PolicyTraceBaseline,
+  type PolicyTraceDetail,
+  type PolicyTraceEntry,
+  TRACE_DETAILS_KEY,
+  TRACE_ENTRIES_KEY,
+  TRACE_REQUESTED_KEY,
+} from "../policies/sdk/trace";
 import type { Policy, PolicyContext } from "../policies/types";
 import type { DebugLogger } from "../utils/debug";
 import { noopDebugLogger } from "../utils/debug";
+import { toSelfTimes } from "../utils/timing";
 import {
   formatTraceparent,
   generateSpanId,
@@ -20,17 +34,6 @@ import {
   parseTraceparent,
 } from "../utils/trace-context";
 import type { DebugHeadersConfig } from "./types";
-import { getCollectedDebugHeaders, parseDebugRequest } from "../policies/sdk/helpers";
-import { toSelfTimes } from "../utils/timing";
-import {
-  TRACE_REQUESTED_KEY,
-  TRACE_ENTRIES_KEY,
-  TRACE_DETAILS_KEY,
-  type PolicyTraceBaseline,
-  type PolicyTraceDetail,
-  type PolicyTraceEntry,
-  type PolicyTrace,
-} from "../policies/sdk/trace";
 
 const noopDebugFactory = () => noopDebugLogger;
 
@@ -49,7 +52,7 @@ export function buildPolicyChain(
   globalPolicies: Policy[],
   routePolicies: Policy[],
   debug?: DebugLogger,
-  defaultPriority = 100,
+  defaultPriority = 100
 ): Policy[] {
   const policyMap = new Map<string, Policy>();
 
@@ -68,12 +71,12 @@ export function buildPolicyChain(
 
   // Sort by priority ascending (lower = earlier)
   const sorted = Array.from(policyMap.values()).sort(
-    (a, b) => (a.priority ?? defaultPriority) - (b.priority ?? defaultPriority),
+    (a, b) => (a.priority ?? defaultPriority) - (b.priority ?? defaultPriority)
   );
 
   if (sorted.length > 0) {
     debug?.(
-      `chain: ${sorted.map((p) => `${p.name}:${p.priority ?? defaultPriority}`).join(" -> ")}`,
+      `chain: ${sorted.map((p) => `${p.name}:${p.priority ?? defaultPriority}`).join(" -> ")}`
     );
   }
 
@@ -139,7 +142,8 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
         c.set("_policyTimings", timings);
 
         // Accumulate trace baseline entries
-        const entries = (c.get(TRACE_ENTRIES_KEY) ?? []) as PolicyTraceBaseline[];
+        const entries = (c.get(TRACE_ENTRIES_KEY) ??
+          []) as PolicyTraceBaseline[];
         entries.push({
           name: policy.name,
           priority: policyPriority,
@@ -173,13 +177,15 @@ export function createContextInjector(
   debugFactory: (namespace: string) => DebugLogger = noopDebugFactory,
   requestIdHeader = "x-request-id",
   adapter?: GatewayAdapter,
-  debugHeaders?: boolean | DebugHeadersConfig,
+  debugHeaders?: boolean | DebugHeadersConfig
 ): MiddlewareHandler {
   // Pre-compute debug header config once at construction time
-  const debugHeadersConfig = debugHeaders === true
-    ? ({} as DebugHeadersConfig)
-    : debugHeaders || undefined;
-  const debugRequestHeader = debugHeadersConfig?.requestHeader ?? "x-stoma-debug";
+  const debugHeadersConfig =
+    debugHeaders === true
+      ? ({} as DebugHeadersConfig)
+      : debugHeaders || undefined;
+  const debugRequestHeader =
+    debugHeadersConfig?.requestHeader ?? "x-stoma-debug";
   const debugAllow = debugHeadersConfig?.allow;
 
   return async (c, next) => {
@@ -219,7 +225,7 @@ export function createContextInjector(
         traceId: ctx.traceId,
         parentId: ctx.spanId,
         flags: parsed?.flags ?? "01",
-      }),
+      })
     );
 
     // Emit collected debug headers on the response
@@ -234,9 +240,13 @@ export function createContextInjector(
 
     // Emit policy trace when tracing was requested
     if (c.get(TRACE_REQUESTED_KEY) === true) {
-      const rawEntries = c.get(TRACE_ENTRIES_KEY) as PolicyTraceBaseline[] | undefined;
+      const rawEntries = c.get(TRACE_ENTRIES_KEY) as
+        | PolicyTraceBaseline[]
+        | undefined;
       if (rawEntries && rawEntries.length > 0) {
-        const details = c.get(TRACE_DETAILS_KEY) as Map<string, PolicyTraceDetail> | undefined;
+        const details = c.get(TRACE_DETAILS_KEY) as
+          | Map<string, PolicyTraceDetail>
+          | undefined;
 
         // Convert inclusive timings to self-time (execution order)
         const selfEntries = toSelfTimes(rawEntries);

@@ -43,7 +43,7 @@ export const noopDebugLogger: DebugLogger = () => {};
  */
 export function createDebugger(
   namespace: string,
-  enabled: boolean | string | undefined,
+  enabled: boolean | string | undefined
 ): DebugLogger {
   if (!enabled) return noopDebugLogger;
 
@@ -57,7 +57,7 @@ export function createDebugger(
       parts.push(
         typeof arg === "object" && arg !== null
           ? JSON.stringify(arg)
-          : String(arg),
+          : String(arg)
       );
     }
     console.debug(parts.join(" "));
@@ -98,7 +98,7 @@ export function matchNamespace(namespace: string, pattern: string): boolean {
  * @returns A factory function: `(namespace) => DebugLogger`
  */
 export function createDebugFactory(
-  enabled: boolean | string | undefined,
+  enabled: boolean | string | undefined
 ): (namespace: string) => DebugLogger {
   if (!enabled) return () => noopDebugLogger;
 

@@ -4,8 +4,16 @@
  * @module cache
  */
 import type { Context } from "hono";
+import {
+  Priority,
+  policyDebug,
+  policyTrace,
+  resolveConfig,
+  safeCall,
+  setDebugHeader,
+  withSkip,
+} from "../sdk";
 import type { Policy, PolicyConfig } from "../types";
-import { Priority, policyDebug, resolveConfig, safeCall, setDebugHeader, withSkip, policyTrace } from "../sdk";
 
 // --- Store interface ---
 
@@ -58,7 +66,11 @@ export class InMemoryCacheStore implements CacheStore {
     });
   }
 
-  async put(key: string, response: Response, ttlSeconds: number): Promise<void> {
+  async put(
+    key: string,
+    response: Response,
+    ttlSeconds: number
+  ): Promise<void> {
     const body = await response.arrayBuffer();
     const headers: [string, string][] = [];
     response.headers.forEach((value, name) => {
@@ -66,7 +78,11 @@ export class InMemoryCacheStore implements CacheStore {
     });
 
     // Evict oldest entry (first key in Map iteration order) when at capacity
-    if (this.maxEntries && !this.entries.has(key) && this.entries.size >= this.maxEntries) {
+    if (
+      this.maxEntries &&
+      !this.entries.has(key) &&
+      this.entries.size >= this.maxEntries
+    ) {
       const oldestKey = this.entries.keys().next().value;
       if (oldestKey !== undefined) {
         this.entries.delete(oldestKey);
@@ -174,8 +190,14 @@ export interface CacheConfig extends PolicyConfig {
  */
 export function cache(config?: CacheConfig): Policy {
   const resolved = resolveConfig<CacheConfig>(
-    { ttlSeconds: 300, methods: ["GET"], respectCacheControl: true, cacheStatusHeader: "x-cache", bypassDirectives: ["no-store", "no-cache"] },
-    config,
+    {
+      ttlSeconds: 300,
+      methods: ["GET"],
+      respectCacheControl: true,
+      cacheStatusHeader: "x-cache",
+      bypassDirectives: ["no-store", "no-cache"],
+    },
+    config
   );
 
   // Normalize methods to uppercase for case-insensitive matching
@@ -201,7 +223,7 @@ export function cache(config?: CacheConfig): Policy {
         if (bodyText) {
           const hashBuffer = await crypto.subtle.digest(
             "SHA-256",
-            new TextEncoder().encode(bodyText),
+            new TextEncoder().encode(bodyText)
           );
           const hashArray = new Uint8Array(hashBuffer);
           let hashHex = "";
@@ -245,7 +267,7 @@ export function cache(config?: CacheConfig): Policy {
       () => resolvedStore.get(key),
       null,
       debug,
-      "store.get()",
+      "store.get()"
     );
     if (cached) {
       debug(`HIT ${key}`);
@@ -254,7 +276,10 @@ export function cache(config?: CacheConfig): Policy {
       // Compute remaining TTL from the internal expiry header (if present)
       const expiresAtStr = cached.headers.get(INTERNAL_EXPIRES_HEADER);
       if (expiresAtStr) {
-        const remaining = Math.max(0, Math.ceil((Number(expiresAtStr) - Date.now()) / 1000));
+        const remaining = Math.max(
+          0,
+          Math.ceil((Number(expiresAtStr) - Date.now()) / 1000)
+        );
         setDebugHeader(c, "x-stoma-cache-expires-in", remaining);
       }
       // Return cached response, re-creating so headers can be modified
@@ -280,7 +305,10 @@ export function cache(config?: CacheConfig): Policy {
     }
 
     // Only cache responses matching cacheableStatuses (when configured)
-    if (resolved.cacheableStatuses && !resolved.cacheableStatuses.includes(c.res.status)) {
+    if (
+      resolved.cacheableStatuses &&
+      !resolved.cacheableStatuses.includes(c.res.status)
+    ) {
       debug(`SKIP ${key} (status=${c.res.status} not in cacheableStatuses)`);
       setDebugHeader(c, "x-stoma-cache-status", "SKIP");
       c.res.headers.set(statusHeader, "SKIP");
@@ -291,7 +319,11 @@ export function cache(config?: CacheConfig): Policy {
     if (resolved.respectCacheControl) {
       const cc = c.res.headers.get("cache-control") ?? "";
       const directives = parseCacheControlDirectives(cc);
-      if (resolved.bypassDirectives!.some((d) => directives.includes(d.toLowerCase()))) {
+      if (
+        resolved.bypassDirectives!.some((d) =>
+          directives.includes(d.toLowerCase())
+        )
+      ) {
         debug(`BYPASS ${key} (cache-control: ${cc})`);
         setDebugHeader(c, "x-stoma-cache-status", "BYPASS");
         trace("BYPASS", { key, directive: cc });
@@ -307,16 +339,23 @@ export function cache(config?: CacheConfig): Policy {
     const storeClone = c.res.clone();
     const storeBody = await storeClone.arrayBuffer();
     const storeHeaders = new Headers(storeClone.headers);
-    storeHeaders.set(INTERNAL_EXPIRES_HEADER, String(Date.now() + resolved.ttlSeconds! * 1000));
+    storeHeaders.set(
+      INTERNAL_EXPIRES_HEADER,
+      String(Date.now() + resolved.ttlSeconds! * 1000)
+    );
     await safeCall(
-      () => resolvedStore.put(
-        key,
-        new Response(storeBody, { status: storeClone.status, headers: storeHeaders }),
-        resolved.ttlSeconds!,
-      ),
+      () =>
+        resolvedStore.put(
+          key,
+          new Response(storeBody, {
+            status: storeClone.status,
+            headers: storeHeaders,
+          }),
+          resolved.ttlSeconds!
+        ),
       undefined,
       debug,
-      "store.put()",
+      "store.put()"
     );
     c.res.headers.set(statusHeader, "MISS");
   };

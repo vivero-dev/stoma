@@ -5,7 +5,7 @@ prev: false
 title: "RegisteredPolicy"
 ---
 
-Defined in: [packages/stoma/src/core/types.ts:202](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L202)
+Defined in: [src/core/types.ts:202](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L202)
 
 Registered policy information for admin introspection.
 
@@ -15,7 +15,7 @@ Registered policy information for admin introspection.
 
 > **name**: `string`
 
-Defined in: [packages/stoma/src/core/types.ts:203](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L203)
+Defined in: [src/core/types.ts:203](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L203)
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: [packages/stoma/src/core/types.ts:203](https://github.com/HomeGrower
 
 > **priority**: `number`
 
-Defined in: [packages/stoma/src/core/types.ts:204](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/core/types.ts#L204)
+Defined in: [src/core/types.ts:204](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/core/types.ts#L204)

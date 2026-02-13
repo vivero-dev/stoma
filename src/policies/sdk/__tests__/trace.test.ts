@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
-import { Hono } from "hono";
 import type { Context } from "hono";
+import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
 import {
-  policyTrace,
-  noopTraceReporter,
   isTraceRequested,
-  TRACE_REQUESTED_KEY,
-  TRACE_DETAILS_KEY,
+  noopTraceReporter,
   type PolicyTraceDetail,
+  policyTrace,
+  TRACE_DETAILS_KEY,
+  TRACE_REQUESTED_KEY,
 } from "../trace";
 
 // ---------------------------------------------------------------------------
@@ -21,7 +21,10 @@ type AnyEnv = { Variables: Record<string, unknown> };
  * Create a minimal Hono app that runs a callback with the Hono context.
  * Optionally pre-sets trace requested.
  */
-function createApp(traceActive: boolean, handler: (c: Context<AnyEnv>) => void) {
+function createApp(
+  traceActive: boolean,
+  handler: (c: Context<AnyEnv>) => void
+) {
   const app = new Hono<AnyEnv>();
   app.get("/test", (c) => {
     if (traceActive) {
@@ -54,7 +57,10 @@ describe("policyTrace()", () => {
 
       trace("allowed", { key: "abc", count: 1 });
 
-      const details = c.get(TRACE_DETAILS_KEY) as Map<string, PolicyTraceDetail>;
+      const details = c.get(TRACE_DETAILS_KEY) as Map<
+        string,
+        PolicyTraceDetail
+      >;
       expect(details).toBeDefined();
       expect(details.get("test-policy")).toEqual({
         action: "allowed",
@@ -73,10 +79,19 @@ describe("policyTrace()", () => {
       traceA("HIT", { key: "k1" });
       traceB("rejected", { reason: "invalid" });
 
-      const details = c.get(TRACE_DETAILS_KEY) as Map<string, PolicyTraceDetail>;
+      const details = c.get(TRACE_DETAILS_KEY) as Map<
+        string,
+        PolicyTraceDetail
+      >;
       expect(details.size).toBe(2);
-      expect(details.get("policy-a")).toEqual({ action: "HIT", data: { key: "k1" } });
-      expect(details.get("policy-b")).toEqual({ action: "rejected", data: { reason: "invalid" } });
+      expect(details.get("policy-a")).toEqual({
+        action: "HIT",
+        data: { key: "k1" },
+      });
+      expect(details.get("policy-b")).toEqual({
+        action: "rejected",
+        data: { reason: "invalid" },
+      });
     });
 
     await app.request("/test");
@@ -87,8 +102,14 @@ describe("policyTrace()", () => {
       const trace = policyTrace(c as Context, "simple");
       trace("passed");
 
-      const details = c.get(TRACE_DETAILS_KEY) as Map<string, PolicyTraceDetail>;
-      expect(details.get("simple")).toEqual({ action: "passed", data: undefined });
+      const details = c.get(TRACE_DETAILS_KEY) as Map<
+        string,
+        PolicyTraceDetail
+      >;
+      expect(details.get("simple")).toEqual({
+        action: "passed",
+        data: undefined,
+      });
     });
 
     await app.request("/test");
@@ -100,7 +121,10 @@ describe("policyTrace()", () => {
       trace("MISS", { key: "k1" });
       trace("HIT", { key: "k1" });
 
-      const details = c.get(TRACE_DETAILS_KEY) as Map<string, PolicyTraceDetail>;
+      const details = c.get(TRACE_DETAILS_KEY) as Map<
+        string,
+        PolicyTraceDetail
+      >;
       expect(details.get("cache")!.action).toBe("HIT");
     });
 

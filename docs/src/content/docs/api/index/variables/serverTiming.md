@@ -7,7 +7,7 @@ title: "serverTiming"
 
 > `const` **serverTiming**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [packages/stoma/src/policies/observability/server-timing.ts:77](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/policies/observability/server-timing.ts#L77)
+Defined in: [src/policies/observability/server-timing.ts:77](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/policies/observability/server-timing.ts#L77)
 
 Emit W3C `Server-Timing` and `X-Response-Time` response headers.
 

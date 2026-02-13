@@ -10,7 +10,7 @@ describe("jsonValidation", () => {
           const obj = body as Record<string, unknown>;
           return { valid: obj.name !== undefined };
         },
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -24,7 +24,7 @@ describe("jsonValidation", () => {
     const { request } = createPolicyTestHarness(
       jsonValidation({
         validate: () => ({ valid: false, errors: ["name is required"] }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -43,7 +43,7 @@ describe("jsonValidation", () => {
           valid: false,
           errors: ["name is required", "age must be a number"],
         }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -64,7 +64,7 @@ describe("jsonValidation", () => {
           errors: ["secret internal detail"],
         }),
         errorDetail: false,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -84,7 +84,7 @@ describe("jsonValidation", () => {
           const obj = body as Record<string, unknown>;
           return { valid: typeof obj.email === "string" };
         },
-      }),
+      })
     );
 
     const passing = await request("/test", {
@@ -107,7 +107,7 @@ describe("jsonValidation", () => {
       jsonValidation({
         validate: () => ({ valid: false }),
         rejectStatus: 400,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -121,7 +121,7 @@ describe("jsonValidation", () => {
     const { request } = createPolicyTestHarness(
       jsonValidation({
         validate: () => ({ valid: false }), // would fail if called
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -135,7 +135,7 @@ describe("jsonValidation", () => {
     const { request } = createPolicyTestHarness(
       jsonValidation({
         validate: () => ({ valid: true }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "GET",
@@ -146,9 +146,7 @@ describe("jsonValidation", () => {
   });
 
   it("should reject invalid JSON when no validate function is provided", async () => {
-    const { request } = createPolicyTestHarness(
-      jsonValidation(),
-    );
+    const { request } = createPolicyTestHarness(jsonValidation());
     const res = await request("/test", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -161,9 +159,7 @@ describe("jsonValidation", () => {
   });
 
   it("should pass valid JSON through when no validate function is provided", async () => {
-    const { request } = createPolicyTestHarness(
-      jsonValidation(),
-    );
+    const { request } = createPolicyTestHarness(jsonValidation());
     const res = await request("/test", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -177,7 +173,7 @@ describe("jsonValidation", () => {
       jsonValidation({
         contentTypes: ["application/vnd.api+json"],
         validate: () => ({ valid: false }),
-      }),
+      })
     );
 
     // Custom content type should be validated (and fail)
@@ -202,7 +198,7 @@ describe("jsonValidation", () => {
       jsonValidation({
         validate: () => ({ valid: false }), // would fail if not skipped
         skip: () => true,
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",
@@ -222,7 +218,7 @@ describe("jsonValidation", () => {
     const { request } = createPolicyTestHarness(
       jsonValidation({
         validate: () => ({ valid: false }),
-      }),
+      })
     );
     const res = await request("/test", {
       method: "POST",

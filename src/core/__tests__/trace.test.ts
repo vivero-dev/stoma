@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
 import type { Context } from "hono";
-import { createGateway } from "../gateway";
-import { GatewayError } from "../errors";
-import type { Policy } from "../../policies/types";
-import { definePolicy, Priority, policyTrace } from "../../policies/sdk";
+import { describe, expect, it } from "vitest";
 import type { PolicyTrace, PolicyTraceEntry } from "../../policies/sdk";
+import { definePolicy, Priority, policyTrace } from "../../policies/sdk";
+import type { Policy } from "../../policies/types";
+import { GatewayError } from "../errors";
+import { createGateway } from "../gateway";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -215,7 +215,9 @@ describe("Policy Trace — integration", () => {
     });
 
     const trace = parseTrace(res)!;
-    const entry = trace.entries.find((e: PolicyTraceEntry) => e.name === "passthrough");
+    const entry = trace.entries.find(
+      (e: PolicyTraceEntry) => e.name === "passthrough"
+    );
     expect(entry).toBeDefined();
     expect(entry!.calledNext).toBe(true);
     expect(entry!.error).toBeNull();
@@ -241,10 +243,15 @@ describe("Policy Trace — integration", () => {
 
     expect(res.status).toBe(403);
     const trace = parseTrace(res)!;
-    const entry = trace.entries.find((e: PolicyTraceEntry) => e.name === "short-circuit");
+    const entry = trace.entries.find(
+      (e: PolicyTraceEntry) => e.name === "short-circuit"
+    );
     expect(entry).toBeDefined();
     expect(entry!.calledNext).toBe(false);
-    expect(entry!.detail).toEqual({ action: "blocked", data: { reason: "test" } });
+    expect(entry!.detail).toEqual({
+      action: "blocked",
+      data: { reason: "test" },
+    });
   });
 
   it("should show error string for policies that throw", async () => {
@@ -272,7 +279,9 @@ describe("Policy Trace — integration", () => {
     // phase runs and emits the trace. If not, there's no trace header.
     // With Hono's default onError, the context injector's post-next still runs.
     if (trace) {
-      const entry = trace.entries.find((e: PolicyTraceEntry) => e.name === "error-thrower");
+      const entry = trace.entries.find(
+        (e: PolicyTraceEntry) => e.name === "error-thrower"
+      );
       expect(entry).toBeDefined();
       expect(entry!.error).toBe("Something broke");
       expect(entry!.calledNext).toBe(false);
@@ -298,21 +307,30 @@ describe("Policy Trace — integration", () => {
     });
 
     const trace = parseTrace(res)!;
-    const entry = trace.entries.find((e: PolicyTraceEntry) => e.name === "tracing-test");
+    const entry = trace.entries.find(
+      (e: PolicyTraceEntry) => e.name === "tracing-test"
+    );
     expect(entry).toBeDefined();
-    expect(entry!.detail).toEqual({ action: "allowed", data: { user: "demo" } });
+    expect(entry!.detail).toEqual({
+      action: "allowed",
+      data: { user: "demo" },
+    });
   });
 
   it("should produce entries in execution order (outermost first)", async () => {
     const earlyPolicy: Policy = {
       name: "early",
       priority: Priority.EARLY,
-      handler: async (_c, next) => { await next(); },
+      handler: async (_c, next) => {
+        await next();
+      },
     };
     const latePolicy: Policy = {
       name: "late",
       priority: Priority.CACHE,
-      handler: async (_c, next) => { await next(); },
+      handler: async (_c, next) => {
+        await next();
+      },
     };
 
     const gw = createGateway({

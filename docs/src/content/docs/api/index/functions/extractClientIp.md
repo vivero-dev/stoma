@@ -7,7 +7,7 @@ title: "extractClientIp"
 
 > **extractClientIp**(`headers`, `ipHeaders?`): `string`
 
-Defined in: [packages/stoma/src/utils/ip.ts:32](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/utils/ip.ts#L32)
+Defined in: [src/utils/ip.ts:32](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/utils/ip.ts#L32)
 
 Extract the client IP address from request headers.
 

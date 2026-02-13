@@ -6,13 +6,14 @@
  *
  * @module generate-http-signature
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 import {
+  algorithmToCrypto,
   buildSignatureBase,
   buildSignatureParams,
-  algorithmToCrypto,
   importSigningKey,
   toBase64,
 } from "./http-signature-base";
@@ -56,7 +57,7 @@ export const generateHttpSignature = definePolicy<GenerateHttpSignatureConfig>({
       throw new GatewayError(
         500,
         "config_error",
-        "generateHttpSignature requires either 'secret' or 'privateKey'",
+        "generateHttpSignature requires either 'secret' or 'privateKey'"
       );
     }
 
@@ -91,30 +92,35 @@ export const generateHttpSignature = definePolicy<GenerateHttpSignatureConfig>({
     const signatureBase = buildSignatureBase(
       components,
       signatureParamsStr,
-      c.req.raw,
+      c.req.raw
     );
 
-    debug(`signing with ${config.algorithm}, components: ${components.join(", ")}`);
+    debug(
+      `signing with ${config.algorithm}, components: ${components.join(", ")}`
+    );
 
     // Import key and sign
     const key = await importSigningKey(
       config.algorithm,
       config.secret,
-      config.privateKey,
+      config.privateKey
     );
     const { signAlg } = algorithmToCrypto(config.algorithm);
     const encoder = new TextEncoder();
     const signatureBytes = await crypto.subtle.sign(
       signAlg,
       key,
-      encoder.encode(signatureBase),
+      encoder.encode(signatureBase)
     );
 
     const signatureB64 = toBase64(signatureBytes);
 
     // Set headers on the request
     const headers = new Headers(c.req.raw.headers);
-    headers.set(config.signatureInputHeaderName!, `${label}=${signatureParamsStr}`);
+    headers.set(
+      config.signatureInputHeaderName!,
+      `${label}=${signatureParamsStr}`
+    );
     headers.set(config.signatureHeaderName!, `${label}=:${signatureB64}:`);
     c.req.raw = new Request(c.req.raw, { headers });
 

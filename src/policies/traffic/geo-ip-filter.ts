@@ -7,8 +7,8 @@
  * @module geo-ip-filter
  */
 import { GatewayError } from "../../core/errors";
-import type { Policy, PolicyConfig } from "../types";
 import { Priority, policyDebug, resolveConfig, withSkip } from "../sdk";
+import type { Policy, PolicyConfig } from "../types";
 
 export interface GeoIpFilterConfig extends PolicyConfig {
   /** Country codes to allow (e.g. `["US", "CA", "GB"]`). Used in "allow" mode. */
@@ -43,15 +43,15 @@ export interface GeoIpFilterConfig extends PolicyConfig {
 export function geoIpFilter(config?: GeoIpFilterConfig): Policy {
   const resolved = resolveConfig<GeoIpFilterConfig>(
     { mode: "deny", countryHeader: "cf-ipcountry" },
-    config,
+    config
   );
 
   // Pre-compute country sets once at construction time instead of per-request
   const allowSet = new Set(
-    (resolved.allow ?? []).map((code) => code.toUpperCase()),
+    (resolved.allow ?? []).map((code) => code.toUpperCase())
   );
   const denySet = new Set(
-    (resolved.deny ?? []).map((code) => code.toUpperCase()),
+    (resolved.deny ?? []).map((code) => code.toUpperCase())
   );
 
   const handler: import("hono").MiddlewareHandler = async (c, next) => {
@@ -67,7 +67,7 @@ export function geoIpFilter(config?: GeoIpFilterConfig): Policy {
         throw new GatewayError(
           403,
           "geo_denied",
-          "Access denied from this region",
+          "Access denied from this region"
         );
       }
     } else {
@@ -76,7 +76,7 @@ export function geoIpFilter(config?: GeoIpFilterConfig): Policy {
         throw new GatewayError(
           403,
           "geo_denied",
-          "Access denied from this region",
+          "Access denied from this region"
         );
       }
     }

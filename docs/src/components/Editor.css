@@ -1,0 +1,763 @@
+/**
+ * Editor page styles.
+ *
+ * Full-viewport dark theme with split-pane layout.
+ * Uses CSS variables from Starlight where possible, with fallbacks
+ * for when running outside Starlight's scope.
+ */
+
+/* =================================================================== */
+/* Root layout — full viewport                                         */
+/* =================================================================== */
+.ed-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+/* =================================================================== */
+/* Header bar                                                          */
+/* =================================================================== */
+.ed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3rem;
+  padding: 0 1rem;
+  background: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  flex-shrink: 0;
+}
+
+.ed-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ed-logo {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #4ec9b0;
+  text-decoration: none;
+}
+
+.ed-logo:hover {
+  color: #6edcc4;
+}
+
+.ed-header-divider {
+  color: #555;
+  font-size: 0.875rem;
+}
+
+.ed-header-title {
+  font-size: 0.8125rem;
+  color: #969696;
+}
+
+.ed-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ed-compile-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  border-radius: 0.25rem;
+  background: #0e639c;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ed-compile-btn:hover:not(:disabled) {
+  background: #1177bb;
+}
+
+.ed-compile-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ed-back-link {
+  font-size: 0.75rem;
+  color: #969696;
+  text-decoration: none;
+}
+
+.ed-back-link:hover {
+  color: #d4d4d4;
+}
+
+/* =================================================================== */
+/* Split panes                                                         */
+/* =================================================================== */
+.ed-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .ed-panes {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+/* Left pane — Monaco editor */
+.ed-pane-left {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #3c3c3c;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .ed-pane-left {
+    border-right: none;
+    border-bottom: 1px solid #3c3c3c;
+  }
+}
+
+/* Right pane — request builder + response */
+.ed-pane-right {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* =================================================================== */
+/* Status bar (below editor)                                           */
+/* =================================================================== */
+.ed-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
+  background: #252526;
+  border-top: 1px solid #3c3c3c;
+  flex-shrink: 0;
+}
+
+.ed-status-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ed-statusbar--idle .ed-status-dot {
+  background: #555;
+}
+.ed-statusbar--compiling .ed-status-dot {
+  background: #dcdcaa;
+}
+.ed-statusbar--deploying .ed-status-dot {
+  background: #dcdcaa;
+}
+.ed-statusbar--ready .ed-status-dot {
+  background: #4ec9b0;
+}
+.ed-statusbar--error .ed-status-dot {
+  background: #f48771;
+}
+
+.ed-status-text {
+  color: #969696;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-statusbar--error .ed-status-text {
+  color: #f48771;
+}
+
+.ed-status-meta {
+  margin-left: auto;
+  color: #555;
+  white-space: nowrap;
+}
+
+/* =================================================================== */
+/* Request builder                                                     */
+/* =================================================================== */
+.ed-request {
+  padding: 0.75rem;
+  border-bottom: 1px solid #3c3c3c;
+  flex-shrink: 0;
+}
+
+/* Route shortcut chips */
+.ed-routes {
+  margin-bottom: 0.5rem;
+}
+
+.ed-route-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.ed-route-chip {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #3c3c3c;
+  background: #2d2d2d;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  user-select: none;
+}
+
+.ed-route-chip:hover:not(:disabled) {
+  border-color: #0e639c;
+  background: #333;
+}
+
+.ed-route-chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ed-method {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.125rem;
+}
+
+.ed-method--get {
+  background: #4ec9b0;
+  color: #1e1e1e;
+}
+.ed-method--post {
+  background: #569cd6;
+  color: #fff;
+}
+.ed-method--put {
+  background: #dcdcaa;
+  color: #1e1e1e;
+}
+.ed-method--patch {
+  background: #dcdcaa;
+  color: #1e1e1e;
+}
+.ed-method--delete {
+  background: #f48771;
+  color: #1e1e1e;
+}
+
+.ed-route-path {
+  color: #d4d4d4;
+}
+
+/* Form controls */
+.ed-label {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #969696;
+  margin-bottom: 0.125rem;
+}
+
+.ed-hint {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #555;
+}
+
+.ed-form-row {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.ed-select {
+  box-sizing: border-box;
+  width: 5.5rem;
+  height: 1.75rem;
+  padding: 0 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid #3c3c3c;
+  background: #2d2d2d;
+  color: #d4d4d4;
+  font-size: 0.75rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  cursor: pointer;
+  appearance: auto;
+  -webkit-appearance: auto;
+  outline: none;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.ed-select:focus {
+  border-color: #0e639c;
+}
+
+.ed-input {
+  box-sizing: border-box;
+  flex: 1;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #3c3c3c;
+  background: #2d2d2d;
+  color: #d4d4d4;
+  font-size: 0.75rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  outline: none;
+  margin: 0;
+  min-width: 0;
+}
+
+.ed-input:focus {
+  border-color: #0e639c;
+}
+
+.ed-send-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  border-radius: 0.25rem;
+  background: #0e639c;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ed-send-btn:hover:not(:disabled) {
+  background: #1177bb;
+}
+
+.ed-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ed-form-extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.375rem;
+}
+
+@media (max-width: 600px) {
+  .ed-form-extra {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ed-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.ed-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #3c3c3c;
+  background: #2d2d2d;
+  color: #d4d4d4;
+  font-size: 0.6875rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  line-height: 1.4;
+  resize: vertical;
+  white-space: pre-wrap;
+  outline: none;
+  margin: 0;
+}
+
+.ed-textarea:focus {
+  border-color: #0e639c;
+}
+
+.ed-textarea::placeholder {
+  color: #555;
+}
+
+/* =================================================================== */
+/* Response panel                                                      */
+/* =================================================================== */
+.ed-response {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ed-response--empty,
+.ed-response--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.ed-response-placeholder {
+  color: #555;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.ed-response-error {
+  color: #f48771;
+  font-size: 0.8125rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  text-align: center;
+  padding: 1rem;
+  word-break: break-word;
+}
+
+.ed-response-section {
+  border-top: 1px solid #3c3c3c;
+}
+
+.ed-response-body {
+  padding: 0 0.75rem 0.5rem;
+}
+
+/* =================================================================== */
+/* Shared Playground component styles for editor context                */
+/* =================================================================== */
+
+/* These provide the base layout for pg-* classes from shared components.
+   Playground.css is NOT loaded on the editor page, so we define a
+   self-contained dark-theme version here. */
+
+/* --- Top bar --- */
+.ed-root .pg-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  flex-wrap: wrap;
+}
+
+.ed-root .pg-req-line {
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #569cd6;
+}
+
+.ed-root .pg-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* --- Badges --- */
+.ed-root .pg-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  padding: 0 0.375rem;
+  border-radius: 0.1875rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.ed-root .pg-badge--2xx {
+  background: #4ec9b0;
+  color: #1e1e1e;
+}
+.ed-root .pg-badge--4xx {
+  background: #dcdcaa;
+  color: #1e1e1e;
+}
+.ed-root .pg-badge--5xx {
+  background: #f48771;
+  color: #1e1e1e;
+}
+
+.ed-root .pg-timing {
+  font-size: 0.75rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  color: #969696;
+}
+
+/* --- Section labels --- */
+.ed-root .pg-section-label {
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: #252526;
+  border-bottom: 1px solid #3c3c3c;
+  color: #969696;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* --- Headers table --- */
+.ed-root .pg-headers-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.6875rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  display: table;
+  margin: 0;
+}
+
+.ed-root .pg-headers-table td {
+  padding: 0.1875rem 0.75rem;
+  border-bottom: 1px solid #3c3c3c33;
+  vertical-align: top;
+}
+
+.ed-root .pg-headers-table td:first-child {
+  color: #969696;
+  white-space: nowrap;
+  width: 1%;
+  padding-right: 0.375rem;
+}
+
+.ed-root .pg-headers-table td:last-child {
+  word-break: break-all;
+  color: #d4d4d4;
+}
+
+.ed-root .pg-header--highlight td:last-child {
+  color: #4ec9b0;
+  font-weight: 600;
+}
+
+/* --- Timing waterfall --- */
+.ed-root .pg-timing-waterfall {
+  padding: 0.5rem 0.75rem 0.625rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+}
+
+.ed-root .pg-timing-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.375rem;
+  margin-bottom: 0.375rem;
+  border-bottom: 1px solid #3c3c3c80;
+}
+
+.ed-root .pg-timing-total-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #969696;
+}
+
+.ed-root .pg-timing-total-value {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #569cd6;
+}
+
+.ed-root .pg-timing-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+}
+
+.ed-root .pg-timing-row {
+  display: grid;
+  grid-template-columns: 7rem 1fr 3.5rem;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.25rem;
+}
+
+.ed-root .pg-timing-name,
+.ed-root .pg-timing-dur {
+  font-size: 0.625rem;
+  color: #969696;
+}
+
+.ed-root .pg-timing-dur {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ed-root .pg-timing-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ed-root .pg-timing-bar-track {
+  height: 0.5rem;
+  border-radius: 0.125rem;
+  background: #3c3c3c33;
+  overflow: hidden;
+}
+
+.ed-root .pg-timing-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 0.125rem;
+  background: #0e639c;
+  min-width: 2px;
+  transition: width 0.3s ease;
+}
+
+.ed-root .pg-timing-empty {
+  font-size: 0.6875rem;
+  color: #555;
+  padding: 0.25rem 0;
+}
+
+/* --- Trace table --- */
+.ed-root .pg-trace-panel {
+  padding: 0.5rem 0.75rem 0.625rem;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+}
+
+.ed-root .pg-trace-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.6875rem;
+  display: table;
+  margin: 0;
+}
+
+.ed-root .pg-trace-table th {
+  text-align: left;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #969696;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+.ed-root .pg-trace-table td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid #3c3c3c33;
+  vertical-align: top;
+}
+
+.ed-root .pg-trace-name {
+  white-space: nowrap;
+  color: #d4d4d4;
+  font-weight: 500;
+}
+
+.ed-root .pg-trace-priority {
+  margin-left: 0.375rem;
+  font-size: 0.5625rem;
+  color: #555;
+}
+
+.ed-root .pg-trace-dur {
+  white-space: nowrap;
+  color: #969696;
+  text-align: right;
+}
+
+.ed-root .pg-trace-next {
+  text-align: center;
+  width: 3rem;
+}
+
+.ed-root .pg-trace-check {
+  color: #4ec9b0;
+  font-weight: 700;
+}
+
+.ed-root .pg-trace-x {
+  color: #dcdcaa;
+  font-weight: 700;
+}
+
+.ed-root .pg-trace-action-text {
+  color: #569cd6;
+  font-weight: 600;
+}
+
+.ed-root .pg-trace-action-text--clickable {
+  cursor: pointer;
+}
+
+.ed-root .pg-trace-action-text--clickable:hover {
+  text-decoration: underline;
+}
+
+.ed-root .pg-trace-expand-icon {
+  font-size: 0.5625rem;
+  color: #555;
+}
+
+.ed-root .pg-trace-no-detail {
+  color: #555;
+}
+
+.ed-root .pg-trace-action--error {
+  color: #f48771;
+}
+
+.ed-root .pg-trace-error {
+  color: #f48771;
+  font-weight: 600;
+}
+
+.ed-root .pg-trace-data {
+  margin: 0.25rem 0 0;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.625rem;
+  line-height: 1.4;
+  background: #2d2d2d;
+  border-radius: 0.25rem;
+  border: none;
+  color: #969696;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+  max-height: 10rem;
+}

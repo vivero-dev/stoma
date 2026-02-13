@@ -6,9 +6,10 @@
  *
  * @module oauth2
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 export interface OAuth2Config extends PolicyConfig {
   /** OAuth2 token introspection endpoint (RFC 7662). */
@@ -69,7 +70,7 @@ export const oauth2 = definePolicy<OAuth2Config>({
       throw new GatewayError(
         500,
         "config_error",
-        "oauth2 requires either introspectionUrl or localValidate",
+        "oauth2 requires either introspectionUrl or localValidate"
       );
     }
   },
@@ -112,7 +113,7 @@ export const oauth2 = definePolicy<OAuth2Config>({
         config.clientId,
         config.clientSecret,
         config.cacheTtlSeconds ?? 0,
-        config.introspectionTimeoutMs,
+        config.introspectionTimeoutMs
       );
 
       if (!introspectionResult.active) {
@@ -125,7 +126,7 @@ export const oauth2 = definePolicy<OAuth2Config>({
           ? introspectionResult.scope.split(" ")
           : [];
         const missing = config.requiredScopes.filter(
-          (s) => !tokenScopes.includes(s),
+          (s) => !tokenScopes.includes(s)
         );
         if (missing.length > 0) {
           throw new GatewayError(403, "forbidden", "Insufficient scope");
@@ -137,7 +138,7 @@ export const oauth2 = definePolicy<OAuth2Config>({
         const headers = new Headers(c.req.raw.headers);
         let modified = false;
         for (const [field, headerKey] of Object.entries(
-          config.forwardTokenInfo,
+          config.forwardTokenInfo
         )) {
           const value = introspectionResult[field];
           if (value !== undefined && value !== null) {
@@ -164,7 +165,7 @@ async function introspect(
   clientId?: string,
   clientSecret?: string,
   cacheTtlSeconds = 0,
-  timeoutMs?: number,
+  timeoutMs?: number
 ): Promise<IntrospectionResult> {
   // Check cache
   if (cacheTtlSeconds > 0) {
@@ -193,16 +194,24 @@ async function introspect(
     });
   } catch (err) {
     if (err instanceof DOMException && err.name === "TimeoutError") {
-      throw new GatewayError(502, "introspection_error", `Introspection endpoint timed out after ${timeout}ms`);
+      throw new GatewayError(
+        502,
+        "introspection_error",
+        `Introspection endpoint timed out after ${timeout}ms`
+      );
     }
-    throw new GatewayError(502, "introspection_error", `Introspection endpoint error: ${err instanceof Error ? err.message : String(err)}`);
+    throw new GatewayError(
+      502,
+      "introspection_error",
+      `Introspection endpoint error: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 
   if (!response.ok) {
     throw new GatewayError(
       502,
       "introspection_error",
-      `Introspection endpoint returned ${response.status}`,
+      `Introspection endpoint returned ${response.status}`
     );
   }
 

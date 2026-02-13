@@ -7,7 +7,7 @@ describe("latencyInjection", () => {
 
   it("should add delay to request processing", async () => {
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 50 }),
+      latencyInjection({ delayMs: 50 })
     );
 
     const start = Date.now();
@@ -25,7 +25,7 @@ describe("latencyInjection", () => {
 
     for (let i = 0; i < 10; i++) {
       const { request } = createPolicyTestHarness(
-        latencyInjection({ delayMs: 50, jitter: 0.5 }),
+        latencyInjection({ delayMs: 50, jitter: 0.5 })
       );
       const start = Date.now();
       await request("/test");
@@ -41,7 +41,7 @@ describe("latencyInjection", () => {
 
   it("should give exact delay when jitter is 0 (default)", async () => {
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 50 }),
+      latencyInjection({ delayMs: 50 })
     );
 
     const start = Date.now();
@@ -57,7 +57,7 @@ describe("latencyInjection", () => {
 
   it("should never inject when probability is 0", async () => {
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 500, probability: 0 }),
+      latencyInjection({ delayMs: 500, probability: 0 })
     );
 
     const start = Date.now();
@@ -71,7 +71,7 @@ describe("latencyInjection", () => {
 
   it("should always inject when probability is 1 (default)", async () => {
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 50 }),
+      latencyInjection({ delayMs: 50 })
     );
 
     const start = Date.now();
@@ -92,7 +92,7 @@ describe("latencyInjection", () => {
     randomSpy.mockReturnValueOnce(0.5).mockReturnValueOnce(0);
 
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 10, jitter: 1.0 }),
+      latencyInjection({ delayMs: 10, jitter: 1.0 })
     );
 
     const start = Date.now();
@@ -118,7 +118,7 @@ describe("latencyInjection", () => {
 
   it("should bypass injection when skip returns true", async () => {
     const { request } = createPolicyTestHarness(
-      latencyInjection({ delayMs: 500, skip: () => true }),
+      latencyInjection({ delayMs: 500, skip: () => true })
     );
 
     const start = Date.now();

@@ -34,7 +34,10 @@ export function base64UrlEncodeBytes(data: Uint8Array): string {
   for (let i = 0; i < data.length; i++) {
     binary += String.fromCharCode(data[i]);
   }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 // --- Algorithm mapping ---
@@ -42,20 +45,30 @@ export function base64UrlEncodeBytes(data: Uint8Array): string {
 /** Map a JWT/JWS HMAC algorithm string to a WebCrypto hash name. Returns `null` for unsupported algorithms. */
 export function hmacAlgorithm(alg: string): string | null {
   switch (alg) {
-    case "HS256": return "SHA-256";
-    case "HS384": return "SHA-384";
-    case "HS512": return "SHA-512";
-    default: return null;
+    case "HS256":
+      return "SHA-256";
+    case "HS384":
+      return "SHA-384";
+    case "HS512":
+      return "SHA-512";
+    default:
+      return null;
   }
 }
 
 /** Map a JWT/JWS RSA algorithm string to WebCrypto import parameters. Returns `null` for unsupported algorithms. */
-export function rsaAlgorithm(alg: string): { name: string; hash: string } | null {
+export function rsaAlgorithm(
+  alg: string
+): { name: string; hash: string } | null {
   switch (alg) {
-    case "RS256": return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" };
-    case "RS384": return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-384" };
-    case "RS512": return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-512" };
-    default: return null;
+    case "RS256":
+      return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" };
+    case "RS384":
+      return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-384" };
+    case "RS512":
+      return { name: "RSASSA-PKCS1-v1_5", hash: "SHA-512" };
+    default:
+      return null;
   }
 }
 
@@ -79,7 +92,7 @@ const jwksCache = new Map<string, { keys: JsonWebKey[]; expiresAt: number }>();
 export async function fetchJwks(
   url: string,
   cacheTtlMs?: number,
-  timeoutMs?: number,
+  timeoutMs?: number
 ): Promise<JsonWebKey[]> {
   const cached = jwksCache.get(url);
   if (cached && cached.expiresAt > Date.now()) {
@@ -92,13 +105,25 @@ export async function fetchJwks(
     response = await fetch(url, { signal: AbortSignal.timeout(timeout) });
   } catch (err) {
     if (err instanceof DOMException && err.name === "TimeoutError") {
-      throw new GatewayError(502, "jwks_error", `JWKS fetch timed out after ${timeout}ms: ${url}`);
+      throw new GatewayError(
+        502,
+        "jwks_error",
+        `JWKS fetch timed out after ${timeout}ms: ${url}`
+      );
     }
-    throw new GatewayError(502, "jwks_error", `Failed to fetch JWKS from ${url}: ${err instanceof Error ? err.message : String(err)}`);
+    throw new GatewayError(
+      502,
+      "jwks_error",
+      `Failed to fetch JWKS from ${url}: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
 
   if (!response.ok) {
-    throw new GatewayError(502, "jwks_error", `Failed to fetch JWKS from ${url}: ${response.status}`);
+    throw new GatewayError(
+      502,
+      "jwks_error",
+      `Failed to fetch JWKS from ${url}: ${response.status}`
+    );
   }
 
   const ttl = cacheTtlMs ?? DEFAULT_JWKS_CACHE_TTL_MS;

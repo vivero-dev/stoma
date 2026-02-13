@@ -15,11 +15,15 @@ describe("sslEnforce", () => {
     const { request } = createPolicyTestHarness(sslEnforce());
     const res = await request("http://example.com/api/users?page=2");
     expect(res.status).toBe(301);
-    expect(res.headers.get("location")).toBe("https://example.com/api/users?page=2");
+    expect(res.headers.get("location")).toBe(
+      "https://example.com/api/users?page=2"
+    );
   });
 
   it("should block HTTP with 403 when redirect=false", async () => {
-    const { request } = createPolicyTestHarness(sslEnforce({ redirect: false }));
+    const { request } = createPolicyTestHarness(
+      sslEnforce({ redirect: false })
+    );
     const res = await request("http://example.com/test");
     expect(res.status).toBe(403);
     const body = (await res.json()) as Record<string, unknown>;
@@ -35,25 +39,37 @@ describe("sslEnforce", () => {
   it("should set HSTS header on HTTPS responses", async () => {
     const { request } = createPolicyTestHarness(sslEnforce());
     const res = await request("https://example.com/test");
-    expect(res.headers.get("strict-transport-security")).toBe("max-age=31536000");
+    expect(res.headers.get("strict-transport-security")).toBe(
+      "max-age=31536000"
+    );
   });
 
   it("should include includeSubDomains in HSTS when configured", async () => {
-    const { request } = createPolicyTestHarness(sslEnforce({ includeSubDomains: true }));
+    const { request } = createPolicyTestHarness(
+      sslEnforce({ includeSubDomains: true })
+    );
     const res = await request("https://example.com/test");
-    expect(res.headers.get("strict-transport-security")).toBe("max-age=31536000; includeSubDomains");
+    expect(res.headers.get("strict-transport-security")).toBe(
+      "max-age=31536000; includeSubDomains"
+    );
   });
 
   it("should include preload in HSTS when configured", async () => {
     const { request } = createPolicyTestHarness(sslEnforce({ preload: true }));
     const res = await request("https://example.com/test");
-    expect(res.headers.get("strict-transport-security")).toBe("max-age=31536000; preload");
+    expect(res.headers.get("strict-transport-security")).toBe(
+      "max-age=31536000; preload"
+    );
   });
 
   it("should include both includeSubDomains and preload", async () => {
-    const { request } = createPolicyTestHarness(sslEnforce({ includeSubDomains: true, preload: true }));
+    const { request } = createPolicyTestHarness(
+      sslEnforce({ includeSubDomains: true, preload: true })
+    );
     const res = await request("https://example.com/test");
-    expect(res.headers.get("strict-transport-security")).toBe("max-age=31536000; includeSubDomains; preload");
+    expect(res.headers.get("strict-transport-security")).toBe(
+      "max-age=31536000; includeSubDomains; preload"
+    );
   });
 
   it("should respect x-forwarded-proto header", async () => {
@@ -63,18 +79,22 @@ describe("sslEnforce", () => {
       headers: { "x-forwarded-proto": "https" },
     });
     expect(res.status).toBe(200);
-    expect(res.headers.get("strict-transport-security")).toBe("max-age=31536000");
+    expect(res.headers.get("strict-transport-security")).toBe(
+      "max-age=31536000"
+    );
   });
 
   it("should use custom hstsMaxAge", async () => {
-    const { request } = createPolicyTestHarness(sslEnforce({ hstsMaxAge: 86400 }));
+    const { request } = createPolicyTestHarness(
+      sslEnforce({ hstsMaxAge: 86400 })
+    );
     const res = await request("https://example.com/test");
     expect(res.headers.get("strict-transport-security")).toBe("max-age=86400");
   });
 
   it("should support skip logic", async () => {
     const { request } = createPolicyTestHarness(
-      sslEnforce({ skip: () => true }),
+      sslEnforce({ skip: () => true })
     );
     const res = await request("http://example.com/test");
     // Should pass through without redirect because skip is true

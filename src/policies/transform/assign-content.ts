@@ -27,12 +27,14 @@ export interface AssignContentConfig extends PolicyConfig {
  */
 async function resolveFields(
   c: Context,
-  fields: Record<string, FieldValue>,
+  fields: Record<string, FieldValue>
 ): Promise<Record<string, unknown>> {
   const resolved: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(fields)) {
     if (typeof value === "function") {
-      resolved[key] = await (value as (c: Context) => unknown | Promise<unknown>)(c);
+      resolved[key] = await (
+        value as (c: Context) => unknown | Promise<unknown>
+      )(c);
     } else {
       resolved[key] = value;
     }
@@ -45,7 +47,7 @@ async function resolveFields(
  */
 function contentTypeMatches(
   contentType: string | undefined,
-  allowedTypes: string[],
+  allowedTypes: string[]
 ): boolean {
   if (!contentType) return false;
   return allowedTypes.some((ct) => contentType.includes(ct));
@@ -101,7 +103,10 @@ export const assignContent = definePolicy<AssignContentConfig>({
         const resolved = await resolveFields(c, config.request);
         Object.assign(body, resolved);
 
-        debug("assigned %d fields to request body", Object.keys(resolved).length);
+        debug(
+          "assigned %d fields to request body",
+          Object.keys(resolved).length
+        );
 
         // Replace the request with modified body
         const newReq = new Request(c.req.url, {
@@ -116,7 +121,10 @@ export const assignContent = definePolicy<AssignContentConfig>({
           configurable: true,
         });
       } else {
-        debug("request content-type %s not in allowed types — skipping request modification", reqContentType);
+        debug(
+          "request content-type %s not in allowed types — skipping request modification",
+          reqContentType
+        );
       }
     }
 
@@ -125,7 +133,9 @@ export const assignContent = definePolicy<AssignContentConfig>({
     // Response phase — modify response body after upstream
     if (config.response) {
       const resContentType = c.res.headers.get("content-type");
-      if (contentTypeMatches(resContentType ?? undefined, config.contentTypes!)) {
+      if (
+        contentTypeMatches(resContentType ?? undefined, config.contentTypes!)
+      ) {
         let body: Record<string, unknown> = {};
 
         try {
@@ -141,7 +151,10 @@ export const assignContent = definePolicy<AssignContentConfig>({
         const resolved = await resolveFields(c, config.response);
         Object.assign(body, resolved);
 
-        debug("assigned %d fields to response body", Object.keys(resolved).length);
+        debug(
+          "assigned %d fields to response body",
+          Object.keys(resolved).length
+        );
 
         // Create new response with modified body, preserving status and headers
         const newRes = new Response(JSON.stringify(body), {
@@ -150,7 +163,10 @@ export const assignContent = definePolicy<AssignContentConfig>({
         });
         c.res = newRes;
       } else {
-        debug("response content-type %s not in allowed types — skipping response modification", resContentType);
+        debug(
+          "response content-type %s not in allowed types — skipping response modification",
+          resContentType
+        );
       }
     }
   },

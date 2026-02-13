@@ -45,13 +45,14 @@ function openDB(): Promise<IDBDatabase> {
  */
 function idbGet(
   db: IDBDatabase,
-  key: string,
+  key: string
 ): Promise<RateLimitEntry | undefined> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly");
     const store = tx.objectStore(STORE_NAME);
     const request = store.get(key);
-    request.onsuccess = () => resolve(request.result as RateLimitEntry | undefined);
+    request.onsuccess = () =>
+      resolve(request.result as RateLimitEntry | undefined);
     request.onerror = () => reject(request.error);
   });
 }
@@ -62,7 +63,7 @@ function idbGet(
 function idbPut(
   db: IDBDatabase,
   key: string,
-  value: RateLimitEntry,
+  value: RateLimitEntry
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
@@ -84,7 +85,7 @@ export class IDBRateLimitStore implements RateLimitStore {
 
   async increment(
     key: string,
-    windowSeconds: number,
+    windowSeconds: number
   ): Promise<{ count: number; resetAt: number }> {
     // Lazily open the database on first use
     if (!this.db) {

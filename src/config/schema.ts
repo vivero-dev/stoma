@@ -123,7 +123,7 @@ export function validateConfig(config: unknown): GatewayConfig {
  * Safely validate a gateway config, returning success/error without throwing.
  */
 export function safeValidateConfig(
-  config: unknown,
+  config: unknown
 ):
   | { success: true; data: GatewayConfig }
   | { success: false; error: z.ZodError } {

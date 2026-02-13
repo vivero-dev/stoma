@@ -4,8 +4,8 @@
  * @module timeout
  */
 import { GatewayError } from "../../core/errors";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface TimeoutConfig extends PolicyConfig {
   /** Timeout in milliseconds. Default: 30000. */
@@ -51,12 +51,19 @@ export const timeout = definePolicy<TimeoutConfig>({
         new Promise<never>((_, reject) => {
           controller.signal.addEventListener("abort", () =>
             reject(
-              new GatewayError(config.statusCode!, "gateway_timeout", config.message!),
-            ),
+              new GatewayError(
+                config.statusCode!,
+                "gateway_timeout",
+                config.message!
+              )
+            )
           );
         }),
       ]);
-      trace("passed", { budgetMs: config.timeoutMs!, elapsed: Date.now() - start });
+      trace("passed", {
+        budgetMs: config.timeoutMs!,
+        elapsed: Date.now() - start,
+      });
     } catch (err) {
       if (err instanceof GatewayError && err.code === "gateway_timeout") {
         trace("fired", { budgetMs: config.timeoutMs! });

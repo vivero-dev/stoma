@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
 import type { Policy } from "../../policies/types";
 import {
   buildPolicyChain,
@@ -24,11 +24,17 @@ describe("buildPolicyChain", () => {
   });
 
   it("should deduplicate by name with route-level winning", () => {
-    const globalHandler = async (_c: unknown, next: () => Promise<void>) => next();
-    const routeHandler = async (_c: unknown, next: () => Promise<void>) => next();
+    const globalHandler = async (_c: unknown, next: () => Promise<void>) =>
+      next();
+    const routeHandler = async (_c: unknown, next: () => Promise<void>) =>
+      next();
 
     const global: Policy[] = [
-      { name: "auth", handler: globalHandler as Policy["handler"], priority: 10 },
+      {
+        name: "auth",
+        handler: globalHandler as Policy["handler"],
+        priority: 10,
+      },
     ];
     const route: Policy[] = [
       { name: "auth", handler: routeHandler as Policy["handler"], priority: 5 },

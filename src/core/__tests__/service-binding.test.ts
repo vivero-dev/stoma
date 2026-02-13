@@ -6,10 +6,10 @@ import { createGateway } from "../gateway";
  * Creates a mock dispatchBinding that routes to a handler by service name.
  */
 function mockAdapter(
-  bindings: Record<string, (req: Request) => Response | Promise<Response>>,
+  bindings: Record<string, (req: Request) => Response | Promise<Response>>
 ): GatewayAdapter {
   const spies = Object.fromEntries(
-    Object.entries(bindings).map(([name, handler]) => [name, vi.fn(handler)]),
+    Object.entries(bindings).map(([name, handler]) => [name, vi.fn(handler)])
   );
 
   return {
@@ -17,7 +17,7 @@ function mockAdapter(
       const handler = spies[service];
       if (!handler) {
         throw new Error(
-          `Service binding "${service}" is not available in the Worker environment`,
+          `Service binding "${service}" is not available in the Worker environment`
         );
       }
       return handler(request);
@@ -33,7 +33,7 @@ function singleServiceAdapter(
   handler: (req: Request) => Response | Promise<Response> = () =>
     new Response(JSON.stringify({ from: "binding" }), {
       headers: { "content-type": "application/json" },
-    }),
+    })
 ) {
   return mockAdapter({ [service]: handler });
 }
@@ -60,7 +60,11 @@ describe("Service Binding upstream", () => {
     expect(res.status).toBe(200);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.from).toBe("binding");
-    const spies = (adapter as GatewayAdapter & { _spies: Record<string, ReturnType<typeof vi.fn>> })._spies;
+    const spies = (
+      adapter as GatewayAdapter & {
+        _spies: Record<string, ReturnType<typeof vi.fn>>;
+      }
+    )._spies;
     expect(spies.MY_SERVICE).toHaveBeenCalledOnce();
   });
 
@@ -267,7 +271,7 @@ describe("Service Binding upstream", () => {
 
   it("should work with policies in the pipeline", async () => {
     const adapter = singleServiceAdapter("SVC", () =>
-      Response.json({ ok: true }),
+      Response.json({ ok: true })
     );
 
     const policyOrder: string[] = [];
@@ -300,7 +304,11 @@ describe("Service Binding upstream", () => {
 
     expect(res.status).toBe(200);
     expect(policyOrder).toEqual(["before", "after"]);
-    const spies = (adapter as GatewayAdapter & { _spies: Record<string, ReturnType<typeof vi.fn>> })._spies;
+    const spies = (
+      adapter as GatewayAdapter & {
+        _spies: Record<string, ReturnType<typeof vi.fn>>;
+      }
+    )._spies;
     expect(spies.SVC).toHaveBeenCalledOnce();
   });
 });

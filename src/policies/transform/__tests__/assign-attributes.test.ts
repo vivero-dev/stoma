@@ -18,7 +18,7 @@ describe("assignAttributes", () => {
         upstream: async (c) => {
           return c.json({ tenant: c.get("tenant") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -37,7 +37,7 @@ describe("assignAttributes", () => {
         upstream: async (c) => {
           return c.json({ requestPath: c.get("requestPath") });
         },
-      },
+      }
     );
 
     const res = await request("/hello");
@@ -59,7 +59,7 @@ describe("assignAttributes", () => {
         upstream: async (c) => {
           return c.json({ delayed: c.get("delayed") });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -84,7 +84,7 @@ describe("assignAttributes", () => {
             c: c.get("c"),
           });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -104,7 +104,7 @@ describe("assignAttributes", () => {
           const value = c.get("downstream");
           return c.json({ captured: value });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -114,7 +114,7 @@ describe("assignAttributes", () => {
 
   it("should pass through with empty attributes object", async () => {
     const { request } = createPolicyTestHarness(
-      assignAttributes({ attributes: {} }),
+      assignAttributes({ attributes: {} })
     );
 
     const res = await request("/test");
@@ -133,7 +133,7 @@ describe("assignAttributes", () => {
         upstream: async (c) => {
           return c.json({ skipped: c.get("skipped") ?? null });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -151,7 +151,7 @@ describe("assignAttributes", () => {
         upstream: async (c) => {
           return c.json({ present: c.get("present") });
         },
-      },
+      }
     );
 
     const res = await request("/test");

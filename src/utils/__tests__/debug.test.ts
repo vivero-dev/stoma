@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  createDebugger,
   createDebugFactory,
+  createDebugger,
   matchNamespace,
   noopDebugLogger,
 } from "../debug";
@@ -33,28 +33,25 @@ describe("matchNamespace", () => {
 
   it("should match comma-separated patterns", () => {
     expect(
-      matchNamespace("stoma:gateway", "stoma:gateway,stoma:upstream"),
+      matchNamespace("stoma:gateway", "stoma:gateway,stoma:upstream")
     ).toBe(true);
     expect(
-      matchNamespace("stoma:upstream", "stoma:gateway,stoma:upstream"),
+      matchNamespace("stoma:upstream", "stoma:gateway,stoma:upstream")
     ).toBe(true);
     expect(
-      matchNamespace("stoma:policy:cache", "stoma:gateway,stoma:upstream"),
+      matchNamespace("stoma:policy:cache", "stoma:gateway,stoma:upstream")
     ).toBe(false);
   });
 
   it("should handle whitespace in comma-separated patterns", () => {
     expect(
-      matchNamespace("stoma:upstream", "stoma:gateway , stoma:upstream"),
+      matchNamespace("stoma:upstream", "stoma:gateway , stoma:upstream")
     ).toBe(true);
   });
 
   it("should match mixed exact and wildcard patterns", () => {
     expect(
-      matchNamespace(
-        "stoma:policy:cache",
-        "stoma:gateway,stoma:policy:*",
-      ),
+      matchNamespace("stoma:policy:cache", "stoma:gateway,stoma:policy:*")
     ).toBe(true);
   });
 });
@@ -101,7 +98,7 @@ describe("createDebugger", () => {
     logger("proxying", "GET /api/users", "->", "https://internal/users");
 
     expect(spy).toHaveBeenCalledWith(
-      "[stoma:upstream] proxying GET /api/users -> https://internal/users",
+      "[stoma:upstream] proxying GET /api/users -> https://internal/users"
     );
   });
 
@@ -112,7 +109,7 @@ describe("createDebugger", () => {
     logger("route", { path: "/api", methods: ["GET"] });
 
     expect(spy).toHaveBeenCalledWith(
-      '[stoma:gateway] route {"path":"/api","methods":["GET"]}',
+      '[stoma:gateway] route {"path":"/api","methods":["GET"]}'
     );
   });
 

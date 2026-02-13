@@ -8,7 +8,7 @@
  *
  * @module types
  */
-import type { Hono, Context } from "hono";
+import type { Context, Hono } from "hono";
 import type { GatewayAdapter } from "../adapters/types";
 import type { MetricsCollector } from "../observability/metrics";
 import type { Policy } from "../policies/types";

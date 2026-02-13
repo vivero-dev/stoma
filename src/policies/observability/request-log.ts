@@ -5,8 +5,8 @@
  */
 import { extractClientIp } from "../../utils/ip";
 import { redactFields } from "../../utils/redact";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority, safeCall } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface RequestLogConfig extends PolicyConfig {
   /** Additional fields to extract from the request */
@@ -113,7 +113,11 @@ export const requestLog = definePolicy<RequestLogConfig>({
     // Capture request body before downstream consumes it
     let requestBody: unknown;
     if (config.logRequestBody) {
-      requestBody = await captureRequestBody(c.req.raw, maxBodyLength, config.redactPaths);
+      requestBody = await captureRequestBody(
+        c.req.raw,
+        maxBodyLength,
+        config.redactPaths
+      );
     }
 
     // Let downstream run
@@ -124,7 +128,8 @@ export const requestLog = definePolicy<RequestLogConfig>({
 
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
-      requestId: gateway?.requestId ?? c.res.headers.get("x-request-id") ?? "unknown",
+      requestId:
+        gateway?.requestId ?? c.res.headers.get("x-request-id") ?? "unknown",
       method: c.req.method,
       path: url.pathname,
       statusCode: c.res.status,
@@ -144,7 +149,11 @@ export const requestLog = definePolicy<RequestLogConfig>({
 
     // Capture response body after downstream
     if (config.logResponseBody) {
-      const responseBody = await captureResponseBody(c, maxBodyLength, config.redactPaths);
+      const responseBody = await captureResponseBody(
+        c,
+        maxBodyLength,
+        config.redactPaths
+      );
       if (responseBody !== undefined) {
         entry.responseBody = responseBody;
       }
@@ -160,7 +169,12 @@ export const requestLog = definePolicy<RequestLogConfig>({
     }
 
     // Sink failure must never crash the request pipeline
-    await safeCall(() => Promise.resolve(sink(entry)), undefined, debug, "sink()");
+    await safeCall(
+      () => Promise.resolve(sink(entry)),
+      undefined,
+      debug,
+      "sink()"
+    );
   },
 });
 
@@ -171,7 +185,7 @@ export const requestLog = definePolicy<RequestLogConfig>({
 async function captureRequestBody(
   req: Request,
   maxLength: number,
-  redactPaths?: string[],
+  redactPaths?: string[]
 ): Promise<unknown> {
   try {
     // Clone so the original body stream stays available for downstream
@@ -179,12 +193,17 @@ async function captureRequestBody(
     const text = await cloned.text();
     if (!text) return undefined;
 
-    const truncated = text.length > maxLength ? text.slice(0, maxLength) + "...[truncated]" : text;
+    const truncated =
+      text.length > maxLength
+        ? `${text.slice(0, maxLength)}...[truncated]`
+        : text;
 
     const contentType = req.headers.get("content-type") ?? "";
     if (contentType.includes("application/json")) {
       try {
-        let parsed: unknown = JSON.parse(truncated.endsWith("...[truncated]") ? text.slice(0, maxLength) : text);
+        let parsed: unknown = JSON.parse(
+          truncated.endsWith("...[truncated]") ? text.slice(0, maxLength) : text
+        );
         if (redactPaths?.length) {
           parsed = redactFields(parsed, { paths: redactPaths });
         }
@@ -209,7 +228,7 @@ async function captureRequestBody(
 async function captureResponseBody(
   c: { res: Response },
   maxLength: number,
-  redactPaths?: string[],
+  redactPaths?: string[]
 ): Promise<unknown> {
   try {
     // Clone the response so the original body remains consumable
@@ -217,12 +236,17 @@ async function captureResponseBody(
     const text = await cloned.text();
     if (!text) return undefined;
 
-    const truncated = text.length > maxLength ? text.slice(0, maxLength) + "...[truncated]" : text;
+    const truncated =
+      text.length > maxLength
+        ? `${text.slice(0, maxLength)}...[truncated]`
+        : text;
 
     const contentType = c.res.headers.get("content-type") ?? "";
     if (contentType.includes("application/json")) {
       try {
-        let parsed: unknown = JSON.parse(truncated.endsWith("...[truncated]") ? text.slice(0, maxLength) : text);
+        let parsed: unknown = JSON.parse(
+          truncated.endsWith("...[truncated]") ? text.slice(0, maxLength) : text
+        );
         if (redactPaths?.length) {
           parsed = redactFields(parsed, { paths: redactPaths });
         }

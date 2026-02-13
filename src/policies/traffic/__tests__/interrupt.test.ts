@@ -8,13 +8,17 @@ describe("interrupt", () => {
   it("should short-circuit when condition returns true", async () => {
     let upstreamCalled = false;
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true, statusCode: 503, body: { maintenance: true } }),
+      interrupt({
+        condition: () => true,
+        statusCode: 503,
+        body: { maintenance: true },
+      }),
       {
         upstream: async (c) => {
           upstreamCalled = true;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -33,7 +37,7 @@ describe("interrupt", () => {
           upstreamCalled = true;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");
@@ -47,7 +51,7 @@ describe("interrupt", () => {
 
   it("should return configured status code", async () => {
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true, statusCode: 418 }),
+      interrupt({ condition: () => true, statusCode: 418 })
     );
 
     const res = await request("/test");
@@ -57,7 +61,7 @@ describe("interrupt", () => {
 
   it("should default to status 200", async () => {
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true }),
+      interrupt({ condition: () => true })
     );
 
     const res = await request("/test");
@@ -69,7 +73,7 @@ describe("interrupt", () => {
 
   it("should return JSON body when body is an object", async () => {
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true, body: { key: "value", num: 42 } }),
+      interrupt({ condition: () => true, body: { key: "value", num: 42 } })
     );
 
     const res = await request("/test");
@@ -80,7 +84,7 @@ describe("interrupt", () => {
 
   it("should return string body with text/plain content-type", async () => {
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true, body: "maintenance mode" }),
+      interrupt({ condition: () => true, body: "maintenance mode" })
     );
 
     const res = await request("/test");
@@ -91,7 +95,7 @@ describe("interrupt", () => {
 
   it("should return empty body when body is undefined", async () => {
     const { request } = createPolicyTestHarness(
-      interrupt({ condition: () => true }),
+      interrupt({ condition: () => true })
     );
 
     const res = await request("/test");
@@ -107,7 +111,7 @@ describe("interrupt", () => {
         condition: () => true,
         statusCode: 503,
         headers: { "retry-after": "300", "x-reason": "maintenance" },
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -128,7 +132,7 @@ describe("interrupt", () => {
         },
         statusCode: 202,
         body: "accepted",
-      }),
+      })
     );
 
     const res = await request("/test");
@@ -153,7 +157,7 @@ describe("interrupt", () => {
           upstreamCalled = true;
           return c.json({ ok: true });
         },
-      },
+      }
     );
 
     const res = await request("/test");

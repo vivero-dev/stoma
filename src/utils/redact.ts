@@ -46,7 +46,7 @@ function applyRedaction(
   obj: unknown,
   segments: string[],
   depth: number,
-  replacement: string,
+  replacement: string
 ): void {
   if (depth >= segments.length || obj == null) return;
 
@@ -72,7 +72,7 @@ function applyRedaction(
           (obj as Record<string, unknown>)[key],
           segments,
           depth + 1,
-          replacement,
+          replacement
         );
       }
     }

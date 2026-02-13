@@ -6,9 +6,10 @@
  *
  * @module rbac
  */
+
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
-import { GatewayError } from "../../core/errors";
 
 export interface RbacConfig extends PolicyConfig {
   /** Header name containing the user's role(s). Default: "x-user-role". */
@@ -55,10 +56,12 @@ export const rbac = definePolicy<RbacConfig>({
         ? roleHeaderValue.split(config.roleDelimiter!).map((r) => r.trim())
         : [];
 
-      debug(`checking roles: user=${userRoles.join(",")} required=${config.roles!.join(",")}`);
+      debug(
+        `checking roles: user=${userRoles.join(",")} required=${config.roles!.join(",")}`
+      );
 
       const hasMatchingRole = config.roles!.some((role) =>
-        userRoles.includes(role),
+        userRoles.includes(role)
       );
       if (!hasMatchingRole) {
         throw new GatewayError(403, "forbidden", config.denyMessage!);
@@ -74,10 +77,12 @@ export const rbac = definePolicy<RbacConfig>({
             .map((p) => p.trim())
         : [];
 
-      debug(`checking permissions: user=${userPermissions.join(",")} required=${config.permissions!.join(",")}`);
+      debug(
+        `checking permissions: user=${userPermissions.join(",")} required=${config.permissions!.join(",")}`
+      );
 
       const hasAllPermissions = config.permissions!.every((perm) =>
-        userPermissions.includes(perm),
+        userPermissions.includes(perm)
       );
       if (!hasAllPermissions) {
         throw new GatewayError(403, "forbidden", config.denyMessage!);

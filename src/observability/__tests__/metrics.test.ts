@@ -1,8 +1,5 @@
-import { describe, expect, it, beforeEach } from "vitest";
-import {
-  InMemoryMetricsCollector,
-  toPrometheusText,
-} from "../metrics";
+import { beforeEach, describe, expect, it } from "vitest";
+import { InMemoryMetricsCollector, toPrometheusText } from "../metrics";
 
 describe("InMemoryMetricsCollector", () => {
   let collector: InMemoryMetricsCollector;
@@ -154,9 +151,7 @@ describe("toPrometheusText", () => {
     const text = toPrometheusText({
       counters: {},
       histograms: {
-        duration_ms: [
-          { values: [100, 200, 300], tags: { path: "/api" } },
-        ],
+        duration_ms: [{ values: [100, 200, 300], tags: { path: "/api" } }],
       },
       gauges: {},
     });

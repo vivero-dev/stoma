@@ -89,12 +89,12 @@ export class DurableObjectRateLimitStore implements RateLimitStore {
 
   async increment(
     key: string,
-    windowSeconds: number,
+    windowSeconds: number
   ): Promise<{ count: number; resetAt: number }> {
     const id = this.namespace.idFromName(key);
     const stub = this.namespace.get(id);
     const response = await stub.fetch(
-      new Request(`${DO_ORIGIN}/increment?window=${windowSeconds}`),
+      new Request(`${DO_ORIGIN}/increment?window=${windowSeconds}`)
     );
     return response.json() as Promise<{ count: number; resetAt: number }>;
   }

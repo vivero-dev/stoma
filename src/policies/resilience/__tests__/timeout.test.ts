@@ -4,10 +4,7 @@ import { GatewayError } from "../../../core/errors";
 import { timeout } from "../timeout";
 
 describe("timeout", () => {
-  function createApp(
-    config: Parameters<typeof timeout>[0],
-    handlerDelay = 0,
-  ) {
+  function createApp(config: Parameters<typeof timeout>[0], handlerDelay = 0) {
     const app = new Hono();
     const policy = timeout(config);
 
@@ -18,7 +15,7 @@ describe("timeout", () => {
         if (err instanceof GatewayError) {
           return c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 504,
+            err.statusCode as 504
           );
         }
         throw err;
@@ -71,7 +68,7 @@ describe("timeout", () => {
         if (err instanceof GatewayError) {
           return c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 504,
+            err.statusCode as 504
           );
         }
         throw err;
@@ -107,7 +104,7 @@ describe("timeout", () => {
         if (err instanceof GatewayError) {
           return c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 504,
+            err.statusCode as 504
           );
         }
         throw err;

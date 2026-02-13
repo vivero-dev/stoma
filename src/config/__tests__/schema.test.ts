@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
 import {
-  validateConfig,
-  safeValidateConfig,
   GatewayConfigSchema,
+  safeValidateConfig,
+  validateConfig,
 } from "../schema";
 
 // ---------------------------------------------------------------------------
@@ -69,7 +69,10 @@ describe("validateConfig", () => {
           path: "/protected",
           pipeline: {
             policies: [validPolicy("jwt-auth")],
-            upstream: { type: "url" as const, target: "https://api.example.com" },
+            upstream: {
+              type: "url" as const,
+              target: "https://api.example.com",
+            },
           },
         },
       ],
@@ -124,7 +127,10 @@ describe("validateConfig", () => {
           path: "/users",
           methods: ["GET" as const, "POST" as const],
           pipeline: {
-            upstream: { type: "url" as const, target: "https://users.internal" },
+            upstream: {
+              type: "url" as const,
+              target: "https://users.internal",
+            },
           },
         },
       ],

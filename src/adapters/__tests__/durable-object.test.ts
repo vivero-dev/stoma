@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { RateLimiterDO, DurableObjectRateLimitStore } from "../durable-object";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DurableObjectRateLimitStore, RateLimiterDO } from "../durable-object";
 
 // ---------------------------------------------------------------------------
 // Mock DurableObjectStorage
@@ -52,13 +52,16 @@ describe("RateLimiterDO", () => {
 
   it("should start a new counter on first request", async () => {
     const res = await dobj.fetch(
-      new Request("https://internal/increment?window=60"),
+      new Request("https://internal/increment?window=60")
     );
     const body = (await res.json()) as { count: number; resetAt: number };
 
     expect(body.count).toBe(1);
     expect(body.resetAt).toBeGreaterThan(Date.now());
-    expect(storage.put).toHaveBeenCalledWith("counter", expect.objectContaining({ count: 1 }));
+    expect(storage.put).toHaveBeenCalledWith(
+      "counter",
+      expect.objectContaining({ count: 1 })
+    );
     expect(storage.setAlarm).toHaveBeenCalledOnce();
   });
 
@@ -68,7 +71,7 @@ describe("RateLimiterDO", () => {
     storage._data.set("counter", { count: 5, resetAt });
 
     const res = await dobj.fetch(
-      new Request("https://internal/increment?window=60"),
+      new Request("https://internal/increment?window=60")
     );
     const body = (await res.json()) as { count: number; resetAt: number };
 
@@ -81,7 +84,7 @@ describe("RateLimiterDO", () => {
     storage._data.set("counter", { count: 99, resetAt: Date.now() - 1000 });
 
     const res = await dobj.fetch(
-      new Request("https://internal/increment?window=30"),
+      new Request("https://internal/increment?window=30")
     );
     const body = (await res.json()) as { count: number; resetAt: number };
 
@@ -92,9 +95,7 @@ describe("RateLimiterDO", () => {
   });
 
   it("should use default 60s window when not specified", async () => {
-    const res = await dobj.fetch(
-      new Request("https://internal/increment"),
-    );
+    const res = await dobj.fetch(new Request("https://internal/increment"));
     const body = (await res.json()) as { count: number; resetAt: number };
 
     expect(body.count).toBe(1);
@@ -119,7 +120,9 @@ describe("DurableObjectRateLimitStore", () => {
   it("should call the DO stub with the correct window parameter", async () => {
     const mockStub = {
       fetch: vi.fn(() =>
-        Promise.resolve(Response.json({ count: 3, resetAt: Date.now() + 60_000 })),
+        Promise.resolve(
+          Response.json({ count: 3, resetAt: Date.now() + 60_000 })
+        )
       ),
     };
 
@@ -143,8 +146,16 @@ describe("DurableObjectRateLimitStore", () => {
   });
 
   it("should map different keys to different DO instances", async () => {
-    const stubA = { fetch: vi.fn(() => Promise.resolve(Response.json({ count: 1, resetAt: 0 }))) };
-    const stubB = { fetch: vi.fn(() => Promise.resolve(Response.json({ count: 1, resetAt: 0 }))) };
+    const stubA = {
+      fetch: vi.fn(() =>
+        Promise.resolve(Response.json({ count: 1, resetAt: 0 }))
+      ),
+    };
+    const stubB = {
+      fetch: vi.fn(() =>
+        Promise.resolve(Response.json({ count: 1, resetAt: 0 }))
+      ),
+    };
 
     let callCount = 0;
     const mockNamespace = {

@@ -5,7 +5,7 @@ prev: false
 title: "MetricsSnapshot"
 ---
 
-Defined in: [packages/stoma/src/observability/metrics.ts:25](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L25)
+Defined in: [src/observability/metrics.ts:25](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L25)
 
 Point-in-time snapshot of all collected metrics.
 
@@ -15,7 +15,7 @@ Point-in-time snapshot of all collected metrics.
 
 > **counters**: `Record`\<`string`, [`TaggedValue`](/api/index/interfaces/taggedvalue/)[]\>
 
-Defined in: [packages/stoma/src/observability/metrics.ts:26](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L26)
+Defined in: [src/observability/metrics.ts:26](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L26)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [packages/stoma/src/observability/metrics.ts:26](https://github.com/
 
 > **gauges**: `Record`\<`string`, [`TaggedValue`](/api/index/interfaces/taggedvalue/)[]\>
 
-Defined in: [packages/stoma/src/observability/metrics.ts:28](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L28)
+Defined in: [src/observability/metrics.ts:28](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L28)
 
 ***
 
@@ -31,4 +31,4 @@ Defined in: [packages/stoma/src/observability/metrics.ts:28](https://github.com/
 
 > **histograms**: `Record`\<`string`, [`HistogramEntry`](/api/index/interfaces/histogramentry/)[]\>
 
-Defined in: [packages/stoma/src/observability/metrics.ts:27](https://github.com/HomeGrower-club/stoma/blob/bb4d04ff85c8c133b10c323d92695cf11b944552/src/observability/metrics.ts#L27)
+Defined in: [src/observability/metrics.ts:27](https://github.com/HomeGrower-club/stoma/blob/645ca3bfe48534ea194e7433b35f97ff805392a9/src/observability/metrics.ts#L27)

@@ -15,7 +15,7 @@ describe("jsonThreatProtection", () => {
 
   it("should reject JSON exceeding max depth", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxDepth: 2 }),
+      jsonThreatProtection({ maxDepth: 2 })
     );
     // Depth: root(0) -> a(1) -> b(2) -> c(3) = exceeds maxDepth 2
     const res = await request("/test", {
@@ -31,7 +31,7 @@ describe("jsonThreatProtection", () => {
 
   it("should reject objects exceeding max keys", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxKeys: 3 }),
+      jsonThreatProtection({ maxKeys: 3 })
     );
     const obj: Record<string, number> = {};
     for (let i = 0; i < 4; i++) {
@@ -50,7 +50,7 @@ describe("jsonThreatProtection", () => {
 
   it("should reject string values exceeding max length", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxStringLength: 10 }),
+      jsonThreatProtection({ maxStringLength: 10 })
     );
     const res = await request("/test", {
       method: "POST",
@@ -65,7 +65,7 @@ describe("jsonThreatProtection", () => {
 
   it("should reject object keys exceeding max string length", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxStringLength: 5 }),
+      jsonThreatProtection({ maxStringLength: 5 })
     );
     const obj: Record<string, string> = {};
     obj["a".repeat(6)] = "value";
@@ -82,7 +82,7 @@ describe("jsonThreatProtection", () => {
 
   it("should reject arrays exceeding max size", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxArraySize: 3 }),
+      jsonThreatProtection({ maxArraySize: 3 })
     );
     const res = await request("/test", {
       method: "POST",
@@ -97,14 +97,16 @@ describe("jsonThreatProtection", () => {
 
   it("should reject body exceeding max body size with 413", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxBodySize: 50 }),
+      jsonThreatProtection({ maxBodySize: 50 })
     );
     const largeBody = JSON.stringify({ data: "x".repeat(100) });
     const res = await request("/test", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "content-length": String(new TextEncoder().encode(largeBody).byteLength),
+        "content-length": String(
+          new TextEncoder().encode(largeBody).byteLength
+        ),
       },
       body: largeBody,
     });
@@ -136,7 +138,7 @@ describe("jsonThreatProtection", () => {
 
   it("should skip non-JSON content types", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxDepth: 1 }),
+      jsonThreatProtection({ maxDepth: 1 })
     );
     // This deeply nested body would fail if inspected, but text/plain is skipped
     const res = await request("/test", {
@@ -149,17 +151,14 @@ describe("jsonThreatProtection", () => {
 
   it("should validate nested objects and arrays recursively", async () => {
     const { request } = createPolicyTestHarness(
-      jsonThreatProtection({ maxArraySize: 5, maxKeys: 5 }),
+      jsonThreatProtection({ maxArraySize: 5, maxKeys: 5 })
     );
     // Valid nested structure
     const validRes = await request("/test", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        users: [
-          { name: "Alice" },
-          { name: "Bob" },
-        ],
+        users: [{ name: "Alice" }, { name: "Bob" }],
       }),
     });
     expect(validRes.status).toBe(200);
@@ -197,7 +196,9 @@ describe("jsonThreatProtection", () => {
     for (let i = 0; i < 21; i++) {
       tooDeep = { child: tooDeep };
     }
-    const { request: request2 } = createPolicyTestHarness(jsonThreatProtection());
+    const { request: request2 } = createPolicyTestHarness(
+      jsonThreatProtection()
+    );
     const invalidRes = await request2("/test", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -214,7 +215,7 @@ describe("jsonThreatProtection", () => {
         maxStringLength: 5,
         maxArraySize: 2,
         maxBodySize: 500,
-      }),
+      })
     );
     // Within all custom limits
     const validRes = await request("/test", {
@@ -238,7 +239,7 @@ describe("jsonThreatProtection", () => {
       jsonThreatProtection({
         maxDepth: 1,
         skip: () => true,
-      }),
+      })
     );
     // This deeply nested body would fail, but skip bypasses the policy
     const res = await request("/test", {

@@ -16,7 +16,7 @@ function makeApp(config: Parameters<typeof apiKeyAuth>[0]): Hono {
     if (err instanceof GatewayError) {
       return c.json(
         { error: err.code, message: err.message },
-        err.statusCode as 401,
+        err.statusCode as 401
       );
     }
     throw err;

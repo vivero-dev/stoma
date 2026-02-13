@@ -8,8 +8,8 @@
  * @module api-key-auth
  */
 import { GatewayError } from "../../core/errors";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface ApiKeyAuthConfig extends PolicyConfig {
   /** Header name to read the API key from. Default: "X-API-Key" */
@@ -104,7 +104,9 @@ export const apiKeyAuth = definePolicy<ApiKeyAuthConfig>({
       const headers = new Headers(c.req.raw.headers);
       headers.set(config.forwardKeyIdentity.headerName, sanitized);
       c.req.raw = new Request(c.req.raw, { headers });
-      debug(`forwarded key identity as ${config.forwardKeyIdentity.headerName}`);
+      debug(
+        `forwarded key identity as ${config.forwardKeyIdentity.headerName}`
+      );
     }
 
     await next();

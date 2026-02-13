@@ -65,7 +65,10 @@ export interface PolicyTrace {
  * @param action - Human-readable action string (e.g. `"HIT"`, `"allowed"`).
  * @param data   - Optional structured context data.
  */
-export type TraceReporter = (action: string, data?: Record<string, unknown>) => void;
+export type TraceReporter = (
+  action: string,
+  data?: Record<string, unknown>
+) => void;
 
 /** Shared no-op reporter instance — zero overhead when tracing is off. */
 export const noopTraceReporter: TraceReporter = () => {};

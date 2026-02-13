@@ -8,8 +8,8 @@
  * @module metrics-reporter
  */
 import type { MetricsCollector } from "../../observability/metrics";
-import type { PolicyConfig } from "../types";
 import { definePolicy, Priority, safeCall } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface MetricsReporterConfig extends PolicyConfig {
   /** The metrics collector to record to. */
@@ -37,51 +37,66 @@ export const metricsReporter = definePolicy<MetricsReporterConfig>({
     await next();
 
     // Collector failures must never crash the request pipeline
-    await safeCall(async () => {
-      const dynamicTagsRaw = c.get("_metricsTags") as Record<string, unknown> | undefined;
-      const dynamicTags: Record<string, string> = {};
-      if (dynamicTagsRaw) {
-        for (const [key, value] of Object.entries(dynamicTagsRaw)) {
-          if (typeof value === "string") {
-            dynamicTags[key] = value;
+    await safeCall(
+      async () => {
+        const dynamicTagsRaw = c.get("_metricsTags") as
+          | Record<string, unknown>
+          | undefined;
+        const dynamicTags: Record<string, string> = {};
+        if (dynamicTagsRaw) {
+          for (const [key, value] of Object.entries(dynamicTagsRaw)) {
+            if (typeof value === "string") {
+              dynamicTags[key] = value;
+            }
           }
         }
-      }
 
-      const url = new URL(c.req.url);
-      const tags: Record<string, string> = {
-        ...dynamicTags,
-        method: c.req.method,
-        path: gateway?.routePath ?? url.pathname,
-        status: String(c.res.status),
-        gateway: gateway?.gatewayName ?? "unknown",
-      };
+        const url = new URL(c.req.url);
+        const tags: Record<string, string> = {
+          ...dynamicTags,
+          method: c.req.method,
+          path: gateway?.routePath ?? url.pathname,
+          status: String(c.res.status),
+          gateway: gateway?.gatewayName ?? "unknown",
+        };
 
-      // Total requests counter
-      config.collector.increment("gateway_requests_total", 1, tags);
+        // Total requests counter
+        config.collector.increment("gateway_requests_total", 1, tags);
 
-      // Request duration histogram
-      const duration = Date.now() - startTime;
-      config.collector.histogram("gateway_request_duration_ms", duration, tags);
+        // Request duration histogram
+        const duration = Date.now() - startTime;
+        config.collector.histogram(
+          "gateway_request_duration_ms",
+          duration,
+          tags
+        );
 
-      // Error counter (4xx and 5xx)
-      if (c.res.status >= 400) {
-        config.collector.increment("gateway_request_errors_total", 1, tags);
-      }
-
-      // Per-policy timing (if available from pipeline instrumentation)
-      const timings = c.get("_policyTimings") as
-        | Array<{ name: string; durationMs: number }>
-        | undefined;
-      if (timings) {
-        for (const t of timings) {
-          config.collector.histogram("gateway_policy_duration_ms", t.durationMs, {
-            ...dynamicTags,
-            policy: t.name,
-            gateway: gateway?.gatewayName ?? "unknown",
-          });
+        // Error counter (4xx and 5xx)
+        if (c.res.status >= 400) {
+          config.collector.increment("gateway_request_errors_total", 1, tags);
         }
-      }
-    }, undefined, debug, "collector");
+
+        // Per-policy timing (if available from pipeline instrumentation)
+        const timings = c.get("_policyTimings") as
+          | Array<{ name: string; durationMs: number }>
+          | undefined;
+        if (timings) {
+          for (const t of timings) {
+            config.collector.histogram(
+              "gateway_policy_duration_ms",
+              t.durationMs,
+              {
+                ...dynamicTags,
+                policy: t.name,
+                gateway: gateway?.gatewayName ?? "unknown",
+              }
+            );
+          }
+        }
+      },
+      undefined,
+      debug,
+      "collector"
+    );
   },
 });

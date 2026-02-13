@@ -3,14 +3,19 @@
  *
  * @module basic-auth
  */
-import { GatewayError } from "../../core/errors";
-import type { PolicyConfig } from "../types";
+
 import type { Context } from "hono";
+import { GatewayError } from "../../core/errors";
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface BasicAuthConfig extends PolicyConfig {
   /** Validate username/password. Return true if valid. */
-  validate: (username: string, password: string, c: Context) => boolean | Promise<boolean>;
+  validate: (
+    username: string,
+    password: string,
+    c: Context
+  ) => boolean | Promise<boolean>;
   /** Realm for the WWW-Authenticate header. Default: "Restricted" */
   realm?: string;
 }
@@ -48,7 +53,11 @@ export const basicAuth = definePolicy<BasicAuthConfig>({
 
     if (!authHeader || !authHeader.startsWith("Basic ")) {
       c.header("www-authenticate", `Basic realm="${realm}"`);
-      throw new GatewayError(401, "unauthorized", "Basic authentication required");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "Basic authentication required"
+      );
     }
 
     let username: string;
@@ -62,7 +71,11 @@ export const basicAuth = definePolicy<BasicAuthConfig>({
       username = decoded.slice(0, colonIndex);
       password = decoded.slice(colonIndex + 1);
     } catch {
-      throw new GatewayError(401, "unauthorized", "Malformed Basic authentication header");
+      throw new GatewayError(
+        401,
+        "unauthorized",
+        "Malformed Basic authentication header"
+      );
     }
 
     const isValid = await config.validate(username, password, c);

@@ -1,11 +1,14 @@
-import { describe, expect, it } from "vitest";
 import { Hono } from "hono";
+import { describe, expect, it } from "vitest";
 import { proxy } from "../proxy";
 
 describe("proxy", () => {
   function createApp(
     config?: Parameters<typeof proxy>[0],
-    downstreamHandler?: (c: { req: { raw: Request }; json: (data: unknown) => Response }) => Response,
+    downstreamHandler?: (c: {
+      req: { raw: Request };
+      json: (data: unknown) => Response;
+    }) => Response
   ) {
     const app = new Hono();
     const policy = proxy(config);
@@ -197,6 +200,8 @@ describe("proxy", () => {
     });
 
     // The user's token should be stripped AND replaced with the gateway token
-    expect(capturedHeaders!.get("authorization")).toBe("Bearer gateway-service-token");
+    expect(capturedHeaders!.get("authorization")).toBe(
+      "Bearer gateway-service-token"
+    );
   });
 });

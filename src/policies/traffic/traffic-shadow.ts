@@ -87,7 +87,7 @@ export const trafficShadow = definePolicy<TrafficShadowConfig>({
     // Determine if this request should be shadowed
     const method = c.req.method.toUpperCase();
     const allowedMethods = new Set(
-      (config.methods ?? []).map((m) => m.toUpperCase()),
+      (config.methods ?? []).map((m) => m.toUpperCase())
     );
 
     if (!allowedMethods.has(method)) {
@@ -119,7 +119,7 @@ export const trafficShadow = definePolicy<TrafficShadowConfig>({
     const controller = new AbortController();
     const timeoutId = setTimeout(
       () => controller.abort(),
-      config.timeout ?? 5000,
+      config.timeout ?? 5000
     );
 
     const shadowPromise = fetch(shadowUrl, {

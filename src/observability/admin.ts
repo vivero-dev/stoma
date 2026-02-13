@@ -23,7 +23,7 @@ const SECRET_PATTERNS = ["secret", "key", "token", "password", "credential"];
 export function registerAdminRoutes(
   app: Hono,
   config: AdminConfig,
-  registry: GatewayRegistry,
+  registry: GatewayRegistry
 ): void {
   const prefix = `/${config.prefix ?? "___gateway"}`;
 
@@ -34,7 +34,7 @@ export function registerAdminRoutes(
       if (!allowed) {
         return c.json(
           { error: "unauthorized", message: "Admin access denied" },
-          403,
+          403
         );
       }
     }
@@ -59,11 +59,13 @@ export function registerAdminRoutes(
 
   // GET /___gateway/config — serialized config with secrets redacted
   app.get(`${prefix}/config`, authMiddleware, (c) => {
-    return c.json(redactConfig({
-      gateway: registry.gatewayName,
-      routes: registry.routes,
-      policies: registry.policies,
-    }));
+    return c.json(
+      redactConfig({
+        gateway: registry.gatewayName,
+        routes: registry.routes,
+        policies: registry.policies,
+      })
+    );
   });
 
   // GET /___gateway/metrics — Prometheus text format
@@ -72,9 +74,10 @@ export function registerAdminRoutes(
       return c.json(
         {
           error: "not_configured",
-          message: "No metrics collector configured. Pass a MetricsCollector to admin.metrics.",
+          message:
+            "No metrics collector configured. Pass a MetricsCollector to admin.metrics.",
         },
-        404,
+        404
       );
     }
 

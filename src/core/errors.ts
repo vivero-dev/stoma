@@ -30,7 +30,12 @@ export class GatewayError extends Error {
   /** Optional headers to include in the error response (e.g. rate-limit headers) */
   readonly headers?: Record<string, string>;
 
-  constructor(statusCode: number, code: string, message: string, headers?: Record<string, string>) {
+  constructor(
+    statusCode: number,
+    code: string,
+    message: string,
+    headers?: Record<string, string>
+  ) {
     super(message);
     this.name = "GatewayError";
     this.statusCode = statusCode;
@@ -63,7 +68,7 @@ export interface ErrorResponse {
  */
 export function errorToResponse(
   error: GatewayError,
-  requestId?: string,
+  requestId?: string
 ): Response {
   const body: ErrorResponse = {
     error: error.code,
@@ -90,7 +95,10 @@ export function errorToResponse(
  * @param requestId - Optional request ID to include in the response body.
  * @returns A 500 `Response` with a generic error message.
  */
-export function defaultErrorResponse(requestId?: string, message = "An unexpected error occurred"): Response {
+export function defaultErrorResponse(
+  requestId?: string,
+  message = "An unexpected error occurred"
+): Response {
   const body: ErrorResponse = {
     error: "internal_error",
     message,

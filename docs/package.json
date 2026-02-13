@@ -4,25 +4,34 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "yarn build:sw && vite build --config vite.sw.config.ts --watch & astro dev",
+    "dev": "yarn build:sw && yarn build:editor && astro dev",
     "dev:sw": "vite build --config vite.sw.config.ts --watch",
     "build:sw": "vite build --config vite.sw.config.ts",
-    "build": "yarn build:sw && astro build",
+    "build:stoma-bundle": "vite build --config vite.stoma-bundle.config.ts",
+    "build:editor-worker": "vite build --config vite.editor-worker.config.ts",
+    "build:types": "dts-bundle-generator --no-check -o public/stoma-bundle.d.ts src/editor/stoma-entry.ts",
+    "build:editor": "yarn build:stoma-bundle && yarn build:editor-worker && yarn build:types",
+    "build": "yarn build:sw && yarn build:editor && astro build",
     "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
     "@astrojs/starlight": "^0.37.0",
+    "@monaco-editor/react": "^4.7.0",
     "astro": "^5.17.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-json-pretty": "^2.2.0",
     "starlight-typedoc": "^0.21.5",
     "typedoc": "^0.28.0",
     "typedoc-plugin-markdown": "^4.6.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260213.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "dts-bundle-generator": "^9.0.0",
+    "esbuild-wasm": "^0.24.2",
     "hono": "^4.7.0",
     "vite": "^6.0.0",
     "wrangler": "^4.65.0"

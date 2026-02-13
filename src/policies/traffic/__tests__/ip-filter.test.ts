@@ -15,7 +15,7 @@ describe("ipFilter", () => {
         if (err instanceof GatewayError) {
           return c.json(
             { error: err.code, message: err.message },
-            err.statusCode as 403,
+            err.statusCode as 403
           );
         }
         throw err;

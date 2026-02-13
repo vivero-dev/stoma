@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
-import { type LogEntry, requestLog } from "../request-log";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createContextInjector } from "../../../core/pipeline";
+import { type LogEntry, requestLog } from "../request-log";
 
 describe("requestLog", () => {
   afterEach(() => {

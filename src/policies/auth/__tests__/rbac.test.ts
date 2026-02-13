@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { createPolicyTestHarness } from "../../sdk";
 import { rbac } from "../rbac";
 
@@ -13,7 +13,7 @@ describe("rbac", () => {
 
   it("should pass when user has a matching role", async () => {
     const { request } = createPolicyTestHarness(
-      rbac({ roles: ["admin", "editor"] }),
+      rbac({ roles: ["admin", "editor"] })
     );
     const res = await request("/test", {
       headers: { "x-user-role": "admin" },
@@ -23,7 +23,7 @@ describe("rbac", () => {
 
   it("should reject when user has no matching role", async () => {
     const { request } = createPolicyTestHarness(
-      rbac({ roles: ["admin", "editor"] }),
+      rbac({ roles: ["admin", "editor"] })
     );
     const res = await request("/test", {
       headers: { "x-user-role": "viewer" },
@@ -34,9 +34,7 @@ describe("rbac", () => {
   });
 
   it("should handle multiple roles in header (comma-separated)", async () => {
-    const { request } = createPolicyTestHarness(
-      rbac({ roles: ["editor"] }),
-    );
+    const { request } = createPolicyTestHarness(rbac({ roles: ["editor"] }));
     const res = await request("/test", {
       headers: { "x-user-role": "viewer,editor,user" },
     });
@@ -47,7 +45,7 @@ describe("rbac", () => {
 
   it("should pass when user has all required permissions", async () => {
     const { request } = createPolicyTestHarness(
-      rbac({ permissions: ["read", "write"] }),
+      rbac({ permissions: ["read", "write"] })
     );
     const res = await request("/test", {
       headers: { "x-user-permissions": "read,write,delete" },
@@ -57,7 +55,7 @@ describe("rbac", () => {
 
   it("should reject when user is missing a permission", async () => {
     const { request } = createPolicyTestHarness(
-      rbac({ permissions: ["read", "write", "delete"] }),
+      rbac({ permissions: ["read", "write", "delete"] })
     );
     const res = await request("/test", {
       headers: { "x-user-permissions": "read,write" },
@@ -72,7 +70,7 @@ describe("rbac", () => {
       rbac({
         roles: ["admin"],
         permissions: ["write"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: {
@@ -88,7 +86,7 @@ describe("rbac", () => {
       rbac({
         roles: ["admin"],
         permissions: ["write", "delete"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: {
@@ -104,7 +102,7 @@ describe("rbac", () => {
       rbac({
         roles: ["admin"],
         permissions: ["read"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: {
@@ -124,7 +122,7 @@ describe("rbac", () => {
         permissionHeader: "x-custom-perms",
         roles: ["superuser"],
         permissions: ["manage"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: {
@@ -142,7 +140,7 @@ describe("rbac", () => {
         roleDelimiter: "|",
         permissions: ["write"],
         permissionDelimiter: ";",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: {
@@ -164,9 +162,7 @@ describe("rbac", () => {
   // --- Missing header ---
 
   it("should return 403 when role header is missing and roles are required", async () => {
-    const { request } = createPolicyTestHarness(
-      rbac({ roles: ["admin"] }),
-    );
+    const { request } = createPolicyTestHarness(rbac({ roles: ["admin"] }));
     const res = await request("/test");
     expect(res.status).toBe(403);
   });
@@ -178,7 +174,7 @@ describe("rbac", () => {
       rbac({
         roles: ["admin"],
         denyMessage: "You shall not pass!",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { "x-user-role": "viewer" },
@@ -195,7 +191,7 @@ describe("rbac", () => {
       rbac({
         roles: ["admin"],
         skip: () => true,
-      }),
+      })
     );
     // No role header — would normally 403, but skip bypasses
     const res = await request("/test");

@@ -12,7 +12,7 @@
  */
 function resolveDerivedComponent(
   componentId: string,
-  request: Request,
+  request: Request
 ): string {
   const url = new URL(request.url);
   switch (componentId) {
@@ -35,10 +35,7 @@ function resolveDerivedComponent(
  * Resolve a component value — derived (`@method`, `@path`, etc.) or
  * regular header name (lowercased).
  */
-function resolveComponentValue(
-  componentId: string,
-  request: Request,
-): string {
+function resolveComponentValue(componentId: string, request: Request): string {
   if (componentId.startsWith("@")) {
     return resolveDerivedComponent(componentId, request);
   }
@@ -54,7 +51,7 @@ function resolveComponentValue(
 export function buildSignatureBase(
   components: string[],
   signatureParams: string,
-  request: Request,
+  request: Request
 ): string {
   const lines: string[] = [];
   for (const component of components) {
@@ -78,7 +75,7 @@ export function buildSignatureParams(
     expires?: number;
     nonce?: string;
     algorithm?: string;
-  },
+  }
 ): string {
   const componentList = components.map((c) => `"${c}"`).join(" ");
   let result = `(${componentList});created=${params.created};keyid="${params.keyId}"`;
@@ -112,17 +109,18 @@ export function parseSignatureParams(input: string): {
 
   const componentStr = parenMatch[1];
   const components = componentStr
-    ? componentStr.match(/"([^"]+)"/g)?.map((s) => s.slice(1, -1)) ?? []
+    ? (componentStr.match(/"([^"]+)"/g)?.map((s) => s.slice(1, -1)) ?? [])
     : [];
 
   // Parse params after the closing paren
   const paramStr = input.slice(parenMatch[0].length);
   const params: Record<string, string> = {};
   const paramRegex = /;(\w+)=("([^"]*)"|(\d+))/g;
-  let match: RegExpExecArray | null;
-  while ((match = paramRegex.exec(paramStr)) !== null) {
+  let match: RegExpExecArray | null = paramRegex.exec(paramStr);
+  while (match !== null) {
     // match[3] is quoted string value, match[4] is unquoted numeric value
     params[match[1]] = match[3] ?? match[4];
+    match = paramRegex.exec(paramStr);
   }
 
   return { components, params };
@@ -160,7 +158,7 @@ export function algorithmToCrypto(alg: string): {
 export async function importSigningKey(
   algorithm: string,
   secret?: string,
-  privateKey?: JsonWebKey,
+  privateKey?: JsonWebKey
 ): Promise<CryptoKey> {
   const { importAlg } = algorithmToCrypto(algorithm);
 
@@ -172,14 +170,12 @@ export async function importSigningKey(
       encoder.encode(secret),
       importAlg,
       false,
-      ["sign"],
+      ["sign"]
     );
   }
 
   if (!privateKey) throw new Error("RSA algorithm requires privateKey");
-  return crypto.subtle.importKey("jwk", privateKey, importAlg, false, [
-    "sign",
-  ]);
+  return crypto.subtle.importKey("jwk", privateKey, importAlg, false, ["sign"]);
 }
 
 /**
@@ -188,7 +184,7 @@ export async function importSigningKey(
 export async function importVerifyKey(
   algorithm: string,
   secret?: string,
-  publicKey?: JsonWebKey,
+  publicKey?: JsonWebKey
 ): Promise<CryptoKey> {
   const { importAlg } = algorithmToCrypto(algorithm);
 
@@ -200,7 +196,7 @@ export async function importVerifyKey(
       encoder.encode(secret),
       importAlg,
       false,
-      ["verify"],
+      ["verify"]
     );
   }
 

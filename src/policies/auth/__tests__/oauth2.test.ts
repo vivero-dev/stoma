@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createPolicyTestHarness } from "../../sdk";
-import { oauth2, clearOAuth2Cache } from "../oauth2";
+import { clearOAuth2Cache, oauth2 } from "../oauth2";
 
 interface ErrorBody {
   error: string;
@@ -25,7 +25,7 @@ function mockIntrospection(response: Record<string, unknown>, status = 200) {
     new Response(JSON.stringify(response), {
       status,
       headers: { "content-type": "application/json" },
-    }),
+    })
   );
 }
 
@@ -36,7 +36,7 @@ describe("oauth2", () => {
     const { request } = createPolicyTestHarness(
       oauth2({
         localValidate: (token) => token === "valid-token",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer valid-token" },
@@ -48,7 +48,7 @@ describe("oauth2", () => {
     const { request } = createPolicyTestHarness(
       oauth2({
         localValidate: (token) => token === "valid-token",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer bad-token" },
@@ -67,7 +67,7 @@ describe("oauth2", () => {
         introspectionUrl: "https://auth.example.com/introspect",
         clientId: "my-client",
         clientSecret: "my-secret",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer some-token" },
@@ -82,7 +82,7 @@ describe("oauth2", () => {
         introspectionUrl: "https://auth.example.com/introspect",
         clientId: "my-client",
         clientSecret: "my-secret",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer expired-token" },
@@ -100,7 +100,7 @@ describe("oauth2", () => {
         introspectionUrl: "https://auth.example.com/introspect",
         clientId: "my-client",
         clientSecret: "my-secret",
-      }),
+      })
     );
     await request("/test", {
       headers: { authorization: "Bearer some-token" },
@@ -112,7 +112,7 @@ describe("oauth2", () => {
     expect(url).toBe("https://auth.example.com/introspect");
     expect(opts.method).toBe("POST");
     expect(opts.headers.authorization).toBe(
-      `Basic ${btoa("my-client:my-secret")}`,
+      `Basic ${btoa("my-client:my-secret")}`
     );
     expect(opts.body).toBe("token=some-token");
   });
@@ -124,7 +124,7 @@ describe("oauth2", () => {
       oauth2({
         tokenLocation: "query",
         localValidate: (token) => token === "query-token",
-      }),
+      })
     );
     const res = await request("/test?access_token=query-token");
     expect(res.status).toBe(200);
@@ -134,7 +134,7 @@ describe("oauth2", () => {
     const { request } = createPolicyTestHarness(
       oauth2({
         localValidate: () => true,
-      }),
+      })
     );
     const res = await request("/test");
     expect(res.status).toBe(401);
@@ -164,7 +164,7 @@ describe("oauth2", () => {
             scope: c.req.header("X-User-Scope"),
           });
         },
-      },
+      }
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer tok" },
@@ -185,7 +185,7 @@ describe("oauth2", () => {
         clientId: "c",
         clientSecret: "s",
         requiredScopes: ["read", "write"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer tok" },
@@ -201,7 +201,7 @@ describe("oauth2", () => {
         clientId: "c",
         clientSecret: "s",
         requiredScopes: ["read", "write"],
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer tok" },
@@ -222,7 +222,7 @@ describe("oauth2", () => {
         clientId: "c",
         clientSecret: "s",
         cacheTtlSeconds: 60,
-      }),
+      })
     );
 
     // First request — calls fetch
@@ -249,7 +249,7 @@ describe("oauth2", () => {
         headerName: "x-api-token",
         headerPrefix: "Token",
         localValidate: (token) => token === "custom-tok",
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { "x-api-token": "Token custom-tok" },
@@ -260,7 +260,9 @@ describe("oauth2", () => {
   // --- No validator configured ---
 
   it("should throw config error at construction when neither localValidate nor introspectionUrl is configured", () => {
-    expect(() => oauth2({})).toThrow("oauth2 requires either introspectionUrl or localValidate");
+    expect(() => oauth2({})).toThrow(
+      "oauth2 requires either introspectionUrl or localValidate"
+    );
   });
 
   // --- Skip logic ---
@@ -270,7 +272,7 @@ describe("oauth2", () => {
       oauth2({
         localValidate: () => false, // Would reject
         skip: () => true,
-      }),
+      })
     );
     // No token — would normally 401, but skip bypasses
     const res = await request("/test");
@@ -286,7 +288,7 @@ describe("oauth2", () => {
           await new Promise((r) => setTimeout(r, 1));
           return token === "async-valid";
         },
-      }),
+      })
     );
     const res = await request("/test", {
       headers: { authorization: "Bearer async-valid" },

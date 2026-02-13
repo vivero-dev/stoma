@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { health } from "../health";
 
 describe("health", () => {
@@ -50,7 +50,7 @@ describe("health", () => {
 
   it("should report healthy when all probes succeed", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response("", { status: 200 }),
+      new Response("", { status: 200 })
     );
 
     const app = createApp({
@@ -70,7 +70,7 @@ describe("health", () => {
 
   it("should report unhealthy when all probes fail", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(
-      new Error("connection refused"),
+      new Error("connection refused")
     );
 
     const app = createApp({
@@ -110,7 +110,7 @@ describe("health", () => {
 
   it("should report unhealthy for non-2xx responses", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response("", { status: 503 }),
+      new Response("", { status: 503 })
     );
 
     const app = createApp({
@@ -129,7 +129,7 @@ describe("health", () => {
 
   it("should not include upstream details when includeUpstreamStatus is false", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response("", { status: 200 }),
+      new Response("", { status: 200 })
     );
 
     const app = createApp({
@@ -153,7 +153,7 @@ describe("health", () => {
 
   it("should include latency in upstream status", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response("", { status: 200 }),
+      new Response("", { status: 200 })
     );
 
     const app = createApp({

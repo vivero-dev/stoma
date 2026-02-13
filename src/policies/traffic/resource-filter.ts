@@ -39,7 +39,10 @@ function deleteField(obj: Record<string, unknown>, path: string): void {
 /**
  * Build a new object containing only the specified field paths.
  */
-function allowFields(obj: Record<string, unknown>, paths: string[]): Record<string, unknown> {
+function allowFields(
+  obj: Record<string, unknown>,
+  paths: string[]
+): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const path of paths) {
     const parts = path.split(".");
@@ -69,7 +72,7 @@ function allowFields(obj: Record<string, unknown>, paths: string[]): Record<stri
 function filterObject(
   obj: Record<string, unknown>,
   mode: "allow" | "deny",
-  fields: string[],
+  fields: string[]
 ): Record<string, unknown> {
   if (mode === "allow") {
     return allowFields(obj, fields);
@@ -119,11 +122,15 @@ export const resourceFilter = definePolicy<ResourceFilterConfig>({
 
     const contentType = c.res.headers.get("content-type") ?? "";
     const matchedType = config.contentTypes!.some((ct) =>
-      contentType.includes(ct),
+      contentType.includes(ct)
     );
 
     if (!matchedType) {
-      debug("skipping — response content type %s not in %o", contentType, config.contentTypes);
+      debug(
+        "skipping — response content type %s not in %o",
+        contentType,
+        config.contentTypes
+      );
       return;
     }
 
@@ -141,21 +148,33 @@ export const resourceFilter = definePolicy<ResourceFilterConfig>({
       if (config.applyToArrayItems) {
         filtered = body.map((item) =>
           item != null && typeof item === "object"
-            ? filterObject(item as Record<string, unknown>, config.mode, config.fields)
-            : item,
+            ? filterObject(
+                item as Record<string, unknown>,
+                config.mode,
+                config.fields
+              )
+            : item
         );
       } else {
         // applyToArrayItems: false — don't filter array items
         filtered = body;
       }
     } else if (body != null && typeof body === "object") {
-      filtered = filterObject(body as Record<string, unknown>, config.mode, config.fields);
+      filtered = filterObject(
+        body as Record<string, unknown>,
+        config.mode,
+        config.fields
+      );
     } else {
       // Primitive JSON value — nothing to filter
       filtered = body;
     }
 
-    debug("filtered response with mode=%s fields=%o", config.mode, config.fields);
+    debug(
+      "filtered response with mode=%s fields=%o",
+      config.mode,
+      config.fields
+    );
 
     c.res = new Response(JSON.stringify(filtered), {
       status: c.res.status,

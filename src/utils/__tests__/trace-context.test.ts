@@ -9,7 +9,7 @@ import {
 describe("parseTraceparent", () => {
   it("should parse a valid traceparent header", () => {
     const result = parseTraceparent(
-      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
     );
     expect(result).toEqual({
       version: "00",
@@ -34,38 +34,38 @@ describe("parseTraceparent", () => {
   it("should return null for invalid hex characters", () => {
     expect(
       parseTraceparent(
-        "00-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ-00f067aa0ba902b7-01",
-      ),
+        "00-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ-00f067aa0ba902b7-01"
+      )
     ).toBeNull();
   });
 
   it("should return null for version ff (reserved)", () => {
     expect(
       parseTraceparent(
-        "ff-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
-      ),
+        "ff-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+      )
     ).toBeNull();
   });
 
   it("should return null for all-zero trace ID", () => {
     expect(
       parseTraceparent(
-        "00-00000000000000000000000000000000-00f067aa0ba902b7-01",
-      ),
+        "00-00000000000000000000000000000000-00f067aa0ba902b7-01"
+      )
     ).toBeNull();
   });
 
   it("should return null for all-zero parent ID", () => {
     expect(
       parseTraceparent(
-        "00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01",
-      ),
+        "00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01"
+      )
     ).toBeNull();
   });
 
   it("should handle leading/trailing whitespace", () => {
     const result = parseTraceparent(
-      "  00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01  ",
+      "  00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01  "
     );
     expect(result).not.toBeNull();
     expect(result!.traceId).toBe("4bf92f3577b34da6a3ce929d0e0e4736");
@@ -73,7 +73,7 @@ describe("parseTraceparent", () => {
 
   it("should parse unsampled flags (00)", () => {
     const result = parseTraceparent(
-      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00",
+      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00"
     );
     expect(result).not.toBeNull();
     expect(result!.flags).toBe("00");
@@ -119,13 +119,12 @@ describe("formatTraceparent", () => {
       flags: "01",
     });
     expect(result).toBe(
-      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01",
+      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
     );
   });
 
   it("should round-trip with parseTraceparent", () => {
-    const original =
-      "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
+    const original = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
     const parsed = parseTraceparent(original)!;
     const formatted = formatTraceparent(parsed);
     expect(formatted).toBe(original);

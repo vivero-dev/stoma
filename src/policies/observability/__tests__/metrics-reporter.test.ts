@@ -1,8 +1,8 @@
-import { describe, expect, it, beforeEach } from "vitest";
 import { Hono } from "hono";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createContextInjector } from "../../../core/pipeline";
 import { InMemoryMetricsCollector } from "../../../observability/metrics";
 import { metricsReporter } from "../metrics-reporter";
-import { createContextInjector } from "../../../core/pipeline";
 
 describe("metricsReporter", () => {
   let collector: InMemoryMetricsCollector;
@@ -11,7 +11,9 @@ describe("metricsReporter", () => {
     collector = new InMemoryMetricsCollector();
   });
 
-  function createApp(extraMiddleware?: Parameters<typeof Hono.prototype.use>[1]) {
+  function createApp(
+    extraMiddleware?: Parameters<typeof Hono.prototype.use>[1]
+  ) {
     const app = new Hono();
     const injector = createContextInjector("test-gw", "/test");
     const reporter = metricsReporter({ collector });
@@ -50,8 +52,12 @@ describe("metricsReporter", () => {
 
     const snap = collector.snapshot();
     expect(snap.histograms.gateway_request_duration_ms).toBeDefined();
-    expect(snap.histograms.gateway_request_duration_ms[0].values).toHaveLength(1);
-    expect(snap.histograms.gateway_request_duration_ms[0].values[0]).toBeGreaterThanOrEqual(0);
+    expect(snap.histograms.gateway_request_duration_ms[0].values).toHaveLength(
+      1
+    );
+    expect(
+      snap.histograms.gateway_request_duration_ms[0].values[0]
+    ).toBeGreaterThanOrEqual(0);
   });
 
   it("should tag metrics with method, path, status, gateway", async () => {
@@ -73,7 +79,9 @@ describe("metricsReporter", () => {
     const snap = collector.snapshot();
     expect(snap.counters.gateway_request_errors_total).toBeDefined();
     expect(snap.counters.gateway_request_errors_total[0].value).toBe(1);
-    expect(snap.counters.gateway_request_errors_total[0].tags?.status).toBe("404");
+    expect(snap.counters.gateway_request_errors_total[0].tags?.status).toBe(
+      "404"
+    );
   });
 
   it("should increment error counter for 5xx responses", async () => {
@@ -82,7 +90,9 @@ describe("metricsReporter", () => {
 
     const snap = collector.snapshot();
     expect(snap.counters.gateway_request_errors_total).toBeDefined();
-    expect(snap.counters.gateway_request_errors_total[0].tags?.status).toBe("500");
+    expect(snap.counters.gateway_request_errors_total[0].tags?.status).toBe(
+      "500"
+    );
   });
 
   it("should not increment error counter for 2xx responses", async () => {
@@ -101,7 +111,9 @@ describe("metricsReporter", () => {
 
     const snap = collector.snapshot();
     expect(snap.counters.gateway_requests_total[0].value).toBe(3);
-    expect(snap.histograms.gateway_request_duration_ms[0].values).toHaveLength(3);
+    expect(snap.histograms.gateway_request_duration_ms[0].values).toHaveLength(
+      3
+    );
   });
 
   it("should distinguish different methods in tags", async () => {
@@ -115,7 +127,10 @@ describe("metricsReporter", () => {
 
   it("should record per-policy timing when available", async () => {
     // Simulate a policy that sets _policyTimings
-    const fakePolicyMiddleware = async (c: { set: (key: string, value: unknown) => void }, next: () => Promise<void>) => {
+    const fakePolicyMiddleware = async (
+      c: { set: (key: string, value: unknown) => void },
+      next: () => Promise<void>
+    ) => {
       c.set("_policyTimings", [
         { name: "jwt-auth", durationMs: 5 },
         { name: "rate-limit", durationMs: 2 },
@@ -123,25 +138,31 @@ describe("metricsReporter", () => {
       await next();
     };
 
-    const app = createApp(fakePolicyMiddleware as Parameters<typeof Hono.prototype.use>[1]);
+    const app = createApp(
+      fakePolicyMiddleware as Parameters<typeof Hono.prototype.use>[1]
+    );
     await app.request("/test");
 
     const snap = collector.snapshot();
     expect(snap.histograms.gateway_policy_duration_ms).toBeDefined();
     // Two policy timings recorded
-    expect(snap.histograms.gateway_policy_duration_ms.length).toBeGreaterThanOrEqual(2);
+    expect(
+      snap.histograms.gateway_policy_duration_ms.length
+    ).toBeGreaterThanOrEqual(2);
   });
 
   it("should merge tags assigned by assignMetrics", async () => {
     const setMetricTags = async (
       c: { set: (key: string, value: unknown) => void },
-      next: () => Promise<void>,
+      next: () => Promise<void>
     ) => {
       c.set("_metricsTags", { region: "us-east-1", service: "api" });
       await next();
     };
 
-    const app = createApp(setMetricTags as Parameters<typeof Hono.prototype.use>[1]);
+    const app = createApp(
+      setMetricTags as Parameters<typeof Hono.prototype.use>[1]
+    );
     await app.request("/test");
 
     const snap = collector.snapshot();
@@ -166,7 +187,9 @@ describe("metricsReporter", () => {
     expect(res.status).toBe(200);
 
     const snap = collector.snapshot();
-    expect(snap.counters.gateway_requests_total[0].tags?.gateway).toBe("unknown");
+    expect(snap.counters.gateway_requests_total[0].tags?.gateway).toBe(
+      "unknown"
+    );
   });
 
   it("should not break the request pipeline", async () => {

@@ -115,7 +115,7 @@ export function health(config?: HealthConfig): RouteConfig {
                   latencyMs: Date.now() - start,
                 };
               }
-            }),
+            })
           );
 
           const allHealthy = results.every((r) => r.status === "healthy");
@@ -136,7 +136,10 @@ export function health(config?: HealthConfig): RouteConfig {
             body.upstreams = results;
           }
 
-          return c.json(body, status === "unhealthy" ? unhealthyStatusCode as 503 : 200);
+          return c.json(
+            body,
+            status === "unhealthy" ? (unhealthyStatusCode as 503) : 200
+          );
         },
       },
     },

@@ -1,5 +1,5 @@
-import type { CacheStore } from "../policies/traffic/cache";
 import type { CircuitBreakerStore } from "../policies/resilience/circuit-breaker";
+import type { CacheStore } from "../policies/traffic/cache";
 import type { RateLimitStore } from "../policies/traffic/rate-limit";
 
 /** Bag of optional store implementations and runtime capabilities for a given runtime. */

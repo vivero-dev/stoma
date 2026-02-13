@@ -6,8 +6,16 @@
 import type { Context } from "hono";
 import { GatewayError } from "../../core/errors";
 import { extractClientIp } from "../../utils/ip";
+import {
+  Priority,
+  policyDebug,
+  policyTrace,
+  resolveConfig,
+  safeCall,
+  setDebugHeader,
+  withSkip,
+} from "../sdk";
 import type { Policy, PolicyConfig } from "../types";
-import { Priority, policyDebug, resolveConfig, safeCall, setDebugHeader, withSkip, policyTrace } from "../sdk";
 
 export interface RateLimitConfig extends PolicyConfig {
   /** Maximum requests per window */
@@ -29,7 +37,10 @@ export interface RateLimitConfig extends PolicyConfig {
 /** Pluggable storage backend for rate limit counters */
 export interface RateLimitStore {
   /** Increment the counter for a key, returning the new count and TTL */
-  increment(key: string, windowSeconds: number): Promise<{ count: number; resetAt: number }>;
+  increment(
+    key: string,
+    windowSeconds: number
+  ): Promise<{ count: number; resetAt: number }>;
   /** Optional: cleanup resources (like intervals) used by the store */
   destroy?(): void;
 }
@@ -63,10 +74,16 @@ export class InMemoryRateLimitStore implements RateLimitStore {
   /** Start the periodic cleanup interval on first use (Workers-safe). */
   private ensureCleanupInterval(): void {
     if (this.cleanupInterval) return;
-    this.cleanupInterval = setInterval(() => this.cleanup(), this.cleanupIntervalMs);
+    this.cleanupInterval = setInterval(
+      () => this.cleanup(),
+      this.cleanupIntervalMs
+    );
   }
 
-  async increment(key: string, windowSeconds: number): Promise<{ count: number; resetAt: number }> {
+  async increment(
+    key: string,
+    windowSeconds: number
+  ): Promise<{ count: number; resetAt: number }> {
     this.ensureCleanupInterval();
     const now = Date.now();
     const existing = this.counters.get(key);
@@ -143,7 +160,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
 export function rateLimit(config: RateLimitConfig): Policy {
   const resolved = resolveConfig<RateLimitConfig>(
     { windowSeconds: 60, statusCode: 429, message: "Rate limit exceeded" },
-    config,
+    config
   );
 
   // Default store used ONLY if none provided.
@@ -155,7 +172,10 @@ export function rateLimit(config: RateLimitConfig): Policy {
     const debug = policyDebug(c, "rate-limit");
     const trace = policyTrace(c, "rate-limit");
 
-    const resolvedStore = config.store ?? (defaultStore ??= new InMemoryRateLimitStore());
+    if (!config.store && !defaultStore) {
+      defaultStore = new InMemoryRateLimitStore();
+    }
+    const resolvedStore = config.store ?? defaultStore!;
 
     // Extract the rate limit key
     let key: string;
@@ -171,7 +191,7 @@ export function rateLimit(config: RateLimitConfig): Policy {
       () => resolvedStore.increment(key, resolved.windowSeconds!),
       null,
       debug,
-      "store.increment()",
+      "store.increment()"
     );
 
     if (!result) {
@@ -190,12 +210,17 @@ export function rateLimit(config: RateLimitConfig): Policy {
       debug(`limited (key=${key}, count=${count}, max=${config.max})`);
       trace("rejected", { key, count, max: config.max });
       const resetHeader = String(resetSeconds);
-      throw new GatewayError(resolved.statusCode!, "rate_limited", resolved.message!, {
-        "x-ratelimit-limit": String(config.max),
-        "x-ratelimit-remaining": "0",
-        "x-ratelimit-reset": resetHeader,
-        "retry-after": resetHeader,
-      });
+      throw new GatewayError(
+        resolved.statusCode!,
+        "rate_limited",
+        resolved.message!,
+        {
+          "x-ratelimit-limit": String(config.max),
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-reset": resetHeader,
+          "retry-after": resetHeader,
+        }
+      );
     }
 
     trace("allowed", { key, count, max: config.max, remaining });

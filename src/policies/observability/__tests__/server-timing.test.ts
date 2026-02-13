@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
 import { Hono } from "hono";
-import { serverTiming } from "../server-timing";
+import { describe, expect, it } from "vitest";
 import { createContextInjector } from "../../../core/pipeline";
+import { serverTiming } from "../server-timing";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -13,9 +13,9 @@ type PolicyTimingEntry = { name: string; durationMs: number };
 // Ordered innermost-first: rate-limit finishes first, then jwt-auth, then cors.
 // Each entry's durationMs includes all downstream policies + upstream.
 const SAMPLE_TIMINGS: PolicyTimingEntry[] = [
-  { name: "rate-limit", durationMs: 3.2 },   // innermost: self=3.2 (includes upstream)
-  { name: "jwt-auth", durationMs: 15.9 },    // self=15.9-3.2=12.7
-  { name: "cors", durationMs: 16.0 },        // self=16.0-15.9=0.1
+  { name: "rate-limit", durationMs: 3.2 }, // innermost: self=3.2 (includes upstream)
+  { name: "jwt-auth", durationMs: 15.9 }, // self=15.9-3.2=12.7
+  { name: "cors", durationMs: 16.0 }, // self=16.0-15.9=0.1
 ];
 
 /**
@@ -29,7 +29,7 @@ function createApp(
   opts?: {
     timings?: PolicyTimingEntry[];
     debugHeaders?: boolean;
-  },
+  }
 ) {
   const app = new Hono();
   const injector = createContextInjector(
@@ -38,7 +38,7 @@ function createApp(
     undefined,
     undefined,
     undefined,
-    opts?.debugHeaders,
+    opts?.debugHeaders
   );
   const policy = serverTiming(config);
 
@@ -48,12 +48,15 @@ function createApp(
   if (opts?.timings) {
     const timingsMiddleware = async (
       c: { set: (key: string, value: unknown) => void },
-      next: () => Promise<void>,
+      next: () => Promise<void>
     ) => {
       c.set("_policyTimings", opts.timings);
       await next();
     };
-    app.use("/*", timingsMiddleware as Parameters<typeof Hono.prototype.use>[1]);
+    app.use(
+      "/*",
+      timingsMiddleware as Parameters<typeof Hono.prototype.use>[1]
+    );
   }
 
   app.use("/*", policy.handler);
@@ -81,7 +84,7 @@ describe("serverTiming", () => {
     it("should emit headers without debug request header", async () => {
       const { app } = createApp(
         { visibility: "always" },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -97,7 +100,7 @@ describe("serverTiming", () => {
     it("should NOT emit headers when no debug header is sent", async () => {
       const { app } = createApp(
         undefined, // default visibility = debug-only
-        { timings: SAMPLE_TIMINGS, debugHeaders: true },
+        { timings: SAMPLE_TIMINGS, debugHeaders: true }
       );
 
       const res = await app.request("/test");
@@ -107,10 +110,10 @@ describe("serverTiming", () => {
     });
 
     it("should emit headers when x-stoma-debug request header is sent", async () => {
-      const { app } = createApp(
-        undefined,
-        { timings: SAMPLE_TIMINGS, debugHeaders: true },
-      );
+      const { app } = createApp(undefined, {
+        timings: SAMPLE_TIMINGS,
+        debugHeaders: true,
+      });
 
       const res = await app.request("/test", {
         headers: { "x-stoma-debug": "*" },
@@ -130,7 +133,7 @@ describe("serverTiming", () => {
           visibility: "conditional",
           visibilityFn: () => true,
         },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -144,7 +147,7 @@ describe("serverTiming", () => {
           visibility: "conditional",
           visibilityFn: () => false,
         },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -159,7 +162,7 @@ describe("serverTiming", () => {
           visibility: "conditional",
           visibilityFn: async () => true,
         },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -173,7 +176,7 @@ describe("serverTiming", () => {
     it("should include per-policy entries", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -186,7 +189,7 @@ describe("serverTiming", () => {
     it("should include a total entry by default", async () => {
       const { app } = createApp(
         { visibility: "always" },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -197,7 +200,7 @@ describe("serverTiming", () => {
     it("should omit total when includeTotal=false", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -208,7 +211,7 @@ describe("serverTiming", () => {
     it("should respect precision config", async () => {
       const { app } = createApp(
         { visibility: "always", precision: 3, includeTotal: false },
-        { timings: [{ name: "test-policy", durationMs: 1.23456 }] },
+        { timings: [{ name: "test-policy", durationMs: 1.23456 }] }
       );
 
       const res = await app.request("/test");
@@ -223,7 +226,7 @@ describe("serverTiming", () => {
           includeTotal: false,
           descriptionFn: (name) => `Policy: ${name}`,
         },
-        { timings: [{ name: "cors", durationMs: 0.5 }] },
+        { timings: [{ name: "cors", durationMs: 0.5 }] }
       );
 
       const res = await app.request("/test");
@@ -234,7 +237,7 @@ describe("serverTiming", () => {
     it("should emit self-time, not inclusive onion-model time", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -255,7 +258,7 @@ describe("serverTiming", () => {
       //   cors_self = 16.0 - 15.9 = 0.1
       //   jwt-auth_self = 15.9 - 3.2 = 12.7
       //   rate-limit_self = 3.2 (innermost)
-      expect(durations["cors"]).toBeCloseTo(0.1, 1);
+      expect(durations.cors).toBeCloseTo(0.1, 1);
       expect(durations["jwt-auth"]).toBeCloseTo(12.7, 1);
       expect(durations["rate-limit"]).toBeCloseTo(3.2, 1);
     });
@@ -263,7 +266,7 @@ describe("serverTiming", () => {
     it("should output in execution order (outermost first)", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -277,12 +280,12 @@ describe("serverTiming", () => {
     it("should show correct self-time for slow-endpoint scenario", async () => {
       // Simulates: cors wraps timeout, both show ~1000ms inclusive
       const slowTimings: PolicyTimingEntry[] = [
-        { name: "timeout", durationMs: 1000 },  // innermost
-        { name: "cors", durationMs: 1000 },      // wraps timeout
+        { name: "timeout", durationMs: 1000 }, // innermost
+        { name: "cors", durationMs: 1000 }, // wraps timeout
       ];
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: slowTimings },
+        { timings: slowTimings }
       );
 
       const res = await app.request("/test");
@@ -299,14 +302,14 @@ describe("serverTiming", () => {
       }
 
       // cors self-time should be ~0, timeout should be ~1000
-      expect(durations["cors"]).toBeCloseTo(0, 0);
-      expect(durations["timeout"]).toBeCloseTo(1000, 0);
+      expect(durations.cors).toBeCloseTo(0, 0);
+      expect(durations.timeout).toBeCloseTo(1000, 0);
     });
 
     it("should sanitize metric names with invalid characters", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: [{ name: "my.policy/v2", durationMs: 1 }] },
+        { timings: [{ name: "my.policy/v2", durationMs: 1 }] }
       );
 
       const res = await app.request("/test");
@@ -341,7 +344,7 @@ describe("serverTiming", () => {
     it("should not emit Server-Timing when serverTimingHeader=false", async () => {
       const { app } = createApp(
         { visibility: "always", serverTimingHeader: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -352,7 +355,7 @@ describe("serverTiming", () => {
     it("should not emit X-Response-Time when responseTimeHeader=false", async () => {
       const { app } = createApp(
         { visibility: "always", responseTimeHeader: false },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -365,9 +368,9 @@ describe("serverTiming", () => {
 
   describe("validation", () => {
     it("should throw when visibility=conditional without visibilityFn", () => {
-      expect(() =>
-        serverTiming({ visibility: "conditional" }),
-      ).toThrow('visibility "conditional" requires a visibilityFn');
+      expect(() => serverTiming({ visibility: "conditional" })).toThrow(
+        'visibility "conditional" requires a visibilityFn'
+      );
     });
   });
 
@@ -377,7 +380,7 @@ describe("serverTiming", () => {
     it("should handle empty timings array", async () => {
       const { app } = createApp(
         { visibility: "always", includeTotal: false },
-        { timings: [] },
+        { timings: [] }
       );
 
       const res = await app.request("/test");
@@ -399,7 +402,7 @@ describe("serverTiming", () => {
     it("should handle skip condition", async () => {
       const { app } = createApp(
         { visibility: "always", skip: () => true },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");
@@ -410,7 +413,7 @@ describe("serverTiming", () => {
     it("should not break the request pipeline", async () => {
       const { app } = createApp(
         { visibility: "always" },
-        { timings: SAMPLE_TIMINGS },
+        { timings: SAMPLE_TIMINGS }
       );
 
       const res = await app.request("/test");

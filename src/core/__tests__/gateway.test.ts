@@ -1,17 +1,24 @@
-import { describe, expect, it } from "vitest";
 import type { Context } from "hono";
-import { createGateway } from "../gateway";
-import { GatewayError } from "../errors";
-import type { HttpMethod, RouteConfig } from "../types";
-import type { Policy } from "../../policies/types";
+import { describe, expect, it } from "vitest";
 import { proxy } from "../../policies/proxy";
+import type { Policy } from "../../policies/types";
+import { GatewayError } from "../errors";
+import { createGateway } from "../gateway";
+import type { HttpMethod, RouteConfig } from "../types";
 
 function echoHandler(c: Context) {
   return c.json({ path: c.req.path, method: c.req.method });
 }
 
 /** Methods that Hono supports as direct method calls */
-const HONO_METHODS: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
+const HONO_METHODS: HttpMethod[] = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "OPTIONS",
+];
 
 function makeRoute(overrides?: Partial<RouteConfig>): RouteConfig {
   return {
@@ -41,10 +48,7 @@ describe("createGateway - valid scenarios", () => {
 
   it("should create a gateway with multiple routes", async () => {
     const gw = createGateway({
-      routes: [
-        makeRoute({ path: "/alpha" }),
-        makeRoute({ path: "/beta" }),
-      ],
+      routes: [makeRoute({ path: "/alpha" }), makeRoute({ path: "/beta" })],
     });
 
     const resA = await gw.app.request("/alpha");
@@ -176,13 +180,13 @@ describe("createGateway - error handling", () => {
   it("should throw GatewayError when routes array is empty", () => {
     expect(() => createGateway({ routes: [] })).toThrow(GatewayError);
     expect(() => createGateway({ routes: [] })).toThrow(
-      "Gateway requires at least one route",
+      "Gateway requires at least one route"
     );
   });
 
   it("should throw GatewayError when routes is undefined", () => {
     expect(() =>
-      createGateway({ routes: undefined as unknown as RouteConfig[] }),
+      createGateway({ routes: undefined as unknown as RouteConfig[] })
     ).toThrow(GatewayError);
   });
 
@@ -193,11 +197,12 @@ describe("createGateway - error handling", () => {
           {
             path: "/bad",
             pipeline: {
+              // biome-ignore lint/suspicious/noExplicitAny: intentionally invalid upstream for error testing
               upstream: { type: "unknown" as "handler" } as any,
             },
           },
         ],
-      }),
+      })
     ).toThrow(GatewayError);
     expect(() =>
       createGateway({
@@ -205,11 +210,12 @@ describe("createGateway - error handling", () => {
           {
             path: "/bad",
             pipeline: {
+              // biome-ignore lint/suspicious/noExplicitAny: intentionally invalid upstream for error testing
               upstream: { type: "unknown" as "handler" } as any,
             },
           },
         ],
-      }),
+      })
     ).toThrow("Unknown upstream type: unknown");
   });
 
@@ -447,7 +453,9 @@ describe("createGateway - security", () => {
             upstream: {
               type: "handler",
               handler: () => {
-                throw new Error("database connection string: postgres://admin:secret@internal:5432/db");
+                throw new Error(
+                  "database connection string: postgres://admin:secret@internal:5432/db"
+                );
               },
             },
           },
@@ -473,7 +481,7 @@ describe("createGateway - security", () => {
     const requestId = res.headers.get("x-request-id");
     // Verify it's a valid UUID v4 format
     expect(requestId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
     );
   });
 
@@ -482,7 +490,8 @@ describe("createGateway - security", () => {
     let capturedHost: string | null = null;
 
     globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-      const request = input instanceof Request ? input : new Request(input, init);
+      const request =
+        input instanceof Request ? input : new Request(input, init);
       capturedHost = request.headers.get("host");
       return new Response("ok", { status: 200 });
     };

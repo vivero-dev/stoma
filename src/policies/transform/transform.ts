@@ -3,8 +3,9 @@
  *
  * @module transform
  */
-import type { PolicyConfig } from "../types";
+
 import { definePolicy, Priority } from "../sdk";
+import type { PolicyConfig } from "../types";
 
 export interface RequestTransformConfig extends PolicyConfig {
   /** Headers to add or overwrite on the outgoing request. */

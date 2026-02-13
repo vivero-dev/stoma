@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 import { GatewayError } from "../../../core/errors";
-import { jwtAuth } from "../jwt-auth";
 import type { JwtAuthConfig } from "../jwt-auth";
+import { jwtAuth } from "../jwt-auth";
 
 const TEST_SECRET = "super-secret-test-key-that-is-long-enough";
 
@@ -11,7 +11,7 @@ function withErrorHandler(app: Hono): Hono {
     if (err instanceof GatewayError) {
       return c.json(
         { error: err.code, message: err.message },
-        err.statusCode as 401,
+        err.statusCode as 401
       );
     }
     throw err;
@@ -26,7 +26,7 @@ function base64UrlEncode(str: string): string {
 async function createTestJwt(
   payload: Record<string, unknown>,
   secret: string,
-  alg: "HS256" | "HS384" | "HS512" = "HS256",
+  alg: "HS256" | "HS384" | "HS512" = "HS256"
 ): Promise<string> {
   const header = { alg, typ: "JWT" };
   const encodedHeader = base64UrlEncode(JSON.stringify(header));
@@ -34,17 +34,18 @@ async function createTestJwt(
   const data = `${encodedHeader}.${encodedPayload}`;
 
   const encoder = new TextEncoder();
-  const hashAlg = alg === "HS256" ? "SHA-256" : alg === "HS384" ? "SHA-384" : "SHA-512";
+  const hashAlg =
+    alg === "HS256" ? "SHA-256" : alg === "HS384" ? "SHA-384" : "SHA-512";
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),
     { name: "HMAC", hash: hashAlg },
     false,
-    ["sign"],
+    ["sign"]
   );
   const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
   const encodedSignature = base64UrlEncode(
-    String.fromCharCode(...new Uint8Array(signature)),
+    String.fromCharCode(...new Uint8Array(signature))
   );
 
   return `${data}.${encodedSignature}`;
@@ -66,7 +67,7 @@ describe("jwtAuth", () => {
     const app = makeApp({ secret: TEST_SECRET });
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -80,7 +81,7 @@ describe("jwtAuth", () => {
     const token = await createTestJwt(
       { sub: "user-2", exp: Math.floor(Date.now() / 1000) + 3600 },
       TEST_SECRET,
-      "HS384",
+      "HS384"
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -93,7 +94,7 @@ describe("jwtAuth", () => {
     const token = await createTestJwt(
       { sub: "user-3", exp: Math.floor(Date.now() / 1000) + 3600 },
       TEST_SECRET,
-      "HS512",
+      "HS512"
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -118,8 +119,12 @@ describe("jwtAuth", () => {
     withErrorHandler(app);
 
     const token = await createTestJwt(
-      { sub: "user-42", role: "admin", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      {
+        sub: "user-42",
+        role: "admin",
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      },
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -134,7 +139,7 @@ describe("jwtAuth", () => {
     const app = makeApp({ secret: TEST_SECRET, headerName: "x-jwt-token" });
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { "x-jwt-token": `Bearer ${token}` },
@@ -157,7 +162,7 @@ describe("jwtAuth", () => {
     const app = makeApp({ secret: TEST_SECRET, forwardClaims: {} });
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -182,8 +187,12 @@ describe("jwtAuth", () => {
     withErrorHandler(app);
 
     const token = await createTestJwt(
-      { sub: "user-1", missing: null, exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      {
+        sub: "user-1",
+        missing: null,
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      },
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -239,7 +248,7 @@ describe("jwtAuth", () => {
     const app = makeApp({ secret: TEST_SECRET });
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) - 3600 },
-      TEST_SECRET,
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -250,8 +259,12 @@ describe("jwtAuth", () => {
   it("should reject JWT with wrong issuer when issuer configured", async () => {
     const app = makeApp({ secret: TEST_SECRET, issuer: "expected-issuer" });
     const token = await createTestJwt(
-      { sub: "user-1", iss: "wrong-issuer", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      {
+        sub: "user-1",
+        iss: "wrong-issuer",
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      },
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -262,8 +275,12 @@ describe("jwtAuth", () => {
   it("should reject JWT with wrong audience when audience configured", async () => {
     const app = makeApp({ secret: TEST_SECRET, audience: "my-app" });
     const token = await createTestJwt(
-      { sub: "user-1", aud: "other-app", exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      {
+        sub: "user-1",
+        aud: "other-app",
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      },
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -286,7 +303,7 @@ describe("jwtAuth", () => {
     const app = makeApp({ secret: TEST_SECRET });
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
-      "wrong-secret-key-completely-different",
+      "wrong-secret-key-completely-different"
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -296,7 +313,9 @@ describe("jwtAuth", () => {
 
   it("should throw config error if neither secret nor jwksUrl provided", () => {
     expect(() => jwtAuth({} as JwtAuthConfig)).toThrow(GatewayError);
-    expect(() => jwtAuth({} as JwtAuthConfig)).toThrow("jwtAuth requires either 'secret' or 'jwksUrl'");
+    expect(() => jwtAuth({} as JwtAuthConfig)).toThrow(
+      "jwtAuth requires either 'secret' or 'jwksUrl'"
+    );
   });
 
   // --- Edge cases ---
@@ -310,7 +329,7 @@ describe("jwtAuth", () => {
         custom_field: "hello",
         nested: { a: 1 },
       },
-      TEST_SECRET,
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -321,8 +340,12 @@ describe("jwtAuth", () => {
   it("should handle audience as array", async () => {
     const app = makeApp({ secret: TEST_SECRET, audience: "my-app" });
     const token = await createTestJwt(
-      { sub: "user-1", aud: ["other-app", "my-app"], exp: Math.floor(Date.now() / 1000) + 3600 },
-      TEST_SECRET,
+      {
+        sub: "user-1",
+        aud: ["other-app", "my-app"],
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      },
+      TEST_SECRET
     );
     const res = await app.request("/test", {
       headers: { authorization: `Bearer ${token}` },
@@ -335,7 +358,9 @@ describe("jwtAuth", () => {
   describe("algorithm confusion attacks", () => {
     it("should reject JWT with 'None' (capitalized) algorithm", async () => {
       const app = makeApp({ secret: TEST_SECRET });
-      const header = base64UrlEncode(JSON.stringify({ alg: "None", typ: "JWT" }));
+      const header = base64UrlEncode(
+        JSON.stringify({ alg: "None", typ: "JWT" })
+      );
       const payload = base64UrlEncode(JSON.stringify({ sub: "attacker" }));
       const token = `${header}.${payload}.fakesig`;
       const res = await app.request("/test", {
@@ -346,7 +371,9 @@ describe("jwtAuth", () => {
 
     it("should reject JWT with 'NONE' (uppercase) algorithm", async () => {
       const app = makeApp({ secret: TEST_SECRET });
-      const header = base64UrlEncode(JSON.stringify({ alg: "NONE", typ: "JWT" }));
+      const header = base64UrlEncode(
+        JSON.stringify({ alg: "NONE", typ: "JWT" })
+      );
       const payload = base64UrlEncode(JSON.stringify({ sub: "attacker" }));
       const token = `${header}.${payload}.fakesig`;
       const res = await app.request("/test", {
@@ -357,7 +384,9 @@ describe("jwtAuth", () => {
 
     it("should reject JWT with 'nOnE' (mixed case) algorithm", async () => {
       const app = makeApp({ secret: TEST_SECRET });
-      const header = base64UrlEncode(JSON.stringify({ alg: "nOnE", typ: "JWT" }));
+      const header = base64UrlEncode(
+        JSON.stringify({ alg: "nOnE", typ: "JWT" })
+      );
       const payload = base64UrlEncode(JSON.stringify({ sub: "attacker" }));
       const token = `${header}.${payload}.`;
       const res = await app.request("/test", {
@@ -370,7 +399,9 @@ describe("jwtAuth", () => {
       const app = makeApp({ secret: TEST_SECRET });
       // Craft a token claiming RS256 but signed with HMAC — should be rejected
       // because hmacAlgorithm() only accepts HS256/384/512
-      const header = base64UrlEncode(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+      const header = base64UrlEncode(
+        JSON.stringify({ alg: "RS256", typ: "JWT" })
+      );
       const payload = base64UrlEncode(JSON.stringify({ sub: "attacker" }));
       const token = `${header}.${payload}.fakesig`;
       const res = await app.request("/test", {
@@ -384,14 +415,18 @@ describe("jwtAuth", () => {
     it("should not leak expected issuer in error message", async () => {
       const app = makeApp({ secret: TEST_SECRET, issuer: "secret-issuer" });
       const token = await createTestJwt(
-        { sub: "user-1", iss: "wrong", exp: Math.floor(Date.now() / 1000) + 3600 },
-        TEST_SECRET,
+        {
+          sub: "user-1",
+          iss: "wrong",
+          exp: Math.floor(Date.now() / 1000) + 3600,
+        },
+        TEST_SECRET
       );
       const res = await app.request("/test", {
         headers: { authorization: `Bearer ${token}` },
       });
       expect(res.status).toBe(401);
-      const body = await res.json() as { message: string };
+      const body = (await res.json()) as { message: string };
       expect(body.message).not.toContain("secret-issuer");
       expect(body.message).toBe("JWT issuer mismatch");
     });
@@ -399,14 +434,18 @@ describe("jwtAuth", () => {
     it("should not leak expected audience in error message", async () => {
       const app = makeApp({ secret: TEST_SECRET, audience: "secret-audience" });
       const token = await createTestJwt(
-        { sub: "user-1", aud: "wrong", exp: Math.floor(Date.now() / 1000) + 3600 },
-        TEST_SECRET,
+        {
+          sub: "user-1",
+          aud: "wrong",
+          exp: Math.floor(Date.now() / 1000) + 3600,
+        },
+        TEST_SECRET
       );
       const res = await app.request("/test", {
         headers: { authorization: `Bearer ${token}` },
       });
       expect(res.status).toBe(401);
-      const body = await res.json() as { message: string };
+      const body = (await res.json()) as { message: string };
       expect(body.message).not.toContain("secret-audience");
       expect(body.message).toBe("JWT audience mismatch");
     });
@@ -421,17 +460,17 @@ describe("jwtAuth", () => {
         app.request("/test", { headers: { authorization: "Token abc" } }),
         // Expired
         createTestJwt({ sub: "x", exp: 0 }, TEST_SECRET).then((t) =>
-          app.request("/test", { headers: { authorization: `Bearer ${t}` } }),
+          app.request("/test", { headers: { authorization: `Bearer ${t}` } })
         ),
         // Wrong signature
         createTestJwt({ sub: "x" }, "wrong-key-totally-different").then((t) =>
-          app.request("/test", { headers: { authorization: `Bearer ${t}` } }),
+          app.request("/test", { headers: { authorization: `Bearer ${t}` } })
         ),
       ];
       const results = await Promise.all(failures);
       for (const res of results) {
         expect(res.status).toBe(401);
-        const body = await res.json() as { error: string };
+        const body = (await res.json()) as { error: string };
         expect(body.error).toBe("unauthorized");
       }
     });
@@ -455,14 +494,17 @@ describe("jwtAuth", () => {
 
       // Create a token with a claim containing CRLF injection attempt
       const token = await createTestJwt(
-        { sub: "user-1\r\nX-Injected: malicious", exp: Math.floor(Date.now() / 1000) + 3600 },
-        TEST_SECRET,
+        {
+          sub: "user-1\r\nX-Injected: malicious",
+          exp: Math.floor(Date.now() / 1000) + 3600,
+        },
+        TEST_SECRET
       );
       const res = await app.request("/test", {
         headers: { authorization: `Bearer ${token}` },
       });
       expect(res.status).toBe(200);
-      const body = await res.json() as { userId: string };
+      const body = (await res.json()) as { userId: string };
       // Value should have CR/LF stripped
       expect(body.userId).not.toContain("\r");
       expect(body.userId).not.toContain("\n");
@@ -486,13 +528,13 @@ describe("jwtAuth", () => {
 
       const token = await createTestJwt(
         { sub: "user-1\0injected", exp: Math.floor(Date.now() / 1000) + 3600 },
-        TEST_SECRET,
+        TEST_SECRET
       );
       const res = await app.request("/test", {
         headers: { authorization: `Bearer ${token}` },
       });
       expect(res.status).toBe(200);
-      const body = await res.json() as { userId: string };
+      const body = (await res.json()) as { userId: string };
       expect(body.userId).not.toContain("\0");
       expect(body.userId).toBe("user-1injected");
     });

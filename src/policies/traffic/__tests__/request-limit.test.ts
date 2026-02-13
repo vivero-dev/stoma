@@ -4,7 +4,9 @@ import { requestLimit } from "../request-limit";
 
 describe("requestLimit", () => {
   it("should allow requests under the limit", async () => {
-    const { request } = createPolicyTestHarness(requestLimit({ maxBytes: 1024 }));
+    const { request } = createPolicyTestHarness(
+      requestLimit({ maxBytes: 1024 })
+    );
     const res = await request("/test", {
       method: "POST",
       headers: { "content-length": "512" },
@@ -14,7 +16,9 @@ describe("requestLimit", () => {
   });
 
   it("should allow requests at exactly the limit", async () => {
-    const { request } = createPolicyTestHarness(requestLimit({ maxBytes: 1024 }));
+    const { request } = createPolicyTestHarness(
+      requestLimit({ maxBytes: 1024 })
+    );
     const res = await request("/test", {
       method: "POST",
       headers: { "content-length": "1024" },
@@ -24,7 +28,9 @@ describe("requestLimit", () => {
   });
 
   it("should block requests over the limit with 413", async () => {
-    const { request } = createPolicyTestHarness(requestLimit({ maxBytes: 1024 }));
+    const { request } = createPolicyTestHarness(
+      requestLimit({ maxBytes: 1024 })
+    );
     const res = await request("/test", {
       method: "POST",
       headers: { "content-length": "2048" },
@@ -38,7 +44,7 @@ describe("requestLimit", () => {
 
   it("should use custom error message", async () => {
     const { request } = createPolicyTestHarness(
-      requestLimit({ maxBytes: 100, message: "Payload exceeds 100 bytes" }),
+      requestLimit({ maxBytes: 100, message: "Payload exceeds 100 bytes" })
     );
     const res = await request("/test", {
       method: "POST",
@@ -51,13 +57,17 @@ describe("requestLimit", () => {
   });
 
   it("should pass requests with no Content-Length header", async () => {
-    const { request } = createPolicyTestHarness(requestLimit({ maxBytes: 1024 }));
+    const { request } = createPolicyTestHarness(
+      requestLimit({ maxBytes: 1024 })
+    );
     const res = await request("/test");
     expect(res.status).toBe(200);
   });
 
   it("should work with zero-length bodies", async () => {
-    const { request } = createPolicyTestHarness(requestLimit({ maxBytes: 1024 }));
+    const { request } = createPolicyTestHarness(
+      requestLimit({ maxBytes: 1024 })
+    );
     const res = await request("/test", {
       method: "POST",
       headers: { "content-length": "0" },
@@ -67,7 +77,7 @@ describe("requestLimit", () => {
 
   it("should support skip logic", async () => {
     const { request } = createPolicyTestHarness(
-      requestLimit({ maxBytes: 100, skip: () => true }),
+      requestLimit({ maxBytes: 100, skip: () => true })
     );
     const res = await request("/test", {
       method: "POST",

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   base64UrlDecode,
-  base64UrlToBuffer,
   base64UrlEncodeBytes,
+  base64UrlToBuffer,
+  clearJwksCache,
+  fetchJwks,
   hmacAlgorithm,
   rsaAlgorithm,
-  fetchJwks,
-  clearJwksCache,
 } from "../crypto";
 
 describe("auth/crypto", () => {
@@ -89,15 +89,24 @@ describe("auth/crypto", () => {
 
   describe("rsaAlgorithm", () => {
     it("should map RS256 to RSASSA-PKCS1-v1_5 SHA-256", () => {
-      expect(rsaAlgorithm("RS256")).toEqual({ name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" });
+      expect(rsaAlgorithm("RS256")).toEqual({
+        name: "RSASSA-PKCS1-v1_5",
+        hash: "SHA-256",
+      });
     });
 
     it("should map RS384 to RSASSA-PKCS1-v1_5 SHA-384", () => {
-      expect(rsaAlgorithm("RS384")).toEqual({ name: "RSASSA-PKCS1-v1_5", hash: "SHA-384" });
+      expect(rsaAlgorithm("RS384")).toEqual({
+        name: "RSASSA-PKCS1-v1_5",
+        hash: "SHA-384",
+      });
     });
 
     it("should map RS512 to RSASSA-PKCS1-v1_5 SHA-512", () => {
-      expect(rsaAlgorithm("RS512")).toEqual({ name: "RSASSA-PKCS1-v1_5", hash: "SHA-512" });
+      expect(rsaAlgorithm("RS512")).toEqual({
+        name: "RSASSA-PKCS1-v1_5",
+        hash: "SHA-512",
+      });
     });
 
     it("should return null for unsupported algorithms", () => {
@@ -121,12 +130,16 @@ describe("auth/crypto", () => {
         });
       });
 
-      const keys1 = await fetchJwks("https://example.com/.well-known/jwks.json");
+      const keys1 = await fetchJwks(
+        "https://example.com/.well-known/jwks.json"
+      );
       expect(keys1).toEqual(mockKeys);
       expect(fetchCount).toBe(1);
 
       // Second call should use cache
-      const keys2 = await fetchJwks("https://example.com/.well-known/jwks.json");
+      const keys2 = await fetchJwks(
+        "https://example.com/.well-known/jwks.json"
+      );
       expect(keys2).toEqual(mockKeys);
       expect(fetchCount).toBe(1);
     });
@@ -137,7 +150,7 @@ describe("auth/crypto", () => {
       });
 
       await expect(
-        fetchJwks("https://example.com/.well-known/jwks.json"),
+        fetchJwks("https://example.com/.well-known/jwks.json")
       ).rejects.toThrow("Failed to fetch JWKS");
     });
 
@@ -145,14 +158,17 @@ describe("auth/crypto", () => {
       vi.stubGlobal("fetch", async (_url: string, opts?: RequestInit) => {
         // Simulate AbortSignal timeout
         if (opts?.signal) {
-          const error = new DOMException("The operation was aborted.", "TimeoutError");
+          const error = new DOMException(
+            "The operation was aborted.",
+            "TimeoutError"
+          );
           throw error;
         }
         return new Response("ok");
       });
 
       await expect(
-        fetchJwks("https://example.com/.well-known/jwks.json", undefined, 100),
+        fetchJwks("https://example.com/.well-known/jwks.json", undefined, 100)
       ).rejects.toThrow("JWKS fetch timed out");
     });
 

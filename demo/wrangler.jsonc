@@ -1,0 +1,15 @@
+/**
+ * Cloudflare Workers configuration
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "stoma-demo",
+	"compatibility_date": "2025-12-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/index.ts",
+  "browser": {
+    "binding": "MYBROWSER",
+    "remote": true
+  }
+}

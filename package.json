@@ -97,9 +97,5 @@
     "zod": {
       "optional": true
     }
-  },
-  "workspaces": [
-    "demo",
-    "docs"
-  ]
+  }
 }

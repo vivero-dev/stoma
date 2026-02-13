@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@cloudflare/puppeteer": "latest",
-    "@homegrower-club/stoma": "workspace:*",
+    "@homegrower-club/stoma": "../",
     "hono": "^4.7.0"
   },
   "devDependencies": {

@@ -63,8 +63,13 @@ export function ResponsePanel({ response, error }: ResponsePanelProps) {
   }
 
   let bodyContent = response.body;
+  let parsedError: { error?: string; message?: string } | null = null;
   try {
-    bodyContent = JSON.stringify(JSON.parse(response.body), null, 2);
+    const parsed = JSON.parse(response.body);
+    bodyContent = JSON.stringify(parsed, null, 2);
+    if (response.status >= 500 && parsed.error) {
+      parsedError = parsed;
+    }
   } catch {
     // Not JSON, use raw text
   }
@@ -79,7 +84,30 @@ export function ResponsePanel({ response, error }: ResponsePanelProps) {
         <span className="pg-timing">{response.timingMs}ms</span>
       </div>
 
-      {/* Headers */}
+      {/* Diagnostic banner for server errors */}
+      {parsedError && (
+        <div className="ed-diagnostic">
+          <div className="ed-diagnostic-title">{parsedError.error}</div>
+          <div className="ed-diagnostic-message">{parsedError.message}</div>
+          {parsedError.error === "upstream_error" && (
+            <div className="ed-diagnostic-hint">
+              The upstream URL is unreachable from the browser. In the editor,
+              URL upstreams can only reach public endpoints. Use a handler
+              upstream for local testing.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Request headers */}
+      {Object.keys(response.requestHeaders).length > 0 && (
+        <div className="ed-response-section">
+          <div className="pg-section-label">Request Headers</div>
+          <HeadersTable headers={response.requestHeaders} />
+        </div>
+      )}
+
+      {/* Response headers */}
       <div className="ed-response-section">
         <div className="pg-section-label">Response Headers</div>
         <HeadersTable headers={response.headers} highlight />

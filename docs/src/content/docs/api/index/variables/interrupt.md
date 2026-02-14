@@ -5,9 +5,9 @@ prev: false
 title: "interrupt"
 ---
 
-> `const` **interrupt**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **interrupt**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/interrupt.ts#L49)
+Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/interrupt.ts#L49)
 
 Conditionally short-circuit the pipeline and return a static response.
 
@@ -18,7 +18,7 @@ When the condition returns `false`, the pipeline continues normally.
 
 ## Parameters
 
-### config?
+### config
 
 [`InterruptConfig`](/api/policies/interfaces/interruptconfig/)
 

@@ -4,14 +4,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "yarn build:sw && yarn build:editor && astro dev",
-    "dev:sw": "vite build --config vite.sw.config.ts --watch",
     "build:sw": "vite build --config vite.sw.config.ts",
     "build:stoma-bundle": "vite build --config vite.stoma-bundle.config.ts",
     "build:editor-worker": "vite build --config vite.editor-worker.config.ts",
     "build:types": "dts-bundle-generator --no-check --external-inlines hono -o public/stoma-bundle.d.ts src/editor/stoma-entry.ts",
-    "build:editor": "yarn build:stoma-bundle && yarn build:editor-worker && yarn build:types",
-    "build": "yarn build:sw && yarn build:editor && astro build",
+    "build:assets": "yarn build:sw && yarn build:stoma-bundle && yarn build:editor-worker && yarn build:types",
+    "build": "yarn build:assets && astro build",
+    "dev": "yarn build:assets && astro dev",
+    "dev:sw": "vite build --config vite.sw.config.ts --watch",
     "preview": "astro preview"
   },
   "dependencies": {

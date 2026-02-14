@@ -7,6 +7,6 @@ title: "ServerTimingVisibility"
 
 > **ServerTimingVisibility** = `"always"` \| `"debug-only"` \| `"conditional"`
 
-Defined in: [src/policies/observability/server-timing.ts:22](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/observability/server-timing.ts#L22)
+Defined in: [src/policies/observability/server-timing.ts:23](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/observability/server-timing.ts#L23)
 
 Visibility mode controlling when timing headers are emitted.

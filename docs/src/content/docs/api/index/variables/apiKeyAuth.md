@@ -5,9 +5,9 @@ prev: false
 title: "apiKeyAuth"
 ---
 
-> `const` **apiKeyAuth**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **apiKeyAuth**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/auth/api-key-auth.ts:71](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/auth/api-key-auth.ts#L71)
+Defined in: [src/policies/auth/api-key-auth.ts:72](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/auth/api-key-auth.ts#L72)
 
 Validate API keys from headers or query parameters.
 
@@ -16,7 +16,7 @@ fallback. The `validate` function can be async to support remote key lookups.
 
 ## Parameters
 
-### config?
+### config
 
 `ApiKeyAuthConfig`
 

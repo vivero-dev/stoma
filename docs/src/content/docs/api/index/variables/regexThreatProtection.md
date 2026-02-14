@@ -5,9 +5,9 @@ prev: false
 title: "regexThreatProtection"
 ---
 
-> `const` **regexThreatProtection**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **regexThreatProtection**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:96](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/regex-threat-protection.ts#L96)
+Defined in: [src/policies/traffic/regex-threat-protection.ts:96](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/regex-threat-protection.ts#L96)
 
 Regex threat protection policy.
 
@@ -16,7 +16,7 @@ configurable regex patterns. Throws a 400 GatewayError on first match.
 
 ## Parameters
 
-### config?
+### config
 
 [`RegexThreatProtectionConfig`](/api/policies/interfaces/regexthreatprotectionconfig/)
 

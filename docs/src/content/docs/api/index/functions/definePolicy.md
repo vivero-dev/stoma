@@ -5,15 +5,18 @@ prev: false
 title: "definePolicy"
 ---
 
-> **definePolicy**\<`TConfig`\>(`definition`): (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> **definePolicy**\<`TConfig`\>(`definition`): [`PolicyFactory`](/api/index/type-aliases/policyfactory/)\<`TConfig`\>
 
-Defined in: [src/policies/sdk/define-policy.ts:177](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/define-policy.ts#L177)
+Defined in: [src/policies/sdk/define-policy.ts:204](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/sdk/define-policy.ts#L204)
 
 Create a policy factory from a declarative definition.
 
-The returned factory function accepts optional user config, merges it
-with defaults, wires up skip logic, and injects a debug logger at
+The returned factory function accepts user config, merges it with
+defaults, wires up skip logic, and injects a debug logger at
 request time.
+
+When `TConfig` has required keys, the factory requires a config
+argument. When all keys are optional, config is optional.
 
 ## Type Parameters
 
@@ -31,19 +34,9 @@ Policy name, priority, defaults, and handler.
 
 ## Returns
 
-A factory function: `(config?) => Policy`.
+[`PolicyFactory`](/api/index/type-aliases/policyfactory/)\<`TConfig`\>
 
-> (`config?`): [`Policy`](/api/index/interfaces/policy/)
-
-### Parameters
-
-#### config?
-
-`TConfig`
-
-### Returns
-
-[`Policy`](/api/index/interfaces/policy/)
+A factory function whose config parameter is required or optional based on TConfig.
 
 ## Example
 

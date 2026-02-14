@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import shadowRelease from '@examples/shadow-release/gateway.ts?raw';
 
 ## Use Case
@@ -15,6 +16,7 @@ Mirror production traffic to a new upstream version without affecting user respo
 ## Recipe
 
 <Code code={shadowRelease} lang="ts" title="examples/shadow-release/gateway.ts" />
+<EditorLink code={shadowRelease} title="Shadow Release" />
 
 ## Why it works
 

@@ -19,7 +19,8 @@ interface Props {
 // biome-ignore lint/correctness/noUnusedVariables: label is used in the Astro template below
 const { code, label = "Open in Editor", title } = Astro.props;
 
-const encoded = btoa(code);
+// Use TextEncoder for Unicode-safe base64 (btoa only handles Latin1)
+const encoded = Buffer.from(code, "utf-8").toString("base64");
 const params = new URLSearchParams({ code: encoded, autorun: "true" });
 if (title) params.set("title", title);
 // biome-ignore lint/correctness/noUnusedVariables: used in the Astro template

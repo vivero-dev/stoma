@@ -1,13 +1,13 @@
-var m = class extends Error {
+class m extends Error {
   statusCode;
   code;
   /** Optional headers to include in the error response (e.g. rate-limit headers) */
   headers;
-  constructor(e, t, r, s) {
-    super(r), this.name = "GatewayError", this.statusCode = e, this.code = t, this.headers = s;
+  constructor(t, r, s, n) {
+    super(s), this.name = "GatewayError", this.statusCode = t, this.code = r, this.headers = n;
   }
-};
-function Xe(e, t) {
+}
+function tt(e, t) {
   const r = {
     error: e.code,
     message: e.message,
@@ -22,7 +22,7 @@ function Xe(e, t) {
     headers: s
   });
 }
-function Ot(e, t = "An unexpected error occurred") {
+function qt(e, t = "An unexpected error occurred") {
   const r = {
     error: "internal_error",
     message: t,
@@ -34,15 +34,15 @@ function Ot(e, t = "An unexpected error occurred") {
     headers: { "content-type": "application/json" }
   });
 }
-var He = (e, t, r) => (s, a) => {
-  let n = -1;
+var Pe = (e, t, r) => (s, n) => {
+  let a = -1;
   return o(0);
   async function o(i) {
-    if (i <= n)
+    if (i <= a)
       throw new Error("next() called multiple times");
-    n = i;
+    a = i;
     let c, l = !1, u;
-    if (e[i] ? (u = e[i][0][0], s.req.routeIndex = i) : u = i === e.length && a || void 0, u)
+    if (e[i] ? (u = e[i][0][0], s.req.routeIndex = i) : u = i === e.length && n || void 0, u)
       try {
         c = await u(s, () => o(i + 1));
       } catch (d) {
@@ -55,62 +55,62 @@ var He = (e, t, r) => (s, a) => {
       s.finalized === !1 && r && (c = await r(s));
     return c && (s.finalized === !1 || l) && (s.res = c), s;
   }
-}, kt = /* @__PURE__ */ Symbol(), Ht = async (e, t = /* @__PURE__ */ Object.create(null)) => {
-  const { all: r = !1, dot: s = !1 } = t, n = (e instanceof st ? e.raw.headers : e.headers).get("Content-Type");
-  return n?.startsWith("multipart/form-data") || n?.startsWith("application/x-www-form-urlencoded") ? It(e, { all: r, dot: s }) : {};
+}, Ct = /* @__PURE__ */ Symbol(), Pt = async (e, t = /* @__PURE__ */ Object.create(null)) => {
+  const { all: r = !1, dot: s = !1 } = t, a = (e instanceof it ? e.raw.headers : e.headers).get("Content-Type");
+  return a?.startsWith("multipart/form-data") || a?.startsWith("application/x-www-form-urlencoded") ? Nt(e, { all: r, dot: s }) : {};
 };
-async function It(e, t) {
+async function Nt(e, t) {
   const r = await e.formData();
-  return r ? Mt(r, t) : {};
+  return r ? Dt(r, t) : {};
 }
-function Mt(e, t) {
+function Dt(e, t) {
   const r = /* @__PURE__ */ Object.create(null);
-  return e.forEach((s, a) => {
-    t.all || a.endsWith("[]") ? Ct(r, a, s) : r[a] = s;
-  }), t.dot && Object.entries(r).forEach(([s, a]) => {
-    s.includes(".") && (Pt(r, s, a), delete r[s]);
+  return e.forEach((s, n) => {
+    t.all || n.endsWith("[]") ? Ut(r, n, s) : r[n] = s;
+  }), t.dot && Object.entries(r).forEach(([s, n]) => {
+    s.includes(".") && (Lt(r, s, n), delete r[s]);
   }), r;
 }
-var Ct = (e, t, r) => {
+var Ut = (e, t, r) => {
   e[t] !== void 0 ? Array.isArray(e[t]) ? e[t].push(r) : e[t] = [e[t], r] : t.endsWith("[]") ? e[t] = [r] : e[t] = r;
-}, Pt = (e, t, r) => {
+}, Lt = (e, t, r) => {
   let s = e;
-  const a = t.split(".");
-  a.forEach((n, o) => {
-    o === a.length - 1 ? s[n] = r : ((!s[n] || typeof s[n] != "object" || Array.isArray(s[n]) || s[n] instanceof File) && (s[n] = /* @__PURE__ */ Object.create(null)), s = s[n]);
+  const n = t.split(".");
+  n.forEach((a, o) => {
+    o === n.length - 1 ? s[a] = r : ((!s[a] || typeof s[a] != "object" || Array.isArray(s[a]) || s[a] instanceof File) && (s[a] = /* @__PURE__ */ Object.create(null)), s = s[a]);
   });
-}, Qe = (e) => {
+}, rt = (e) => {
   const t = e.split("/");
   return t[0] === "" && t.shift(), t;
-}, Nt = (e) => {
-  const { groups: t, path: r } = Dt(e), s = Qe(r);
-  return Ut(s, t);
-}, Dt = (e) => {
+}, Bt = (e) => {
+  const { groups: t, path: r } = Jt(e), s = rt(r);
+  return Kt(s, t);
+}, Jt = (e) => {
   const t = [];
   return e = e.replace(/\{[^}]+\}/g, (r, s) => {
-    const a = `@${s}`;
-    return t.push([a, r]), a;
+    const n = `@${s}`;
+    return t.push([n, r]), n;
   }), { groups: t, path: e };
-}, Ut = (e, t) => {
+}, Kt = (e, t) => {
   for (let r = t.length - 1; r >= 0; r--) {
     const [s] = t[r];
-    for (let a = e.length - 1; a >= 0; a--)
-      if (e[a].includes(s)) {
-        e[a] = e[a].replace(s, t[r][1]);
+    for (let n = e.length - 1; n >= 0; n--)
+      if (e[n].includes(s)) {
+        e[n] = e[n].replace(s, t[r][1]);
         break;
       }
   }
   return e;
-}, Y = {}, Lt = (e, t) => {
+}, X = {}, Ft = (e, t) => {
   if (e === "*")
     return "*";
   const r = e.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
   if (r) {
     const s = `${e}#${t}`;
-    return Y[s] || (r[2] ? Y[s] = t && t[0] !== ":" && t[0] !== "*" ? [s, r[1], new RegExp(`^${r[2]}(?=/${t})`)] : [e, r[1], new RegExp(`^${r[2]}$`)] : Y[s] = [e, r[1], !0]), Y[s];
+    return X[s] || (r[2] ? X[s] = t && t[0] !== ":" && t[0] !== "*" ? [s, r[1], new RegExp(`^${r[2]}(?=/${t})`)] : [e, r[1], new RegExp(`^${r[2]}$`)] : X[s] = [e, r[1], !0]), X[s];
   }
   return null;
-}, qe = (e, t) => {
+}, ke = (e, t) => {
   try {
     return t(e);
   } catch {
@@ -122,38 +122,38 @@ var Ct = (e, t, r) => {
       }
     });
   }
-}, Bt = (e) => qe(e, decodeURI), Ze = (e) => {
+}, zt = (e) => ke(e, decodeURI), st = (e) => {
   const t = e.url, r = t.indexOf("/", t.indexOf(":") + 4);
   let s = r;
   for (; s < t.length; s++) {
-    const a = t.charCodeAt(s);
-    if (a === 37) {
-      const n = t.indexOf("?", s), o = t.indexOf("#", s), i = n === -1 ? o === -1 ? void 0 : o : o === -1 ? n : Math.min(n, o), c = t.slice(r, i);
-      return Bt(c.includes("%25") ? c.replace(/%25/g, "%2525") : c);
-    } else if (a === 63 || a === 35)
+    const n = t.charCodeAt(s);
+    if (n === 37) {
+      const a = t.indexOf("?", s), o = t.indexOf("#", s), i = a === -1 ? o === -1 ? void 0 : o : o === -1 ? a : Math.min(a, o), c = t.slice(r, i);
+      return zt(c.includes("%25") ? c.replace(/%25/g, "%2525") : c);
+    } else if (n === 63 || n === 35)
       break;
   }
   return t.slice(r, s);
-}, Jt = (e) => {
-  const t = Ze(e);
+}, Wt = (e) => {
+  const t = st(e);
   return t.length > 1 && t.at(-1) === "/" ? t.slice(0, -1) : t;
-}, N = (e, t, ...r) => (r.length && (t = N(t, ...r)), `${e?.[0] === "/" ? "" : "/"}${e}${t === "/" ? "" : `${e?.at(-1) === "/" ? "" : "/"}${t?.[0] === "/" ? t.slice(1) : t}`}`), et = (e) => {
+}, U = (e, t, ...r) => (r.length && (t = U(t, ...r)), `${e?.[0] === "/" ? "" : "/"}${e}${t === "/" ? "" : `${e?.at(-1) === "/" ? "" : "/"}${t?.[0] === "/" ? t.slice(1) : t}`}`), nt = (e) => {
   if (e.charCodeAt(e.length - 1) !== 63 || !e.includes(":"))
     return null;
   const t = e.split("/"), r = [];
   let s = "";
-  return t.forEach((a) => {
-    if (a !== "" && !/\:/.test(a))
-      s += "/" + a;
-    else if (/\:/.test(a))
-      if (/\?/.test(a)) {
+  return t.forEach((n) => {
+    if (n !== "" && !/\:/.test(n))
+      s += "/" + n;
+    else if (/\:/.test(n))
+      if (/\?/.test(n)) {
         r.length === 0 && s === "" ? r.push("/") : r.push(s);
-        const n = a.replace("?", "");
-        s += "/" + n, r.push(s);
+        const a = n.replace("?", "");
+        s += "/" + a, r.push(s);
       } else
-        s += "/" + a;
-  }), r.filter((a, n, o) => o.indexOf(a) === n);
-}, ce = (e) => /[%+]/.test(e) ? (e.indexOf("+") !== -1 && (e = e.replace(/\+/g, " ")), e.indexOf("%") !== -1 ? qe(e, rt) : e) : e, tt = (e, t, r) => {
+        s += "/" + n;
+  }), r.filter((n, a, o) => o.indexOf(n) === a);
+}, de = (e) => /[%+]/.test(e) ? (e.indexOf("+") !== -1 && (e = e.replace(/\+/g, " ")), e.indexOf("%") !== -1 ? ke(e, ot) : e) : e, at = (e, t, r) => {
   let s;
   if (!r && t && !/[%+]/.test(t)) {
     let o = e.indexOf("?", 8);
@@ -163,7 +163,7 @@ var Ct = (e, t, r) => {
       const i = e.charCodeAt(o + t.length + 1);
       if (i === 61) {
         const c = o + t.length + 2, l = e.indexOf("&", c);
-        return ce(e.slice(c, l === -1 ? void 0 : l));
+        return de(e.slice(c, l === -1 ? void 0 : l));
       } else if (i == 38 || isNaN(i))
         return "";
       o = e.indexOf(`&${t}`, o + 1);
@@ -171,24 +171,24 @@ var Ct = (e, t, r) => {
     if (s = /[%+]/.test(e), !s)
       return;
   }
-  const a = {};
+  const n = {};
   s ??= /[%+]/.test(e);
-  let n = e.indexOf("?", 8);
-  for (; n !== -1; ) {
-    const o = e.indexOf("&", n + 1);
-    let i = e.indexOf("=", n);
+  let a = e.indexOf("?", 8);
+  for (; a !== -1; ) {
+    const o = e.indexOf("&", a + 1);
+    let i = e.indexOf("=", a);
     i > o && o !== -1 && (i = -1);
     let c = e.slice(
-      n + 1,
+      a + 1,
       i === -1 ? o === -1 ? void 0 : o : i
     );
-    if (s && (c = ce(c)), n = o, c === "")
+    if (s && (c = de(c)), a = o, c === "")
       continue;
     let l;
-    i === -1 ? l = "" : (l = e.slice(i + 1, o === -1 ? void 0 : o), s && (l = ce(l))), r ? (a[c] && Array.isArray(a[c]) || (a[c] = []), a[c].push(l)) : a[c] ??= l;
+    i === -1 ? l = "" : (l = e.slice(i + 1, o === -1 ? void 0 : o), s && (l = de(l))), r ? (n[c] && Array.isArray(n[c]) || (n[c] = []), n[c].push(l)) : n[c] ??= l;
   }
-  return t ? a[t] : a;
-}, Kt = tt, zt = (e, t) => tt(e, t, !0), rt = decodeURIComponent, Ie = (e) => qe(e, rt), st = class {
+  return t ? n[t] : n;
+}, Vt = at, Yt = (e, t) => at(e, t, !0), ot = decodeURIComponent, Ne = (e) => ke(e, ot), it = class {
   /**
    * `.raw` can get the raw Request object.
    *
@@ -226,28 +226,28 @@ var Ct = (e, t, r) => {
     this.raw = e, this.path = t, this.#e = r, this.#t = {};
   }
   param(e) {
-    return e ? this.#r(e) : this.#n();
+    return e ? this.#r(e) : this.#a();
   }
   #r(e) {
-    const t = this.#e[0][this.routeIndex][1][e], r = this.#a(t);
-    return r && /\%/.test(r) ? Ie(r) : r;
+    const t = this.#e[0][this.routeIndex][1][e], r = this.#n(t);
+    return r && /\%/.test(r) ? Ne(r) : r;
   }
-  #n() {
+  #a() {
     const e = {}, t = Object.keys(this.#e[0][this.routeIndex][1]);
     for (const r of t) {
-      const s = this.#a(this.#e[0][this.routeIndex][1][r]);
-      s !== void 0 && (e[r] = /\%/.test(s) ? Ie(s) : s);
+      const s = this.#n(this.#e[0][this.routeIndex][1][r]);
+      s !== void 0 && (e[r] = /\%/.test(s) ? Ne(s) : s);
     }
     return e;
   }
-  #a(e) {
+  #n(e) {
     return this.#e[1] ? this.#e[1][e] : e;
   }
   query(e) {
-    return Kt(this.url, e);
+    return Vt(this.url, e);
   }
   queries(e) {
-    return zt(this.url, e);
+    return Yt(this.url, e);
   }
   header(e) {
     if (e)
@@ -258,14 +258,14 @@ var Ct = (e, t, r) => {
     }), t;
   }
   async parseBody(e) {
-    return this.bodyCache.parsedBody ??= await Ht(this, e);
+    return this.bodyCache.parsedBody ??= await Pt(this, e);
   }
   #s = (e) => {
     const { bodyCache: t, raw: r } = this, s = t[e];
     if (s)
       return s;
-    const a = Object.keys(t)[0];
-    return a ? t[a].then((n) => (a === "json" && (n = JSON.stringify(n)), new Response(n)[e]())) : t[e] = r[e]();
+    const n = Object.keys(t)[0];
+    return n ? t[n].then((a) => (n === "json" && (a = JSON.stringify(a)), new Response(a)[e]())) : t[e] = r[e]();
   };
   /**
    * `.json()` can parse Request body of type `application/json`
@@ -381,7 +381,7 @@ var Ct = (e, t, r) => {
   get method() {
     return this.raw.method;
   }
-  get [kt]() {
+  get [Ct]() {
     return this.#e;
   }
   /**
@@ -433,20 +433,20 @@ var Ct = (e, t, r) => {
   get routePath() {
     return this.#e[0].map(([[, e]]) => e)[this.routeIndex].path;
   }
-}, Ft = {
+}, Gt = {
   Stringify: 1
-}, at = async (e, t, r, s, a) => {
+}, ct = async (e, t, r, s, n) => {
   typeof e == "object" && !(e instanceof String) && (e instanceof Promise || (e = e.toString()), e instanceof Promise && (e = await e));
-  const n = e.callbacks;
-  return n?.length ? (a ? a[0] += e : a = [e], Promise.all(n.map((i) => i({ phase: t, buffer: a, context: s }))).then(
+  const a = e.callbacks;
+  return a?.length ? (n ? n[0] += e : n = [e], Promise.all(a.map((i) => i({ phase: t, buffer: n, context: s }))).then(
     (i) => Promise.all(
-      i.filter(Boolean).map((c) => at(c, t, !1, s, a))
-    ).then(() => a[0])
+      i.filter(Boolean).map((c) => ct(c, t, !1, s, n))
+    ).then(() => n[0])
   )) : Promise.resolve(e);
-}, Wt = "text/plain; charset=UTF-8", le = (e, t) => ({
+}, Xt = "text/plain; charset=UTF-8", he = (e, t) => ({
   "Content-Type": e,
   ...t
-}), Vt = class {
+}), Qt = class {
   #t;
   #e;
   /**
@@ -481,8 +481,8 @@ var Ct = (e, t, r) => {
    * ```
    */
   error;
-  #n;
   #a;
+  #n;
   #s;
   #u;
   #c;
@@ -497,13 +497,13 @@ var Ct = (e, t, r) => {
    * @param options - Optional configuration options for the context.
    */
   constructor(e, t) {
-    this.#t = e, t && (this.#a = t.executionCtx, this.env = t.env, this.#l = t.notFoundHandler, this.#h = t.path, this.#d = t.matchResult);
+    this.#t = e, t && (this.#n = t.executionCtx, this.env = t.env, this.#l = t.notFoundHandler, this.#h = t.path, this.#d = t.matchResult);
   }
   /**
    * `.req` is the instance of {@link HonoRequest}.
    */
   get req() {
-    return this.#e ??= new st(this.#t, this.#h, this.#d), this.#e;
+    return this.#e ??= new it(this.#t, this.#h, this.#d), this.#e;
   }
   /**
    * @see {@link https://hono.dev/docs/api/context#event}
@@ -512,8 +512,8 @@ var Ct = (e, t, r) => {
    * @throws Will throw an error if the context does not have a FetchEvent.
    */
   get event() {
-    if (this.#a && "respondWith" in this.#a)
-      return this.#a;
+    if (this.#n && "respondWith" in this.#n)
+      return this.#n;
     throw Error("This context has no FetchEvent");
   }
   /**
@@ -523,8 +523,8 @@ var Ct = (e, t, r) => {
    * @throws Will throw an error if the context does not have an ExecutionContext.
    */
   get executionCtx() {
-    if (this.#a)
-      return this.#a;
+    if (this.#n)
+      return this.#n;
     throw Error("This context has no ExecutionContext");
   }
   /**
@@ -549,8 +549,8 @@ var Ct = (e, t, r) => {
           if (t === "set-cookie") {
             const s = this.#s.headers.getSetCookie();
             e.headers.delete("set-cookie");
-            for (const a of s)
-              e.headers.append("set-cookie", a);
+            for (const n of s)
+              e.headers.append("set-cookie", n);
           } else
             e.headers.set(t, r);
     }
@@ -628,7 +628,7 @@ var Ct = (e, t, r) => {
     t === void 0 ? s.delete(e) : r?.append ? s.append(e, t) : s.set(e, t);
   };
   status = (e) => {
-    this.#n = e;
+    this.#a = e;
   };
   /**
    * `.set()` can set the value specified by the key.
@@ -677,21 +677,21 @@ var Ct = (e, t, r) => {
   #o(e, t, r) {
     const s = this.#s ? new Headers(this.#s.headers) : this.#i ?? new Headers();
     if (typeof t == "object" && "headers" in t) {
-      const n = t.headers instanceof Headers ? t.headers : new Headers(t.headers);
-      for (const [o, i] of n)
+      const a = t.headers instanceof Headers ? t.headers : new Headers(t.headers);
+      for (const [o, i] of a)
         o.toLowerCase() === "set-cookie" ? s.append(o, i) : s.set(o, i);
     }
     if (r)
-      for (const [n, o] of Object.entries(r))
+      for (const [a, o] of Object.entries(r))
         if (typeof o == "string")
-          s.set(n, o);
+          s.set(a, o);
         else {
-          s.delete(n);
+          s.delete(a);
           for (const i of o)
-            s.append(n, i);
+            s.append(a, i);
         }
-    const a = typeof t == "number" ? t : t?.status ?? this.#n;
-    return new Response(e, { status: a, headers: s });
+    const n = typeof t == "number" ? t : t?.status ?? this.#a;
+    return new Response(e, { status: n, headers: s });
   }
   newResponse = (...e) => this.#o(...e);
   /**
@@ -728,10 +728,10 @@ var Ct = (e, t, r) => {
    * })
    * ```
    */
-  text = (e, t, r) => !this.#i && !this.#n && !t && !r && !this.finalized ? new Response(e) : this.#o(
+  text = (e, t, r) => !this.#i && !this.#a && !t && !r && !this.finalized ? new Response(e) : this.#o(
     e,
     t,
-    le(Wt, r)
+    he(Xt, r)
   );
   /**
    * `.json()` can render JSON as `Content-Type:application/json`.
@@ -748,11 +748,11 @@ var Ct = (e, t, r) => {
   json = (e, t, r) => this.#o(
     JSON.stringify(e),
     t,
-    le("application/json", r)
+    he("application/json", r)
   );
   html = (e, t, r) => {
-    const s = (a) => this.#o(a, t, le("text/html; charset=UTF-8", r));
-    return typeof e == "object" ? at(e, Ft.Stringify, !1, {}).then(s) : s(e);
+    const s = (n) => this.#o(n, t, he("text/html; charset=UTF-8", r));
+    return typeof e == "object" ? ct(e, Gt.Stringify, !1, {}).then(s) : s(e);
   };
   /**
    * `.redirect()` can Redirect, default status code is 302.
@@ -791,14 +791,14 @@ var Ct = (e, t, r) => {
    * ```
    */
   notFound = () => (this.#l ??= () => new Response(), this.#l(this));
-}, R = "ALL", Yt = "all", Gt = ["get", "post", "put", "delete", "options", "patch"], nt = "Can not add a route since the matcher is already built.", ot = class extends Error {
-}, Xt = "__COMPOSED_HANDLER", Qt = (e) => e.text("404 Not Found", 404), Me = (e, t) => {
+}, R = "ALL", Zt = "all", er = ["get", "post", "put", "delete", "options", "patch"], lt = "Can not add a route since the matcher is already built.", ut = class extends Error {
+}, tr = "__COMPOSED_HANDLER", rr = (e) => e.text("404 Not Found", 404), De = (e, t) => {
   if ("getResponse" in e) {
     const r = e.getResponse();
     return t.newResponse(r.body, r);
   }
   return console.error(e), t.text("Internal Server Error", 500);
-}, Zt = class it {
+}, sr = class dt {
   get;
   post;
   put;
@@ -819,35 +819,35 @@ var Ct = (e, t, r) => {
   #t = "/";
   routes = [];
   constructor(t = {}) {
-    [...Gt, Yt].forEach((n) => {
-      this[n] = (o, ...i) => (typeof o == "string" ? this.#t = o : this.#n(n, this.#t, o), i.forEach((c) => {
-        this.#n(n, this.#t, c);
+    [...er, Zt].forEach((a) => {
+      this[a] = (o, ...i) => (typeof o == "string" ? this.#t = o : this.#a(a, this.#t, o), i.forEach((c) => {
+        this.#a(a, this.#t, c);
       }), this);
-    }), this.on = (n, o, ...i) => {
+    }), this.on = (a, o, ...i) => {
       for (const c of [o].flat()) {
         this.#t = c;
-        for (const l of [n].flat())
+        for (const l of [a].flat())
           i.map((u) => {
-            this.#n(l.toUpperCase(), this.#t, u);
+            this.#a(l.toUpperCase(), this.#t, u);
           });
       }
       return this;
-    }, this.use = (n, ...o) => (typeof n == "string" ? this.#t = n : (this.#t = "*", o.unshift(n)), o.forEach((i) => {
-      this.#n(R, this.#t, i);
+    }, this.use = (a, ...o) => (typeof a == "string" ? this.#t = a : (this.#t = "*", o.unshift(a)), o.forEach((i) => {
+      this.#a(R, this.#t, i);
     }), this);
-    const { strict: s, ...a } = t;
-    Object.assign(this, a), this.getPath = s ?? !0 ? t.getPath ?? Ze : Jt;
+    const { strict: s, ...n } = t;
+    Object.assign(this, n), this.getPath = s ?? !0 ? t.getPath ?? st : Wt;
   }
   #e() {
-    const t = new it({
+    const t = new dt({
       router: this.router,
       getPath: this.getPath
     });
     return t.errorHandler = this.errorHandler, t.#r = this.#r, t.routes = this.routes, t;
   }
-  #r = Qt;
+  #r = rr;
   // Cannot use `#` because it requires visibility at JavaScript runtime.
-  errorHandler = Me;
+  errorHandler = De;
   /**
    * `.route()` allows grouping other Hono instance in routes.
    *
@@ -868,9 +868,9 @@ var Ct = (e, t, r) => {
    */
   route(t, r) {
     const s = this.basePath(t);
-    return r.routes.map((a) => {
-      let n;
-      r.errorHandler === Me ? n = a.handler : (n = async (o, i) => (await He([], r.errorHandler)(o, () => a.handler(o, i))).res, n[Xt] = a.handler), s.#n(a.method, a.path, n);
+    return r.routes.map((n) => {
+      let a;
+      r.errorHandler === De ? a = n.handler : (a = async (o, i) => (await Pe([], r.errorHandler)(o, () => n.handler(o, i))).res, a[tr] = n.handler), s.#a(n.method, n.path, a);
     }), this;
   }
   /**
@@ -888,7 +888,7 @@ var Ct = (e, t, r) => {
    */
   basePath(t) {
     const r = this.#e();
-    return r._basePath = N(this._basePath, t), r;
+    return r._basePath = U(this._basePath, t), r;
   }
   /**
    * `.onError()` handles an error and returns a customized Response.
@@ -956,10 +956,10 @@ var Ct = (e, t, r) => {
    * ```
    */
   mount(t, r, s) {
-    let a, n;
-    s && (typeof s == "function" ? n = s : (n = s.optionHandler, s.replaceRequest === !1 ? a = (c) => c : a = s.replaceRequest));
-    const o = n ? (c) => {
-      const l = n(c);
+    let n, a;
+    s && (typeof s == "function" ? a = s : (a = s.optionHandler, s.replaceRequest === !1 ? n = (c) => c : n = s.replaceRequest));
+    const o = a ? (c) => {
+      const l = a(c);
       return Array.isArray(l) ? l : [l];
     } : (c) => {
       let l;
@@ -969,36 +969,36 @@ var Ct = (e, t, r) => {
       }
       return [c.env, l];
     };
-    a ||= (() => {
-      const c = N(this._basePath, t), l = c === "/" ? 0 : c.length;
+    n ||= (() => {
+      const c = U(this._basePath, t), l = c === "/" ? 0 : c.length;
       return (u) => {
         const d = new URL(u.url);
         return d.pathname = d.pathname.slice(l) || "/", new Request(d, u);
       };
     })();
     const i = async (c, l) => {
-      const u = await r(a(c.req.raw), ...o(c));
+      const u = await r(n(c.req.raw), ...o(c));
       if (u)
         return u;
       await l();
     };
-    return this.#n(R, N(t, "*"), i), this;
+    return this.#a(R, U(t, "*"), i), this;
   }
-  #n(t, r, s) {
-    t = t.toUpperCase(), r = N(this._basePath, r);
-    const a = { basePath: this._basePath, path: r, method: t, handler: s };
-    this.router.add(t, r, [s, a]), this.routes.push(a);
+  #a(t, r, s) {
+    t = t.toUpperCase(), r = U(this._basePath, r);
+    const n = { basePath: this._basePath, path: r, method: t, handler: s };
+    this.router.add(t, r, [s, n]), this.routes.push(n);
   }
-  #a(t, r) {
+  #n(t, r) {
     if (t instanceof Error)
       return this.errorHandler(t, r);
     throw t;
   }
-  #s(t, r, s, a) {
-    if (a === "HEAD")
+  #s(t, r, s, n) {
+    if (n === "HEAD")
       return (async () => new Response(null, await this.#s(t, r, s, "GET")))();
-    const n = this.getPath(t, { env: s }), o = this.router.match(a, n), i = new Vt(t, {
-      path: n,
+    const a = this.getPath(t, { env: s }), o = this.router.match(n, a), i = new Qt(t, {
+      path: a,
       matchResult: o,
       env: s,
       executionCtx: r,
@@ -1011,13 +1011,13 @@ var Ct = (e, t, r) => {
           i.res = await this.#r(i);
         });
       } catch (u) {
-        return this.#a(u, i);
+        return this.#n(u, i);
       }
       return l instanceof Promise ? l.then(
         (u) => u || (i.finalized ? i.res : this.#r(i))
-      ).catch((u) => this.#a(u, i)) : l ?? this.#r(i);
+      ).catch((u) => this.#n(u, i)) : l ?? this.#r(i);
     }
-    const c = He(o[0], this.errorHandler, this.#r);
+    const c = Pe(o[0], this.errorHandler, this.#r);
     return (async () => {
       try {
         const l = await c(i);
@@ -1027,7 +1027,7 @@ var Ct = (e, t, r) => {
           );
         return l.res;
       } catch (l) {
-        return this.#a(l, i);
+        return this.#n(l, i);
       }
     })();
   }
@@ -1055,13 +1055,13 @@ var Ct = (e, t, r) => {
    * ```
    * @see https://hono.dev/docs/api/hono#request
    */
-  request = (t, r, s, a) => t instanceof Request ? this.fetch(r ? new Request(t, r) : t, s, a) : (t = t.toString(), this.fetch(
+  request = (t, r, s, n) => t instanceof Request ? this.fetch(r ? new Request(t, r) : t, s, n) : (t = t.toString(), this.fetch(
     new Request(
-      /^https?:\/\//.test(t) ? t : `http://localhost${N("/", t)}`,
+      /^https?:\/\//.test(t) ? t : `http://localhost${U("/", t)}`,
       r
     ),
     s,
-    a
+    n
   ));
   /**
    * `.fire()` automatically adds a global fetch event listener.
@@ -1085,95 +1085,95 @@ var Ct = (e, t, r) => {
       t.respondWith(this.#s(t.request, t, void 0, t.request.method));
     });
   };
-}, ct = [];
-function er(e, t) {
-  const r = this.buildAllMatchers(), s = ((a, n) => {
-    const o = r[a] || r[R], i = o[2][n];
+}, ht = [];
+function nr(e, t) {
+  const r = this.buildAllMatchers(), s = ((n, a) => {
+    const o = r[n] || r[R], i = o[2][a];
     if (i)
       return i;
-    const c = n.match(o[0]);
+    const c = a.match(o[0]);
     if (!c)
-      return [[], ct];
+      return [[], ht];
     const l = c.indexOf("", 1);
     return [o[1][l], c];
   });
   return this.match = s, s(e, t);
 }
-var Z = "[^/]+", W = ".*", V = "(?:|/.*)", D = /* @__PURE__ */ Symbol(), tr = new Set(".\\+*[^]$()");
-function rr(e, t) {
-  return e.length === 1 ? t.length === 1 ? e < t ? -1 : 1 : -1 : t.length === 1 || e === W || e === V ? 1 : t === W || t === V ? -1 : e === Z ? 1 : t === Z ? -1 : e.length === t.length ? e < t ? -1 : 1 : t.length - e.length;
+var re = "[^/]+", Y = ".*", G = "(?:|/.*)", L = /* @__PURE__ */ Symbol(), ar = new Set(".\\+*[^]$()");
+function or(e, t) {
+  return e.length === 1 ? t.length === 1 ? e < t ? -1 : 1 : -1 : t.length === 1 || e === Y || e === G ? 1 : t === Y || t === G ? -1 : e === re ? 1 : t === re ? -1 : e.length === t.length ? e < t ? -1 : 1 : t.length - e.length;
 }
-var sr = class fe {
+var ir = class we {
   #t;
   #e;
   #r = /* @__PURE__ */ Object.create(null);
-  insert(t, r, s, a, n) {
+  insert(t, r, s, n, a) {
     if (t.length === 0) {
       if (this.#t !== void 0)
-        throw D;
-      if (n)
+        throw L;
+      if (a)
         return;
       this.#t = r;
       return;
     }
-    const [o, ...i] = t, c = o === "*" ? i.length === 0 ? ["", "", W] : ["", "", Z] : o === "/*" ? ["", "", V] : o.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
+    const [o, ...i] = t, c = o === "*" ? i.length === 0 ? ["", "", Y] : ["", "", re] : o === "/*" ? ["", "", G] : o.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
     let l;
     if (c) {
       const u = c[1];
-      let d = c[2] || Z;
+      let d = c[2] || re;
       if (u && c[2] && (d === ".*" || (d = d.replace(/^\((?!\?:)(?=[^)]+\)$)/, "(?:"), /\((?!\?:)/.test(d))))
-        throw D;
+        throw L;
       if (l = this.#r[d], !l) {
         if (Object.keys(this.#r).some(
-          (h) => h !== W && h !== V
+          (h) => h !== Y && h !== G
         ))
-          throw D;
-        if (n)
+          throw L;
+        if (a)
           return;
-        l = this.#r[d] = new fe(), u !== "" && (l.#e = a.varIndex++);
+        l = this.#r[d] = new we(), u !== "" && (l.#e = n.varIndex++);
       }
-      !n && u !== "" && s.push([u, l.#e]);
+      !a && u !== "" && s.push([u, l.#e]);
     } else if (l = this.#r[o], !l) {
       if (Object.keys(this.#r).some(
-        (u) => u.length > 1 && u !== W && u !== V
+        (u) => u.length > 1 && u !== Y && u !== G
       ))
-        throw D;
-      if (n)
+        throw L;
+      if (a)
         return;
-      l = this.#r[o] = new fe();
+      l = this.#r[o] = new we();
     }
-    l.insert(i, r, s, a, n);
+    l.insert(i, r, s, n, a);
   }
   buildRegExpStr() {
-    const r = Object.keys(this.#r).sort(rr).map((s) => {
-      const a = this.#r[s];
-      return (typeof a.#e == "number" ? `(${s})@${a.#e}` : tr.has(s) ? `\\${s}` : s) + a.buildRegExpStr();
+    const r = Object.keys(this.#r).sort(or).map((s) => {
+      const n = this.#r[s];
+      return (typeof n.#e == "number" ? `(${s})@${n.#e}` : ar.has(s) ? `\\${s}` : s) + n.buildRegExpStr();
     });
     return typeof this.#t == "number" && r.unshift(`#${this.#t}`), r.length === 0 ? "" : r.length === 1 ? r[0] : "(?:" + r.join("|") + ")";
   }
-}, ar = class {
+}, cr = class {
   #t = { varIndex: 0 };
-  #e = new sr();
+  #e = new ir();
   insert(e, t, r) {
-    const s = [], a = [];
+    const s = [], n = [];
     for (let o = 0; ; ) {
       let i = !1;
       if (e = e.replace(/\{[^}]+\}/g, (c) => {
         const l = `@\\${o}`;
-        return a[o] = [l, c], o++, i = !0, l;
+        return n[o] = [l, c], o++, i = !0, l;
       }), !i)
         break;
     }
-    const n = e.match(/(?::[^\/]+)|(?:\/\*$)|./g) || [];
-    for (let o = a.length - 1; o >= 0; o--) {
-      const [i] = a[o];
-      for (let c = n.length - 1; c >= 0; c--)
-        if (n[c].indexOf(i) !== -1) {
-          n[c] = n[c].replace(i, a[o][1]);
+    const a = e.match(/(?::[^\/]+)|(?:\/\*$)|./g) || [];
+    for (let o = n.length - 1; o >= 0; o--) {
+      const [i] = n[o];
+      for (let c = a.length - 1; c >= 0; c--)
+        if (a[c].indexOf(i) !== -1) {
+          a[c] = a[c].replace(i, n[o][1]);
           break;
         }
     }
-    return this.#e.insert(n, t, s, this.#t, r), s;
+    return this.#e.insert(a, t, s, this.#t, r), s;
   }
   buildRegExp() {
     let e = this.#e.buildRegExpStr();
@@ -1181,70 +1181,70 @@ var sr = class fe {
       return [/^$/, [], []];
     let t = 0;
     const r = [], s = [];
-    return e = e.replace(/#(\d+)|@(\d+)|\.\*\$/g, (a, n, o) => n !== void 0 ? (r[++t] = Number(n), "$()") : (o !== void 0 && (s[Number(o)] = ++t), "")), [new RegExp(`^${e}`), r, s];
+    return e = e.replace(/#(\d+)|@(\d+)|\.\*\$/g, (n, a, o) => a !== void 0 ? (r[++t] = Number(a), "$()") : (o !== void 0 && (s[Number(o)] = ++t), "")), [new RegExp(`^${e}`), r, s];
   }
-}, nr = [/^$/, [], /* @__PURE__ */ Object.create(null)], lt = /* @__PURE__ */ Object.create(null);
-function ut(e) {
-  return lt[e] ??= new RegExp(
+}, lr = [/^$/, [], /* @__PURE__ */ Object.create(null)], pt = /* @__PURE__ */ Object.create(null);
+function mt(e) {
+  return pt[e] ??= new RegExp(
     e === "*" ? "" : `^${e.replace(
       /\/\*$|([.\\+*[^\]$()])/g,
       (t, r) => r ? `\\${r}` : "(?:|/.*)"
     )}$`
   );
 }
-function or() {
-  lt = /* @__PURE__ */ Object.create(null);
+function ur() {
+  pt = /* @__PURE__ */ Object.create(null);
 }
-function ir(e) {
-  const t = new ar(), r = [];
+function dr(e) {
+  const t = new cr(), r = [];
   if (e.length === 0)
-    return nr;
+    return lr;
   const s = e.map(
     (l) => [!/\*|\/:/.test(l[0]), ...l]
   ).sort(
     ([l, u], [d, h]) => l ? 1 : d ? -1 : u.length - h.length
-  ), a = /* @__PURE__ */ Object.create(null);
+  ), n = /* @__PURE__ */ Object.create(null);
   for (let l = 0, u = -1, d = s.length; l < d; l++) {
     const [h, p, y] = s[l];
-    h ? a[p] = [y.map(([w]) => [w, /* @__PURE__ */ Object.create(null)]), ct] : u++;
+    h ? n[p] = [y.map(([g]) => [g, /* @__PURE__ */ Object.create(null)]), ht] : u++;
     let f;
     try {
       f = t.insert(p, u, h);
-    } catch (w) {
-      throw w === D ? new ot(p) : w;
+    } catch (g) {
+      throw g === L ? new ut(p) : g;
     }
-    h || (r[u] = y.map(([w, g]) => {
-      const T = /* @__PURE__ */ Object.create(null);
-      for (g -= 1; g >= 0; g--) {
-        const [b, x] = f[g];
-        T[b] = x;
+    h || (r[u] = y.map(([g, w]) => {
+      const b = /* @__PURE__ */ Object.create(null);
+      for (w -= 1; w >= 0; w--) {
+        const [T, x] = f[w];
+        b[T] = x;
       }
-      return [w, T];
+      return [g, b];
     }));
   }
-  const [n, o, i] = t.buildRegExp();
+  const [a, o, i] = t.buildRegExp();
   for (let l = 0, u = r.length; l < u; l++)
     for (let d = 0, h = r[l].length; d < h; d++) {
       const p = r[l][d]?.[1];
       if (!p)
         continue;
       const y = Object.keys(p);
-      for (let f = 0, w = y.length; f < w; f++)
+      for (let f = 0, g = y.length; f < g; f++)
         p[y[f]] = i[p[y[f]]];
     }
   const c = [];
   for (const l in o)
     c[l] = r[o[l]];
-  return [n, c, a];
+  return [a, c, n];
 }
-function C(e, t) {
+function N(e, t) {
   if (e) {
-    for (const r of Object.keys(e).sort((s, a) => a.length - s.length))
-      if (ut(r).test(t))
+    for (const r of Object.keys(e).sort((s, n) => n.length - s.length))
+      if (mt(r).test(t))
         return [...e[r]];
   }
 }
-var cr = class {
+var hr = class {
   name = "RegExpRouter";
   #t;
   #e;
@@ -1252,58 +1252,58 @@ var cr = class {
     this.#t = { [R]: /* @__PURE__ */ Object.create(null) }, this.#e = { [R]: /* @__PURE__ */ Object.create(null) };
   }
   add(e, t, r) {
-    const s = this.#t, a = this.#e;
-    if (!s || !a)
-      throw new Error(nt);
-    s[e] || [s, a].forEach((i) => {
+    const s = this.#t, n = this.#e;
+    if (!s || !n)
+      throw new Error(lt);
+    s[e] || [s, n].forEach((i) => {
       i[e] = /* @__PURE__ */ Object.create(null), Object.keys(i[R]).forEach((c) => {
         i[e][c] = [...i[R][c]];
       });
     }), t === "/*" && (t = "*");
-    const n = (t.match(/\/:/g) || []).length;
+    const a = (t.match(/\/:/g) || []).length;
     if (/\*$/.test(t)) {
-      const i = ut(t);
+      const i = mt(t);
       e === R ? Object.keys(s).forEach((c) => {
-        s[c][t] ||= C(s[c], t) || C(s[R], t) || [];
-      }) : s[e][t] ||= C(s[e], t) || C(s[R], t) || [], Object.keys(s).forEach((c) => {
+        s[c][t] ||= N(s[c], t) || N(s[R], t) || [];
+      }) : s[e][t] ||= N(s[e], t) || N(s[R], t) || [], Object.keys(s).forEach((c) => {
         (e === R || e === c) && Object.keys(s[c]).forEach((l) => {
-          i.test(l) && s[c][l].push([r, n]);
+          i.test(l) && s[c][l].push([r, a]);
         });
-      }), Object.keys(a).forEach((c) => {
-        (e === R || e === c) && Object.keys(a[c]).forEach(
-          (l) => i.test(l) && a[c][l].push([r, n])
+      }), Object.keys(n).forEach((c) => {
+        (e === R || e === c) && Object.keys(n[c]).forEach(
+          (l) => i.test(l) && n[c][l].push([r, a])
         );
       });
       return;
     }
-    const o = et(t) || [t];
+    const o = nt(t) || [t];
     for (let i = 0, c = o.length; i < c; i++) {
       const l = o[i];
-      Object.keys(a).forEach((u) => {
-        (e === R || e === u) && (a[u][l] ||= [
-          ...C(s[u], l) || C(s[R], l) || []
-        ], a[u][l].push([r, n - c + i + 1]));
+      Object.keys(n).forEach((u) => {
+        (e === R || e === u) && (n[u][l] ||= [
+          ...N(s[u], l) || N(s[R], l) || []
+        ], n[u][l].push([r, a - c + i + 1]));
       });
     }
   }
-  match = er;
+  match = nr;
   buildAllMatchers() {
     const e = /* @__PURE__ */ Object.create(null);
     return Object.keys(this.#e).concat(Object.keys(this.#t)).forEach((t) => {
       e[t] ||= this.#r(t);
-    }), this.#t = this.#e = void 0, or(), e;
+    }), this.#t = this.#e = void 0, ur(), e;
   }
   #r(e) {
     const t = [];
     let r = e === R;
     return [this.#t, this.#e].forEach((s) => {
-      const a = s[e] ? Object.keys(s[e]).map((n) => [n, s[e][n]]) : [];
-      a.length !== 0 ? (r ||= !0, t.push(...a)) : e !== R && t.push(
-        ...Object.keys(s[R]).map((n) => [n, s[R][n]])
+      const n = s[e] ? Object.keys(s[e]).map((a) => [a, s[e][a]]) : [];
+      n.length !== 0 ? (r ||= !0, t.push(...n)) : e !== R && t.push(
+        ...Object.keys(s[R]).map((a) => [a, s[R][a]])
       );
-    }), r ? ir(t) : null;
+    }), r ? dr(t) : null;
   }
-}, lr = class {
+}, pr = class {
   name = "SmartRouter";
   #t = [];
   #e = [];
@@ -1312,29 +1312,29 @@ var cr = class {
   }
   add(e, t, r) {
     if (!this.#e)
-      throw new Error(nt);
+      throw new Error(lt);
     this.#e.push([e, t, r]);
   }
   match(e, t) {
     if (!this.#e)
       throw new Error("Fatal error");
-    const r = this.#t, s = this.#e, a = r.length;
-    let n = 0, o;
-    for (; n < a; n++) {
-      const i = r[n];
+    const r = this.#t, s = this.#e, n = r.length;
+    let a = 0, o;
+    for (; a < n; a++) {
+      const i = r[a];
       try {
         for (let c = 0, l = s.length; c < l; c++)
           i.add(...s[c]);
         o = i.match(e, t);
       } catch (c) {
-        if (c instanceof ot)
+        if (c instanceof ut)
           continue;
         throw c;
       }
       this.match = i.match.bind(i), this.#t = [i], this.#e = void 0;
       break;
     }
-    if (n === a)
+    if (a === n)
       throw new Error("Fatal error");
     return this.name = `SmartRouter + ${this.activeRouter.name}`, o;
   }
@@ -1343,105 +1343,105 @@ var cr = class {
       throw new Error("No active router has been determined yet.");
     return this.#t[0];
   }
-}, F = /* @__PURE__ */ Object.create(null), ur = class dt {
+}, V = /* @__PURE__ */ Object.create(null), mr = class ft {
   #t;
   #e;
   #r;
-  #n = 0;
-  #a = F;
+  #a = 0;
+  #n = V;
   constructor(t, r, s) {
     if (this.#e = s || /* @__PURE__ */ Object.create(null), this.#t = [], t && r) {
-      const a = /* @__PURE__ */ Object.create(null);
-      a[t] = { handler: r, possibleKeys: [], score: 0 }, this.#t = [a];
+      const n = /* @__PURE__ */ Object.create(null);
+      n[t] = { handler: r, possibleKeys: [], score: 0 }, this.#t = [n];
     }
     this.#r = [];
   }
   insert(t, r, s) {
-    this.#n = ++this.#n;
-    let a = this;
-    const n = Nt(r), o = [];
-    for (let i = 0, c = n.length; i < c; i++) {
-      const l = n[i], u = n[i + 1], d = Lt(l, u), h = Array.isArray(d) ? d[0] : l;
-      if (h in a.#e) {
-        a = a.#e[h], d && o.push(d[1]);
+    this.#a = ++this.#a;
+    let n = this;
+    const a = Bt(r), o = [];
+    for (let i = 0, c = a.length; i < c; i++) {
+      const l = a[i], u = a[i + 1], d = Ft(l, u), h = Array.isArray(d) ? d[0] : l;
+      if (h in n.#e) {
+        n = n.#e[h], d && o.push(d[1]);
         continue;
       }
-      a.#e[h] = new dt(), d && (a.#r.push(d), o.push(d[1])), a = a.#e[h];
+      n.#e[h] = new ft(), d && (n.#r.push(d), o.push(d[1])), n = n.#e[h];
     }
-    return a.#t.push({
+    return n.#t.push({
       [t]: {
         handler: s,
         possibleKeys: o.filter((i, c, l) => l.indexOf(i) === c),
-        score: this.#n
+        score: this.#a
       }
-    }), a;
+    }), n;
   }
-  #s(t, r, s, a) {
-    const n = [];
+  #s(t, r, s, n) {
+    const a = [];
     for (let o = 0, i = t.#t.length; o < i; o++) {
       const c = t.#t[o], l = c[r] || c[R], u = {};
-      if (l !== void 0 && (l.params = /* @__PURE__ */ Object.create(null), n.push(l), s !== F || a && a !== F))
+      if (l !== void 0 && (l.params = /* @__PURE__ */ Object.create(null), a.push(l), s !== V || n && n !== V))
         for (let d = 0, h = l.possibleKeys.length; d < h; d++) {
           const p = l.possibleKeys[d], y = u[l.score];
-          l.params[p] = a?.[p] && !y ? a[p] : s[p] ?? a?.[p], u[l.score] = !0;
+          l.params[p] = n?.[p] && !y ? n[p] : s[p] ?? n?.[p], u[l.score] = !0;
         }
     }
-    return n;
+    return a;
   }
   search(t, r) {
     const s = [];
-    this.#a = F;
-    let n = [this];
-    const o = Qe(r), i = [];
+    this.#n = V;
+    let a = [this];
+    const o = rt(r), i = [];
     for (let c = 0, l = o.length; c < l; c++) {
       const u = o[c], d = c === l - 1, h = [];
-      for (let p = 0, y = n.length; p < y; p++) {
-        const f = n[p], w = f.#e[u];
-        w && (w.#a = f.#a, d ? (w.#e["*"] && s.push(
-          ...this.#s(w.#e["*"], t, f.#a)
-        ), s.push(...this.#s(w, t, f.#a))) : h.push(w));
-        for (let g = 0, T = f.#r.length; g < T; g++) {
-          const b = f.#r[g], x = f.#a === F ? {} : { ...f.#a };
-          if (b === "*") {
-            const H = f.#e["*"];
-            H && (s.push(...this.#s(H, t, f.#a)), H.#a = x, h.push(H));
+      for (let p = 0, y = a.length; p < y; p++) {
+        const f = a[p], g = f.#e[u];
+        g && (g.#n = f.#n, d ? (g.#e["*"] && s.push(
+          ...this.#s(g.#e["*"], t, f.#n)
+        ), s.push(...this.#s(g, t, f.#n))) : h.push(g));
+        for (let w = 0, b = f.#r.length; w < b; w++) {
+          const T = f.#r[w], x = f.#n === V ? {} : { ...f.#n };
+          if (T === "*") {
+            const q = f.#e["*"];
+            q && (s.push(...this.#s(q, t, f.#n)), q.#n = x, h.push(q));
             continue;
           }
-          const [A, z, _] = b;
+          const [A, W, _] = T;
           if (!u && !(_ instanceof RegExp))
             continue;
-          const $ = f.#e[A], $t = o.slice(c).join("/");
+          const O = f.#e[A], It = o.slice(c).join("/");
           if (_ instanceof RegExp) {
-            const H = _.exec($t);
-            if (H) {
-              if (x[z] = H[0], s.push(...this.#s($, t, f.#a, x)), Object.keys($.#e).length) {
-                $.#a = x;
-                const jt = H[0].match(/\//)?.length ?? 0;
-                (i[jt] ||= []).push($);
+            const q = _.exec(It);
+            if (q) {
+              if (x[W] = q[0], s.push(...this.#s(O, t, f.#n, x)), Object.keys(O.#e).length) {
+                O.#n = x;
+                const Mt = q[0].match(/\//)?.length ?? 0;
+                (i[Mt] ||= []).push(O);
               }
               continue;
             }
           }
-          (_ === !0 || _.test(u)) && (x[z] = u, d ? (s.push(...this.#s($, t, x, f.#a)), $.#e["*"] && s.push(
-            ...this.#s($.#e["*"], t, x, f.#a)
-          )) : ($.#a = x, h.push($)));
+          (_ === !0 || _.test(u)) && (x[W] = u, d ? (s.push(...this.#s(O, t, x, f.#n)), O.#e["*"] && s.push(
+            ...this.#s(O.#e["*"], t, x, f.#n)
+          )) : (O.#n = x, h.push(O)));
         }
       }
-      n = h.concat(i.shift() ?? []);
+      a = h.concat(i.shift() ?? []);
     }
     return s.length > 1 && s.sort((c, l) => c.score - l.score), [s.map(({ handler: c, params: l }) => [c, l])];
   }
-}, dr = class {
+}, fr = class {
   name = "TrieRouter";
   #t;
   constructor() {
-    this.#t = new ur();
+    this.#t = new mr();
   }
   add(e, t, r) {
-    const s = et(t);
+    const s = nt(t);
     if (s) {
-      for (let a = 0, n = s.length; a < n; a++)
-        this.#t.insert(e, s[a], r);
+      for (let n = 0, a = s.length; n < a; n++)
+        this.#t.insert(e, s[n], r);
       return;
     }
     this.#t.insert(e, t, r);
@@ -1449,18 +1449,869 @@ var cr = class {
   match(e, t) {
     return this.#t.search(e, t);
   }
-}, ht = class extends Zt {
+}, yt = class extends sr {
   /**
    * Creates an instance of the Hono class.
    *
    * @param options - Optional configuration options for the Hono instance.
    */
   constructor(e = {}) {
-    super(e), this.router = e.router ?? new lr({
-      routers: [new cr(), new dr()]
+    super(e), this.router = e.router ?? new pr({
+      routers: [new hr(), new fr()]
     });
   }
-}, v = {
+};
+function pe(e) {
+  return !e || Object.keys(e).length === 0 ? "" : Object.entries(e).sort(([t], [r]) => t.localeCompare(r)).map(([t, r]) => `${t}=${r}`).join(",");
+}
+class js {
+  counters = /* @__PURE__ */ new Map();
+  histograms = /* @__PURE__ */ new Map();
+  gauges = /* @__PURE__ */ new Map();
+  increment(t, r = 1, s) {
+    const n = pe(s);
+    let a = this.counters.get(t);
+    a || (a = /* @__PURE__ */ new Map(), this.counters.set(t, a));
+    const o = a.get(n);
+    o ? o.value += r : a.set(n, { value: r, tags: s });
+  }
+  histogram(t, r, s) {
+    const n = pe(s);
+    let a = this.histograms.get(t);
+    a || (a = /* @__PURE__ */ new Map(), this.histograms.set(t, a));
+    const o = a.get(n);
+    o ? o.values.push(r) : a.set(n, { values: [r], tags: s });
+  }
+  gauge(t, r, s) {
+    const n = pe(s);
+    let a = this.gauges.get(t);
+    a || (a = /* @__PURE__ */ new Map(), this.gauges.set(t, a)), a.set(n, { value: r, tags: s });
+  }
+  snapshot() {
+    const t = {
+      counters: {},
+      histograms: {},
+      gauges: {}
+    };
+    for (const [r, s] of this.counters)
+      t.counters[r] = Array.from(s.values());
+    for (const [r, s] of this.histograms)
+      t.histograms[r] = Array.from(s.values());
+    for (const [r, s] of this.gauges)
+      t.gauges[r] = Array.from(s.values());
+    return t;
+  }
+  reset() {
+    this.counters.clear(), this.histograms.clear(), this.gauges.clear();
+  }
+}
+function yr(e) {
+  const t = [];
+  for (const [r, s] of Object.entries(e.counters)) {
+    t.push(`# TYPE ${r} counter`);
+    for (const n of s)
+      t.push(`${r}${me(n.tags)} ${n.value}`);
+  }
+  for (const [r, s] of Object.entries(e.histograms)) {
+    t.push(`# TYPE ${r} histogram`);
+    for (const n of s) {
+      const a = me(n.tags), o = n.values.reduce((c, l) => c + l, 0), i = n.values.length;
+      t.push(`${r}_sum${a} ${o}`), t.push(`${r}_count${a} ${i}`);
+    }
+  }
+  for (const [r, s] of Object.entries(e.gauges)) {
+    t.push(`# TYPE ${r} gauge`);
+    for (const n of s)
+      t.push(`${r}${me(n.tags)} ${n.value}`);
+  }
+  return t.join(`
+`);
+}
+function wr(e) {
+  return e.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+}
+function me(e) {
+  return !e || Object.keys(e).length === 0 ? "" : `{${Object.entries(e).sort(([r], [s]) => r.localeCompare(s)).map(([r, s]) => `${r}="${wr(s)}"`).join(",")}}`;
+}
+const gr = ["secret", "key", "token", "password", "credential"];
+function Sr(e, t, r) {
+  const s = `/${t.prefix ?? "___gateway"}`, n = async (a, o) => {
+    if (t.auth && !await t.auth(a))
+      return a.json(
+        { error: "unauthorized", message: "Admin access denied" },
+        403
+      );
+    await o();
+  };
+  e.get(`${s}/routes`, n, (a) => a.json({
+    gateway: r.gatewayName,
+    routes: r.routes
+  })), e.get(`${s}/policies`, n, (a) => a.json({
+    gateway: r.gatewayName,
+    policies: r.policies
+  })), e.get(`${s}/config`, n, (a) => a.json(
+    ge({
+      gateway: r.gatewayName,
+      routes: r.routes,
+      policies: r.policies
+    })
+  )), e.get(`${s}/metrics`, n, (a) => {
+    if (!t.metrics)
+      return a.json(
+        {
+          error: "not_configured",
+          message: "No metrics collector configured. Pass a MetricsCollector to admin.metrics."
+        },
+        404
+      );
+    const o = t.metrics.snapshot(), i = yr(o);
+    return a.text(i, 200, {
+      "content-type": "text/plain; version=0.0.4; charset=utf-8"
+    });
+  }), e.get(`${s}/health`, n, (a) => a.json({
+    status: "healthy",
+    gateway: r.gatewayName,
+    routeCount: r.routes.length,
+    policyCount: r.policies.length,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  }));
+}
+function ge(e) {
+  if (typeof e != "object" || e === null) return e;
+  if (Array.isArray(e)) return e.map(ge);
+  const t = {};
+  for (const [r, s] of Object.entries(e))
+    gr.some((n) => r.toLowerCase().includes(n)) ? t[r] = "[REDACTED]" : typeof s == "function" ? t[r] = "[Function]" : typeof s == "object" && s !== null ? t[r] = ge(s) : t[r] = s;
+  return t;
+}
+const j = {
+  HTTP_METHOD: "http.request.method",
+  HTTP_ROUTE: "http.route",
+  HTTP_STATUS_CODE: "http.response.status_code",
+  URL_PATH: "url.path",
+  SERVER_ADDRESS: "server.address"
+};
+class ie {
+  constructor(t, r, s, n, a, o = Date.now()) {
+    this.name = t, this.kind = r, this.traceId = s, this.spanId = n, this.parentSpanId = a, this.startTimeMs = o;
+  }
+  _attributes = {};
+  _events = [];
+  _status = {
+    code: "UNSET"
+  };
+  _endTimeMs;
+  /** Set a single attribute. Chainable. */
+  setAttribute(t, r) {
+    return this._attributes[t] = r, this;
+  }
+  /** Record a timestamped event with optional attributes. Chainable. */
+  addEvent(t, r) {
+    return this._events.push({ name: t, timeMs: Date.now(), attributes: r }), this;
+  }
+  /** Set the span status. Chainable. */
+  setStatus(t, r) {
+    return this._status = { code: t, message: r }, this;
+  }
+  /**
+   * Finalize the span and return an immutable {@link ReadableSpan}.
+   *
+   * Sets `endTimeMs` on first call; subsequent calls return the same
+   * snapshot with defensive copies of mutable fields.
+   */
+  end() {
+    return this._endTimeMs = this._endTimeMs ?? Date.now(), {
+      traceId: this.traceId,
+      spanId: this.spanId,
+      parentSpanId: this.parentSpanId,
+      name: this.name,
+      kind: this.kind,
+      startTimeMs: this.startTimeMs,
+      endTimeMs: this._endTimeMs,
+      attributes: { ...this._attributes },
+      status: { ...this._status },
+      events: [...this._events]
+    };
+  }
+}
+const vr = {
+  INTERNAL: 1,
+  // SPAN_KIND_INTERNAL
+  SERVER: 2,
+  // SPAN_KIND_SERVER
+  CLIENT: 3
+  // SPAN_KIND_CLIENT
+}, Tr = {
+  UNSET: 0,
+  // STATUS_CODE_UNSET
+  OK: 1,
+  // STATUS_CODE_OK
+  ERROR: 2
+  // STATUS_CODE_ERROR
+};
+function br(e) {
+  return typeof e == "string" ? { stringValue: e } : typeof e == "boolean" ? { boolValue: e } : Number.isInteger(e) ? { intValue: e } : { doubleValue: e };
+}
+function Ue(e) {
+  return Object.entries(e).map(([t, r]) => ({
+    key: t,
+    value: br(r)
+  }));
+}
+function fe(e) {
+  return String(e * 1e6);
+}
+function xr(e, t, r) {
+  const s = [{ key: "service.name", value: { stringValue: t } }];
+  r && s.push({
+    key: "service.version",
+    value: { stringValue: r }
+  });
+  const n = e.map((a) => {
+    const o = {
+      traceId: a.traceId,
+      spanId: a.spanId,
+      name: a.name,
+      kind: vr[a.kind],
+      startTimeUnixNano: fe(a.startTimeMs),
+      endTimeUnixNano: fe(a.endTimeMs),
+      attributes: Ue(a.attributes),
+      status: {
+        code: Tr[a.status.code],
+        ...a.status.message ? { message: a.status.message } : {}
+      },
+      events: a.events.map((i) => ({
+        name: i.name,
+        timeUnixNano: fe(i.timeMs),
+        ...i.attributes ? { attributes: Ue(i.attributes) } : {}
+      }))
+    };
+    return a.parentSpanId && (o.parentSpanId = a.parentSpanId), o;
+  });
+  return {
+    resourceSpans: [
+      {
+        resource: { attributes: s },
+        scopeSpans: [
+          {
+            scope: { name: "stoma-gateway" },
+            spans: n
+          }
+        ]
+      }
+    ]
+  };
+}
+class ks {
+  endpoint;
+  headers;
+  timeoutMs;
+  serviceName;
+  serviceVersion;
+  constructor(t) {
+    this.endpoint = t.endpoint, this.headers = t.headers ?? {}, this.timeoutMs = t.timeoutMs ?? 1e4, this.serviceName = t.serviceName ?? "stoma-gateway", this.serviceVersion = t.serviceVersion;
+  }
+  async export(t) {
+    if (t.length === 0) return;
+    const r = xr(t, this.serviceName, this.serviceVersion);
+    await fetch(this.endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...this.headers
+      },
+      body: JSON.stringify(r),
+      signal: AbortSignal.timeout(this.timeoutMs)
+    });
+  }
+}
+class Hs {
+  async export(t) {
+    for (const r of t)
+      console.debug(
+        `[trace] ${r.name} ${r.kind} ${r.endTimeMs - r.startTimeMs}ms trace=${r.traceId} span=${r.spanId}` + (r.parentSpanId ? ` parent=${r.parentSpanId}` : "") + ` status=${r.status.code}`
+      );
+  }
+}
+function Rr(e) {
+  return e >= 1 ? !0 : e <= 0 ? !1 : Math.random() < e;
+}
+function ce() {
+  const e = new Uint8Array(8);
+  return crypto.getRandomValues(e), Array.from(e, (t) => t.toString(16).padStart(2, "0")).join("");
+}
+const C = () => {
+};
+function Ar(e, t) {
+  return !t || typeof t == "string" && !Er(e, t) ? C : (r, ...s) => {
+    const n = [`[${e}]`, r];
+    for (const a of s)
+      n.push(
+        typeof a == "object" && a !== null ? JSON.stringify(a) : String(a)
+      );
+    console.debug(n.join(" "));
+  };
+}
+function Er(e, t) {
+  return t.split(",").map((s) => s.trim()).some((s) => {
+    if (s === "*") return !0;
+    const n = s.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+    return new RegExp(`^${n}$`).test(e);
+  });
+}
+function _r(e) {
+  if (!e) return () => C;
+  const t = /* @__PURE__ */ new Map();
+  return (r) => {
+    const s = t.get(r);
+    if (s) return s;
+    const n = Ar(r, e);
+    return t.set(r, n), n;
+  };
+}
+function k(e) {
+  return e.replace(/[\r\n\0]/g, "");
+}
+function Se(e) {
+  return e.replace(/"/g, '\\"');
+}
+function He(e) {
+  return new Headers(e.req.raw.headers);
+}
+function $r(e, t) {
+  e.req.raw = new Request(e.req.raw, { headers: t });
+}
+function I(e, t) {
+  const r = He(e);
+  t(r), $r(e, r);
+}
+const Or = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
+function jr(e) {
+  if (!e) return null;
+  const t = e.trim().match(Or);
+  if (!t) return null;
+  const [, r, s, n, a] = t;
+  return r === "ff" || s === "00000000000000000000000000000000" || n === "0000000000000000" ? null : { version: r, traceId: s, parentId: n, flags: a };
+}
+function kr() {
+  return {
+    version: "00",
+    traceId: wt(16),
+    parentId: le(),
+    flags: "01"
+  };
+}
+function Ie(e) {
+  return `${e.version}-${e.traceId}-${e.parentId}-${e.flags}`;
+}
+function le() {
+  return wt(8);
+}
+function wt(e) {
+  const t = new Uint8Array(e);
+  return crypto.getRandomValues(t), Array.from(t, (r) => r.toString(16).padStart(2, "0")).join("");
+}
+const B = "_stomaTraceRequested", ve = "_stomaTraceEntries", Te = "_stomaTraceDetails", gt = () => {
+};
+function Me(e, t) {
+  return e.get(B) ? (r, s) => {
+    const n = e.get(Te) ?? /* @__PURE__ */ new Map();
+    n.set(t, { action: r, data: s }), e.set(Te, n);
+  } : gt;
+}
+function Hr(e) {
+  return e.get(B) === !0;
+}
+function K(e, t) {
+  return t ? { ...e, ...t } : { ...e };
+}
+function F(e, t) {
+  return z(e)?.debug(`stoma:policy:${t}`) ?? C;
+}
+function M(e, t) {
+  return e ? async (r, s) => {
+    if (await e(r)) {
+      await s();
+      return;
+    }
+    await t(r, s);
+  } : t;
+}
+async function E(e, t, r, s) {
+  try {
+    return await e();
+  } catch (n) {
+    return r && s && r(
+      `${s} failed: ${n instanceof Error ? n.message : String(n)}`
+    ), t;
+  }
+}
+const be = "_stomaDebugHeaders", qe = "_stomaDebugRequested";
+function $(e, t, r) {
+  const s = e.get(qe);
+  if (!s || !(s.has(t) || s.has("*"))) return;
+  const n = e.get(be) ?? /* @__PURE__ */ new Map();
+  n.set(t, String(r)), e.set(be, n);
+}
+function St(e, t, r) {
+  const s = e.req.header(t);
+  if (!s) return;
+  const n = s.split(",").map((i) => i.trim().toLowerCase()).filter(Boolean);
+  if (n.length === 0) return;
+  const a = r ? new Set(r.map((i) => i.toLowerCase())) : null, o = /* @__PURE__ */ new Set();
+  if (n.includes("*"))
+    if (a)
+      for (const i of a) o.add(i);
+    else
+      o.add("*");
+  for (const i of n)
+    i !== "*" && (!a || a.has(i)) && o.add(i);
+  o.size > 0 && e.set(qe, o), (o.has("trace") || o.has("*")) && e.set(B, !0);
+}
+function vt(e) {
+  return e.get(be);
+}
+function Tt(e) {
+  const t = e.get(qe);
+  return t !== void 0 && t.size > 0;
+}
+function bt(e) {
+  const t = e.map((r, s) => ({
+    ...r,
+    durationMs: s === 0 ? r.durationMs : Math.max(0, r.durationMs - e[s - 1].durationMs)
+  }));
+  return t.reverse(), t;
+}
+const Ir = () => C, xt = "gateway";
+function Mr(e, t, r, s = 100) {
+  const n = /* @__PURE__ */ new Map();
+  for (const o of e)
+    n.set(o.name, o);
+  for (const o of t)
+    n.has(o.name) && r?.(`policy "${o.name}" overridden by route-level policy`), n.set(o.name, o);
+  const a = Array.from(n.values()).sort(
+    (o, i) => (o.priority ?? s) - (i.priority ?? s)
+  );
+  return a.length > 0 && r?.(
+    `chain: ${a.map((o) => `${o.name}:${o.priority ?? s}`).join(" -> ")}`
+  ), a;
+}
+function qr(e) {
+  return e.map((t) => {
+    const r = t.handler, s = t.priority ?? 100;
+    return async (a, o) => {
+      const i = Date.now();
+      if (a.get(B) !== !0 && a.get("_otelSpans") === void 0) {
+        try {
+          await r(a, o);
+        } finally {
+          const u = Date.now() - i, d = a.get("_policyTimings") ?? [];
+          d.push({ name: t.name, durationMs: u }), a.set("_policyTimings", d);
+        }
+        return;
+      }
+      let c = !1, l = null;
+      try {
+        await r(a, async () => {
+          c = !0, await o();
+        });
+      } catch (u) {
+        throw l = u instanceof Error ? u.message : String(u), u;
+      } finally {
+        const u = Date.now() - i, d = a.get("_policyTimings") ?? [];
+        if (d.push({ name: t.name, durationMs: u }), a.set("_policyTimings", d), a.get(B) === !0) {
+          const p = a.get(ve) ?? [];
+          p.push({
+            name: t.name,
+            priority: s,
+            durationMs: u,
+            calledNext: c,
+            error: l
+          }), a.set(ve, p);
+        }
+        const h = a.get("_otelSpans");
+        if (h !== void 0) {
+          const p = a.get("_otelRootSpan"), y = new ie(
+            `policy:${t.name}`,
+            "INTERNAL",
+            p.traceId,
+            ce(),
+            p.spanId,
+            i
+          );
+          y.setAttribute("policy.name", t.name).setAttribute("policy.priority", s), l && y.setStatus("ERROR", l), h.push(y.end());
+        }
+      }
+    };
+  });
+}
+function Rt(e, t, r = Ir, s = "x-request-id", n, a, o) {
+  const i = a === !0 ? {} : a || void 0, c = i?.requestHeader ?? "x-stoma-debug", l = i?.allow;
+  return async (u, d) => {
+    const h = u.req.header("traceparent") ?? null, p = jr(h), y = p?.traceId ?? kr().traceId, f = le(), g = {
+      requestId: crypto.randomUUID(),
+      startTime: Date.now(),
+      gatewayName: e,
+      routePath: t,
+      traceId: y,
+      spanId: f,
+      debug: r,
+      adapter: n
+    };
+    u.set(xt, g);
+    let w;
+    if (o && Rr(o.sampleRate ?? 1)) {
+      const b = ce();
+      w = new ie(
+        `${u.req.method} ${t}`,
+        "SERVER",
+        y,
+        b,
+        p?.parentId,
+        g.startTime
+      ), w.setAttribute(j.HTTP_METHOD, u.req.method).setAttribute(j.HTTP_ROUTE, t).setAttribute(j.URL_PATH, new URL(u.req.url).pathname).setAttribute("gateway.name", e), u.set("_otelRootSpan", w), u.set("_otelSpans", []);
+    }
+    if (i && St(u, c, l), await d(), u.res.headers.set(s, g.requestId), u.res.headers.set(
+      "traceparent",
+      Ie({
+        version: "00",
+        traceId: g.traceId,
+        parentId: g.spanId,
+        flags: p?.flags ?? "01"
+      })
+    ), i) {
+      const b = vt(u);
+      if (b)
+        for (const [T, x] of b)
+          u.res.headers.set(T, x);
+    }
+    if (u.get(B) === !0) {
+      const b = u.get(ve);
+      if (b && b.length > 0) {
+        const T = u.get(Te), A = bt(b).map((_) => {
+          const O = T?.get(_.name);
+          return O ? { ..._, detail: O } : _;
+        }), W = {
+          requestId: g.requestId,
+          traceId: g.traceId,
+          route: t,
+          totalMs: Date.now() - g.startTime,
+          entries: A
+        };
+        u.res.headers.set("x-stoma-trace", JSON.stringify(W));
+      }
+    }
+    if (w) {
+      w.setAttribute(j.HTTP_STATUS_CODE, u.res.status).setStatus(
+        u.res.status >= 500 ? "ERROR" : u.res.status >= 400 ? "UNSET" : "OK"
+      );
+      const b = w.end(), T = u.get("_otelSpans") ?? [], x = [b, ...T], A = o.exporter.export(x).catch(() => {
+      });
+      n?.waitUntil && n.waitUntil(A);
+    }
+  };
+}
+function z(e) {
+  return e.get(xt);
+}
+function Is(e) {
+  if (!e.routes || e.routes.length === 0)
+    throw new m(
+      500,
+      "config_error",
+      "Gateway requires at least one route"
+    );
+  const t = e.name ?? "edge-gateway", r = _r(e.debug), s = r("stoma:gateway"), n = r("stoma:pipeline"), a = r("stoma:upstream"), o = new yt();
+  o.onError((d, h) => {
+    if (e.onError)
+      return e.onError(d, h);
+    const p = z(h);
+    return d instanceof m ? tt(d, p?.requestId) : (console.error(
+      `[${t}] Unhandled error on ${h.req.method} ${h.req.path}:`,
+      d
+    ), qt(p?.requestId, e.defaultErrorMessage));
+  }), o.notFound((d) => (s(`no route matches ${d.req.method} ${d.req.path}`), d.json(
+    {
+      error: "not_found",
+      message: `No route matches ${d.req.method} ${d.req.path}`,
+      statusCode: 404,
+      gateway: t
+    },
+    404
+  )));
+  let i = 0;
+  const c = [], l = /* @__PURE__ */ new Map();
+  for (const d of e.routes) {
+    const h = Cr(e.basePath, d.path), p = Rt(
+      t,
+      d.path,
+      r,
+      e.requestIdHeader,
+      e.adapter,
+      e.debugHeaders,
+      e.tracing
+    ), y = Mr(
+      e.policies ?? [],
+      d.pipeline.policies ?? [],
+      n,
+      e.defaultPolicyPriority
+    ), f = qr(y), g = Pr(
+      d,
+      a,
+      e.adapter
+    ), w = [p, ...f, g], b = d.methods ?? e.defaultMethods ?? ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], T = b.map((A) => A.toUpperCase());
+    o.on(T, h, ...w), i += b.length;
+    const x = y.map((A) => A.name);
+    c.push({
+      path: h,
+      methods: T,
+      policyNames: x,
+      upstreamType: d.pipeline.upstream.type
+    });
+    for (const A of y)
+      l.has(A.name) || l.set(A.name, {
+        name: A.name,
+        priority: A.priority ?? e.defaultPolicyPriority ?? 100
+      });
+    s(
+      `route ${h} [${T.join(",")}]${x.length ? ` policies=[${x.join(", ")}]` : ""} upstream=${d.pipeline.upstream.type}`
+    );
+  }
+  const u = {
+    routes: c,
+    policies: Array.from(l.values()).sort(
+      (d, h) => d.priority - h.priority
+    ),
+    gatewayName: t
+  };
+  if (e.admin) {
+    const d = typeof e.admin == "boolean" ? { enabled: !0 } : e.admin;
+    d.enabled && (d.auth || console.warn(
+      `[stoma:${t}] admin routes enabled without authentication`
+    ), Sr(o, d, u), s(
+      `admin routes registered at /${d.prefix ?? "___gateway"}/*`
+    ));
+  }
+  return s(`"${t}" started with ${i} route handlers`), { app: o, routeCount: i, name: t, _registry: u };
+}
+function Cr(e, t) {
+  if (!e) return t;
+  const r = e.endsWith("/") ? e.slice(0, -1) : e, s = t.startsWith("/") ? t : `/${t}`;
+  return `${r}${s}`;
+}
+function Pr(e, t = C, r) {
+  const s = e.pipeline.upstream;
+  switch (s.type) {
+    case "handler":
+      return Nr(s);
+    case "url":
+      return Ur(s, t);
+    case "service-binding":
+      return Dr(s, t, r);
+    default:
+      throw new m(
+        500,
+        "config_error",
+        `Unknown upstream type: ${s.type}`
+      );
+  }
+}
+function Nr(e) {
+  return async (t) => e.handler(t);
+}
+const se = [
+  "connection",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "proxy-connection",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade"
+];
+function Dr(e, t = C, r) {
+  return async (s) => {
+    if (!r?.dispatchBinding)
+      throw new m(
+        502,
+        "config_error",
+        `Service binding "${e.service}" requires adapter.dispatchBinding — pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
+      );
+    const n = new URL(s.req.url);
+    let a = n.pathname;
+    if (e.rewritePath) {
+      const f = a;
+      a = e.rewritePath(a), t(`path rewrite: ${f} -> ${a}`);
+    }
+    const o = new URL(a + n.search, s.req.url);
+    t(
+      `service-binding "${e.service}": ${s.req.method} ${o.pathname}${o.search}`
+    );
+    const i = He(s);
+    for (const f of se)
+      i.delete(f);
+    const c = z(s);
+    if (c) {
+      const f = le();
+      i.set(
+        "traceparent",
+        Ie({
+          version: "00",
+          traceId: c.traceId,
+          parentId: f,
+          flags: "01"
+        })
+      );
+    }
+    const l = new Request(o.toString(), {
+      method: s.req.method,
+      headers: i,
+      body: s.req.raw.body,
+      // @ts-expect-error -- duplex is needed for streaming bodies
+      duplex: s.req.raw.body ? "half" : void 0
+    }), u = s.get("_otelSpans");
+    let d;
+    if (u !== void 0) {
+      const f = s.get("_otelRootSpan");
+      d = new ie(
+        `upstream:service-binding:${e.service}`,
+        "CLIENT",
+        f.traceId,
+        ce(),
+        f.spanId
+      ), d.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute("rpc.service", e.service);
+    }
+    const h = Date.now(), p = await r.dispatchBinding(
+      e.service,
+      l
+    );
+    t(
+      `service-binding responded: ${p.status} (${Date.now() - h}ms)`
+    ), d && (d.setAttribute(j.HTTP_STATUS_CODE, p.status).setStatus(p.status >= 500 ? "ERROR" : "OK"), u.push(d.end()));
+    const y = new Headers(p.headers);
+    for (const f of se)
+      y.delete(f);
+    return new Response(p.body, {
+      status: p.status,
+      statusText: p.statusText,
+      headers: y
+    });
+  };
+}
+function Ur(e, t = C) {
+  const r = new URL(e.target);
+  return async (s) => {
+    const n = new URL(s.req.url);
+    let a = n.pathname;
+    if (e.rewritePath) {
+      const w = a;
+      a = e.rewritePath(a), t(`path rewrite: ${w} -> ${a}`);
+    }
+    const o = new URL(a + n.search, r);
+    if (o.origin !== r.origin)
+      throw t(
+        `SSRF blocked: rewritten URL origin ${o.origin} != ${r.origin}`
+      ), new m(
+        502,
+        "upstream_error",
+        "Rewritten URL must not change the upstream origin"
+      );
+    t(`proxying ${s.req.method} ${s.req.path} -> ${o.toString()}`);
+    const i = He(s);
+    for (const w of se)
+      i.delete(w);
+    if (s.get("_preserveHost") === !0 || i.set("host", o.host), e.headers)
+      for (const [w, b] of Object.entries(e.headers))
+        i.set(w, b);
+    const l = z(s);
+    if (l) {
+      const w = le();
+      i.set(
+        "traceparent",
+        Ie({
+          version: "00",
+          traceId: l.traceId,
+          parentId: w,
+          flags: "01"
+        })
+      );
+    }
+    const u = new Request(o.toString(), {
+      method: s.req.method,
+      headers: i,
+      body: s.req.raw.body,
+      redirect: "manual",
+      // Prevent SSRF via redirect to internal services
+      // @ts-expect-error -- duplex is needed for streaming bodies
+      duplex: s.req.raw.body ? "half" : void 0
+    });
+    s.set("_proxyRequest", u.clone());
+    const d = s.get("_timeoutSignal"), h = s.get("_otelSpans");
+    let p;
+    if (h !== void 0) {
+      const w = s.get("_otelRootSpan");
+      p = new ie(
+        `upstream:url:${o.host}`,
+        "CLIENT",
+        w.traceId,
+        ce(),
+        w.spanId
+      ), p.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute(j.SERVER_ADDRESS, o.host);
+    }
+    const y = Date.now();
+    let f;
+    try {
+      f = await fetch(
+        u,
+        d ? { signal: d } : void 0
+      );
+    } catch (w) {
+      throw w instanceof DOMException && w.name === "AbortError" ? w : (t(
+        `upstream fetch failed: ${w instanceof Error ? w.message : w}`
+      ), new m(
+        502,
+        "upstream_error",
+        `Upstream request to ${o.host} failed: ${w instanceof Error ? w.message : String(w)}`
+      ));
+    }
+    t(
+      `upstream responded: ${f.status} (${Date.now() - y}ms)`
+    ), p && (p.setAttribute(j.HTTP_STATUS_CODE, f.status).setStatus(f.status >= 500 ? "ERROR" : "OK"), h.push(p.end()));
+    const g = new Headers(f.headers);
+    for (const w of se)
+      g.delete(w);
+    return new Response(f.body, {
+      status: f.status,
+      statusText: f.statusText,
+      headers: g
+    });
+  };
+}
+function Lr(e) {
+  let t = e;
+  return t.startsWith("/") || (t = `/${t}`), t.length > 1 && t.endsWith("/") && (t = t.slice(0, -1)), t;
+}
+function Br(e, t) {
+  const r = t.startsWith("/") ? t : `/${t}`;
+  return e.endsWith("/") && r.startsWith("/") ? `${e}${r.slice(1)}` : `${e}${r}`;
+}
+function Ms(e) {
+  const t = Lr(e.prefix), r = e.policies ?? [], s = e.metadata ?? {};
+  return e.routes.map((n) => {
+    const a = Br(t, n.path), o = n.pipeline.policies ?? [], i = r.length > 0 || o.length > 0 ? [...r, ...o] : void 0, c = Object.keys(s).length > 0 || n.metadata ? { ...s, ...n.metadata } : void 0;
+    return {
+      ...n,
+      path: a,
+      pipeline: {
+        ...n.pipeline,
+        ...i !== void 0 ? { policies: i } : {}
+      },
+      ...c !== void 0 ? { metadata: c } : {}
+    };
+  });
+}
+const S = {
   /** Observability policies (e.g. requestLog) — wraps everything */
   OBSERVABILITY: 0,
   /** IP filtering — runs before all other logic */
@@ -1491,461 +2342,51 @@ var cr = class {
   DEFAULT: 100,
   /** Mock — terminal, replaces upstream */
   MOCK: 999
-}, j = {
-  HTTP_METHOD: "http.request.method",
-  HTTP_ROUTE: "http.route",
-  HTTP_STATUS_CODE: "http.response.status_code",
-  URL_PATH: "url.path",
-  SERVER_ADDRESS: "server.address"
-}, ae = class {
-  constructor(e, t, r, s, a, n = Date.now()) {
-    this.name = e, this.kind = t, this.traceId = r, this.spanId = s, this.parentSpanId = a, this.startTimeMs = n;
-  }
-  _attributes = {};
-  _events = [];
-  _status = {
-    code: "UNSET"
-  };
-  _endTimeMs;
-  /** Set a single attribute. Chainable. */
-  setAttribute(e, t) {
-    return this._attributes[e] = t, this;
-  }
-  /** Record a timestamped event with optional attributes. Chainable. */
-  addEvent(e, t) {
-    return this._events.push({ name: e, timeMs: Date.now(), attributes: t }), this;
-  }
-  /** Set the span status. Chainable. */
-  setStatus(e, t) {
-    return this._status = { code: e, message: t }, this;
-  }
-  /**
-   * Finalize the span and return an immutable {@link ReadableSpan}.
-   *
-   * Sets `endTimeMs` on first call; subsequent calls return the same
-   * snapshot with defensive copies of mutable fields.
-   */
-  end() {
-    return this._endTimeMs = this._endTimeMs ?? Date.now(), {
-      traceId: this.traceId,
-      spanId: this.spanId,
-      parentSpanId: this.parentSpanId,
-      name: this.name,
-      kind: this.kind,
-      startTimeMs: this.startTimeMs,
-      endTimeMs: this._endTimeMs,
-      attributes: { ...this._attributes },
-      status: { ...this._status },
-      events: [...this._events]
-    };
-  }
-}, hr = {
-  INTERNAL: 1,
-  // SPAN_KIND_INTERNAL
-  SERVER: 2,
-  // SPAN_KIND_SERVER
-  CLIENT: 3
-  // SPAN_KIND_CLIENT
-}, pr = {
-  UNSET: 0,
-  // STATUS_CODE_UNSET
-  OK: 1,
-  // STATUS_CODE_OK
-  ERROR: 2
-  // STATUS_CODE_ERROR
 };
-function mr(e) {
-  return typeof e == "string" ? { stringValue: e } : typeof e == "boolean" ? { boolValue: e } : Number.isInteger(e) ? { intValue: e } : { doubleValue: e };
-}
-function Ce(e) {
-  return Object.entries(e).map(([t, r]) => ({
-    key: t,
-    value: mr(r)
-  }));
-}
-function ue(e) {
-  return String(e * 1e6);
-}
-function fr(e, t, r) {
-  const s = [{ key: "service.name", value: { stringValue: t } }];
-  r && s.push({
-    key: "service.version",
-    value: { stringValue: r }
-  });
-  const a = e.map((n) => {
-    const o = {
-      traceId: n.traceId,
-      spanId: n.spanId,
-      name: n.name,
-      kind: hr[n.kind],
-      startTimeUnixNano: ue(n.startTimeMs),
-      endTimeUnixNano: ue(n.endTimeMs),
-      attributes: Ce(n.attributes),
-      status: {
-        code: pr[n.status.code],
-        ...n.status.message ? { message: n.status.message } : {}
-      },
-      events: n.events.map((i) => ({
-        name: i.name,
-        timeUnixNano: ue(i.timeMs),
-        ...i.attributes ? { attributes: Ce(i.attributes) } : {}
-      }))
-    };
-    return n.parentSpanId && (o.parentSpanId = n.parentSpanId), o;
-  });
-  return {
-    resourceSpans: [
-      {
-        resource: { attributes: s },
-        scopeSpans: [
-          {
-            scope: { name: "stoma-gateway" },
-            spans: a
-          }
-        ]
-      }
-    ]
-  };
-}
-var Es = class {
-  endpoint;
-  headers;
-  timeoutMs;
-  serviceName;
-  serviceVersion;
-  constructor(e) {
-    this.endpoint = e.endpoint, this.headers = e.headers ?? {}, this.timeoutMs = e.timeoutMs ?? 1e4, this.serviceName = e.serviceName ?? "stoma-gateway", this.serviceVersion = e.serviceVersion;
-  }
-  async export(e) {
-    if (e.length === 0) return;
-    const t = fr(e, this.serviceName, this.serviceVersion);
-    await fetch(this.endpoint, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        ...this.headers
-      },
-      body: JSON.stringify(t),
-      signal: AbortSignal.timeout(this.timeoutMs)
-    });
-  }
-}, _s = class {
-  async export(e) {
-    for (const t of e)
-      console.debug(
-        `[trace] ${t.name} ${t.kind} ${t.endTimeMs - t.startTimeMs}ms trace=${t.traceId} span=${t.spanId}` + (t.parentSpanId ? ` parent=${t.parentSpanId}` : "") + ` status=${t.status.code}`
-      );
-  }
-};
-function yr(e) {
-  return e >= 1 ? !0 : e <= 0 ? !1 : Math.random() < e;
-}
-function ne() {
-  const e = new Uint8Array(8);
-  return crypto.getRandomValues(e), Array.from(e, (t) => t.toString(16).padStart(2, "0")).join("");
-}
-var U = "_stomaTraceRequested", ye = "_stomaTraceEntries", we = "_stomaTraceDetails", pt = () => {
-};
-function $e(e, t) {
-  return e.get(U) ? (r, s) => {
-    const a = e.get(we) ?? /* @__PURE__ */ new Map();
-    a.set(t, { action: r, data: s }), e.set(we, a);
-  } : pt;
-}
-function wr(e) {
-  return e.get(U) === !0;
-}
-var I = () => {
-};
-function gr(e, t) {
-  return !t || typeof t == "string" && !vr(e, t) ? I : (r, ...s) => {
-    const a = [`[${e}]`, r];
-    for (const n of s)
-      a.push(
-        typeof n == "object" && n !== null ? JSON.stringify(n) : String(n)
-      );
-    console.debug(a.join(" "));
-  };
-}
-function vr(e, t) {
-  return t.split(",").map((s) => s.trim()).some((s) => {
-    if (s === "*") return !0;
-    const a = s.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
-    return new RegExp(`^${a}$`).test(e);
-  });
-}
-function Sr(e) {
-  if (!e) return () => I;
-  const t = /* @__PURE__ */ new Map();
-  return (r) => {
-    const s = t.get(r);
-    if (s) return s;
-    const a = gr(r, e);
-    return t.set(r, a), a;
-  };
-}
-function mt(e) {
-  const t = e.map((r, s) => ({
-    ...r,
-    durationMs: s === 0 ? r.durationMs : Math.max(0, r.durationMs - e[s - 1].durationMs)
-  }));
-  return t.reverse(), t;
-}
-var Tr = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
-function br(e) {
-  if (!e) return null;
-  const t = e.trim().match(Tr);
-  if (!t) return null;
-  const [, r, s, a, n] = t;
-  return r === "ff" || s === "00000000000000000000000000000000" || a === "0000000000000000" ? null : { version: r, traceId: s, parentId: a, flags: n };
-}
-function xr() {
-  return {
-    version: "00",
-    traceId: ft(16),
-    parentId: oe(),
-    flags: "01"
-  };
-}
-function je(e) {
-  return `${e.version}-${e.traceId}-${e.parentId}-${e.flags}`;
-}
-function oe() {
-  return ft(8);
-}
-function ft(e) {
-  const t = new Uint8Array(e);
-  return crypto.getRandomValues(t), Array.from(t, (r) => r.toString(16).padStart(2, "0")).join("");
-}
-var Rr = () => I, yt = "gateway";
-function Ar(e, t, r, s = 100) {
-  const a = /* @__PURE__ */ new Map();
-  for (const o of e)
-    a.set(o.name, o);
-  for (const o of t)
-    a.has(o.name) && r?.(`policy "${o.name}" overridden by route-level policy`), a.set(o.name, o);
-  const n = Array.from(a.values()).sort(
-    (o, i) => (o.priority ?? s) - (i.priority ?? s)
-  );
-  return n.length > 0 && r?.(
-    `chain: ${n.map((o) => `${o.name}:${o.priority ?? s}`).join(" -> ")}`
-  ), n;
-}
-function Er(e) {
-  return e.map((t) => {
-    const r = t.handler, s = t.priority ?? 100;
-    return async (n, o) => {
-      const i = Date.now();
-      if (n.get(U) !== !0 && n.get("_otelSpans") === void 0) {
-        try {
-          await r(n, o);
-        } finally {
-          const u = Date.now() - i, d = n.get("_policyTimings") ?? [];
-          d.push({ name: t.name, durationMs: u }), n.set("_policyTimings", d);
-        }
-        return;
-      }
-      let c = !1, l = null;
-      try {
-        await r(n, async () => {
-          c = !0, await o();
-        });
-      } catch (u) {
-        throw l = u instanceof Error ? u.message : String(u), u;
-      } finally {
-        const u = Date.now() - i, d = n.get("_policyTimings") ?? [];
-        if (d.push({ name: t.name, durationMs: u }), n.set("_policyTimings", d), n.get(U) === !0) {
-          const p = n.get(ye) ?? [];
-          p.push({
-            name: t.name,
-            priority: s,
-            durationMs: u,
-            calledNext: c,
-            error: l
-          }), n.set(ye, p);
-        }
-        const h = n.get("_otelSpans");
-        if (h !== void 0) {
-          const p = n.get("_otelRootSpan"), y = new ae(
-            `policy:${t.name}`,
-            "INTERNAL",
-            p.traceId,
-            ne(),
-            p.spanId,
-            i
-          );
-          y.setAttribute("policy.name", t.name).setAttribute("policy.priority", s), l && y.setStatus("ERROR", l), h.push(y.end());
-        }
-      }
-    };
-  });
-}
-function wt(e, t, r = Rr, s = "x-request-id", a, n, o) {
-  const i = n === !0 ? {} : n || void 0, c = i?.requestHeader ?? "x-stoma-debug", l = i?.allow;
-  return async (u, d) => {
-    const h = u.req.header("traceparent") ?? null, p = br(h), y = p?.traceId ?? xr().traceId, f = oe(), w = {
-      requestId: crypto.randomUUID(),
-      startTime: Date.now(),
-      gatewayName: e,
-      routePath: t,
-      traceId: y,
-      spanId: f,
-      debug: r,
-      adapter: a
-    };
-    u.set(yt, w);
-    let g;
-    if (o && yr(o.sampleRate ?? 1)) {
-      const T = ne();
-      g = new ae(
-        `${u.req.method} ${t}`,
-        "SERVER",
-        y,
-        T,
-        p?.parentId,
-        w.startTime
-      ), g.setAttribute(j.HTTP_METHOD, u.req.method).setAttribute(j.HTTP_ROUTE, t).setAttribute(j.URL_PATH, new URL(u.req.url).pathname).setAttribute("gateway.name", e), u.set("_otelRootSpan", g), u.set("_otelSpans", []);
-    }
-    if (i && gt(u, c, l), await d(), u.res.headers.set(s, w.requestId), u.res.headers.set(
-      "traceparent",
-      je({
-        version: "00",
-        traceId: w.traceId,
-        parentId: w.spanId,
-        flags: p?.flags ?? "01"
-      })
-    ), i) {
-      const T = vt(u);
-      if (T)
-        for (const [b, x] of T)
-          u.res.headers.set(b, x);
-    }
-    if (u.get(U) === !0) {
-      const T = u.get(ye);
-      if (T && T.length > 0) {
-        const b = u.get(we), A = mt(T).map((_) => {
-          const $ = b?.get(_.name);
-          return $ ? { ..._, detail: $ } : _;
-        }), z = {
-          requestId: w.requestId,
-          traceId: w.traceId,
-          route: t,
-          totalMs: Date.now() - w.startTime,
-          entries: A
-        };
-        u.res.headers.set("x-stoma-trace", JSON.stringify(z));
-      }
-    }
-    if (g) {
-      g.setAttribute(j.HTTP_STATUS_CODE, u.res.status).setStatus(
-        u.res.status >= 500 ? "ERROR" : u.res.status >= 400 ? "UNSET" : "OK"
-      );
-      const T = g.end(), b = u.get("_otelSpans") ?? [], x = [T, ...b], A = o.exporter.export(x).catch(() => {
-      });
-      a?.waitUntil && a.waitUntil(A);
-    }
-  };
-}
-function B(e) {
-  return e.get(yt);
-}
-function J(e, t) {
-  return t ? { ...e, ...t } : { ...e };
-}
-function K(e, t) {
-  return B(e)?.debug(`stoma:policy:${t}`) ?? I;
-}
-function k(e, t) {
-  return e ? async (r, s) => {
-    if (await e(r)) {
-      await s();
-      return;
-    }
-    await t(r, s);
-  } : t;
-}
-async function E(e, t, r, s) {
-  try {
-    return await e();
-  } catch (a) {
-    return r && s && r(
-      `${s} failed: ${a instanceof Error ? a.message : String(a)}`
-    ), t;
-  }
-}
-var ge = "_stomaDebugHeaders", Oe = "_stomaDebugRequested";
-function q(e, t, r) {
-  const s = e.get(Oe);
-  if (!s || !(s.has(t) || s.has("*"))) return;
-  const a = e.get(ge) ?? /* @__PURE__ */ new Map();
-  a.set(t, String(r)), e.set(ge, a);
-}
-function gt(e, t, r) {
-  const s = e.req.header(t);
-  if (!s) return;
-  const a = s.split(",").map((i) => i.trim().toLowerCase()).filter(Boolean);
-  if (a.length === 0) return;
-  const n = r ? new Set(r.map((i) => i.toLowerCase())) : null, o = /* @__PURE__ */ new Set();
-  if (a.includes("*"))
-    if (n)
-      for (const i of n) o.add(i);
-    else
-      o.add("*");
-  for (const i of a)
-    i !== "*" && (!n || n.has(i)) && o.add(i);
-  o.size > 0 && e.set(Oe, o), (o.has("trace") || o.has("*")) && e.set(U, !0);
-}
-function vt(e) {
-  return e.get(ge);
-}
-function St(e) {
-  const t = e.get(Oe);
-  return t !== void 0 && t.size > 0;
-}
-function S(e) {
-  return (t) => {
-    const r = J(
+function v(e) {
+  return ((t) => {
+    const r = K(
       e.defaults ?? {},
       t
     );
     e.validate && e.validate(r);
     const s = async (o, i) => {
-      const c = K(o, e.name), l = $e(o, e.name), u = B(o);
+      const c = F(o, e.name), l = Me(o, e.name), u = z(o);
       await e.handler(o, i, { config: r, debug: c, trace: l, gateway: u });
-    }, a = k(r.skip, s);
-    let n;
+    }, n = M(r.skip, s);
+    let a;
     if (e.evaluate) {
       const o = e.evaluate;
-      n = {
+      a = {
         onRequest: o.onRequest ? (i, c) => o.onRequest(i, { ...c, config: r }) : void 0,
         onResponse: o.onResponse ? (i, c) => o.onResponse(i, { ...c, config: r }) : void 0
       };
     }
     return {
       name: e.name,
-      priority: e.priority ?? v.DEFAULT,
-      handler: a,
-      evaluate: n,
+      priority: e.priority ?? S.DEFAULT,
+      handler: n,
+      evaluate: a,
       phases: e.phases,
       httpOnly: e.httpOnly
     };
-  };
+  });
 }
-var _r = class {
+class Jr {
   promises = [];
   /**
    * Add a promise to the background work queue.
    */
-  waitUntil = (e) => {
-    this.promises.push(e);
+  waitUntil = (t) => {
+    this.promises.push(t);
   };
   /**
    * Await all pending background work collected via `waitUntil`.
    */
   async waitAll() {
     for (; this.promises.length > 0; ) {
-      const e = [...this.promises];
-      this.promises = [], await Promise.all(e);
+      const t = [...this.promises];
+      this.promises = [], await Promise.all(t);
     }
   }
   /**
@@ -1954,424 +2395,48 @@ var _r = class {
   reset() {
     this.promises = [];
   }
-};
-function qr(e, t) {
-  const r = t?.path ?? "/*", s = t?.gatewayName ?? "test-gateway", a = t?.adapter ?? new _r(), n = new ht();
-  return n.use(
+}
+function Kr(e, t) {
+  const r = t?.path ?? "/*", s = t?.gatewayName ?? "test-gateway", n = t?.adapter ?? new Jr(), a = new yt();
+  return a.use(
     r,
-    wt(s, r, void 0, void 0, a)
-  ), n.use(r, async (o, i) => {
+    Rt(s, r, void 0, void 0, n)
+  ), a.use(r, async (o, i) => {
     try {
       await e.handler(o, i);
     } catch (c) {
       if (c instanceof m)
-        return Xe(c);
+        return tt(c);
       throw c;
     }
-  }), t?.upstream ? n.all(r, t.upstream) : n.all(r, (o) => o.json({ ok: !0 })), {
+  }), t?.upstream ? a.all(r, t.upstream) : a.all(r, (o) => o.json({ ok: !0 })), {
     /** The underlying Hono app for advanced test scenarios. */
-    app: n,
+    app: a,
     /** The adapter used by the harness. Call `adapter.waitAll()` to await background tasks. */
-    adapter: a,
+    adapter: n,
     /** Make a test request through the policy pipeline. */
-    request: (o, i) => n.request(o, i)
+    request: (o, i) => a.request(o, i)
   };
 }
-var $r = /* @__PURE__ */ new Set([204, 304]);
-function ve(e, t) {
-  return $r.has(t) ? null : e ?? null;
-}
-var Tt = class {
-  entries = /* @__PURE__ */ new Map();
-  maxEntries;
-  constructor(e) {
-    this.maxEntries = e?.maxEntries;
-  }
-  async get(e) {
-    const t = this.entries.get(e);
-    return t ? Date.now() > t.expiresAt ? (this.entries.delete(e), null) : (this.entries.delete(e), this.entries.set(e, t), new Response(ve(t.body, t.status), {
-      status: t.status,
-      headers: t.headers
-    })) : null;
-  }
-  async put(e, t, r) {
-    const s = await t.arrayBuffer(), a = [];
-    if (t.headers.forEach((n, o) => {
-      a.push([o, n]);
-    }), this.maxEntries && !this.entries.has(e) && this.entries.size >= this.maxEntries) {
-      const n = this.entries.keys().next().value;
-      n !== void 0 && this.entries.delete(n);
-    }
-    this.entries.set(e, {
-      body: s,
-      status: t.status,
-      headers: a,
-      expiresAt: Date.now() + r * 1e3
-    });
-  }
-  async delete(e) {
-    return this.entries.delete(e);
-  }
-  /** Remove all entries (for testing) */
-  clear() {
-    this.entries.clear();
-  }
-  /** Current number of entries (for testing/inspection) */
-  get size() {
-    return this.entries.size;
-  }
-  /** Release all cached entries. */
-  destroy() {
-    this.entries.clear();
-  }
-}, de = "x-stoma-internal-expires-at", jr = /* @__PURE__ */ new Set(["POST", "PUT", "PATCH"]);
-function Or(e) {
-  return e ? e.split(",").map((t) => t.trim().split("=")[0].trim().toLowerCase()) : [];
-}
-function qs(e) {
-  const t = J(
-    {
-      ttlSeconds: 300,
-      methods: ["GET"],
-      respectCacheControl: !0,
-      cacheStatusHeader: "x-cache",
-      bypassDirectives: ["no-store", "no-cache"]
-    },
-    e
-  ), r = t.methods.map((c) => c.toUpperCase());
-  let s = e?.store;
-  s || (s = new Tt());
-  const a = s, n = t.cacheStatusHeader;
-  async function o(c) {
-    if (e?.cacheKeyFn) return await e.cacheKeyFn(c);
-    let l = `${c.req.method}:${c.req.url}`;
-    if (jr.has(c.req.method.toUpperCase()))
-      try {
-        const u = await c.req.raw.clone().text();
-        if (u) {
-          const d = await crypto.subtle.digest(
-            "SHA-256",
-            new TextEncoder().encode(u)
-          ), h = new Uint8Array(d);
-          let p = "";
-          for (const y of h)
-            p += y.toString(16).padStart(2, "0");
-          l += `|body:${p}`;
-        }
-      } catch {
-      }
-    if (e?.varyHeaders) {
-      const u = e.varyHeaders.map((d) => c.req.header(d) ?? "").join("|");
-      l += `|vary:${u}`;
-    }
-    return l;
-  }
-  const i = async (c, l) => {
-    const u = K(c, "cache"), d = $e(c, "cache");
-    if (!r.includes(c.req.method.toUpperCase())) {
-      d("SKIP", { method: c.req.method }), await l(), c.res.headers.set(n, "SKIP");
-      return;
-    }
-    const h = await o(c);
-    q(c, "x-stoma-cache-key", h), q(c, "x-stoma-cache-ttl", t.ttlSeconds);
-    const p = await E(
-      () => a.get(h),
-      null,
-      u,
-      "store.get()"
-    );
-    if (p) {
-      u(`HIT ${h}`), q(c, "x-stoma-cache-status", "HIT"), d("HIT", { key: h });
-      const g = p.headers.get(de);
-      if (g) {
-        const x = Math.max(
-          0,
-          Math.ceil((Number(g) - Date.now()) / 1e3)
-        );
-        q(c, "x-stoma-cache-expires-in", x);
-      }
-      const T = await p.arrayBuffer(), b = new Response(ve(T, p.status), {
-        status: p.status,
-        headers: p.headers
-      });
-      b.headers.delete(de), b.headers.set(n, "HIT"), c.res = b;
-      return;
-    }
-    if (await l(), c.res.status >= 500) {
-      u(`SKIP ${h} (status=${c.res.status})`), q(c, "x-stoma-cache-status", "SKIP"), c.res.headers.set(n, "SKIP");
-      return;
-    }
-    if (t.cacheableStatuses && !t.cacheableStatuses.includes(c.res.status)) {
-      u(`SKIP ${h} (status=${c.res.status} not in cacheableStatuses)`), q(c, "x-stoma-cache-status", "SKIP"), c.res.headers.set(n, "SKIP");
-      return;
-    }
-    if (t.respectCacheControl) {
-      const g = c.res.headers.get("cache-control") ?? "", T = Or(g);
-      if (t.bypassDirectives.some(
-        (b) => T.includes(b.toLowerCase())
-      )) {
-        u(`BYPASS ${h} (cache-control: ${g})`), q(c, "x-stoma-cache-status", "BYPASS"), d("BYPASS", { key: h, directive: g }), c.res.headers.set(n, "BYPASS");
-        return;
-      }
-    }
-    u(`MISS ${h} (ttl=${t.ttlSeconds}s)`), q(c, "x-stoma-cache-status", "MISS"), d("MISS", { key: h, ttl: t.ttlSeconds });
-    const y = c.res.clone(), f = ve(
-      await y.arrayBuffer(),
-      y.status
-    ), w = new Headers(y.headers);
-    w.set(
-      de,
-      String(Date.now() + t.ttlSeconds * 1e3)
-    ), await E(
-      () => a.put(
-        h,
-        new Response(f, {
-          status: y.status,
-          headers: w
-        }),
-        t.ttlSeconds
-      ),
-      void 0,
-      u,
-      "store.put()"
-    ), c.res.headers.set(n, "MISS");
-  };
-  return {
-    name: "cache",
-    priority: v.CACHE,
-    handler: k(e?.skip, i)
-  };
-}
-function ke(e) {
-  const t = e.split(".");
-  if (t.length !== 4) return -1;
-  let r = 0;
-  for (const s of t) {
-    const a = Number(s);
-    if (Number.isNaN(a) || a < 0 || a > 255) return -1;
-    r = r << 8 | a;
-  }
-  return r >>> 0;
-}
-function kr(e, t) {
-  const r = ke(e);
-  if (r === -1 || t < 0 || t > 32) return null;
-  const s = t === 0 ? 0 : -1 << 32 - t >>> 0;
-  return { version: 4, network: (r & s) >>> 0, mask: s };
-}
-var Pe = (1n << 128n) - 1n;
-function bt(e) {
-  let t = e;
-  const r = t.indexOf("%");
-  r !== -1 && (t = t.slice(0, r)), t = t.toLowerCase();
-  const s = t.indexOf("::");
-  let a, n;
-  if (s !== -1) {
-    if (t.indexOf("::", s + 2) !== -1) return null;
-    const i = t.slice(0, s), c = t.slice(s + 2);
-    a = i === "" ? [] : i.split(":"), n = c === "" ? [] : c.split(":");
-    const l = a.length + n.length;
-    if (l > 8) return null;
-    const u = 8 - l, d = [...a, ...Array(u).fill("0"), ...n];
-    return Ne(d);
-  }
-  const o = t.split(":");
-  return o.length !== 8 ? null : Ne(o);
-}
-function Ne(e) {
-  if (e.length !== 8) return null;
-  let t = 0n;
-  for (const r of e) {
-    if (r.length === 0 || r.length > 4) return null;
-    const s = Number.parseInt(r, 16);
-    if (Number.isNaN(s) || s < 0 || s > 65535) return null;
-    t = t << 16n | BigInt(s);
-  }
-  return t;
-}
-function De(e, t) {
-  const r = bt(e);
-  if (r === null || t < 0 || t > 128) return null;
-  const s = t === 0 ? 0n : Pe << BigInt(128 - t) & Pe;
-  return { version: 6, network: r & s, mask: s };
-}
-function Se(e) {
-  return e.includes(":");
-}
-function Te(e) {
-  const t = e.indexOf("/");
-  if (t === -1) {
-    if (Se(e))
-      return De(e, 128);
-    const a = ke(e);
-    return a === -1 ? null : { version: 4, network: a, mask: 4294967295 };
-  }
-  const r = e.slice(0, t), s = Number(e.slice(t + 1));
-  return Number.isNaN(s) ? null : Se(r) ? De(r, s) : kr(r, s);
-}
-function be(e, t) {
-  if (Se(e)) {
-    const s = bt(e);
-    if (s === null) return !1;
-    for (const a of t)
-      if (a.version === 6 && (s & a.mask) === a.network)
-        return !0;
-    return !1;
-  }
-  const r = ke(e);
-  if (r === -1) return !1;
-  for (const s of t)
-    if (s.version === 4 && (r & s.mask) >>> 0 === s.network)
-      return !0;
-  return !1;
-}
-var Hr = ["cf-connecting-ip", "x-forwarded-for"];
-function ee(e, t = {}) {
-  const {
-    ipHeaders: r = Hr,
-    trustedProxies: s,
-    useRightmostForwardedIp: a = !1
-  } = t, n = s ? s.map((o) => Te(o)).filter((o) => o !== null) : null;
-  for (const o of r) {
-    const i = e.get(o);
-    if (!i) continue;
-    const c = i.split(",").map((u) => u.trim()), l = a ? c[c.length - 1] : c[0];
-    if (!(n && o.toLowerCase() === "x-forwarded-for" && !be(l, n)))
-      return l;
-  }
-  return "unknown";
-}
-var xt = class {
-  counters = /* @__PURE__ */ new Map();
-  cleanupInterval = null;
-  /** Maximum number of unique keys to prevent memory exhaustion */
-  maxKeys;
-  cleanupIntervalMs;
-  constructor(e) {
-    typeof e == "number" ? (this.maxKeys = e, this.cleanupIntervalMs = 6e4) : (this.maxKeys = e?.maxKeys ?? 1e5, this.cleanupIntervalMs = e?.cleanupIntervalMs ?? 6e4);
-  }
-  /** Start the periodic cleanup interval on first use (Workers-safe). */
-  ensureCleanupInterval() {
-    this.cleanupInterval || (this.cleanupInterval = setInterval(
-      () => this.cleanup(),
-      this.cleanupIntervalMs
-    ));
-  }
-  /**
-   * Increment the counter for a key within the given time window.
-   *
-   * When the store reaches `maxKeys` capacity and no expired entries can
-   * be evicted, returns `{ count: MAX_SAFE_INTEGER, resetAt }` to trigger
-   * rate limiting (fail-closed). This prevents unbounded memory growth at
-   * the cost of potentially rejecting legitimate requests — an intentional
-   * security trade-off where memory safety takes priority over availability.
-   */
-  async increment(e, t) {
-    this.ensureCleanupInterval();
-    const r = Date.now(), s = this.counters.get(e);
-    if (s && s.resetAt > r)
-      return s.count++, { count: s.count, resetAt: s.resetAt };
-    if (this.counters.size >= this.maxKeys && !s && (this.cleanup(), this.counters.size >= this.maxKeys)) {
-      const o = r + t * 1e3;
-      return { count: Number.MAX_SAFE_INTEGER, resetAt: o };
-    }
-    const a = r + t * 1e3, n = { count: 1, resetAt: a };
-    return this.counters.set(e, n), { count: 1, resetAt: a };
-  }
-  cleanup() {
-    const e = Date.now();
-    for (const [t, r] of this.counters)
-      r.resetAt <= e && this.counters.delete(t);
-  }
-  /** Stop the cleanup interval (for testing) */
-  destroy() {
-    this.cleanupInterval && (clearInterval(this.cleanupInterval), this.cleanupInterval = null);
-  }
-  /** Reset all counters (for testing) */
-  reset() {
-    this.counters.clear();
-  }
-}, Ue = /* @__PURE__ */ new WeakMap();
-function Ir(e) {
-  if (e.store) return e.store;
-  let t = Ue.get(e);
-  return t || (t = new xt(), Ue.set(e, t)), t;
-}
-var $s = S({
-  name: "rate-limit",
-  priority: v.RATE_LIMIT,
-  defaults: {
-    windowSeconds: 60,
-    statusCode: 429,
-    message: "Rate limit exceeded"
-  },
-  handler: async (e, t, { config: r, debug: s, trace: a }) => {
-    const n = Ir(r);
-    let o;
-    r.keyBy ? o = await r.keyBy(e) : o = ee(e.req.raw.headers, { ipHeaders: r.ipHeaders });
-    const i = await E(
-      () => n.increment(o, r.windowSeconds),
-      null,
-      s,
-      "store.increment()"
-    );
-    if (!i) {
-      s(`store unavailable, failing open (key=${o})`), await t();
-      return;
-    }
-    const { count: c, resetAt: l } = i, u = Math.max(0, r.max - c), d = Math.ceil((l - Date.now()) / 1e3);
-    if (q(e, "x-stoma-ratelimit-key", o), q(e, "x-stoma-ratelimit-window", r.windowSeconds), c > r.max) {
-      s(`limited (key=${o}, count=${c}, max=${r.max})`), a("rejected", { key: o, count: c, max: r.max });
-      const h = String(d);
-      throw new m(
-        r.statusCode,
-        "rate_limited",
-        r.message,
-        {
-          "x-ratelimit-limit": String(r.max),
-          "x-ratelimit-remaining": "0",
-          "x-ratelimit-reset": h,
-          "retry-after": h
-        }
-      );
-    }
-    a("allowed", { key: o, count: c, max: r.max, remaining: u }), await t(), e.res.headers.set("x-ratelimit-limit", String(r.max)), e.res.headers.set("x-ratelimit-remaining", String(u)), e.res.headers.set("x-ratelimit-reset", String(d));
-  }
-}), Mr = (e) => {
-  const r = {
-    ...{
-      origin: "*",
-      allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
-      allowHeaders: [],
-      exposeHeaders: []
-    },
-    ...e
-  }, s = /* @__PURE__ */ ((n) => typeof n == "string" ? n === "*" ? () => n : (o) => n === o ? o : null : typeof n == "function" ? n : (o) => n.includes(o) ? o : null)(r.origin), a = ((n) => typeof n == "function" ? n : Array.isArray(n) ? () => n : () => [])(r.allowMethods);
-  return async function(o, i) {
-    function c(u, d) {
-      o.res.headers.set(u, d);
-    }
-    const l = await s(o.req.header("origin") || "", o);
-    if (l && c("Access-Control-Allow-Origin", l), r.credentials && c("Access-Control-Allow-Credentials", "true"), r.exposeHeaders?.length && c("Access-Control-Expose-Headers", r.exposeHeaders.join(",")), o.req.method === "OPTIONS") {
-      r.origin !== "*" && c("Vary", "Origin"), r.maxAge != null && c("Access-Control-Max-Age", r.maxAge.toString());
-      const u = await a(o.req.header("origin") || "", o);
-      u.length && c("Access-Control-Allow-Methods", u.join(","));
-      let d = r.allowHeaders;
-      if (!d?.length) {
-        const h = o.req.header("Access-Control-Request-Headers");
-        h && (d = h.split(/\s*,\s*/));
-      }
-      return d?.length && (c("Access-Control-Allow-Headers", d.join(",")), o.res.headers.append("Vary", "Access-Control-Request-Headers")), o.res.headers.delete("Content-Length"), o.res.headers.delete("Content-Type"), new Response(null, {
-        headers: o.res.headers,
-        status: 204,
-        statusText: "No Content"
-      });
-    }
-    await i(), r.origin !== "*" && o.header("Vary", "Origin", { append: !0 });
-  };
-}, js = S({
+const qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  Priority: S,
+  createPolicyTestHarness: Kr,
+  definePolicy: v,
+  getCollectedDebugHeaders: vt,
+  isDebugRequested: Tt,
+  isTraceRequested: Hr,
+  noopTraceReporter: gt,
+  parseDebugRequest: St,
+  policyDebug: F,
+  policyTrace: Me,
+  resolveConfig: K,
+  safeCall: E,
+  setDebugHeader: $,
+  withSkip: M
+}, Symbol.toStringTag, { value: "Module" })), Cs = v({
   name: "mock",
-  priority: v.MOCK,
+  priority: S.MOCK,
   httpOnly: !0,
   defaults: { status: 200, delayMs: 0 },
   validate: (e) => {
@@ -2380,54 +2445,57 @@ var $s = S({
     );
   },
   handler: async (e, t, { config: r }) => {
-    r.delayMs > 0 && await new Promise((n) => setTimeout(n, r.delayMs));
-    const s = r.body === void 0 ? null : typeof r.body == "string" ? r.body : JSON.stringify(r.body), a = new Headers(r.headers);
-    typeof r.body == "object" && !a.has("content-type") && a.set("content-type", "application/json"), e.res = new Response(s, { status: r.status, headers: a });
+    r.delayMs > 0 && await new Promise((a) => setTimeout(a, r.delayMs));
+    const s = r.body === void 0 ? null : typeof r.body == "string" ? r.body : JSON.stringify(r.body), n = new Headers(r.headers);
+    typeof r.body == "object" && !n.has("content-type") && n.set("content-type", "application/json"), e.res = new Response(s, { status: r.status, headers: n });
   }
 });
-function Os(e) {
-  const t = e?.timeout ?? 3e4, r = async (s, a) => {
+function Ps(e) {
+  const t = e?.timeout ?? 3e4, r = async (s, n) => {
     if (e?.preserveHost && s.set("_preserveHost", !0), e?.stripHeaders || e?.headers) {
-      const n = new Headers(s.req.raw.headers);
-      if (e.stripHeaders)
-        for (const o of e.stripHeaders)
-          n.delete(o);
-      if (e.headers)
-        for (const [o, i] of Object.entries(e.headers))
-          n.set(o, i);
-      s.req.raw = new Request(s.req.raw, { headers: n });
+      const a = e?.stripHeaders, o = e?.headers;
+      I(s, (i) => {
+        if (a)
+          for (const c of a)
+            i.delete(c);
+        if (o)
+          for (const [c, l] of Object.entries(o))
+            i.set(c, l);
+      });
     }
     if (t > 0) {
-      const n = new AbortController(), o = setTimeout(() => n.abort(), t);
+      const a = new AbortController(), o = setTimeout(() => a.abort(), t);
       try {
-        await a();
+        await n();
       } finally {
         clearTimeout(o);
       }
     } else
-      await a();
+      await n();
   };
   return {
     name: "proxy",
-    priority: v.PROXY,
-    handler: k(e?.skip, r),
+    priority: S.PROXY,
+    handler: M(e?.skip, r),
     httpOnly: !0
   };
 }
-var ks = S({
+const Ns = v({
   name: "api-key-auth",
-  priority: v.AUTH,
+  priority: S.AUTH,
   defaults: { headerName: "x-api-key" },
   phases: ["request-headers"],
-  handler: async (e, t, { config: r, debug: s, trace: a }) => {
-    let n = e.req.header(r.headerName), o = "header";
-    if (!n && r.queryParam && (n = new URL(e.req.url).searchParams.get(r.queryParam) ?? void 0, o = "query"), !n)
-      throw a("rejected", { reason: "missing" }), new m(401, "unauthorized", "Missing API key");
-    if (!await r.validate(n))
-      throw a("rejected", { reason: "invalid" }), new m(403, "forbidden", "Invalid API key");
-    if (a("authenticated", { source: o }), r.forwardKeyIdentity) {
-      const l = (await r.forwardKeyIdentity.identityFn(n)).replace(/[\r\n\0]/g, ""), u = new Headers(e.req.raw.headers);
-      u.set(r.forwardKeyIdentity.headerName, l), e.req.raw = new Request(e.req.raw, { headers: u }), s(
+  handler: async (e, t, { config: r, debug: s, trace: n }) => {
+    let a = e.req.header(r.headerName), o = "header";
+    if (!a && r.queryParam && (a = new URL(e.req.url).searchParams.get(r.queryParam) ?? void 0, o = "query"), !a)
+      throw n("rejected", { reason: "missing" }), new m(401, "unauthorized", "Missing API key");
+    if (!await r.validate(a))
+      throw n("rejected", { reason: "invalid" }), new m(403, "forbidden", "Invalid API key");
+    if (n("authenticated", { source: o }), r.forwardKeyIdentity) {
+      const c = r.forwardKeyIdentity, l = await c.identityFn(a);
+      I(e, (u) => {
+        u.set(c.headerName, k(l));
+      }), s(
         `forwarded key identity as ${r.forwardKeyIdentity.headerName}`
       );
     }
@@ -2435,23 +2503,23 @@ var ks = S({
   },
   evaluate: {
     onRequest: async (e, { config: t, debug: r, trace: s }) => {
-      let a = e.headers.get(t.headerName) ?? void 0, n = "header";
-      if (!a && t.queryParam && (a = new URL(e.path, "http://localhost").searchParams.get(t.queryParam) ?? void 0, n = "query"), !a)
+      let n = e.headers.get(t.headerName) ?? void 0, a = "header";
+      if (!n && t.queryParam && (n = new URL(e.path, "http://localhost").searchParams.get(t.queryParam) ?? void 0, a = "query"), !n)
         return s("rejected", { reason: "missing" }), {
           action: "reject",
           status: 401,
           code: "unauthorized",
           message: "Missing API key"
         };
-      if (!await t.validate(a))
+      if (!await t.validate(n))
         return s("rejected", { reason: "invalid" }), {
           action: "reject",
           status: 403,
           code: "forbidden",
           message: "Invalid API key"
         };
-      if (s("authenticated", { source: n }), t.forwardKeyIdentity) {
-        const c = (await t.forwardKeyIdentity.identityFn(a)).replace(/[\r\n\0]/g, "");
+      if (s("authenticated", { source: a }), t.forwardKeyIdentity) {
+        const i = t.forwardKeyIdentity, c = await i.identityFn(n);
         return r(
           `forwarded key identity as ${t.forwardKeyIdentity.headerName}`
         ), {
@@ -2460,8 +2528,8 @@ var ks = S({
             {
               type: "header",
               op: "set",
-              name: t.forwardKeyIdentity.headerName,
-              value: c
+              name: i.headerName,
+              value: k(c)
             }
           ]
         };
@@ -2469,25 +2537,27 @@ var ks = S({
       return { action: "continue" };
     }
   }
-}), Hs = S({
+}), Ds = v({
   name: "basic-auth",
-  priority: v.AUTH,
+  priority: S.AUTH,
   defaults: { realm: "Restricted" },
   phases: ["request-headers"],
   handler: async (e, t, { config: r }) => {
-    const s = (r.realm ?? "Restricted").replace(/[\r\n\0]/g, "").replace(/"/g, '\\"'), a = e.req.header("authorization");
-    if (!a || !a.startsWith("Basic "))
+    const s = Se(
+      k(r.realm ?? "Restricted")
+    ), n = e.req.header("authorization");
+    if (!n || !n.startsWith("Basic "))
       throw e.header("www-authenticate", `Basic realm="${s}"`), new m(
         401,
         "unauthorized",
         "Basic authentication required"
       );
-    let n, o;
+    let a, o;
     try {
-      const c = atob(a.slice(6)), l = c.indexOf(":");
+      const c = atob(n.slice(6)), l = c.indexOf(":");
       if (l === -1)
         throw new Error("Invalid format");
-      n = c.slice(0, l), o = c.slice(l + 1);
+      a = c.slice(0, l), o = c.slice(l + 1);
     } catch {
       throw new m(
         401,
@@ -2495,13 +2565,15 @@ var ks = S({
         "Malformed Basic authentication header"
       );
     }
-    if (!await r.validate(n, o, e))
+    if (!await r.validate(a, o, e))
       throw e.header("www-authenticate", `Basic realm="${s}"`), new m(403, "forbidden", "Invalid credentials");
     await t();
   },
   evaluate: {
     onRequest: async (e, { config: t }) => {
-      const r = (t.realm ?? "Restricted").replace(/[\r\n\0]/g, "").replace(/"/g, '\\"'), s = e.headers.get("authorization");
+      const r = Se(
+        k(t.realm ?? "Restricted")
+      ), s = e.headers.get("authorization");
       if (!s || !s.startsWith("Basic "))
         return {
           action: "reject",
@@ -2510,12 +2582,12 @@ var ks = S({
           message: "Basic authentication required",
           headers: { "www-authenticate": `Basic realm="${r}"` }
         };
-      let a, n;
+      let n, a;
       try {
         const i = atob(s.slice(6)), c = i.indexOf(":");
         if (c === -1)
           throw new Error("Invalid format");
-        a = i.slice(0, c), n = i.slice(c + 1);
+        n = i.slice(0, c), a = i.slice(c + 1);
       } catch {
         return {
           action: "reject",
@@ -2524,7 +2596,7 @@ var ks = S({
           message: "Malformed Basic authentication header"
         };
       }
-      return await t.validate(a, n, {}) ? { action: "continue" } : {
+      return await t.validate(n, a, {}) ? { action: "continue" } : {
         action: "reject",
         status: 403,
         code: "forbidden",
@@ -2534,21 +2606,24 @@ var ks = S({
     }
   }
 });
-function O(e) {
+function H(e) {
   const t = e.replace(/-/g, "+").replace(/_/g, "/"), r = t + "=".repeat((4 - t.length % 4) % 4);
   return atob(r);
 }
-function te(e) {
-  const t = O(e), r = new Uint8Array(t.length);
+function ne(e) {
+  const t = H(e), r = new Uint8Array(t.length);
   for (let s = 0; s < t.length; s++)
     r[s] = t.charCodeAt(s);
   return r;
 }
-function he(e) {
+function ee(e) {
   let t = "";
   for (let r = 0; r < e.length; r++)
     t += String.fromCharCode(e[r]);
   return btoa(t).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function Le(e) {
+  return btoa(e).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 function xe(e) {
   switch (e) {
@@ -2574,39 +2649,39 @@ function Re(e) {
       return null;
   }
 }
-var Cr = 3e5, Pr = 1e4, Ae = /* @__PURE__ */ new Map();
+const Fr = 3e5, zr = 1e4, Ae = /* @__PURE__ */ new Map();
 async function Ee(e, t, r) {
   const s = Ae.get(e);
   if (s && s.expiresAt > Date.now())
     return s.keys;
-  const a = r ?? Pr;
-  let n;
+  const n = r ?? zr;
+  let a;
   try {
-    n = await fetch(e, { signal: AbortSignal.timeout(a) });
+    a = await fetch(e, { signal: AbortSignal.timeout(n) });
   } catch (c) {
     throw c instanceof DOMException && c.name === "TimeoutError" ? new m(
       502,
       "jwks_error",
-      `JWKS fetch timed out after ${a}ms: ${e}`
+      `JWKS fetch timed out after ${n}ms: ${e}`
     ) : new m(
       502,
       "jwks_error",
       `Failed to fetch JWKS from ${e}: ${c instanceof Error ? c.message : String(c)}`
     );
   }
-  if (!n.ok)
+  if (!a.ok)
     throw new m(
       502,
       "jwks_error",
-      `Failed to fetch JWKS from ${e}: ${n.status}`
+      `Failed to fetch JWKS from ${e}: ${a.status}`
     );
-  const o = t ?? Cr, i = await n.json();
+  const o = t ?? Fr, i = await a.json();
   return Ae.set(e, { keys: i.keys, expiresAt: Date.now() + o }), i.keys;
 }
-function Is() {
+function Us() {
   Ae.clear();
 }
-function Nr(e, t) {
+function Wr(e, t) {
   const r = new URL(t.url);
   switch (e) {
     case "@method":
@@ -2623,33 +2698,33 @@ function Nr(e, t) {
       throw new Error(`Unknown derived component: ${e}`);
   }
 }
-function Dr(e, t) {
-  return e.startsWith("@") ? Nr(e, t) : t.headers.get(e) ?? "";
+function Vr(e, t) {
+  return e.startsWith("@") ? Wr(e, t) : t.headers.get(e) ?? "";
 }
-function Rt(e, t, r) {
+function At(e, t, r) {
   const s = [];
-  for (const a of e) {
-    const n = Dr(a, r);
-    s.push(`"${a}": ${n}`);
+  for (const n of e) {
+    const a = Vr(n, r);
+    s.push(`"${n}": ${a}`);
   }
   return s.push(`"@signature-params": ${t}`), s.join(`
 `);
 }
-function Ur(e, t) {
-  let s = `(${e.map((a) => `"${a}"`).join(" ")});created=${t.created};keyid="${t.keyId}"`;
+function Yr(e, t) {
+  let s = `(${e.map((n) => `"${n}"`).join(" ")});created=${t.created};keyid="${t.keyId}"`;
   return t.algorithm && (s += `;alg="${t.algorithm}"`), t.expires !== void 0 && (s += `;expires=${t.expires}`), t.nonce !== void 0 && (s += `;nonce="${t.nonce}"`), s;
 }
-function Lr(e) {
+function Gr(e) {
   const t = e.match(/^\(([^)]*)\)/);
   if (!t)
     throw new Error("Invalid signature params: missing component list");
-  const r = t[1], s = r ? r.match(/"([^"]+)"/g)?.map((c) => c.slice(1, -1)) ?? [] : [], a = e.slice(t[0].length), n = {}, o = /;(\w+)=("([^"]*)"|(\d+))/g;
-  let i = o.exec(a);
+  const r = t[1], s = r ? r.match(/"([^"]+)"/g)?.map((c) => c.slice(1, -1)) ?? [] : [], n = e.slice(t[0].length), a = {}, o = /;(\w+)=("([^"]*)"|(\d+))/g;
+  let i = o.exec(n);
   for (; i !== null; )
-    n[i[1]] = i[3] ?? i[4], i = o.exec(a);
-  return { components: s, params: n };
+    a[i[1]] = i[3] ?? i[4], i = o.exec(n);
+  return { components: s, params: a };
 }
-function ie(e) {
+function ue(e) {
   switch (e) {
     case "hmac-sha256":
       return {
@@ -2670,14 +2745,14 @@ function ie(e) {
       throw new Error(`Unsupported signature algorithm: ${e}`);
   }
 }
-async function Br(e, t, r) {
-  const { importAlg: s } = ie(e);
+async function Xr(e, t, r) {
+  const { importAlg: s } = ue(e);
   if (e.startsWith("hmac")) {
     if (!t) throw new Error("HMAC algorithm requires secret");
-    const a = new TextEncoder();
+    const n = new TextEncoder();
     return crypto.subtle.importKey(
       "raw",
-      a.encode(t),
+      n.encode(t),
       s,
       !1,
       ["sign"]
@@ -2686,14 +2761,14 @@ async function Br(e, t, r) {
   if (!r) throw new Error("RSA algorithm requires privateKey");
   return crypto.subtle.importKey("jwk", r, s, !1, ["sign"]);
 }
-async function Jr(e, t, r) {
-  const { importAlg: s } = ie(e);
+async function Qr(e, t, r) {
+  const { importAlg: s } = ue(e);
   if (e.startsWith("hmac")) {
     if (!t) throw new Error("HMAC algorithm requires secret");
-    const a = new TextEncoder();
+    const n = new TextEncoder();
     return crypto.subtle.importKey(
       "raw",
-      a.encode(t),
+      n.encode(t),
       s,
       !1,
       ["verify"]
@@ -2704,18 +2779,18 @@ async function Jr(e, t, r) {
     "verify"
   ]);
 }
-function Kr(e) {
+function Zr(e) {
   return btoa(String.fromCharCode(...new Uint8Array(e)));
 }
-function zr(e) {
+function es(e) {
   const t = atob(e), r = new Uint8Array(t.length);
   for (let s = 0; s < t.length; s++)
     r[s] = t.charCodeAt(s);
   return r;
 }
-var Ms = S({
+const Ls = v({
   name: "generate-http-signature",
-  priority: v.PROXY,
+  priority: S.PROXY,
   defaults: {
     components: ["@method", "@path", "@authority"],
     signatureHeaderName: "Signature",
@@ -2730,45 +2805,38 @@ var Ms = S({
         "config_error",
         "generateHttpSignature requires either 'secret' or 'privateKey'"
       );
-    const a = r.components, n = r.label, o = Math.floor(Date.now() / 1e3), i = {
+    const n = r.components, a = r.label, o = Math.floor(Date.now() / 1e3), i = {
       created: o,
       keyId: r.keyId,
       algorithm: r.algorithm
     };
     r.expires !== void 0 && (i.expires = o + r.expires), r.nonce && (i.nonce = crypto.randomUUID().replace(/-/g, ""));
-    const c = Ur(a, i), l = Rt(
-      a,
+    const c = Yr(n, i), l = At(
+      n,
       c,
       e.req.raw
     );
     s(
-      `signing with ${r.algorithm}, components: ${a.join(", ")}`
+      `signing with ${r.algorithm}, components: ${n.join(", ")}`
     );
-    const u = await Br(
+    const u = await Xr(
       r.algorithm,
       r.secret,
       r.privateKey
-    ), { signAlg: d } = ie(r.algorithm), h = new TextEncoder(), p = await crypto.subtle.sign(
+    ), { signAlg: d } = ue(r.algorithm), h = new TextEncoder(), p = await crypto.subtle.sign(
       d,
       u,
       h.encode(l)
-    ), y = Kr(p), f = new Headers(e.req.raw.headers);
-    f.set(
-      r.signatureInputHeaderName,
-      `${n}=${c}`
-    ), f.set(r.signatureHeaderName, `${n}=:${y}:`), e.req.raw = new Request(e.req.raw, { headers: f }), s("signature headers attached"), await t();
+    ), y = Zr(p);
+    I(e, (f) => {
+      f.set(
+        r.signatureInputHeaderName,
+        `${a}=${c}`
+      ), f.set(r.signatureHeaderName, `${a}=:${y}:`);
+    }), s("signature headers attached"), await t();
   }
 });
-function Fr(e) {
-  let t = "";
-  for (let r = 0; r < e.length; r++)
-    t += String.fromCharCode(e[r]);
-  return btoa(t).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-function Le(e) {
-  return btoa(e).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-function Wr(e) {
+function ts(e) {
   switch (e) {
     case "HS256":
     case "RS256":
@@ -2784,9 +2852,9 @@ function Wr(e) {
 function Be(e) {
   return e.startsWith("HS");
 }
-var Cs = S({
+const Bs = v({
   name: "generate-jwt",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   defaults: {
     expiresIn: 3600,
     headerName: "Authorization",
@@ -2806,42 +2874,44 @@ var Cs = S({
         "config_error",
         "generateJwt with RSA algorithm requires 'privateKey'"
       );
-    const a = { alg: r.algorithm, typ: "JWT" }, n = Le(JSON.stringify(a)), o = Math.floor(Date.now() / 1e3), i = {
+    const n = { alg: r.algorithm, typ: "JWT" }, a = Le(JSON.stringify(n)), o = Math.floor(Date.now() / 1e3), i = {
       iat: o,
       exp: o + (r.expiresIn ?? 3600)
     };
     r.issuer && (i.iss = r.issuer), r.audience && (i.aud = r.audience);
     let c = {};
     r.claims && (c = typeof r.claims == "function" ? await r.claims(e) : r.claims);
-    const l = { ...i, ...c }, u = Le(JSON.stringify(l)), d = `${n}.${u}`, h = new TextEncoder(), p = h.encode(d), y = Wr(r.algorithm);
+    const l = { ...i, ...c }, u = Le(JSON.stringify(l)), d = `${a}.${u}`, h = new TextEncoder(), p = h.encode(d), y = ts(r.algorithm);
     let f;
     if (Be(r.algorithm)) {
-      const x = await crypto.subtle.importKey(
+      const T = await crypto.subtle.importKey(
         "raw",
         h.encode(r.secret),
         { name: "HMAC", hash: y },
         !1,
         ["sign"]
       );
-      f = await crypto.subtle.sign("HMAC", x, p);
+      f = await crypto.subtle.sign("HMAC", T, p);
     } else {
-      const x = await crypto.subtle.importKey(
+      const T = await crypto.subtle.importKey(
         "jwk",
         r.privateKey,
         { name: "RSASSA-PKCS1-v1_5", hash: y },
         !1,
         ["sign"]
       );
-      f = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", x, p);
+      f = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", T, p);
     }
-    const w = Fr(new Uint8Array(f)), g = `${d}.${w}`;
+    const g = ee(new Uint8Array(f)), w = `${d}.${g}`;
     s(`generated JWT (alg=${r.algorithm})`);
-    const T = r.tokenPrefix ? `${r.tokenPrefix} ${g}` : g, b = new Headers(e.req.raw.headers);
-    b.set(r.headerName, T), e.req.raw = new Request(e.req.raw, { headers: b }), await t();
+    const b = r.tokenPrefix ? `${r.tokenPrefix} ${w}` : w;
+    I(e, (T) => {
+      T.set(r.headerName, b);
+    }), await t();
   }
-}), Ps = S({
+}), Js = v({
   name: "jws",
-  priority: v.AUTH,
+  priority: S.AUTH,
   defaults: {
     headerName: "X-JWS-Signature",
     payloadSource: "embedded",
@@ -2857,24 +2927,24 @@ var Cs = S({
       );
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header(r.headerName);
-    if (!a)
+    const n = e.req.header(r.headerName);
+    if (!n)
       throw new m(
         401,
         "jws_missing",
         `Missing JWS header: ${r.headerName}`
       );
-    const n = a.split(".");
-    if (n.length !== 3)
+    const a = n.split(".");
+    if (a.length !== 3)
       throw new m(
         401,
         "jws_invalid",
         "Malformed JWS: expected 3 parts"
       );
-    const [o, i, c] = n;
+    const [o, i, c] = a;
     let l;
     try {
-      l = JSON.parse(O(o));
+      l = JSON.parse(H(o));
     } catch {
       throw new m(
         401,
@@ -2891,7 +2961,7 @@ var Cs = S({
     let u;
     if (r.payloadSource === "body") {
       const y = await e.req.raw.clone().text(), f = new TextEncoder();
-      u = he(f.encode(y));
+      u = ee(f.encode(y));
     } else {
       if (!i)
         throw new m(
@@ -2901,7 +2971,7 @@ var Cs = S({
         );
       u = i;
     }
-    const d = new TextEncoder(), h = d.encode(`${o}.${u}`), p = te(c);
+    const d = new TextEncoder(), h = d.encode(`${o}.${u}`), p = ne(c);
     if (r.secret) {
       const y = xe(l.alg);
       if (!y)
@@ -2937,10 +3007,10 @@ var Cs = S({
         r.jwksUrl,
         r.jwksCacheTtlMs,
         r.jwksTimeoutMs
-      ), w = l.kid ? f.find(
-        (b) => b.kid === l.kid
+      ), g = l.kid ? f.find(
+        (T) => T.kid === l.kid
       ) : f[0];
-      if (!w)
+      if (!g)
         throw new m(
           401,
           "jws_invalid",
@@ -2949,16 +3019,16 @@ var Cs = S({
       s(
         `JWKS verification (alg=${l.alg}, kid=${l.kid ?? "none"})`
       );
-      const g = await crypto.subtle.importKey(
+      const w = await crypto.subtle.importKey(
         "jwk",
-        w,
+        g,
         y,
         !1,
         ["verify"]
       );
       if (!await crypto.subtle.verify(
         y,
-        g,
+        w,
         p,
         h
       ))
@@ -2966,8 +3036,13 @@ var Cs = S({
     }
     if (r.forwardPayload)
       try {
-        const y = O(u), f = new Headers(e.req.raw.headers), w = y.replace(/[\r\n\0]/g, "");
-        f.set(r.forwardHeaderName, w), e.req.raw = new Request(e.req.raw, { headers: f });
+        const y = H(u);
+        I(e, (f) => {
+          f.set(
+            r.forwardHeaderName,
+            k(y)
+          );
+        });
       } catch {
       }
     s("JWS verified"), await t();
@@ -2982,18 +3057,18 @@ var Cs = S({
           code: "jws_missing",
           message: `Missing JWS header: ${t.headerName}`
         };
-      const a = s.split(".");
-      if (a.length !== 3)
+      const n = s.split(".");
+      if (n.length !== 3)
         return {
           action: "reject",
           status: 401,
           code: "jws_invalid",
           message: "Malformed JWS: expected 3 parts"
         };
-      const [n, o, i] = a;
+      const [a, o, i] = n;
       let c;
       try {
-        c = JSON.parse(O(n));
+        c = JSON.parse(H(a));
       } catch {
         return {
           action: "reject",
@@ -3009,7 +3084,7 @@ var Cs = S({
           code: "jws_invalid",
           message: "JWS algorithm 'none' is not allowed"
         };
-      const l = t.payloadSource === "body" && e.body ? typeof e.body == "string" ? he(new TextEncoder().encode(e.body)) : he(new Uint8Array(e.body)) : o, u = `${n}.${l}`, d = te(i);
+      const l = t.payloadSource === "body" && e.body ? typeof e.body == "string" ? ee(new TextEncoder().encode(e.body)) : ee(new Uint8Array(e.body)) : o, u = `${a}.${l}`, d = ne(i);
       if (t.secret) {
         const h = xe(c.alg);
         if (!h)
@@ -3052,7 +3127,7 @@ var Cs = S({
           t.jwksCacheTtlMs,
           t.jwksTimeoutMs
         ), y = c.kid ? p.find(
-          (g) => g.kid === c.kid
+          (w) => w.kid === c.kid
         ) : p[0];
         if (!y)
           return {
@@ -3083,7 +3158,7 @@ var Cs = S({
       }
       if (t.forwardPayload)
         try {
-          const p = O(l).replace(/[\r\n\0]/g, "");
+          const h = H(l);
           return {
             action: "continue",
             mutations: [
@@ -3091,7 +3166,7 @@ var Cs = S({
                 type: "header",
                 op: "set",
                 name: t.forwardHeaderName,
-                value: p
+                value: k(h)
               }
             ]
           };
@@ -3100,9 +3175,9 @@ var Cs = S({
       return r("JWS verified"), { action: "continue" };
     }
   }
-}), Ns = S({
+}), Ks = v({
   name: "jwt-auth",
-  priority: v.AUTH,
+  priority: S.AUTH,
   phases: ["request-headers"],
   defaults: {
     headerName: "authorization",
@@ -3119,27 +3194,27 @@ var Cs = S({
       );
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header(r.headerName);
-    if (!a)
+    const n = e.req.header(r.headerName);
+    if (!n)
       throw new m(
         401,
         "unauthorized",
         "Missing authentication token"
       );
-    let n;
+    let a;
     if (r.tokenPrefix) {
-      if (!a.startsWith(`${r.tokenPrefix} `))
+      if (!n.startsWith(`${r.tokenPrefix} `))
         throw new m(
           401,
           "unauthorized",
           `Expected ${r.tokenPrefix} token`
         );
-      n = a.slice(r.tokenPrefix.length + 1);
+      a = n.slice(r.tokenPrefix.length + 1);
     } else
-      n = a;
-    if (!n || !n.trim())
+      a = n;
+    if (!a || !a.trim())
       throw new m(401, "unauthorized", "Empty authentication token");
-    const o = n.split(".");
+    const o = a.split(".");
     if (o.length !== 3)
       throw new m(
         401,
@@ -3148,7 +3223,7 @@ var Cs = S({
       );
     let i, c;
     try {
-      i = JSON.parse(O(o[0])), c = JSON.parse(O(o[1]));
+      i = JSON.parse(H(o[0])), c = JSON.parse(H(o[1]));
     } catch {
       throw new m(
         401,
@@ -3187,16 +3262,13 @@ var Cs = S({
     if (r.audience && !(Array.isArray(c.aud) ? c.aud : [c.aud]).includes(r.audience))
       throw new m(401, "unauthorized", "JWT audience mismatch");
     if (s(`verified (sub=${c.sub ?? "none"})`), r.forwardClaims) {
-      const u = new Headers(e.req.raw.headers);
-      let d = !1;
-      for (const [h, p] of Object.entries(r.forwardClaims)) {
-        const y = c[h];
-        if (y != null) {
-          const f = String(y).replace(/[\r\n\0]/g, "");
-          u.set(p, f), d = !0;
+      const u = r.forwardClaims;
+      I(e, (d) => {
+        for (const [h, p] of Object.entries(u)) {
+          const y = c[h];
+          y != null && d.set(p, k(String(y)));
         }
-      }
-      d && (e.req.raw = new Request(e.req.raw, { headers: u }));
+      });
     }
     await t();
   },
@@ -3229,17 +3301,17 @@ var Cs = S({
           code: "unauthorized",
           message: "Empty authentication token"
         };
-      const a = s.split(".");
-      if (a.length !== 3)
+      const n = s.split(".");
+      if (n.length !== 3)
         return {
           action: "reject",
           status: 401,
           code: "unauthorized",
           message: "Malformed JWT: expected 3 parts"
         };
-      let n, o;
+      let a, o;
       try {
-        n = JSON.parse(O(a[0])), o = JSON.parse(O(a[1]));
+        a = JSON.parse(H(n[0])), o = JSON.parse(H(n[1]));
       } catch {
         return {
           action: "reject",
@@ -3248,7 +3320,7 @@ var Cs = S({
           message: "Malformed JWT: invalid base64 encoding"
         };
       }
-      if (n.alg.toLowerCase() === "none")
+      if (a.alg.toLowerCase() === "none")
         return {
           action: "reject",
           status: 401,
@@ -3257,16 +3329,16 @@ var Cs = S({
         };
       t.secret ? await Je(
         t.secret,
-        a[0],
-        a[1],
-        a[2],
-        n.alg
+        n[0],
+        n[1],
+        n[2],
+        a.alg
       ) : t.jwksUrl && await Ke(
         t.jwksUrl,
-        a[0],
-        a[1],
-        a[2],
-        n,
+        n[0],
+        n[1],
+        n[2],
+        a,
         t.jwksCacheTtlMs,
         t.jwksTimeoutMs
       );
@@ -3300,56 +3372,53 @@ var Cs = S({
           message: "JWT audience mismatch"
         };
       if (t.forwardClaims) {
-        const c = [];
-        for (const [l, u] of Object.entries(t.forwardClaims)) {
-          const d = o[l];
-          if (d != null) {
-            const h = String(d).replace(/[\r\n\0]/g, "");
-            c.push({
-              type: "header",
-              op: "set",
-              name: u,
-              value: h
-            });
-          }
+        const c = t.forwardClaims, l = [];
+        for (const [u, d] of Object.entries(c)) {
+          const h = o[u];
+          h != null && l.push({
+            type: "header",
+            op: "set",
+            name: d,
+            value: k(String(h))
+          });
         }
-        if (c.length > 0)
-          return { action: "continue", mutations: c };
+        if (l.length > 0)
+          return { action: "continue", mutations: l };
       }
       return { action: "continue" };
     }
   }
 });
-async function Je(e, t, r, s, a) {
-  const n = xe(a);
-  if (!n)
+async function Je(e, t, r, s, n) {
+  const a = xe(n);
+  if (!a)
     throw new m(
       401,
       "unauthorized",
-      `Unsupported JWT algorithm: ${a}`
+      `Unsupported JWT algorithm: ${n}`
     );
   const o = new TextEncoder(), i = await crypto.subtle.importKey(
     "raw",
     o.encode(e),
-    { name: "HMAC", hash: n },
+    { name: "HMAC", hash: a },
     !1,
     ["verify"]
-  ), c = o.encode(`${t}.${r}`), l = te(s);
+  ), c = o.encode(`${t}.${r}`), l = ne(s);
   if (!await crypto.subtle.verify("HMAC", i, l, c))
     throw new m(401, "unauthorized", "Invalid JWT signature");
 }
-async function Ke(e, t, r, s, a, n, o) {
-  const i = await Ee(e, n, o), c = a.kid ? i.find(
-    (f) => f.kid === a.kid
+async function Ke(e, t, r, s, n, a, o) {
+  const i = await Ee(e, a, o), c = n.kid ? i.find(
+    (f) => f.kid === n.kid
   ) : i[0];
   if (!c)
     throw new m(401, "unauthorized", "No matching JWKS key found");
-  const l = Re(a.alg);
+  const l = Re(n.alg);
   if (!l)
     throw new m(
       401,
       "unauthorized",
-      `Unsupported JWT algorithm: ${a.alg}`
+      `Unsupported JWT algorithm: ${n.alg}`
     );
   const u = await crypto.subtle.importKey(
     "jwk",
@@ -3357,20 +3426,20 @@ async function Ke(e, t, r, s, a, n, o) {
     l,
     !1,
     ["verify"]
-  ), h = new TextEncoder().encode(`${t}.${r}`), p = te(s);
+  ), h = new TextEncoder().encode(`${t}.${r}`), p = ne(s);
   if (!await crypto.subtle.verify(l, u, p, h))
     throw new m(401, "unauthorized", "Invalid JWT signature");
 }
-var Vr = 100, M = /* @__PURE__ */ new Map();
-function Yr(e) {
-  if (M.size >= e) {
-    const t = M.keys().next().value;
-    t && M.delete(t);
+const rs = 100, P = /* @__PURE__ */ new Map();
+function ss(e) {
+  if (P.size >= e) {
+    const t = P.keys().next().value;
+    t && P.delete(t);
   }
 }
-var Ds = S({
+const Fs = v({
   name: "oauth2",
-  priority: v.AUTH,
+  priority: S.AUTH,
   phases: ["request-headers"],
   defaults: {
     tokenLocation: "header",
@@ -3388,26 +3457,26 @@ var Ds = S({
       );
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    let a;
+    let n;
     if (r.tokenLocation === "query")
-      a = e.req.query(r.queryParam) ?? void 0;
+      n = e.req.query(r.queryParam) ?? void 0;
     else {
-      const n = e.req.header(r.headerName);
-      if (n && r.headerPrefix) {
+      const a = e.req.header(r.headerName);
+      if (a && r.headerPrefix) {
         const o = `${r.headerPrefix} `;
-        n.startsWith(o) ? a = n.slice(o.length) : a = void 0;
+        a.startsWith(o) ? n = a.slice(o.length) : n = void 0;
       } else
-        a = n ?? void 0;
+        n = a ?? void 0;
     }
-    if (!a || !a.trim())
+    if (!n || !n.trim())
       throw new m(401, "unauthorized", "Missing access token");
     if (r.localValidate) {
-      if (s("local validation"), !await r.localValidate(a))
+      if (s("local validation"), !await r.localValidate(n))
         throw new m(401, "unauthorized", "Token validation failed");
     } else if (r.introspectionUrl) {
       s("introspection validation");
-      const n = await ze(
-        a,
+      const a = await Fe(
+        n,
         r.introspectionUrl,
         r.clientId,
         r.clientSecret,
@@ -3415,28 +3484,23 @@ var Ds = S({
         r.introspectionTimeoutMs,
         r.cacheMaxEntries
       );
-      if (!n.active)
+      if (!a.active)
         throw new m(401, "unauthorized", "Token is not active");
       if (r.requiredScopes && r.requiredScopes.length > 0) {
-        const o = n.scope ? n.scope.split(" ") : [];
+        const o = a.scope ? a.scope.split(" ") : [];
         if (r.requiredScopes.filter(
           (c) => !o.includes(c)
         ).length > 0)
           throw new m(403, "forbidden", "Insufficient scope");
       }
       if (r.forwardTokenInfo) {
-        const o = new Headers(e.req.raw.headers);
-        let i = !1;
-        for (const [c, l] of Object.entries(
-          r.forwardTokenInfo
-        )) {
-          const u = n[c];
-          if (u != null) {
-            const d = String(u).replace(/[\r\n\0]/g, "");
-            o.set(l, d), i = !0;
+        const o = r.forwardTokenInfo;
+        I(e, (i) => {
+          for (const [c, l] of Object.entries(o)) {
+            const u = a[c];
+            u != null && i.set(l, k(String(u)));
           }
-        }
-        i && (e.req.raw = new Request(e.req.raw, { headers: o }));
+        });
       }
     }
     await t();
@@ -3447,12 +3511,12 @@ var Ds = S({
       if (t.tokenLocation === "query")
         s = new URL(e.path, "http://localhost").searchParams.get(t.queryParam) ?? void 0;
       else {
-        const a = e.headers.get(t.headerName) ?? void 0;
-        if (a && t.headerPrefix) {
-          const n = `${t.headerPrefix} `;
-          a.startsWith(n) && (s = a.slice(n.length));
+        const n = e.headers.get(t.headerName) ?? void 0;
+        if (n && t.headerPrefix) {
+          const a = `${t.headerPrefix} `;
+          n.startsWith(a) && (s = n.slice(a.length));
         } else
-          s = a;
+          s = n;
       }
       if (!s || !s.trim())
         return {
@@ -3470,7 +3534,7 @@ var Ds = S({
         };
       if (t.introspectionUrl) {
         r("introspection validation");
-        const a = await ze(
+        const n = await Fe(
           s,
           t.introspectionUrl,
           t.clientId,
@@ -3479,7 +3543,7 @@ var Ds = S({
           t.introspectionTimeoutMs,
           t.cacheMaxEntries
         );
-        if (!a.active)
+        if (!n.active)
           return {
             action: "reject",
             status: 401,
@@ -3487,9 +3551,9 @@ var Ds = S({
             message: "Token is not active"
           };
         if (t.requiredScopes && t.requiredScopes.length > 0) {
-          const n = a.scope ? a.scope.split(" ") : [];
+          const a = n.scope ? n.scope.split(" ") : [];
           if (t.requiredScopes.filter(
-            (i) => !n.includes(i)
+            (i) => !a.includes(i)
           ).length > 0)
             return {
               action: "reject",
@@ -3499,41 +3563,36 @@ var Ds = S({
             };
         }
         if (t.forwardTokenInfo) {
-          const n = [];
-          for (const [o, i] of Object.entries(
-            t.forwardTokenInfo
-          )) {
-            const c = a[o];
-            if (c != null) {
-              const l = String(c).replace(/[\r\n\0]/g, "");
-              n.push({
-                type: "header",
-                op: "set",
-                name: i,
-                value: l
-              });
-            }
+          const a = t.forwardTokenInfo, o = [];
+          for (const [i, c] of Object.entries(a)) {
+            const l = n[i];
+            l != null && o.push({
+              type: "header",
+              op: "set",
+              name: c,
+              value: k(String(l))
+            });
           }
-          if (n.length > 0)
-            return { action: "continue", mutations: n };
+          if (o.length > 0)
+            return { action: "continue", mutations: o };
         }
         return { action: "continue" };
       }
       return { action: "continue" };
     }
   }
-}), Gr = 5e3;
-async function ze(e, t, r, s, a = 0, n, o = Vr) {
-  if (a > 0) {
-    const d = M.get(e);
+}), ns = 5e3;
+async function Fe(e, t, r, s, n = 0, a, o = rs) {
+  if (n > 0) {
+    const d = P.get(e);
     if (d && d.expiresAt > Date.now())
-      return M.delete(e), M.set(e, d), d.result;
+      return P.delete(e), P.set(e, d), d.result;
   }
   const i = {
     "content-type": "application/x-www-form-urlencoded"
   };
   r && s && (i.authorization = `Basic ${btoa(`${r}:${s}`)}`);
-  const c = n ?? Gr;
+  const c = a ?? ns;
   let l;
   try {
     l = await fetch(t, {
@@ -3560,14 +3619,14 @@ async function ze(e, t, r, s, a = 0, n, o = Vr) {
       `Introspection endpoint returned ${l.status}`
     );
   const u = await l.json();
-  return a > 0 && (Yr(o), M.set(e, {
+  return n > 0 && (ss(o), P.set(e, {
     result: u,
-    expiresAt: Date.now() + a * 1e3
+    expiresAt: Date.now() + n * 1e3
   })), u;
 }
-var Us = S({
+const zs = v({
   name: "rbac",
-  priority: v.AUTH,
+  priority: S.AUTH,
   defaults: {
     roleHeader: "x-user-role",
     permissionHeader: "x-user-permissions",
@@ -3578,17 +3637,15 @@ var Us = S({
   },
   phases: ["request-headers"],
   handler: async (e, t, { config: r, debug: s }) => {
-    if (r.stripHeaders) {
-      const o = new Headers(e.req.raw.headers);
-      let i = !1;
-      r.roleHeader && o.has(r.roleHeader) && (o.delete(r.roleHeader), i = !0, s("stripped role header from incoming request")), r.permissionHeader && o.has(r.permissionHeader) && (o.delete(r.permissionHeader), i = !0, s("stripped permission header from incoming request")), i && (e.req.raw = new Request(e.req.raw, { headers: o }));
-    }
-    const a = r.roles && r.roles.length > 0, n = r.permissions && r.permissions.length > 0;
-    if (!a && !n) {
+    r.stripHeaders && I(e, (o) => {
+      r.roleHeader && o.has(r.roleHeader) && (o.delete(r.roleHeader), s("stripped role header from incoming request")), r.permissionHeader && o.has(r.permissionHeader) && (o.delete(r.permissionHeader), s("stripped permission header from incoming request"));
+    });
+    const n = r.roles && r.roles.length > 0, a = r.permissions && r.permissions.length > 0;
+    if (!n && !a) {
       s("no roles or permissions configured, passing through"), await t();
       return;
     }
-    if (a) {
+    if (n) {
       const o = e.req.header(r.roleHeader) ?? "", i = o ? o.split(r.roleDelimiter).map((l) => l.trim()) : [];
       if (s(
         `checking roles: user=${i.join(",")} required=${r.roles.join(",")}`
@@ -3597,7 +3654,7 @@ var Us = S({
       ))
         throw new m(403, "forbidden", r.denyMessage);
     }
-    if (n) {
+    if (a) {
       const o = e.req.header(r.permissionHeader) ?? "", i = o ? o.split(r.permissionDelimiter).map((l) => l.trim()) : [];
       if (s(
         `checking permissions: user=${i.join(",")} required=${r.permissions.join(",")}`
@@ -3610,11 +3667,11 @@ var Us = S({
   },
   evaluate: {
     onRequest: async (e, { config: t, debug: r }) => {
-      const s = t.roles && t.roles.length > 0, a = t.permissions && t.permissions.length > 0;
-      if (!s && !a)
+      const s = t.roles && t.roles.length > 0, n = t.permissions && t.permissions.length > 0;
+      if (!s && !n)
         return r("no roles or permissions configured, passing through"), { action: "continue" };
       if (s) {
-        const n = e.headers.get(t.roleHeader) ?? "", o = n ? n.split(t.roleDelimiter).map((c) => c.trim()) : [];
+        const a = e.headers.get(t.roleHeader) ?? "", o = a ? a.split(t.roleDelimiter).map((c) => c.trim()) : [];
         if (r(
           `checking roles: user=${o.join(",")} required=${t.roles.join(",")}`
         ), !t.roles.some(
@@ -3627,8 +3684,8 @@ var Us = S({
             message: t.denyMessage
           };
       }
-      if (a) {
-        const n = e.headers.get(t.permissionHeader) ?? "", o = n ? n.split(t.permissionDelimiter).map((c) => c.trim()) : [];
+      if (n) {
+        const a = e.headers.get(t.permissionHeader) ?? "", o = a ? a.split(t.permissionDelimiter).map((c) => c.trim()) : [];
         if (r(
           `checking permissions: user=${o.join(",")} required=${t.permissions.join(",")}`
         ), !t.permissions.every(
@@ -3644,9 +3701,9 @@ var Us = S({
       return { action: "continue" };
     }
   }
-}), Ls = S({
+}), Ws = v({
   name: "verify-http-signature",
-  priority: v.AUTH,
+  priority: S.AUTH,
   defaults: {
     requiredComponents: ["@method"],
     maxAge: 300,
@@ -3661,8 +3718,8 @@ var Us = S({
         "config_error",
         "verifyHttpSignature requires at least one key in 'keys'"
       );
-    const a = r.label, n = e.req.header(r.signatureInputHeaderName);
-    if (!n)
+    const n = r.label, a = e.req.header(r.signatureInputHeaderName);
+    if (!a)
       throw new m(
         401,
         "signature_invalid",
@@ -3675,21 +3732,21 @@ var Us = S({
         "signature_invalid",
         "Missing Signature header"
       );
-    const i = `${a}=`;
-    if (!n.startsWith(i))
+    const i = `${n}=`;
+    if (!a.startsWith(i))
       throw new m(
         401,
         "signature_invalid",
-        `Missing signature label "${a}" in Signature-Input header`
+        `Missing signature label "${n}" in Signature-Input header`
       );
-    const c = n.slice(i.length), { components: l, params: u } = Lr(c);
-    s(`verifying label=${a}, components=${l.join(",")}`);
-    const d = `${a}=:`;
+    const c = a.slice(i.length), { components: l, params: u } = Gr(c);
+    s(`verifying label=${n}, components=${l.join(",")}`);
+    const d = `${n}=:`;
     if (!o.startsWith(d) || !o.endsWith(":"))
       throw new m(
         401,
         "signature_invalid",
-        `Invalid Signature header format for label "${a}"`
+        `Invalid Signature header format for label "${n}"`
       );
     const h = o.slice(d.length, -1), p = Math.floor(Date.now() / 1e3);
     if (u.created && Number.parseInt(u.created, 10) + r.maxAge < p)
@@ -3725,20 +3782,20 @@ var Us = S({
         "signature_invalid",
         "Unknown key identifier"
       );
-    const g = Rt(
+    const w = At(
       l,
       c,
       e.req.raw
-    ), T = await Jr(
+    ), b = await Qr(
       f.algorithm,
       f.secret,
       f.publicKey
-    ), { signAlg: b } = ie(f.algorithm), x = new TextEncoder(), A = zr(h);
+    ), { signAlg: T } = ue(f.algorithm), x = new TextEncoder(), A = es(h);
     if (!await crypto.subtle.verify(
-      b,
       T,
+      b,
       A,
-      x.encode(g)
+      x.encode(w)
     ))
       throw new m(
         401,
@@ -3747,17 +3804,183 @@ var Us = S({
       );
     s("signature verified successfully"), await t();
   }
-}), Bs = S({
+}), as = /* @__PURE__ */ new Set([204, 304]);
+function _e(e, t) {
+  return as.has(t) ? null : e ?? null;
+}
+class Et {
+  entries = /* @__PURE__ */ new Map();
+  maxEntries;
+  constructor(t) {
+    this.maxEntries = t?.maxEntries;
+  }
+  async get(t) {
+    const r = this.entries.get(t);
+    return r ? Date.now() > r.expiresAt ? (this.entries.delete(t), null) : (this.entries.delete(t), this.entries.set(t, r), new Response(_e(r.body, r.status), {
+      status: r.status,
+      headers: r.headers
+    })) : null;
+  }
+  async put(t, r, s) {
+    const n = await r.arrayBuffer(), a = [];
+    if (r.headers.forEach((o, i) => {
+      a.push([i, o]);
+    }), this.maxEntries && !this.entries.has(t) && this.entries.size >= this.maxEntries) {
+      const o = this.entries.keys().next().value;
+      o !== void 0 && this.entries.delete(o);
+    }
+    this.entries.set(t, {
+      body: n,
+      status: r.status,
+      headers: a,
+      expiresAt: Date.now() + s * 1e3
+    });
+  }
+  async delete(t) {
+    return this.entries.delete(t);
+  }
+  /** Remove all entries (for testing) */
+  clear() {
+    this.entries.clear();
+  }
+  /** Current number of entries (for testing/inspection) */
+  get size() {
+    return this.entries.size;
+  }
+  /** Release all cached entries. */
+  destroy() {
+    this.entries.clear();
+  }
+}
+const ye = "x-stoma-internal-expires-at", os = /* @__PURE__ */ new Set(["POST", "PUT", "PATCH"]);
+function is(e) {
+  return e ? e.split(",").map((t) => t.trim().split("=")[0].trim().toLowerCase()) : [];
+}
+function Vs(e) {
+  const t = K(
+    {
+      ttlSeconds: 300,
+      methods: ["GET"],
+      respectCacheControl: !0,
+      cacheStatusHeader: "x-cache",
+      bypassDirectives: ["no-store", "no-cache"]
+    },
+    e
+  ), r = t.methods.map((c) => c.toUpperCase());
+  let s = e?.store;
+  s || (s = new Et());
+  const n = s, a = t.cacheStatusHeader;
+  async function o(c) {
+    if (e?.cacheKeyFn) return await e.cacheKeyFn(c);
+    let l = `${c.req.method}:${c.req.url}`;
+    if (os.has(c.req.method.toUpperCase()))
+      try {
+        const u = await c.req.raw.clone().text();
+        if (u) {
+          const d = await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(u)
+          ), h = new Uint8Array(d);
+          let p = "";
+          for (const y of h)
+            p += y.toString(16).padStart(2, "0");
+          l += `|body:${p}`;
+        }
+      } catch {
+      }
+    if (e?.varyHeaders) {
+      const u = e.varyHeaders.map((d) => c.req.header(d) ?? "").join("|");
+      l += `|vary:${u}`;
+    }
+    return l;
+  }
+  const i = async (c, l) => {
+    const u = F(c, "cache"), d = Me(c, "cache");
+    if (!r.includes(c.req.method.toUpperCase())) {
+      d("SKIP", { method: c.req.method }), await l(), c.res.headers.set(a, "SKIP");
+      return;
+    }
+    const h = await o(c);
+    $(c, "x-stoma-cache-key", h), $(c, "x-stoma-cache-ttl", t.ttlSeconds);
+    const p = await E(
+      () => n.get(h),
+      null,
+      u,
+      "store.get()"
+    );
+    if (p) {
+      u(`HIT ${h}`), $(c, "x-stoma-cache-status", "HIT"), d("HIT", { key: h });
+      const w = p.headers.get(ye);
+      if (w) {
+        const x = Math.max(
+          0,
+          Math.ceil((Number(w) - Date.now()) / 1e3)
+        );
+        $(c, "x-stoma-cache-expires-in", x);
+      }
+      const b = await p.arrayBuffer(), T = new Response(_e(b, p.status), {
+        status: p.status,
+        headers: p.headers
+      });
+      T.headers.delete(ye), T.headers.set(a, "HIT"), c.res = T;
+      return;
+    }
+    if (await l(), c.res.status >= 500) {
+      u(`SKIP ${h} (status=${c.res.status})`), $(c, "x-stoma-cache-status", "SKIP"), c.res.headers.set(a, "SKIP");
+      return;
+    }
+    if (t.cacheableStatuses && !t.cacheableStatuses.includes(c.res.status)) {
+      u(`SKIP ${h} (status=${c.res.status} not in cacheableStatuses)`), $(c, "x-stoma-cache-status", "SKIP"), c.res.headers.set(a, "SKIP");
+      return;
+    }
+    if (t.respectCacheControl) {
+      const w = c.res.headers.get("cache-control") ?? "", b = is(w);
+      if (t.bypassDirectives.some(
+        (T) => b.includes(T.toLowerCase())
+      )) {
+        u(`BYPASS ${h} (cache-control: ${w})`), $(c, "x-stoma-cache-status", "BYPASS"), d("BYPASS", { key: h, directive: w }), c.res.headers.set(a, "BYPASS");
+        return;
+      }
+    }
+    u(`MISS ${h} (ttl=${t.ttlSeconds}s)`), $(c, "x-stoma-cache-status", "MISS"), d("MISS", { key: h, ttl: t.ttlSeconds });
+    const y = c.res.clone(), f = _e(
+      await y.arrayBuffer(),
+      y.status
+    ), g = new Headers(y.headers);
+    g.set(
+      ye,
+      String(Date.now() + t.ttlSeconds * 1e3)
+    ), await E(
+      () => n.put(
+        h,
+        new Response(f, {
+          status: y.status,
+          headers: g
+        }),
+        t.ttlSeconds
+      ),
+      void 0,
+      u,
+      "store.put()"
+    ), c.res.headers.set(a, "MISS");
+  };
+  return {
+    name: "cache",
+    priority: S.CACHE,
+    handler: M(e?.skip, i)
+  };
+}
+const Ys = v({
   name: "dynamic-routing",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
   defaults: { fallthrough: !0 },
   handler: async (e, t, { config: r, debug: s }) => {
-    for (const a of r.rules)
-      if (await a.condition(e)) {
+    for (const n of r.rules)
+      if (await n.condition(e)) {
         s(
-          `matched rule ${a.name ? `"${a.name}"` : "(unnamed)"} → target=${a.target}`
-        ), e.set("_dynamicTarget", a.target), a.rewritePath && e.set("_dynamicRewrite", a.rewritePath), a.headers && e.set("_dynamicHeaders", a.headers), await t();
+          `matched rule ${n.name ? `"${n.name}"` : "(unnamed)"} → target=${n.target}`
+        ), e.set("_dynamicTarget", n.target), n.rewritePath && e.set("_dynamicRewrite", n.rewritePath), n.headers && e.set("_dynamicHeaders", n.headers), await t();
         return;
       }
     if (!r.fallthrough)
@@ -3765,16 +3988,16 @@ var Us = S({
     s("no rule matched, falling through"), await t();
   }
 });
-function Js(e) {
-  const t = J(
+function Gs(e) {
+  const t = K(
     { mode: "deny", countryHeader: "cf-ipcountry" },
     e
   ), r = new Set(
-    (t.allow ?? []).map((n) => n.toUpperCase())
+    (t.allow ?? []).map((a) => a.toUpperCase())
   ), s = new Set(
-    (t.deny ?? []).map((n) => n.toUpperCase())
-  ), a = async (n, o) => {
-    const i = K(n, "geo-ip-filter"), c = n.req.header(t.countryHeader)?.toUpperCase(), l = t.mode;
+    (t.deny ?? []).map((a) => a.toUpperCase())
+  ), n = async (a, o) => {
+    const i = F(a, "geo-ip-filter"), c = a.req.header(t.countryHeader)?.toUpperCase(), l = t.mode;
     if (i(`country=${c ?? "unknown"} mode=${l}`), l === "allow") {
       if (!c || !r.has(c))
         throw new m(
@@ -3792,12 +4015,12 @@ function Js(e) {
   };
   return {
     name: "geo-ip-filter",
-    priority: v.IP_FILTER,
-    handler: k(e?.skip, a),
+    priority: S.IP_FILTER,
+    handler: M(e?.skip, n),
     phases: ["request-headers"],
     evaluate: {
-      onRequest: async (n) => {
-        const o = n.headers.get(t.countryHeader)?.toUpperCase();
+      onRequest: async (a) => {
+        const o = a.headers.get(t.countryHeader)?.toUpperCase();
         if (t.mode === "allow") {
           if (!o || !r.has(o))
             return {
@@ -3818,27 +4041,27 @@ function Js(e) {
     }
   };
 }
-var Ks = S({
+const Xs = v({
   name: "http-callout",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
   defaults: { method: "GET", timeout: 5e3, abortOnFailure: !0 },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = typeof r.url == "function" ? await r.url(e) : r.url, n = {};
+    const n = typeof r.url == "function" ? await r.url(e) : r.url, a = {};
     if (r.headers)
       for (const [c, l] of Object.entries(r.headers))
-        n[c] = typeof l == "function" ? await l(e) : l;
+        a[c] = typeof l == "function" ? await l(e) : l;
     let o;
     if (r.body !== void 0) {
       const c = typeof r.body == "function" ? await r.body(e) : r.body;
-      c != null && (o = typeof c == "string" ? c : JSON.stringify(c), typeof c != "string" && !n["content-type"] && (n["content-type"] = "application/json"));
+      c != null && (o = typeof c == "string" ? c : JSON.stringify(c), typeof c != "string" && !a["content-type"] && (a["content-type"] = "application/json"));
     }
-    s(`${r.method} ${a}`);
+    s(`${r.method} ${n}`);
     let i;
     try {
-      i = await fetch(a, {
+      i = await fetch(n, {
         method: r.method,
-        headers: n,
+        headers: a,
         body: o,
         signal: AbortSignal.timeout(r.timeout)
       });
@@ -3869,9 +4092,9 @@ var Ks = S({
     }
     await r.onResponse(i, e), await t();
   }
-}), zs = S({
+}), Qs = v({
   name: "interrupt",
-  priority: v.DEFAULT,
+  priority: S.DEFAULT,
   httpOnly: !0,
   defaults: { statusCode: 200, headers: {} },
   handler: async (e, t, { config: r, debug: s }) => {
@@ -3880,26 +4103,125 @@ var Ks = S({
       return;
     }
     s("condition true, short-circuiting");
-    const n = new Headers(r.headers);
+    const a = new Headers(r.headers);
     let o = null;
-    r.body === void 0 || r.body === null || (typeof r.body == "string" ? (o = r.body, n.has("content-type") || n.set("content-type", "text/plain")) : (o = JSON.stringify(r.body), n.has("content-type") || n.set("content-type", "application/json"))), e.res = new Response(o, {
+    r.body === void 0 || r.body === null || (typeof r.body == "string" ? (o = r.body, a.has("content-type") || a.set("content-type", "text/plain")) : (o = JSON.stringify(r.body), a.has("content-type") || a.set("content-type", "application/json"))), e.res = new Response(o, {
       status: r.statusCode,
-      headers: n
+      headers: a
     });
   }
 });
-function Fs(e) {
-  const t = e.mode ?? "deny", r = e.ipHeaders ? { ipHeaders: e.ipHeaders } : {}, s = (e.allow ?? []).map(Te).filter((i) => i !== null), a = (e.deny ?? []).map(Te).filter((i) => i !== null);
-  function n(i) {
+function Ce(e) {
+  const t = e.split(".");
+  if (t.length !== 4) return -1;
+  let r = 0;
+  for (const s of t) {
+    const n = Number(s);
+    if (Number.isNaN(n) || n < 0 || n > 255) return -1;
+    r = r << 8 | n;
+  }
+  return r >>> 0;
+}
+function cs(e, t) {
+  const r = Ce(e);
+  if (r === -1 || t < 0 || t > 32) return null;
+  const s = t === 0 ? 0 : -1 << 32 - t >>> 0;
+  return { version: 4, network: (r & s) >>> 0, mask: s };
+}
+const ze = (1n << 128n) - 1n;
+function _t(e) {
+  let t = e;
+  const r = t.indexOf("%");
+  r !== -1 && (t = t.slice(0, r)), t = t.toLowerCase();
+  const s = t.indexOf("::");
+  let n, a;
+  if (s !== -1) {
+    if (t.indexOf("::", s + 2) !== -1) return null;
+    const i = t.slice(0, s), c = t.slice(s + 2);
+    n = i === "" ? [] : i.split(":"), a = c === "" ? [] : c.split(":");
+    const l = n.length + a.length;
+    if (l > 8) return null;
+    const u = 8 - l, d = [...n, ...Array(u).fill("0"), ...a];
+    return We(d);
+  }
+  const o = t.split(":");
+  return o.length !== 8 ? null : We(o);
+}
+function We(e) {
+  if (e.length !== 8) return null;
+  let t = 0n;
+  for (const r of e) {
+    if (r.length === 0 || r.length > 4) return null;
+    const s = Number.parseInt(r, 16);
+    if (Number.isNaN(s) || s < 0 || s > 65535) return null;
+    t = t << 16n | BigInt(s);
+  }
+  return t;
+}
+function Ve(e, t) {
+  const r = _t(e);
+  if (r === null || t < 0 || t > 128) return null;
+  const s = t === 0 ? 0n : ze << BigInt(128 - t) & ze;
+  return { version: 6, network: r & s, mask: s };
+}
+function $e(e) {
+  return e.includes(":");
+}
+function Oe(e) {
+  const t = e.indexOf("/");
+  if (t === -1) {
+    if ($e(e))
+      return Ve(e, 128);
+    const n = Ce(e);
+    return n === -1 ? null : { version: 4, network: n, mask: 4294967295 };
+  }
+  const r = e.slice(0, t), s = Number(e.slice(t + 1));
+  return Number.isNaN(s) ? null : $e(r) ? Ve(r, s) : cs(r, s);
+}
+function je(e, t) {
+  if ($e(e)) {
+    const s = _t(e);
+    if (s === null) return !1;
+    for (const n of t)
+      if (n.version === 6 && (s & n.mask) === n.network)
+        return !0;
+    return !1;
+  }
+  const r = Ce(e);
+  if (r === -1) return !1;
+  for (const s of t)
+    if (s.version === 4 && (r & s.mask) >>> 0 === s.network)
+      return !0;
+  return !1;
+}
+const ls = ["cf-connecting-ip", "x-forwarded-for"];
+function ae(e, t = {}) {
+  const {
+    ipHeaders: r = ls,
+    trustedProxies: s,
+    useRightmostForwardedIp: n = !1
+  } = t, a = s ? s.map((o) => Oe(o)).filter((o) => o !== null) : null;
+  for (const o of r) {
+    const i = e.get(o);
+    if (!i) continue;
+    const c = i.split(",").map((u) => u.trim()), l = n ? c[c.length - 1] : c[0];
+    if (!(a && o.toLowerCase() === "x-forwarded-for" && !je(l, a)))
+      return l;
+  }
+  return "unknown";
+}
+function Zs(e) {
+  const t = e.mode ?? "deny", r = e.ipHeaders ? { ipHeaders: e.ipHeaders } : {}, s = (e.allow ?? []).map(Oe).filter((i) => i !== null), n = (e.deny ?? []).map(Oe).filter((i) => i !== null);
+  function a(i) {
     if (t === "allow") {
-      if (!be(i, s))
+      if (!je(i, s))
         return {
           action: "reject",
           status: 403,
           code: "ip_denied",
           message: "Access denied"
         };
-    } else if (be(i, a))
+    } else if (je(i, n))
       return {
         action: "reject",
         status: 403,
@@ -3909,26 +4231,26 @@ function Fs(e) {
     return { action: "continue" };
   }
   const o = async (i, c) => {
-    const l = ee(i.req.raw.headers, r), u = n(l);
+    const l = ae(i.req.raw.headers, r), u = a(l);
     if (u.action === "reject")
       throw new m(u.status, u.code, u.message);
     await c();
   };
   return {
     name: "ip-filter",
-    priority: v.IP_FILTER,
-    handler: k(e.skip, o),
+    priority: S.IP_FILTER,
+    handler: M(e.skip, o),
     phases: ["request-headers"],
     // ── Protocol-agnostic evaluator ────────────────────────────────
     evaluate: {
       onRequest: async (i) => {
-        const c = i.clientIp ?? ee(i.headers, r);
-        return n(c);
+        const c = i.clientIp ?? ae(i.headers, r);
+        return a(c);
       }
     }
   };
 }
-function re(e, t, r = 0) {
+function oe(e, t, r = 0) {
   if (r > t.maxDepth)
     throw new m(400, "json_threat", "JSON exceeds maximum depth");
   if (typeof e == "string" && e.length > t.maxStringLength)
@@ -3941,7 +4263,7 @@ function re(e, t, r = 0) {
     if (e.length > t.maxArraySize)
       throw new m(400, "json_threat", "Array exceeds maximum size");
     for (const s of e)
-      re(s, t, r + 1);
+      oe(s, t, r + 1);
   } else if (e !== null && typeof e == "object") {
     const s = Object.keys(e);
     if (s.length > t.maxKeys)
@@ -3950,24 +4272,24 @@ function re(e, t, r = 0) {
         "json_threat",
         "Object exceeds maximum key count"
       );
-    for (const a of s) {
-      if (a.length > t.maxStringLength)
+    for (const n of s) {
+      if (n.length > t.maxStringLength)
         throw new m(
           400,
           "json_threat",
           "String value exceeds maximum length"
         );
-      re(
-        e[a],
+      oe(
+        e[n],
         t,
         r + 1
       );
     }
   }
 }
-var Ws = S({
+const en = v({
   name: "json-threat-protection",
-  priority: v.EARLY,
+  priority: S.EARLY,
   phases: ["request-body"],
   defaults: {
     maxDepth: 20,
@@ -3978,11 +4300,11 @@ var Ws = S({
     contentTypes: ["application/json"]
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header("content-type") ?? "";
+    const n = e.req.header("content-type") ?? "";
     if (!r.contentTypes.some(
-      (u) => a.includes(u)
+      (u) => n.includes(u)
     )) {
-      s("skipping — content type %s not inspected", a), await t();
+      s("skipping — content type %s not inspected", n), await t();
       return;
     }
     const o = e.req.header("content-length");
@@ -4010,7 +4332,7 @@ var Ws = S({
         "Invalid JSON in request body"
       );
     }
-    re(l, {
+    oe(l, {
       maxDepth: r.maxDepth,
       maxKeys: r.maxKeys,
       maxStringLength: r.maxStringLength,
@@ -4024,9 +4346,9 @@ var Ws = S({
         (i) => s.includes(i)
       ))
         return r("skipping — content type %s not inspected", s), { action: "continue" };
-      const n = e.headers.get("content-length");
-      if (n) {
-        const i = Number.parseInt(n, 10);
+      const a = e.headers.get("content-length");
+      if (a) {
+        const i = Number.parseInt(a, 10);
         if (!Number.isNaN(i) && i > t.maxBodySize)
           return r("body size %d exceeds max %d", i, t.maxBodySize), {
             action: "reject",
@@ -4050,7 +4372,7 @@ var Ws = S({
         };
       }
       try {
-        re(o, {
+        oe(o, {
           maxDepth: t.maxDepth,
           maxKeys: t.maxKeys,
           maxStringLength: t.maxStringLength,
@@ -4069,24 +4391,122 @@ var Ws = S({
       return r("JSON structure validated"), { action: "continue" };
     }
   }
-}), Fe = /* @__PURE__ */ new WeakMap();
-function Xr(e, t) {
-  let r = Fe.get(e);
+});
+class $t {
+  counters = /* @__PURE__ */ new Map();
+  cleanupInterval = null;
+  /** Maximum number of unique keys to prevent memory exhaustion */
+  maxKeys;
+  cleanupIntervalMs;
+  constructor(t) {
+    typeof t == "number" ? (this.maxKeys = t, this.cleanupIntervalMs = 6e4) : (this.maxKeys = t?.maxKeys ?? 1e5, this.cleanupIntervalMs = t?.cleanupIntervalMs ?? 6e4);
+  }
+  /** Start the periodic cleanup interval on first use (Workers-safe). */
+  ensureCleanupInterval() {
+    this.cleanupInterval || (this.cleanupInterval = setInterval(
+      () => this.cleanup(),
+      this.cleanupIntervalMs
+    ));
+  }
+  /**
+   * Increment the counter for a key within the given time window.
+   *
+   * When the store reaches `maxKeys` capacity and no expired entries can
+   * be evicted, returns `{ count: MAX_SAFE_INTEGER, resetAt }` to trigger
+   * rate limiting (fail-closed). This prevents unbounded memory growth at
+   * the cost of potentially rejecting legitimate requests — an intentional
+   * security trade-off where memory safety takes priority over availability.
+   */
+  async increment(t, r) {
+    this.ensureCleanupInterval();
+    const s = Date.now(), n = this.counters.get(t);
+    if (n && n.resetAt > s)
+      return n.count++, { count: n.count, resetAt: n.resetAt };
+    if (this.counters.size >= this.maxKeys && !n && (this.cleanup(), this.counters.size >= this.maxKeys)) {
+      const i = s + r * 1e3;
+      return { count: Number.MAX_SAFE_INTEGER, resetAt: i };
+    }
+    const a = s + r * 1e3, o = { count: 1, resetAt: a };
+    return this.counters.set(t, o), { count: 1, resetAt: a };
+  }
+  cleanup() {
+    const t = Date.now();
+    for (const [r, s] of this.counters)
+      s.resetAt <= t && this.counters.delete(r);
+  }
+  /** Stop the cleanup interval (for testing) */
+  destroy() {
+    this.cleanupInterval && (clearInterval(this.cleanupInterval), this.cleanupInterval = null);
+  }
+  /** Reset all counters (for testing) */
+  reset() {
+    this.counters.clear();
+  }
+}
+const Ye = /* @__PURE__ */ new WeakMap();
+function us(e) {
+  if (e.store) return e.store;
+  let t = Ye.get(e);
+  return t || (t = new $t(), Ye.set(e, t)), t;
+}
+const tn = v({
+  name: "rate-limit",
+  priority: S.RATE_LIMIT,
+  defaults: {
+    windowSeconds: 60,
+    statusCode: 429,
+    message: "Rate limit exceeded"
+  },
+  handler: async (e, t, { config: r, debug: s, trace: n }) => {
+    const a = us(r);
+    let o;
+    r.keyBy ? o = await r.keyBy(e) : o = ae(e.req.raw.headers, { ipHeaders: r.ipHeaders });
+    const i = await E(
+      () => a.increment(o, r.windowSeconds),
+      null,
+      s,
+      "store.increment()"
+    );
+    if (!i) {
+      s(`store unavailable, failing open (key=${o})`), await t();
+      return;
+    }
+    const { count: c, resetAt: l } = i, u = Math.max(0, r.max - c), d = Math.ceil((l - Date.now()) / 1e3);
+    if ($(e, "x-stoma-ratelimit-key", o), $(e, "x-stoma-ratelimit-window", r.windowSeconds), c > r.max) {
+      s(`limited (key=${o}, count=${c}, max=${r.max})`), n("rejected", { key: o, count: c, max: r.max });
+      const h = String(d);
+      throw new m(
+        r.statusCode,
+        "rate_limited",
+        r.message,
+        {
+          "x-ratelimit-limit": String(r.max),
+          "x-ratelimit-remaining": "0",
+          "x-ratelimit-reset": h,
+          "retry-after": h
+        }
+      );
+    }
+    n("allowed", { key: o, count: c, max: r.max, remaining: u }), await t(), e.res.headers.set("x-ratelimit-limit", String(r.max)), e.res.headers.set("x-ratelimit-remaining", String(u)), e.res.headers.set("x-ratelimit-reset", String(d));
+  }
+}), Ge = /* @__PURE__ */ new WeakMap();
+function ds(e, t) {
+  let r = Ge.get(e);
   if (!r) {
     const s = t.replace(/g/g, "");
     s !== t && console.warn(
       "[stoma:regex-threat-protection] Stripped 'g' flag — not meaningful with .test()"
-    ), r = e.map((a) => ({
-      regex: new RegExp(a.regex, s),
-      targets: a.targets,
-      message: a.message ?? "Request blocked by threat protection"
-    })), Fe.set(e, r);
+    ), r = e.map((n) => ({
+      regex: new RegExp(n.regex, s),
+      targets: n.targets,
+      message: n.message ?? "Request blocked by threat protection"
+    })), Ge.set(e, r);
   }
   return r;
 }
-var Vs = S({
+const rn = v({
   name: "regex-threat-protection",
-  priority: v.EARLY,
+  priority: S.EARLY,
   defaults: {
     patterns: [],
     flags: "i",
@@ -4094,14 +4514,14 @@ var Vs = S({
     maxBodyScanLength: 65536
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = Xr(r.patterns, r.flags ?? "i");
-    if (a.length === 0) {
+    const n = ds(r.patterns, r.flags ?? "i");
+    if (n.length === 0) {
       s("no patterns configured — passing through"), await t();
       return;
     }
-    const n = a.some((i) => i.targets.includes("body"));
+    const a = n.some((i) => i.targets.includes("body"));
     let o = null;
-    if (n) {
+    if (a) {
       const i = e.req.header("content-type") ?? "";
       if (r.contentTypes.some(
         (l) => i.includes(l)
@@ -4120,7 +4540,7 @@ var Vs = S({
         }
       }
     }
-    for (const i of a) {
+    for (const i of n) {
       if (i.targets.includes("path") && i.regex.test(e.req.path))
         throw s("path matched pattern: %s", i.regex.source), new m(400, "threat_detected", i.message);
       if (i.targets.includes("query")) {
@@ -4138,9 +4558,9 @@ var Vs = S({
     }
     s("all patterns passed"), await t();
   }
-}), Ys = S({
+}), sn = v({
   name: "request-limit",
-  priority: v.EARLY,
+  priority: S.EARLY,
   phases: ["request-headers"],
   defaults: {
     message: "Request body too large"
@@ -4148,8 +4568,8 @@ var Vs = S({
   handler: async (e, t, { config: r }) => {
     const s = e.req.header("content-length");
     if (s !== void 0) {
-      const a = Number.parseInt(s, 10);
-      if (!Number.isNaN(a) && a > r.maxBytes)
+      const n = Number.parseInt(s, 10);
+      if (!Number.isNaN(n) && n > r.maxBytes)
         throw new m(413, "request_too_large", r.message);
     }
     await t();
@@ -4171,36 +4591,36 @@ var Vs = S({
     }
   }
 });
-function Qr(e, t) {
+function hs(e, t) {
   const r = t.split(".");
   let s = e;
-  for (let a = 0; a < r.length - 1; a++) {
+  for (let n = 0; n < r.length - 1; n++) {
     if (s == null || typeof s != "object") return;
-    s = s[r[a]];
+    s = s[r[n]];
   }
   s != null && typeof s == "object" && delete s[r[r.length - 1]];
 }
-function Zr(e, t) {
+function ps(e, t) {
   const r = {};
   for (const s of t) {
-    const a = s.split(".");
-    let n = e, o = r;
-    for (let i = 0; i < a.length && !(n == null || typeof n != "object"); i++)
-      i === a.length - 1 ? a[i] in n && (o[a[i]] = n[a[i]]) : (a[i] in o || (o[a[i]] = {}), o = o[a[i]], n = n[a[i]]);
+    const n = s.split(".");
+    let a = e, o = r;
+    for (let i = 0; i < n.length && !(a == null || typeof a != "object"); i++)
+      i === n.length - 1 ? n[i] in a && (o[n[i]] = a[n[i]]) : (n[i] in o || (o[n[i]] = {}), o = o[n[i]], a = a[n[i]]);
   }
   return r;
 }
-function G(e, t, r) {
+function Q(e, t, r) {
   if (t === "allow")
-    return Zr(e, r);
+    return ps(e, r);
   const s = structuredClone(e);
-  for (const a of r)
-    Qr(s, a);
+  for (const n of r)
+    hs(s, n);
   return s;
 }
-var Gs = S({
+const nn = v({
   name: "resource-filter",
-  priority: v.RESPONSE_TRANSFORM,
+  priority: S.RESPONSE_TRANSFORM,
   phases: ["response-body"],
   defaults: {
     contentTypes: ["application/json"],
@@ -4211,13 +4631,13 @@ var Gs = S({
       s("no fields configured — passing through");
       return;
     }
-    const a = e.res.headers.get("content-type") ?? "";
+    const n = e.res.headers.get("content-type") ?? "";
     if (!r.contentTypes.some(
-      (c) => a.includes(c)
+      (c) => n.includes(c)
     )) {
       s(
         "skipping — response content type %s not in %o",
-        a,
+        n,
         r.contentTypes
       );
       return;
@@ -4232,12 +4652,12 @@ var Gs = S({
     }
     let i;
     Array.isArray(o) ? r.applyToArrayItems ? i = o.map(
-      (c) => c != null && typeof c == "object" ? G(
+      (c) => c != null && typeof c == "object" ? Q(
         c,
         r.mode,
         r.fields
       ) : c
-    ) : i = o : o != null && typeof o == "object" ? i = G(
+    ) : i = o : o != null && typeof o == "object" ? i = Q(
       o,
       r.mode,
       r.fields
@@ -4263,27 +4683,27 @@ var Gs = S({
           s,
           t.contentTypes
         ), { action: "continue" };
-      let n;
+      let a;
       try {
         if (!e.body)
           return { action: "continue" };
         const i = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
-        n = JSON.parse(i);
+        a = JSON.parse(i);
       } catch {
         return r("response body is not valid JSON — passing through"), { action: "continue" };
       }
       let o;
-      return Array.isArray(n) ? t.applyToArrayItems ? o = n.map(
-        (i) => i != null && typeof i == "object" ? G(
+      return Array.isArray(a) ? t.applyToArrayItems ? o = a.map(
+        (i) => i != null && typeof i == "object" ? Q(
           i,
           t.mode,
           t.fields
         ) : i
-      ) : o = n : n != null && typeof n == "object" ? o = G(
-        n,
+      ) : o = a : a != null && typeof a == "object" ? o = Q(
+        a,
         t.mode,
         t.fields
-      ) : o = n, r(
+      ) : o = a, r(
         "filtered response with mode=%s fields=%o",
         t.mode,
         t.fields
@@ -4299,9 +4719,9 @@ var Gs = S({
       };
     }
   }
-}), Xs = S({
+}), an = v({
   name: "ssl-enforce",
-  priority: v.EARLY,
+  priority: S.EARLY,
   httpOnly: !0,
   defaults: {
     redirect: !0,
@@ -4322,10 +4742,10 @@ var Gs = S({
       throw new m(403, "ssl_required", "HTTPS is required");
     }
     await t();
-    let n = `max-age=${r.hstsMaxAge}`;
-    r.includeSubDomains && (n += "; includeSubDomains"), r.preload && (n += "; preload"), e.res.headers.set("Strict-Transport-Security", n);
+    let a = `max-age=${r.hstsMaxAge}`;
+    r.includeSubDomains && (a += "; includeSubDomains"), r.preload && (a += "; preload"), e.res.headers.set("Strict-Transport-Security", a);
   }
-}), es = /* @__PURE__ */ new Set([
+}), ms = /* @__PURE__ */ new Set([
   "connection",
   "keep-alive",
   "proxy-authenticate",
@@ -4334,9 +4754,9 @@ var Gs = S({
   "trailer",
   "transfer-encoding",
   "upgrade"
-]), Qs = S({
+]), on = v({
   name: "traffic-shadow",
-  priority: v.RESPONSE_TRANSFORM,
+  priority: S.RESPONSE_TRANSFORM,
   httpOnly: !0,
   defaults: {
     target: "",
@@ -4346,19 +4766,19 @@ var Gs = S({
     timeout: 5e3
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    let a = null;
+    let n = null;
     if (r.mirrorBody)
       try {
-        a = await e.req.raw.clone().arrayBuffer(), a.byteLength === 0 && (a = null);
+        n = await e.req.raw.clone().arrayBuffer(), n.byteLength === 0 && (n = null);
       } catch {
-        a = null;
+        n = null;
       }
     await t();
-    const n = e.req.method.toUpperCase();
+    const a = e.req.method.toUpperCase();
     if (!new Set(
-      (r.methods ?? []).map((w) => w.toUpperCase())
-    ).has(n)) {
-      s("method %s not in shadow methods — skipping", n);
+      (r.methods ?? []).map((g) => g.toUpperCase())
+    ).has(a)) {
+      s("method %s not in shadow methods — skipping", a);
       return;
     }
     const i = Math.random() * 100;
@@ -4367,28 +4787,235 @@ var Gs = S({
       return;
     }
     const c = new URL(e.req.url), u = `${r.target.replace(/\/$/, "")}${c.pathname}${c.search}`, d = new Headers();
-    for (const [w, g] of e.req.raw.headers.entries())
-      es.has(w.toLowerCase()) || d.set(w, g);
-    s("shadowing %s %s → %s", n, c.pathname, u);
+    for (const [g, w] of e.req.raw.headers.entries())
+      ms.has(g.toLowerCase()) || d.set(g, w);
+    s("shadowing %s %s → %s", a, c.pathname, u);
     const h = new AbortController(), p = setTimeout(
       () => h.abort(),
       r.timeout ?? 5e3
     ), y = fetch(u, {
-      method: n,
+      method: a,
       headers: d,
-      body: r.mirrorBody && a ? a : void 0,
+      body: r.mirrorBody && n ? n : void 0,
       signal: h.signal,
       redirect: "manual"
-    }).catch((w) => {
-      s("shadow request failed: %s", String(w)), r.onError?.(w);
+    }).catch((g) => {
+      s("shadow request failed: %s", String(g)), r.onError?.(g);
     }).finally(() => {
       clearTimeout(p);
-    }), f = B(e);
+    }), f = z(e);
     f?.adapter?.waitUntil && f.adapter.waitUntil(y);
   }
-}), Zs = S({
+});
+function Ot() {
+  return {
+    state: "closed",
+    failureCount: 0,
+    successCount: 0,
+    lastFailureTime: 0,
+    lastStateChange: Date.now()
+  };
+}
+class jt {
+  circuits = /* @__PURE__ */ new Map();
+  getOrCreate(t) {
+    let r = this.circuits.get(t);
+    return r || (r = Ot(), this.circuits.set(t, r)), r;
+  }
+  async getState(t) {
+    return { ...this.getOrCreate(t) };
+  }
+  async recordSuccess(t) {
+    const r = this.getOrCreate(t);
+    return r.successCount++, { ...r };
+  }
+  async recordFailure(t) {
+    const r = this.getOrCreate(t);
+    return r.failureCount++, r.lastFailureTime = Date.now(), { ...r };
+  }
+  async transition(t, r) {
+    const s = this.getOrCreate(t);
+    return s.state = r, s.lastStateChange = Date.now(), r === "closed" && (s.failureCount = 0, s.successCount = 0), r === "half-open" && (s.successCount = 0), { ...s };
+  }
+  async reset(t) {
+    this.circuits.delete(t);
+  }
+  /** Remove all circuits (for testing) */
+  clear() {
+    this.circuits.clear();
+  }
+  /** Release all state. */
+  destroy() {
+    this.circuits.clear();
+  }
+}
+async function D(e, t, r, s, n, a) {
+  await E(
+    () => e.transition(t, s),
+    void 0,
+    a,
+    "store.transition()"
+  ), n && await E(
+    () => Promise.resolve(n(t, r, s)),
+    void 0,
+    a,
+    "onStateChange()"
+  );
+}
+function cn(e) {
+  const t = K(
+    {
+      failureThreshold: 5,
+      resetTimeoutMs: 3e4,
+      halfOpenMax: 1,
+      failureOn: [500, 502, 503, 504],
+      openStatusCode: 503
+    },
+    e
+  );
+  let r = e?.store;
+  r || (r = new jt());
+  const s = r, n = e?.onStateChange, a = /* @__PURE__ */ new Map(), o = async (i, c) => {
+    const l = F(i, "circuit-breaker"), u = e?.key ? e.key(i) : new URL(i.req.url).pathname, d = await E(
+      () => s.getState(u),
+      Ot(),
+      l,
+      "store.getState()"
+    ), h = Date.now();
+    if ($(i, "x-stoma-circuit-key", u), $(i, "x-stoma-circuit-state", d.state), $(i, "x-stoma-circuit-failures", d.failureCount), d.state === "open")
+      if (h - d.lastStateChange >= t.resetTimeoutMs)
+        l(`open -> half-open (key=${u})`), await D(
+          s,
+          u,
+          "open",
+          "half-open",
+          n,
+          l
+        ), a.set(u, 0);
+      else {
+        const p = Math.ceil(
+          (t.resetTimeoutMs - (h - d.lastStateChange)) / 1e3
+        );
+        throw new m(
+          t.openStatusCode,
+          "circuit_open",
+          "Service temporarily unavailable",
+          { "retry-after": String(p) }
+        );
+      }
+    if (d.state === "half-open" || d.state === "open" && h - d.lastStateChange >= t.resetTimeoutMs) {
+      const p = a.get(u) ?? 0;
+      if (p >= t.halfOpenMax)
+        throw new m(
+          t.openStatusCode,
+          "circuit_open",
+          "Service temporarily unavailable",
+          { "retry-after": String(Math.ceil(t.resetTimeoutMs / 1e3)) }
+        );
+      a.set(u, p + 1);
+      try {
+        await c(), t.failureOn.includes(i.res.status) ? (l(
+          `half-open probe failed (key=${u}, status=${i.res.status}) -> open`
+        ), await E(
+          () => s.recordFailure(u),
+          void 0,
+          l,
+          "store.recordFailure()"
+        ), await D(
+          s,
+          u,
+          "half-open",
+          "open",
+          n,
+          l
+        )) : (l(`half-open probe succeeded (key=${u}) -> closed`), await E(
+          () => s.recordSuccess(u),
+          void 0,
+          l,
+          "store.recordSuccess()"
+        ), await D(
+          s,
+          u,
+          "half-open",
+          "closed",
+          n,
+          l
+        ), a.delete(u));
+      } catch (y) {
+        throw l(`half-open probe threw (key=${u}) -> open`), await E(
+          () => s.recordFailure(u),
+          void 0,
+          l,
+          "store.recordFailure()"
+        ), await D(
+          s,
+          u,
+          "half-open",
+          "open",
+          n,
+          l
+        ), y;
+      } finally {
+        const y = a.get(u) ?? 1;
+        y <= 1 ? a.delete(u) : a.set(u, y - 1);
+      }
+      return;
+    }
+    try {
+      await c();
+    } catch (p) {
+      const y = await E(
+        () => s.recordFailure(u),
+        null,
+        l,
+        "store.recordFailure()"
+      );
+      throw y && y.failureCount >= t.failureThreshold && (l(
+        `closed -> open (key=${u}, failures=${y.failureCount}/${t.failureThreshold})`
+      ), await D(
+        s,
+        u,
+        "closed",
+        "open",
+        n,
+        l
+      )), p;
+    }
+    if (t.failureOn.includes(i.res.status)) {
+      const p = await E(
+        () => s.recordFailure(u),
+        null,
+        l,
+        "store.recordFailure()"
+      );
+      p && p.failureCount >= t.failureThreshold && (l(
+        `closed -> open (key=${u}, failures=${p.failureCount}/${t.failureThreshold})`
+      ), await D(
+        s,
+        u,
+        "closed",
+        "open",
+        n,
+        l
+      ));
+    } else
+      await E(
+        () => s.recordSuccess(u),
+        void 0,
+        l,
+        "store.recordSuccess()"
+      );
+  };
+  return {
+    name: "circuit-breaker",
+    priority: S.CIRCUIT_BREAKER,
+    handler: M(e?.skip, o),
+    httpOnly: !0
+  };
+}
+const ln = v({
   name: "latency-injection",
-  priority: v.EARLY,
+  priority: S.EARLY,
   httpOnly: !0,
   defaults: { jitter: 0, probability: 1 },
   handler: async (e, t, { config: r, debug: s }) => {
@@ -4396,51 +5023,56 @@ var Gs = S({
       s("skipping injection (probability miss)"), await t();
       return;
     }
-    let a = r.delayMs;
-    r.jitter > 0 && (a += (Math.random() * 2 - 1) * r.jitter * r.delayMs), a = Math.max(0, a), s(`injecting ${a.toFixed(0)}ms latency`), await new Promise((n) => setTimeout(n, a)), await t();
+    let n = r.delayMs;
+    r.jitter > 0 && (n += (Math.random() * 2 - 1) * r.jitter * r.delayMs), n = Math.max(0, n), s(`injecting ${n.toFixed(0)}ms latency`), await new Promise((a) => setTimeout(a, n)), await t();
   }
-}), ts = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
-function rs(e) {
+}), fs = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
+function ys(e) {
   return new Promise((t) => setTimeout(t, e));
 }
-function ss(e, t, r, s) {
-  const a = Math.random() * r;
-  return t === "fixed" ? r + a : Math.min(r * 2 ** e + a, s);
+function ws(e, t, r, s) {
+  const n = Math.random() * r;
+  return t === "fixed" ? r + n : Math.min(r * 2 ** e + n, s);
 }
-function ea(e) {
-  const t = J(
+function un(e) {
+  const t = K(
     {
       maxRetries: 3,
       retryOn: [502, 503, 504],
       backoff: "exponential",
       baseDelayMs: 200,
       maxDelayMs: 5e3,
-      retryMethods: ts,
+      retryMethods: fs,
       retryCountHeader: "x-retry-count"
     },
     e
-  ), r = async (s, a) => {
-    const n = K(s, "retry"), o = s.req.method.toUpperCase();
+  ), r = async (s, n) => {
+    const a = F(s, "retry"), o = s.req.method.toUpperCase();
     if (!t.retryMethods.includes(o)) {
-      await a();
+      await n();
       return;
     }
-    await a();
+    await n();
     const i = s.get("_proxyRequest");
     if (!i)
       return;
     let c = 0;
     for (let l = 0; l < t.maxRetries && t.retryOn.includes(s.res.status); l++) {
-      const u = ss(
+      const u = ws(
         l,
         t.backoff,
         t.baseDelayMs,
         t.maxDelayMs
       );
-      n(
+      a(
         `attempt ${l + 1}/${t.maxRetries} failed (status=${s.res.status}), retrying in ${Math.round(u)}ms`
-      ), await s.res.body?.cancel(), await rs(u);
-      const d = await fetch(i.clone());
+      ), await s.res.body?.cancel(), await ys(u);
+      let d;
+      try {
+        d = await fetch(i.clone());
+      } catch {
+        a(`retry attempt ${l + 1} fetch error, synthesizing 502`), d = new Response(null, { status: 502 });
+      }
       c = l + 1, s.res = new Response(d.body, {
         status: d.status,
         statusText: d.statusText,
@@ -4451,25 +5083,25 @@ function ea(e) {
   };
   return {
     name: "retry",
-    priority: v.RETRY,
-    handler: k(e?.skip, r),
+    priority: S.RETRY,
+    handler: M(e?.skip, r),
     httpOnly: !0
   };
 }
-var ta = S({
+const dn = v({
   name: "timeout",
-  priority: v.TIMEOUT,
+  priority: S.TIMEOUT,
   httpOnly: !0,
   defaults: { timeoutMs: 3e4, message: "Gateway timeout", statusCode: 504 },
   handler: async (e, t, { config: r, trace: s }) => {
-    const a = new AbortController(), n = setTimeout(() => a.abort(), r.timeoutMs);
-    e.set("_timeoutSignal", a.signal);
+    const n = new AbortController(), a = setTimeout(() => n.abort(), r.timeoutMs);
+    e.set("_timeoutSignal", n.signal);
     try {
       const o = Date.now();
       await Promise.race([
         t(),
         new Promise((i, c) => {
-          a.signal.addEventListener(
+          n.signal.addEventListener(
             "abort",
             () => c(
               new m(
@@ -4487,30 +5119,30 @@ var ta = S({
     } catch (o) {
       throw o instanceof m && o.code === "gateway_timeout" && s("fired", { budgetMs: r.timeoutMs }), o;
     } finally {
-      clearTimeout(n);
+      clearTimeout(a);
     }
   }
-}), ra = S({
+}), hn = v({
   name: "assign-attributes",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
   handler: async (e, t, { config: r, debug: s }) => {
-    for (const [a, n] of Object.entries(r.attributes))
-      if (typeof n == "function") {
-        const o = await n(e);
-        e.set(a, o), s("set %s = %s (dynamic)", a, o);
+    for (const [n, a] of Object.entries(r.attributes))
+      if (typeof a == "function") {
+        const o = await a(e);
+        e.set(n, o), s("set %s = %s (dynamic)", n, o);
       } else
-        e.set(a, n), s("set %s = %s (static)", a, n);
+        e.set(n, a), s("set %s = %s (static)", n, a);
     await t();
   },
   evaluate: {
     onRequest: async (e, { config: t, debug: r }) => {
       const s = [];
-      for (const [a, n] of Object.entries(t.attributes)) {
-        const o = typeof n == "function" ? n({}) : n;
-        r("set %s = %s", a, o), s.push({
+      for (const [n, a] of Object.entries(t.attributes)) {
+        const o = typeof a == "function" ? a({}) : a;
+        r("set %s = %s", n, o), s.push({
           type: "attribute",
-          key: a,
+          key: n,
           value: o
         });
       }
@@ -4518,40 +5150,40 @@ var ta = S({
     }
   }
 });
-async function We(e, t) {
+async function Xe(e, t) {
   const r = {};
-  for (const [s, a] of Object.entries(t))
-    typeof a == "function" ? r[s] = await a(e) : r[s] = a;
+  for (const [s, n] of Object.entries(t))
+    typeof n == "function" ? r[s] = await n(e) : r[s] = n;
   return r;
 }
-function X(e, t) {
+function Z(e, t) {
   return e ? t.some((r) => e.includes(r)) : !1;
 }
-var sa = S({
+const pn = v({
   name: "assign-content",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   defaults: {
     contentTypes: ["application/json"]
   },
   handler: async (e, t, { config: r, debug: s }) => {
     if (r.request) {
-      const a = e.req.header("content-type");
-      if (X(a, r.contentTypes)) {
-        let n = {};
+      const n = e.req.header("content-type");
+      if (Z(n, r.contentTypes)) {
+        let a = {};
         try {
           const l = await e.req.raw.clone().text();
-          l && (n = JSON.parse(l));
+          l && (a = JSON.parse(l));
         } catch {
         }
-        const o = await We(e, r.request);
-        Object.assign(n, o), s(
+        const o = await Xe(e, r.request);
+        Object.assign(a, o), s(
           "assigned %d fields to request body",
           Object.keys(o).length
         );
         const i = new Request(e.req.url, {
           method: e.req.method,
           headers: e.req.raw.headers,
-          body: JSON.stringify(n),
+          body: JSON.stringify(a),
           // @ts-expect-error -- duplex required for streams in some runtimes
           duplex: "half"
         });
@@ -4562,24 +5194,24 @@ var sa = S({
       } else
         s(
           "request content-type %s not in allowed types — skipping request modification",
-          a
+          n
         );
     }
     if (await t(), r.response) {
-      const a = e.res.headers.get("content-type");
-      if (X(a ?? void 0, r.contentTypes)) {
-        let n = {};
+      const n = e.res.headers.get("content-type");
+      if (Z(n ?? void 0, r.contentTypes)) {
+        let a = {};
         try {
           const c = await e.res.text();
-          c && (n = JSON.parse(c));
+          c && (a = JSON.parse(c));
         } catch {
         }
-        const o = await We(e, r.response);
-        Object.assign(n, o), s(
+        const o = await Xe(e, r.response);
+        Object.assign(a, o), s(
           "assigned %d fields to response body",
           Object.keys(o).length
         );
-        const i = new Response(JSON.stringify(n), {
+        const i = new Response(JSON.stringify(a), {
           status: e.res.status,
           headers: e.res.headers
         });
@@ -4587,7 +5219,7 @@ var sa = S({
       } else
         s(
           "response content-type %s not in allowed types — skipping response modification",
-          a
+          n
         );
     }
   },
@@ -4596,21 +5228,21 @@ var sa = S({
       if (!t.request)
         return { action: "continue" };
       const s = e.headers.get("content-type") ?? "";
-      if (!X(s, t.contentTypes))
+      if (!Z(s, t.contentTypes))
         return r(
           "request content-type %s not in allowed types — skipping request modification",
           s
         ), { action: "continue" };
-      let a = {};
+      let n = {};
       try {
         if (e.body) {
-          const n = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
-          n && (a = JSON.parse(n));
+          const a = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
+          a && (n = JSON.parse(a));
         }
       } catch {
       }
-      for (const [n, o] of Object.entries(t.request))
-        typeof o == "function" ? a[n] = o({}) : a[n] = o;
+      for (const [a, o] of Object.entries(t.request))
+        typeof o == "function" ? n[a] = o({}) : n[a] = o;
       return r(
         "assigned %d fields to request body",
         Object.keys(t.request).length
@@ -4620,7 +5252,7 @@ var sa = S({
           {
             type: "body",
             op: "replace",
-            content: JSON.stringify(a)
+            content: JSON.stringify(n)
           }
         ]
       };
@@ -4629,21 +5261,21 @@ var sa = S({
       if (!t.response)
         return { action: "continue" };
       const s = e.headers.get("content-type") ?? "";
-      if (!X(s, t.contentTypes))
+      if (!Z(s, t.contentTypes))
         return r(
           "response content-type %s not in allowed types — skipping response modification",
           s
         ), { action: "continue" };
-      let a = {};
+      let n = {};
       try {
         if (e.body) {
-          const n = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
-          n && (a = JSON.parse(n));
+          const a = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
+          a && (n = JSON.parse(a));
         }
       } catch {
       }
-      for (const [n, o] of Object.entries(t.response))
-        typeof o == "function" ? a[n] = o({}) : a[n] = o;
+      for (const [a, o] of Object.entries(t.response))
+        typeof o == "function" ? n[a] = o({}) : n[a] = o;
       return r(
         "assigned %d fields to response body",
         Object.keys(t.response).length
@@ -4653,15 +5285,48 @@ var sa = S({
           {
             type: "body",
             op: "replace",
-            content: JSON.stringify(a)
+            content: JSON.stringify(n)
           }
         ]
       };
     }
   }
 });
-function aa(e) {
-  const t = e?.origins ?? "*", r = Mr({
+var gs = (e) => {
+  const r = {
+    ...{
+      origin: "*",
+      allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
+      allowHeaders: [],
+      exposeHeaders: []
+    },
+    ...e
+  }, s = /* @__PURE__ */ ((a) => typeof a == "string" ? a === "*" ? () => a : (o) => a === o ? o : null : typeof a == "function" ? a : (o) => a.includes(o) ? o : null)(r.origin), n = ((a) => typeof a == "function" ? a : Array.isArray(a) ? () => a : () => [])(r.allowMethods);
+  return async function(o, i) {
+    function c(u, d) {
+      o.res.headers.set(u, d);
+    }
+    const l = await s(o.req.header("origin") || "", o);
+    if (l && c("Access-Control-Allow-Origin", l), r.credentials && c("Access-Control-Allow-Credentials", "true"), r.exposeHeaders?.length && c("Access-Control-Expose-Headers", r.exposeHeaders.join(",")), o.req.method === "OPTIONS") {
+      r.origin !== "*" && c("Vary", "Origin"), r.maxAge != null && c("Access-Control-Max-Age", r.maxAge.toString());
+      const u = await n(o.req.header("origin") || "", o);
+      u.length && c("Access-Control-Allow-Methods", u.join(","));
+      let d = r.allowHeaders;
+      if (!d?.length) {
+        const h = o.req.header("Access-Control-Request-Headers");
+        h && (d = h.split(/\s*,\s*/));
+      }
+      return d?.length && (c("Access-Control-Allow-Headers", d.join(",")), o.res.headers.append("Vary", "Access-Control-Request-Headers")), o.res.headers.delete("Content-Length"), o.res.headers.delete("Content-Type"), new Response(null, {
+        headers: o.res.headers,
+        status: 204,
+        statusText: "No Content"
+      });
+    }
+    await i(), r.origin !== "*" && o.header("Vary", "Origin", { append: !0 });
+  };
+};
+function mn(e) {
+  const t = e?.origins ?? "*", r = gs({
     origin: typeof t == "function" ? (s) => t(s) ? s : "" : t,
     allowMethods: e?.methods,
     allowHeaders: e?.allowHeaders,
@@ -4671,14 +5336,14 @@ function aa(e) {
   });
   return {
     name: "cors",
-    priority: v.EARLY,
-    handler: k(e?.skip, r),
+    priority: S.EARLY,
+    handler: M(e?.skip, r),
     httpOnly: !0
   };
 }
-var na = S({
+const fn = v({
   name: "json-validation",
-  priority: v.AUTH,
+  priority: S.AUTH,
   phases: ["request-body"],
   defaults: {
     contentTypes: ["application/json"],
@@ -4686,13 +5351,13 @@ var na = S({
     errorDetail: !0
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header("content-type") ?? "";
+    const n = e.req.header("content-type") ?? "";
     if (!r.contentTypes.some(
-      (c) => a.includes(c)
+      (c) => n.includes(c)
     )) {
       s(
         "skipping — content type %s not in %o",
-        a,
+        n,
         r.contentTypes
       ), await t();
       return;
@@ -4740,7 +5405,7 @@ var na = S({
           s,
           t.contentTypes
         ), { action: "continue" };
-      let n;
+      let a;
       try {
         if (!e.body)
           return r("empty body with JSON content type"), {
@@ -4750,7 +5415,7 @@ var na = S({
             message: "Request body is empty"
           };
         const i = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
-        n = JSON.parse(i);
+        a = JSON.parse(i);
       } catch {
         return r("body parse failed"), {
           action: "reject",
@@ -4761,7 +5426,7 @@ var na = S({
       }
       if (!t.validate)
         return r("no validator configured — JSON parsed successfully"), { action: "continue" };
-      const o = await t.validate(n);
+      const o = await t.validate(a);
       if (!o.valid) {
         const i = t.errorDetail && o.errors && o.errors.length > 0 ? `Validation failed: ${o.errors.join("; ")}` : "Validation failed";
         return r("validation failed: %s", i), {
@@ -4774,17 +5439,17 @@ var na = S({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), oa = S({
+}), yn = v({
   name: "override-method",
-  priority: v.EARLY,
+  priority: S.EARLY,
   phases: ["request-headers"],
   defaults: {
     header: "X-HTTP-Method-Override",
     allowedMethods: ["GET", "PUT", "PATCH", "DELETE"]
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header(r.header);
-    if (!a) {
+    const n = e.req.header(r.header);
+    if (!n) {
       await t();
       return;
     }
@@ -4792,18 +5457,18 @@ var na = S({
       s(`ignoring override on ${e.req.method} request`), await t();
       return;
     }
-    const n = a.toUpperCase();
+    const a = n.toUpperCase();
     if (!new Set(
       (r.allowedMethods ?? []).map((c) => c.toUpperCase())
-    ).has(n))
+    ).has(a))
       throw new m(
         400,
         "invalid_method_override",
-        `Method override not allowed: ${n}`
+        `Method override not allowed: ${a}`
       );
-    s(`overriding POST → ${n}`);
+    s(`overriding POST → ${a}`);
     const i = new Request(e.req.url, {
-      method: n,
+      method: a,
       headers: e.req.raw.headers,
       body: e.req.raw.body,
       // @ts-expect-error -- duplex is required for streams but not in all type definitions
@@ -4812,25 +5477,25 @@ var na = S({
     Object.defineProperty(e.req, "raw", { value: i, configurable: !0 }), await t();
   }
 });
-function Ve(e) {
+function Qe(e) {
   return typeof e == "boolean" ? { valid: e } : e;
 }
-var ia = S({
+const wn = v({
   name: "request-validation",
-  priority: v.AUTH,
+  priority: S.AUTH,
   phases: ["request-body"],
   defaults: {
     contentTypes: ["application/json"],
     errorMessage: "Request validation failed"
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = e.req.header("content-type") ?? "";
+    const n = e.req.header("content-type") ?? "";
     if (!r.contentTypes.some(
-      (u) => a.includes(u)
+      (u) => n.includes(u)
     )) {
       s(
         "skipping — content type %s not in %o",
-        a,
+        n,
         r.contentTypes
       ), await t();
       return;
@@ -4851,7 +5516,7 @@ var ia = S({
       s("no validator configured — passing through"), await t();
       return;
     }
-    const c = await i(o), l = Ve(c);
+    const c = await i(o), l = Qe(c);
     if (!l.valid) {
       const u = l.errors && l.errors.length > 0 ? `${r.errorMessage}: ${l.errors.join("; ")}` : r.errorMessage;
       throw s("validation failed: %s", u), new m(400, "validation_failed", u);
@@ -4869,7 +5534,7 @@ var ia = S({
           s,
           t.contentTypes
         ), { action: "continue" };
-      let n;
+      let a;
       try {
         if (!e.body)
           return r("body parse failed"), {
@@ -4879,7 +5544,7 @@ var ia = S({
             message: `${t.errorMessage}: invalid JSON`
           };
         const l = typeof e.body == "string" ? e.body : new TextDecoder().decode(e.body);
-        n = JSON.parse(l);
+        a = JSON.parse(l);
       } catch {
         return r("body parse failed"), {
           action: "reject",
@@ -4891,7 +5556,7 @@ var ia = S({
       const o = t.validateAsync ?? t.validate;
       if (!o)
         return r("no validator configured — passing through"), { action: "continue" };
-      const i = await o(n), c = Ve(i);
+      const i = await o(a), c = Qe(i);
       if (!c.valid) {
         const l = c.errors && c.errors.length > 0 ? `${t.errorMessage}: ${c.errors.join("; ")}` : t.errorMessage;
         return r("validation failed: %s", l), {
@@ -4904,35 +5569,36 @@ var ia = S({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), ca = S({
+}), gn = v({
   name: "request-transform",
-  priority: v.REQUEST_TRANSFORM,
+  priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
   handler: async (e, t, { config: r }) => {
-    const s = new Headers(e.req.raw.headers);
-    if (r.renameHeaders)
-      for (const [a, n] of Object.entries(r.renameHeaders)) {
-        const o = s.get(a);
-        o !== null && (s.set(n, o), s.delete(a));
-      }
-    if (r.setHeaders)
-      for (const [a, n] of Object.entries(r.setHeaders))
-        s.set(a, n);
-    if (r.removeHeaders)
-      for (const a of r.removeHeaders)
-        s.delete(a);
-    e.req.raw = new Request(e.req.raw, { headers: s }), await t();
+    const s = r.setHeaders, n = r.removeHeaders, a = r.renameHeaders;
+    I(e, (o) => {
+      if (a)
+        for (const [i, c] of Object.entries(a)) {
+          const l = o.get(i);
+          l !== null && (o.set(c, l), o.delete(i));
+        }
+      if (s)
+        for (const [i, c] of Object.entries(s))
+          o.set(i, c);
+      if (n)
+        for (const i of n)
+          o.delete(i);
+    }), await t();
   },
   evaluate: {
     onRequest: async (e, { config: t }) => {
       const r = [];
       if (t.setHeaders)
-        for (const [s, a] of Object.entries(t.setHeaders))
+        for (const [s, n] of Object.entries(t.setHeaders))
           r.push({
             type: "header",
             op: "set",
             name: s,
-            value: a
+            value: n
           });
       if (t.removeHeaders)
         for (const s of t.removeHeaders)
@@ -4944,19 +5610,19 @@ var ia = S({
       return r.length > 0 ? { action: "continue", mutations: r } : { action: "continue" };
     }
   }
-}), la = S({
+}), Sn = v({
   name: "response-transform",
-  priority: v.RESPONSE_TRANSFORM,
+  priority: S.RESPONSE_TRANSFORM,
   phases: ["response-headers"],
   handler: async (e, t, { config: r }) => {
     if (await t(), r.renameHeaders)
-      for (const [s, a] of Object.entries(r.renameHeaders)) {
-        const n = e.res.headers.get(s);
-        n !== null && (e.res.headers.set(a, n), e.res.headers.delete(s));
+      for (const [s, n] of Object.entries(r.renameHeaders)) {
+        const a = e.res.headers.get(s);
+        a !== null && (e.res.headers.set(n, a), e.res.headers.delete(s));
       }
     if (r.setHeaders)
-      for (const [s, a] of Object.entries(r.setHeaders))
-        e.res.headers.set(s, a);
+      for (const [s, n] of Object.entries(r.setHeaders))
+        e.res.headers.set(s, n);
     if (r.removeHeaders)
       for (const s of r.removeHeaders)
         e.res.headers.delete(s);
@@ -4965,12 +5631,12 @@ var ia = S({
     onResponse: async (e, { config: t }) => {
       const r = [];
       if (t.setHeaders)
-        for (const [s, a] of Object.entries(t.setHeaders))
+        for (const [s, n] of Object.entries(t.setHeaders))
           r.push({
             type: "header",
             op: "set",
             name: s,
-            value: a
+            value: n
           });
       if (t.removeHeaders)
         for (const s of t.removeHeaders)
@@ -4983,8 +5649,8 @@ var ia = S({
     }
   }
 });
-function ua(e) {
-  const t = e?.path ?? "/health", r = e?.upstreamProbes ?? [], s = e?.includeUpstreamStatus ?? !1, a = e?.probeTimeoutMs ?? 5e3, n = e?.probeMethod ?? "HEAD", o = e?.unhealthyStatusCode ?? 503;
+function vn(e) {
+  const t = e?.path ?? "/health", r = e?.upstreamProbes ?? [], s = e?.includeUpstreamStatus ?? !1, n = e?.probeTimeoutMs ?? 5e3, a = e?.probeMethod ?? "HEAD", o = e?.unhealthyStatusCode ?? 503;
   return {
     path: t,
     methods: ["GET"],
@@ -5002,8 +5668,8 @@ function ua(e) {
               const y = Date.now();
               try {
                 const f = await fetch(p, {
-                  method: n,
-                  signal: AbortSignal.timeout(a)
+                  method: a,
+                  signal: AbortSignal.timeout(n)
                 });
                 return {
                   url: p,
@@ -5031,27 +5697,27 @@ function ua(e) {
     }
   };
 }
-var da = S({
+const Tn = v({
   name: "assign-metrics",
-  priority: v.OBSERVABILITY,
+  priority: S.OBSERVABILITY,
   httpOnly: !0,
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = {};
-    for (const [n, o] of Object.entries(r.tags))
-      typeof o == "function" ? (a[n] = await E(
+    const n = {};
+    for (const [a, o] of Object.entries(r.tags))
+      typeof o == "function" ? (n[a] = await E(
         () => Promise.resolve(o(e)),
         "unknown",
         s,
-        `tag resolver(${n})`
-      ), s("tag %s = %s (dynamic)", n, a[n])) : (a[n] = o, s("tag %s = %s (static)", n, o));
-    e.set("_metricsTags", a), await t();
+        `tag resolver(${a})`
+      ), s("tag %s = %s (dynamic)", a, n[a])) : (n[a] = o, s("tag %s = %s (static)", a, o));
+    e.set("_metricsTags", n), await t();
   }
-}), ha = S({
+}), bn = v({
   name: "metrics-reporter",
-  priority: v.METRICS,
+  priority: S.METRICS,
   httpOnly: !0,
-  handler: async (e, t, { config: r, debug: s, gateway: a }) => {
-    const n = Date.now();
+  handler: async (e, t, { config: r, debug: s, gateway: n }) => {
+    const a = Date.now();
     await t(), await E(
       async () => {
         const o = e.get("_metricsTags"), i = {};
@@ -5061,12 +5727,12 @@ var da = S({
         const c = new URL(e.req.url), l = {
           ...i,
           method: e.req.method,
-          path: a?.routePath ?? c.pathname,
+          path: n?.routePath ?? c.pathname,
           status: String(e.res.status),
-          gateway: a?.gatewayName ?? "unknown"
+          gateway: n?.gatewayName ?? "unknown"
         };
         r.collector.increment("gateway_requests_total", 1, l);
-        const u = Date.now() - n;
+        const u = Date.now() - a;
         r.collector.histogram(
           "gateway_request_duration_ms",
           u,
@@ -5081,7 +5747,7 @@ var da = S({
               {
                 ...i,
                 policy: h.name,
-                gateway: a?.gatewayName ?? "unknown"
+                gateway: n?.gatewayName ?? "unknown"
               }
             );
       },
@@ -5091,26 +5757,26 @@ var da = S({
     );
   }
 });
-function At(e, t) {
-  if (!Et(e) && !Array.isArray(e))
+function kt(e, t) {
+  if (!Ht(e) && !Array.isArray(e))
     return e;
   const r = t.replacement ?? "[REDACTED]", s = structuredClone(e);
-  for (const a of t.paths)
-    Q(s, a.split("."), 0, r);
+  for (const n of t.paths)
+    te(s, n.split("."), 0, r);
   return s;
 }
-function Q(e, t, r, s) {
+function te(e, t, r, s) {
   if (r >= t.length || e == null) return;
-  const a = t[r], n = r === t.length - 1;
+  const n = t[r], a = r === t.length - 1;
   if (Array.isArray(e)) {
     for (const o of e)
-      Q(o, t, r, s);
+      te(o, t, r, s);
     return;
   }
-  if (Et(e))
-    if (a === "*")
+  if (Ht(e))
+    if (n === "*")
       for (const o of Object.keys(e))
-        n ? e[o] = s : Q(
+        a ? e[o] = s : te(
           e[o],
           t,
           r + 1,
@@ -5118,45 +5784,45 @@ function Q(e, t, r, s) {
         );
     else {
       const o = e;
-      if (!(a in o)) return;
-      n ? o[a] = s : Q(o[a], t, r + 1, s);
+      if (!(n in o)) return;
+      a ? o[n] = s : te(o[n], t, r + 1, s);
     }
 }
-function Et(e) {
+function Ht(e) {
   return typeof e == "object" && e !== null && !Array.isArray(e);
 }
-var as = 8192, pa = S({
+const Ss = 8192, xn = v({
   name: "request-log",
-  priority: v.OBSERVABILITY,
+  priority: S.OBSERVABILITY,
   httpOnly: !0,
-  handler: async (e, t, { config: r, debug: s, gateway: a }) => {
-    const n = r.sink ?? is, o = r.maxBodyLength ?? as, i = Date.now();
+  handler: async (e, t, { config: r, debug: s, gateway: n }) => {
+    const a = r.sink ?? bs, o = r.maxBodyLength ?? Ss, i = Date.now();
     let c;
-    r.logRequestBody && (c = await ns(
+    r.logRequestBody && (c = await vs(
       e.req.raw,
       o,
       r.redactPaths
     )), await t();
     const l = new URL(e.req.url), u = {
       timestamp: (/* @__PURE__ */ new Date()).toISOString(),
-      requestId: a?.requestId ?? e.res.headers.get("x-request-id") ?? "unknown",
+      requestId: n?.requestId ?? e.res.headers.get("x-request-id") ?? "unknown",
       method: e.req.method,
       path: l.pathname,
       statusCode: e.res.status,
       durationMs: Date.now() - i,
-      clientIp: ee(e.req.raw.headers, {
+      clientIp: ae(e.req.raw.headers, {
         ipHeaders: r.ipHeaders
       }),
       userAgent: e.req.header("user-agent") ?? "unknown",
-      gatewayName: a?.gatewayName ?? "unknown",
-      routePath: a?.routePath ?? l.pathname,
+      gatewayName: n?.gatewayName ?? "unknown",
+      routePath: n?.routePath ?? l.pathname,
       upstream: "unknown",
       // Enriched by proxy policy in future
-      traceId: a?.traceId,
-      spanId: a?.spanId
+      traceId: n?.traceId,
+      spanId: n?.spanId
     };
     if (c !== void 0 && (u.requestBody = c), r.logResponseBody) {
-      const d = await os(
+      const d = await Ts(
         e,
         o,
         r.redactPaths
@@ -5169,68 +5835,64 @@ var as = 8192, pa = S({
       } catch {
       }
     await E(
-      () => Promise.resolve(n(u)),
+      () => Promise.resolve(a(u)),
       void 0,
       s,
       "sink()"
     );
   }
 });
-async function ns(e, t, r) {
+async function vs(e, t, r) {
   try {
-    const a = await e.clone().text();
-    if (!a) return;
-    const n = a.length > t ? `${a.slice(0, t)}...[truncated]` : a;
+    const n = await e.clone().text();
+    if (!n) return;
+    const a = n.length > t ? `${n.slice(0, t)}...[truncated]` : n;
     if ((e.headers.get("content-type") ?? "").includes("application/json"))
       try {
         let i = JSON.parse(
-          n.endsWith("...[truncated]") ? a.slice(0, t) : a
+          a.endsWith("...[truncated]") ? n.slice(0, t) : n
         );
-        return r?.length && (i = At(i, { paths: r })), i;
+        return r?.length && (i = kt(i, { paths: r })), i;
       } catch {
-        return n;
+        return a;
       }
-    return n;
+    return a;
   } catch {
     return;
   }
 }
-async function os(e, t, r) {
+async function Ts(e, t, r) {
   try {
-    const a = await e.res.clone().text();
-    if (!a) return;
-    const n = a.length > t ? `${a.slice(0, t)}...[truncated]` : a;
+    const n = await e.res.clone().text();
+    if (!n) return;
+    const a = n.length > t ? `${n.slice(0, t)}...[truncated]` : n;
     if ((e.res.headers.get("content-type") ?? "").includes("application/json"))
       try {
         let i = JSON.parse(
-          n.endsWith("...[truncated]") ? a.slice(0, t) : a
+          a.endsWith("...[truncated]") ? n.slice(0, t) : n
         );
-        return r?.length && (i = At(i, { paths: r })), i;
+        return r?.length && (i = kt(i, { paths: r })), i;
       } catch {
-        return n;
+        return a;
       }
-    return n;
+    return a;
   } catch {
     return;
   }
 }
-function is(e) {
+function bs(e) {
   console.log(JSON.stringify(e));
 }
-function cs(e) {
+function xs(e) {
   return e.replace(/[^a-zA-Z0-9_-]/g, "_");
 }
-function Ye(e, t, r, s) {
-  const a = cs(e), n = t.toFixed(r), o = s?.(e);
-  if (o) {
-    const i = o.replace(/"/g, '\\"');
-    return `${a};dur=${n};desc="${i}"`;
-  }
-  return `${a};dur=${n}`;
+function Ze(e, t, r, s) {
+  const n = xs(e), a = t.toFixed(r), o = s?.(e);
+  return o ? `${n};dur=${a};desc="${Se(o)}"` : `${n};dur=${a}`;
 }
-var ma = S({
+const Rn = v({
   name: "server-timing",
-  priority: v.METRICS,
+  priority: S.METRICS,
   httpOnly: !0,
   defaults: {
     serverTimingHeader: !0,
@@ -5248,33 +5910,33 @@ var ma = S({
       );
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const a = Date.now();
+    const n = Date.now();
     await t();
-    let n;
+    let a;
     switch (r.visibility) {
       case "always":
-        n = !0;
+        a = !0;
         break;
       case "conditional":
-        n = await r.visibilityFn(e);
+        a = await r.visibilityFn(e);
         break;
       default:
-        n = St(e);
+        a = Tt(e);
         break;
     }
-    if (!n) {
+    if (!a) {
       s("skipping — visibility check failed");
       return;
     }
-    const o = Date.now() - a, i = r.precision, c = e.get("_policyTimings"), l = c ? mt(c) : void 0;
+    const o = Date.now() - n, i = r.precision, c = e.get("_policyTimings"), l = c ? bt(c) : void 0;
     if (r.serverTimingHeader) {
       const u = [];
       if (r.includeTotal && u.push(
-        Ye("total", o, i, r.descriptionFn)
+        Ze("total", o, i, r.descriptionFn)
       ), l)
         for (const d of l)
           u.push(
-            Ye(d.name, d.durationMs, i, r.descriptionFn)
+            Ze(d.name, d.durationMs, i, r.descriptionFn)
           );
       u.length > 0 && (e.res.headers.set("server-timing", u.join(", ")), s("Server-Timing: %s", u.join(", ")));
     }
@@ -5284,719 +5946,90 @@ var ma = S({
     }
   }
 });
-function _t() {
-  return {
-    state: "closed",
-    failureCount: 0,
-    successCount: 0,
-    lastFailureTime: 0,
-    lastStateChange: Date.now()
-  };
-}
-var qt = class {
-  circuits = /* @__PURE__ */ new Map();
-  getOrCreate(e) {
-    let t = this.circuits.get(e);
-    return t || (t = _t(), this.circuits.set(e, t)), t;
-  }
-  async getState(e) {
-    return { ...this.getOrCreate(e) };
-  }
-  async recordSuccess(e) {
-    const t = this.getOrCreate(e);
-    return t.successCount++, { ...t };
-  }
-  async recordFailure(e) {
-    const t = this.getOrCreate(e);
-    return t.failureCount++, t.lastFailureTime = Date.now(), { ...t };
-  }
-  async transition(e, t) {
-    const r = this.getOrCreate(e);
-    return r.state = t, r.lastStateChange = Date.now(), t === "closed" && (r.failureCount = 0, r.successCount = 0), t === "half-open" && (r.successCount = 0), { ...r };
-  }
-  async reset(e) {
-    this.circuits.delete(e);
-  }
-  /** Remove all circuits (for testing) */
-  clear() {
-    this.circuits.clear();
-  }
-  /** Release all state. */
-  destroy() {
-    this.circuits.clear();
-  }
-};
-async function P(e, t, r, s, a, n) {
-  await E(
-    () => e.transition(t, s),
-    void 0,
-    n,
-    "store.transition()"
-  ), a && await E(
-    () => Promise.resolve(a(t, r, s)),
-    void 0,
-    n,
-    "onStateChange()"
-  );
-}
-function fa(e) {
-  const t = J(
-    {
-      failureThreshold: 5,
-      resetTimeoutMs: 3e4,
-      halfOpenMax: 1,
-      failureOn: [500, 502, 503, 504],
-      openStatusCode: 503
-    },
-    e
-  );
-  let r = e?.store;
-  r || (r = new qt());
-  const s = r, a = e?.onStateChange, n = /* @__PURE__ */ new Map(), o = async (i, c) => {
-    const l = K(i, "circuit-breaker"), u = e?.key ? e.key(i) : new URL(i.req.url).pathname, d = await E(
-      () => s.getState(u),
-      _t(),
-      l,
-      "store.getState()"
-    ), h = Date.now();
-    if (q(i, "x-stoma-circuit-key", u), q(i, "x-stoma-circuit-state", d.state), q(i, "x-stoma-circuit-failures", d.failureCount), d.state === "open")
-      if (h - d.lastStateChange >= t.resetTimeoutMs)
-        l(`open -> half-open (key=${u})`), await P(
-          s,
-          u,
-          "open",
-          "half-open",
-          a,
-          l
-        ), n.set(u, 0);
-      else {
-        const p = Math.ceil(
-          (t.resetTimeoutMs - (h - d.lastStateChange)) / 1e3
-        );
-        throw new m(
-          t.openStatusCode,
-          "circuit_open",
-          "Service temporarily unavailable",
-          { "retry-after": String(p) }
-        );
-      }
-    if (d.state === "half-open" || d.state === "open" && h - d.lastStateChange >= t.resetTimeoutMs) {
-      const p = n.get(u) ?? 0;
-      if (p >= t.halfOpenMax)
-        throw new m(
-          t.openStatusCode,
-          "circuit_open",
-          "Service temporarily unavailable",
-          { "retry-after": String(Math.ceil(t.resetTimeoutMs / 1e3)) }
-        );
-      n.set(u, p + 1);
-      try {
-        await c(), t.failureOn.includes(i.res.status) ? (l(
-          `half-open probe failed (key=${u}, status=${i.res.status}) -> open`
-        ), await E(
-          () => s.recordFailure(u),
-          void 0,
-          l,
-          "store.recordFailure()"
-        ), await P(
-          s,
-          u,
-          "half-open",
-          "open",
-          a,
-          l
-        )) : (l(`half-open probe succeeded (key=${u}) -> closed`), await E(
-          () => s.recordSuccess(u),
-          void 0,
-          l,
-          "store.recordSuccess()"
-        ), await P(
-          s,
-          u,
-          "half-open",
-          "closed",
-          a,
-          l
-        ), n.delete(u));
-      } catch (y) {
-        throw l(`half-open probe threw (key=${u}) -> open`), await E(
-          () => s.recordFailure(u),
-          void 0,
-          l,
-          "store.recordFailure()"
-        ), await P(
-          s,
-          u,
-          "half-open",
-          "open",
-          a,
-          l
-        ), y;
-      } finally {
-        const y = n.get(u) ?? 1;
-        y <= 1 ? n.delete(u) : n.set(u, y - 1);
-      }
-      return;
-    }
-    try {
-      await c();
-    } catch (p) {
-      const y = await E(
-        () => s.recordFailure(u),
-        null,
-        l,
-        "store.recordFailure()"
-      );
-      throw y && y.failureCount >= t.failureThreshold && (l(
-        `closed -> open (key=${u}, failures=${y.failureCount}/${t.failureThreshold})`
-      ), await P(
-        s,
-        u,
-        "closed",
-        "open",
-        a,
-        l
-      )), p;
-    }
-    if (t.failureOn.includes(i.res.status)) {
-      const p = await E(
-        () => s.recordFailure(u),
-        null,
-        l,
-        "store.recordFailure()"
-      );
-      p && p.failureCount >= t.failureThreshold && (l(
-        `closed -> open (key=${u}, failures=${p.failureCount}/${t.failureThreshold})`
-      ), await P(
-        s,
-        u,
-        "closed",
-        "open",
-        a,
-        l
-      ));
-    } else
-      await E(
-        () => s.recordSuccess(u),
-        void 0,
-        l,
-        "store.recordSuccess()"
-      );
-  };
-  return {
-    name: "circuit-breaker",
-    priority: v.CIRCUIT_BREAKER,
-    handler: k(e?.skip, o),
-    httpOnly: !0
-  };
-}
-function pe(e) {
-  return !e || Object.keys(e).length === 0 ? "" : Object.entries(e).sort(([t], [r]) => t.localeCompare(r)).map(([t, r]) => `${t}=${r}`).join(",");
-}
-var ya = class {
-  counters = /* @__PURE__ */ new Map();
-  histograms = /* @__PURE__ */ new Map();
-  gauges = /* @__PURE__ */ new Map();
-  increment(e, t = 1, r) {
-    const s = pe(r);
-    let a = this.counters.get(e);
-    a || (a = /* @__PURE__ */ new Map(), this.counters.set(e, a));
-    const n = a.get(s);
-    n ? n.value += t : a.set(s, { value: t, tags: r });
-  }
-  histogram(e, t, r) {
-    const s = pe(r);
-    let a = this.histograms.get(e);
-    a || (a = /* @__PURE__ */ new Map(), this.histograms.set(e, a));
-    const n = a.get(s);
-    n ? n.values.push(t) : a.set(s, { values: [t], tags: r });
-  }
-  gauge(e, t, r) {
-    const s = pe(r);
-    let a = this.gauges.get(e);
-    a || (a = /* @__PURE__ */ new Map(), this.gauges.set(e, a)), a.set(s, { value: t, tags: r });
-  }
-  snapshot() {
-    const e = {
-      counters: {},
-      histograms: {},
-      gauges: {}
-    };
-    for (const [t, r] of this.counters)
-      e.counters[t] = Array.from(r.values());
-    for (const [t, r] of this.histograms)
-      e.histograms[t] = Array.from(r.values());
-    for (const [t, r] of this.gauges)
-      e.gauges[t] = Array.from(r.values());
-    return e;
-  }
-  reset() {
-    this.counters.clear(), this.histograms.clear(), this.gauges.clear();
-  }
-};
-function ls(e) {
-  const t = [];
-  for (const [r, s] of Object.entries(e.counters)) {
-    t.push(`# TYPE ${r} counter`);
-    for (const a of s)
-      t.push(`${r}${me(a.tags)} ${a.value}`);
-  }
-  for (const [r, s] of Object.entries(e.histograms)) {
-    t.push(`# TYPE ${r} histogram`);
-    for (const a of s) {
-      const n = me(a.tags), o = a.values.reduce((c, l) => c + l, 0), i = a.values.length;
-      t.push(`${r}_sum${n} ${o}`), t.push(`${r}_count${n} ${i}`);
-    }
-  }
-  for (const [r, s] of Object.entries(e.gauges)) {
-    t.push(`# TYPE ${r} gauge`);
-    for (const a of s)
-      t.push(`${r}${me(a.tags)} ${a.value}`);
-  }
-  return t.join(`
-`);
-}
-function us(e) {
-  return e.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
-}
-function me(e) {
-  return !e || Object.keys(e).length === 0 ? "" : `{${Object.entries(e).sort(([r], [s]) => r.localeCompare(s)).map(([r, s]) => `${r}="${us(s)}"`).join(",")}}`;
-}
-var ds = ["secret", "key", "token", "password", "credential"];
-function hs(e, t, r) {
-  const s = `/${t.prefix ?? "___gateway"}`, a = async (n, o) => {
-    if (t.auth && !await t.auth(n))
-      return n.json(
-        { error: "unauthorized", message: "Admin access denied" },
-        403
-      );
-    await o();
-  };
-  e.get(`${s}/routes`, a, (n) => n.json({
-    gateway: r.gatewayName,
-    routes: r.routes
-  })), e.get(`${s}/policies`, a, (n) => n.json({
-    gateway: r.gatewayName,
-    policies: r.policies
-  })), e.get(`${s}/config`, a, (n) => n.json(
-    _e({
-      gateway: r.gatewayName,
-      routes: r.routes,
-      policies: r.policies
-    })
-  )), e.get(`${s}/metrics`, a, (n) => {
-    if (!t.metrics)
-      return n.json(
-        {
-          error: "not_configured",
-          message: "No metrics collector configured. Pass a MetricsCollector to admin.metrics."
-        },
-        404
-      );
-    const o = t.metrics.snapshot(), i = ls(o);
-    return n.text(i, 200, {
-      "content-type": "text/plain; version=0.0.4; charset=utf-8"
-    });
-  }), e.get(`${s}/health`, a, (n) => n.json({
-    status: "healthy",
-    gateway: r.gatewayName,
-    routeCount: r.routes.length,
-    policyCount: r.policies.length,
-    timestamp: (/* @__PURE__ */ new Date()).toISOString()
-  }));
-}
-function _e(e) {
-  if (typeof e != "object" || e === null) return e;
-  if (Array.isArray(e)) return e.map(_e);
-  const t = {};
-  for (const [r, s] of Object.entries(e))
-    ds.some((a) => r.toLowerCase().includes(a)) ? t[r] = "[REDACTED]" : typeof s == "function" ? t[r] = "[Function]" : typeof s == "object" && s !== null ? t[r] = _e(s) : t[r] = s;
-  return t;
-}
-function wa(e) {
-  if (!e.routes || e.routes.length === 0)
-    throw new m(
-      500,
-      "config_error",
-      "Gateway requires at least one route"
-    );
-  const t = e.name ?? "edge-gateway", r = Sr(e.debug), s = r("stoma:gateway"), a = r("stoma:pipeline"), n = r("stoma:upstream"), o = new ht();
-  o.onError((d, h) => {
-    if (e.onError)
-      return e.onError(d, h);
-    const p = B(h);
-    return d instanceof m ? Xe(d, p?.requestId) : (console.error(
-      `[${t}] Unhandled error on ${h.req.method} ${h.req.path}:`,
-      d
-    ), Ot(p?.requestId, e.defaultErrorMessage));
-  }), o.notFound((d) => (s(`no route matches ${d.req.method} ${d.req.path}`), d.json(
-    {
-      error: "not_found",
-      message: `No route matches ${d.req.method} ${d.req.path}`,
-      statusCode: 404,
-      gateway: t
-    },
-    404
-  )));
-  let i = 0;
-  const c = [], l = /* @__PURE__ */ new Map();
-  for (const d of e.routes) {
-    const h = ps(e.basePath, d.path), p = wt(
-      t,
-      d.path,
-      r,
-      e.requestIdHeader,
-      e.adapter,
-      e.debugHeaders,
-      e.tracing
-    ), y = Ar(
-      e.policies ?? [],
-      d.pipeline.policies ?? [],
-      a,
-      e.defaultPolicyPriority
-    ), f = Er(y), w = ms(
-      d,
-      n,
-      e.adapter
-    ), g = [p, ...f, w], T = d.methods ?? e.defaultMethods ?? ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], b = T.map((A) => A.toUpperCase());
-    o.on(b, h, ...g), i += T.length;
-    const x = y.map((A) => A.name);
-    c.push({
-      path: h,
-      methods: b,
-      policyNames: x,
-      upstreamType: d.pipeline.upstream.type
-    });
-    for (const A of y)
-      l.has(A.name) || l.set(A.name, {
-        name: A.name,
-        priority: A.priority ?? e.defaultPolicyPriority ?? 100
-      });
-    s(
-      `route ${h} [${b.join(",")}]${x.length ? ` policies=[${x.join(", ")}]` : ""} upstream=${d.pipeline.upstream.type}`
-    );
-  }
-  const u = {
-    routes: c,
-    policies: Array.from(l.values()).sort(
-      (d, h) => d.priority - h.priority
-    ),
-    gatewayName: t
-  };
-  if (e.admin) {
-    const d = typeof e.admin == "boolean" ? { enabled: !0 } : e.admin;
-    d.enabled && (d.auth || console.warn(
-      `[stoma:${t}] admin routes enabled without authentication`
-    ), hs(o, d, u), s(
-      `admin routes registered at /${d.prefix ?? "___gateway"}/*`
-    ));
-  }
-  return s(`"${t}" started with ${i} route handlers`), { app: o, routeCount: i, name: t, _registry: u };
-}
-function ps(e, t) {
-  if (!e) return t;
-  const r = e.endsWith("/") ? e.slice(0, -1) : e, s = t.startsWith("/") ? t : `/${t}`;
-  return `${r}${s}`;
-}
-function ms(e, t = I, r) {
-  const s = e.pipeline.upstream;
-  switch (s.type) {
-    case "handler":
-      return fs(s);
-    case "url":
-      return ws(s, t);
-    case "service-binding":
-      return ys(s, t, r);
-    default:
-      throw new m(
-        500,
-        "config_error",
-        `Unknown upstream type: ${s.type}`
-      );
-  }
-}
-function fs(e) {
-  return async (t) => e.handler(t);
-}
-var se = [
-  "connection",
-  "keep-alive",
-  "proxy-authenticate",
-  "proxy-authorization",
-  "proxy-connection",
-  "te",
-  "trailer",
-  "transfer-encoding",
-  "upgrade"
-];
-function ys(e, t = I, r) {
-  return async (s) => {
-    if (!r?.dispatchBinding)
-      throw new m(
-        502,
-        "config_error",
-        `Service binding "${e.service}" requires adapter.dispatchBinding — pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
-      );
-    const a = new URL(s.req.url);
-    let n = a.pathname;
-    if (e.rewritePath) {
-      const f = n;
-      n = e.rewritePath(n), t(`path rewrite: ${f} -> ${n}`);
-    }
-    const o = new URL(n + a.search, s.req.url);
-    t(
-      `service-binding "${e.service}": ${s.req.method} ${o.pathname}${o.search}`
-    );
-    const i = new Headers(s.req.raw.headers);
-    for (const f of se)
-      i.delete(f);
-    const c = B(s);
-    if (c) {
-      const f = oe();
-      i.set(
-        "traceparent",
-        je({
-          version: "00",
-          traceId: c.traceId,
-          parentId: f,
-          flags: "01"
-        })
-      );
-    }
-    const l = new Request(o.toString(), {
-      method: s.req.method,
-      headers: i,
-      body: s.req.raw.body,
-      // @ts-expect-error -- duplex is needed for streaming bodies
-      duplex: s.req.raw.body ? "half" : void 0
-    }), u = s.get("_otelSpans");
-    let d;
-    if (u !== void 0) {
-      const f = s.get("_otelRootSpan");
-      d = new ae(
-        `upstream:service-binding:${e.service}`,
-        "CLIENT",
-        f.traceId,
-        ne(),
-        f.spanId
-      ), d.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute("rpc.service", e.service);
-    }
-    const h = Date.now(), p = await r.dispatchBinding(
-      e.service,
-      l
-    );
-    t(
-      `service-binding responded: ${p.status} (${Date.now() - h}ms)`
-    ), d && (d.setAttribute(j.HTTP_STATUS_CODE, p.status).setStatus(p.status >= 500 ? "ERROR" : "OK"), u.push(d.end()));
-    const y = new Headers(p.headers);
-    for (const f of se)
-      y.delete(f);
-    return new Response(p.body, {
-      status: p.status,
-      statusText: p.statusText,
-      headers: y
-    });
-  };
-}
-function ws(e, t = I) {
-  const r = new URL(e.target);
-  return async (s) => {
-    const a = new URL(s.req.url);
-    let n = a.pathname;
-    if (e.rewritePath) {
-      const g = n;
-      n = e.rewritePath(n), t(`path rewrite: ${g} -> ${n}`);
-    }
-    const o = new URL(n + a.search, r);
-    if (o.origin !== r.origin)
-      throw t(
-        `SSRF blocked: rewritten URL origin ${o.origin} != ${r.origin}`
-      ), new m(
-        502,
-        "upstream_error",
-        "Rewritten URL must not change the upstream origin"
-      );
-    t(`proxying ${s.req.method} ${s.req.path} -> ${o.toString()}`);
-    const i = new Headers(s.req.raw.headers);
-    for (const g of se)
-      i.delete(g);
-    if (s.get("_preserveHost") === !0 || i.set("host", o.host), e.headers)
-      for (const [g, T] of Object.entries(e.headers))
-        i.set(g, T);
-    const l = B(s);
-    if (l) {
-      const g = oe();
-      i.set(
-        "traceparent",
-        je({
-          version: "00",
-          traceId: l.traceId,
-          parentId: g,
-          flags: "01"
-        })
-      );
-    }
-    const u = new Request(o.toString(), {
-      method: s.req.method,
-      headers: i,
-      body: s.req.raw.body,
-      redirect: "manual",
-      // Prevent SSRF via redirect to internal services
-      // @ts-expect-error -- duplex is needed for streaming bodies
-      duplex: s.req.raw.body ? "half" : void 0
-    });
-    s.set("_proxyRequest", u.clone());
-    const d = s.get("_timeoutSignal"), h = s.get("_otelSpans");
-    let p;
-    if (h !== void 0) {
-      const g = s.get("_otelRootSpan");
-      p = new ae(
-        `upstream:url:${o.host}`,
-        "CLIENT",
-        g.traceId,
-        ne(),
-        g.spanId
-      ), p.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute(j.SERVER_ADDRESS, o.host);
-    }
-    const y = Date.now(), f = await fetch(
-      u,
-      d ? { signal: d } : void 0
-    );
-    t(
-      `upstream responded: ${f.status} (${Date.now() - y}ms)`
-    ), p && (p.setAttribute(j.HTTP_STATUS_CODE, f.status).setStatus(f.status >= 500 ? "ERROR" : "OK"), h.push(p.end()));
-    const w = new Headers(f.headers);
-    for (const g of se)
-      w.delete(g);
-    return new Response(f.body, {
-      status: f.status,
-      statusText: f.statusText,
-      headers: w
-    });
-  };
-}
-function gs(e) {
-  let t = e;
-  return t.startsWith("/") || (t = `/${t}`), t.length > 1 && t.endsWith("/") && (t = t.slice(0, -1)), t;
-}
-function vs(e, t) {
-  const r = t.startsWith("/") ? t : `/${t}`;
-  return e.endsWith("/") && r.startsWith("/") ? `${e}${r.slice(1)}` : `${e}${r}`;
-}
-function ga(e) {
-  const t = gs(e.prefix), r = e.policies ?? [], s = e.metadata ?? {};
-  return e.routes.map((a) => {
-    const n = vs(t, a.path), o = a.pipeline.policies ?? [], i = r.length > 0 || o.length > 0 ? [...r, ...o] : void 0, c = Object.keys(s).length > 0 || a.metadata ? { ...s, ...a.metadata } : void 0;
-    return {
-      ...a,
-      path: n,
-      pipeline: {
-        ...a.pipeline,
-        ...i !== void 0 ? { policies: i } : {}
-      },
-      ...c !== void 0 ? { metadata: c } : {}
-    };
-  });
-}
-function va(e, t) {
-  const r = new TextEncoder(), s = r.encode(e), a = r.encode(t), n = Math.max(s.length, a.length);
-  let o = s.length !== a.length ? 1 : 0;
-  for (let i = 0; i < n; i++) {
-    const c = i < s.length ? s[i] : 0, l = i < a.length ? a[i] : 0;
+function An(e, t) {
+  const r = new TextEncoder(), s = r.encode(e), n = r.encode(t), a = Math.max(s.length, n.length);
+  let o = s.length !== n.length ? 1 : 0;
+  for (let i = 0; i < a; i++) {
+    const c = i < s.length ? s[i] : 0, l = i < n.length ? n[i] : 0;
     o |= c ^ l;
   }
   return o === 0;
 }
-var Ss = "https://stoma.internal", Sa = class {
+const Rs = "https://stoma.internal";
+class En {
   cache;
   origin;
   /**
    * @param cache - A `Cache` instance (e.g. `caches.default`). Falls back to `caches.default` when omitted.
    * @param origin - Synthetic origin used to construct cache keys. Default: `"https://edge-gateway.internal"`.
    */
-  constructor(e, t) {
-    this.cache = e ?? caches.default, this.origin = t ?? Ss;
+  constructor(t, r) {
+    this.cache = t ?? caches.default, this.origin = r ?? Rs;
   }
-  async get(e) {
-    const t = new Request(`${this.origin}/${encodeURIComponent(e)}`);
-    return await this.cache.match(t) ?? null;
+  async get(t) {
+    const r = new Request(`${this.origin}/${encodeURIComponent(t)}`);
+    return await this.cache.match(r) ?? null;
   }
-  async put(e, t, r) {
-    const s = new Request(`${this.origin}/${encodeURIComponent(e)}`), a = new Headers(t.headers);
-    a.set("Cache-Control", `s-maxage=${r}`);
-    const n = await t.arrayBuffer(), o = new Response(n, {
-      status: t.status,
+  async put(t, r, s) {
+    const n = new Request(`${this.origin}/${encodeURIComponent(t)}`), a = new Headers(r.headers);
+    a.set("Cache-Control", `s-maxage=${s}`);
+    const o = await r.arrayBuffer(), i = new Response(o, {
+      status: r.status,
       headers: a
     });
-    await this.cache.put(s, o);
+    await this.cache.put(n, i);
   }
-  async delete(e) {
-    const t = new Request(`${this.origin}/${encodeURIComponent(e)}`);
-    return this.cache.delete(t);
+  async delete(t) {
+    const r = new Request(`${this.origin}/${encodeURIComponent(t)}`);
+    return this.cache.delete(r);
   }
-};
-function Ta() {
+}
+function _n() {
   return {
-    rateLimitStore: new xt(),
-    circuitBreakerStore: new qt(),
-    cacheStore: new Tt()
+    rateLimitStore: new $t(),
+    circuitBreakerStore: new jt(),
+    cacheStore: new Et()
   };
 }
-const ba = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  Priority: v,
-  createPolicyTestHarness: qr,
-  definePolicy: S,
-  getCollectedDebugHeaders: vt,
-  isDebugRequested: St,
-  isTraceRequested: wr,
-  noopTraceReporter: pt,
-  parseDebugRequest: gt,
-  policyDebug: K,
-  policyTrace: $e,
-  resolveConfig: J,
-  safeCall: E,
-  setDebugHeader: q,
-  withSkip: k
-}, Symbol.toStringTag, { value: "Module" })), Ts = "stoma-playground", L = "rate-limits", bs = 1;
-function xs() {
+const As = "stoma-playground", J = "rate-limits", Es = 1;
+function _s() {
   return new Promise((e, t) => {
-    const r = indexedDB.open(Ts, bs);
+    const r = indexedDB.open(As, Es);
     r.onupgradeneeded = () => {
       const s = r.result;
-      s.objectStoreNames.contains(L) || s.createObjectStore(L);
+      s.objectStoreNames.contains(J) || s.createObjectStore(J);
     }, r.onsuccess = () => e(r.result), r.onerror = () => t(r.error);
   });
 }
-function Rs(e, t) {
+function $s(e, t) {
   return new Promise((r, s) => {
-    const o = e.transaction(L, "readonly").objectStore(L).get(t);
+    const o = e.transaction(J, "readonly").objectStore(J).get(t);
     o.onsuccess = () => r(o.result), o.onerror = () => s(o.error);
   });
 }
-function Ge(e, t, r) {
-  return new Promise((s, a) => {
-    const i = e.transaction(L, "readwrite").objectStore(L).put(r, t);
-    i.onsuccess = () => s(), i.onerror = () => a(i.error);
+function et(e, t, r) {
+  return new Promise((s, n) => {
+    const i = e.transaction(J, "readwrite").objectStore(J).put(r, t);
+    i.onsuccess = () => s(), i.onerror = () => n(i.error);
   });
 }
-class xa {
+class $n {
   db = null;
   async increment(t, r) {
-    this.db || (this.db = await xs());
-    const s = Date.now(), a = await Rs(this.db, t);
-    if (a && a.resetAt > s) {
+    this.db || (this.db = await _s());
+    const s = Date.now(), n = await $s(this.db, t);
+    if (n && n.resetAt > s) {
       const o = {
-        count: a.count + 1,
-        resetAt: a.resetAt
+        count: n.count + 1,
+        resetAt: n.resetAt
       };
-      return await Ge(this.db, t, o), o;
+      return await et(this.db, t, o), o;
     }
-    const n = {
+    const a = {
       count: 1,
       resetAt: s + r * 1e3
     };
-    return await Ge(this.db, t, n), n;
+    return await et(this.db, t, a), a;
   }
   /** Close the database connection. */
   destroy() {
@@ -6004,79 +6037,79 @@ class xa {
   }
 }
 export {
-  Sa as CacheApiCacheStore,
-  _s as ConsoleSpanExporter,
-  Hr as DEFAULT_IP_HEADERS,
+  En as CacheApiCacheStore,
+  Hs as ConsoleSpanExporter,
+  ls as DEFAULT_IP_HEADERS,
   m as GatewayError,
-  xa as IDBRateLimitStore,
-  Tt as InMemoryCacheStore,
-  qt as InMemoryCircuitBreakerStore,
-  ya as InMemoryMetricsCollector,
-  Es as OTLPSpanExporter,
-  v as Priority,
+  $n as IDBRateLimitStore,
+  Et as InMemoryCacheStore,
+  jt as InMemoryCircuitBreakerStore,
+  js as InMemoryMetricsCollector,
+  ks as OTLPSpanExporter,
+  S as Priority,
   j as SemConv,
-  ae as SpanBuilder,
-  ks as apiKeyAuth,
-  ra as assignAttributes,
-  sa as assignContent,
-  da as assignMetrics,
-  Hs as basicAuth,
-  qs as cache,
-  fa as circuitBreaker,
-  Is as clearJwksCache,
-  aa as cors,
-  wa as createGateway,
-  qr as createPolicyTestHarness,
-  Ot as defaultErrorResponse,
-  S as definePolicy,
-  Bs as dynamicRouting,
-  Xe as errorToResponse,
-  ee as extractClientIp,
-  Ms as generateHttpSignature,
-  Cs as generateJwt,
-  Js as geoIpFilter,
-  B as getGatewayContext,
-  ua as health,
-  Ks as httpCallout,
-  zs as interrupt,
-  Fs as ipFilter,
-  St as isDebugRequested,
-  wr as isTraceRequested,
-  Ws as jsonThreatProtection,
-  na as jsonValidation,
-  Ps as jws,
-  Ns as jwtAuth,
-  Zs as latencyInjection,
-  Ta as memoryAdapter,
-  ha as metricsReporter,
-  js as mock,
-  pt as noopTraceReporter,
-  Ds as oauth2,
-  oa as overrideMethod,
-  K as policyDebug,
-  $e as policyTrace,
-  Os as proxy,
-  $s as rateLimit,
-  Us as rbac,
-  Vs as regexThreatProtection,
-  Ys as requestLimit,
-  pa as requestLog,
-  ca as requestTransform,
-  ia as requestValidation,
-  J as resolveConfig,
-  Gs as resourceFilter,
-  la as responseTransform,
-  ea as retry,
+  ie as SpanBuilder,
+  Ns as apiKeyAuth,
+  hn as assignAttributes,
+  pn as assignContent,
+  Tn as assignMetrics,
+  Ds as basicAuth,
+  Vs as cache,
+  cn as circuitBreaker,
+  Us as clearJwksCache,
+  mn as cors,
+  Is as createGateway,
+  Kr as createPolicyTestHarness,
+  qt as defaultErrorResponse,
+  v as definePolicy,
+  Ys as dynamicRouting,
+  tt as errorToResponse,
+  ae as extractClientIp,
+  Ls as generateHttpSignature,
+  Bs as generateJwt,
+  Gs as geoIpFilter,
+  z as getGatewayContext,
+  vn as health,
+  Xs as httpCallout,
+  Qs as interrupt,
+  Zs as ipFilter,
+  Tt as isDebugRequested,
+  Hr as isTraceRequested,
+  en as jsonThreatProtection,
+  fn as jsonValidation,
+  Js as jws,
+  Ks as jwtAuth,
+  ln as latencyInjection,
+  _n as memoryAdapter,
+  bn as metricsReporter,
+  Cs as mock,
+  gt as noopTraceReporter,
+  Fs as oauth2,
+  yn as overrideMethod,
+  F as policyDebug,
+  Me as policyTrace,
+  Ps as proxy,
+  tn as rateLimit,
+  zs as rbac,
+  rn as regexThreatProtection,
+  sn as requestLimit,
+  xn as requestLog,
+  gn as requestTransform,
+  wn as requestValidation,
+  K as resolveConfig,
+  nn as resourceFilter,
+  Sn as responseTransform,
+  un as retry,
   E as safeCall,
-  ga as scope,
-  ba as sdk,
-  ma as serverTiming,
-  q as setDebugHeader,
-  Xs as sslEnforce,
-  ta as timeout,
-  va as timingSafeEqual,
-  ls as toPrometheusText,
-  Qs as trafficShadow,
-  Ls as verifyHttpSignature,
-  k as withSkip
+  Ms as scope,
+  qs as sdk,
+  Rn as serverTiming,
+  $ as setDebugHeader,
+  an as sslEnforce,
+  dn as timeout,
+  An as timingSafeEqual,
+  yr as toPrometheusText,
+  on as trafficShadow,
+  Ws as verifyHttpSignature,
+  M as withSkip
 };

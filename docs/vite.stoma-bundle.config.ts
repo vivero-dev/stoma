@@ -40,17 +40,17 @@ export default defineConfig({
     alias: {
       "@homegrower-club/stoma/adapters/cloudflare": resolve(
         __dirname,
-        "../dist/adapters/cloudflare.js",
+        "../src/adapters/cloudflare.ts",
       ),
       "@homegrower-club/stoma/adapters/memory": resolve(
         __dirname,
-        "../dist/adapters/memory.js",
+        "../src/adapters/memory.ts",
       ),
       "@homegrower-club/stoma/sdk": resolve(
         __dirname,
-        "../dist/sdk/index.js",
+        "../src/policies/sdk/index.ts",
       ),
-      "@homegrower-club/stoma": resolve(__dirname, "../dist/index.js"),
+      "@homegrower-club/stoma": resolve(__dirname, "../src/index.ts"),
     },
   },
 });

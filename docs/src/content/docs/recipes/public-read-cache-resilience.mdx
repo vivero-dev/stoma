@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import cacheResilience from '@examples/cache-resilience/gateway.ts?raw';
 
 ## Use Case
@@ -15,6 +16,7 @@ Serve high-volume public GET endpoints with fast cached responses and graceful d
 ## Recipe
 
 <Code code={cacheResilience} lang="ts" title="examples/cache-resilience/gateway.ts" />
+<EditorLink code={cacheResilience} title="Public Read API (Cache + Resilience)" />
 
 ## Why it works
 

@@ -449,6 +449,32 @@
   word-break: break-word;
 }
 
+/* --- Diagnostic banner (5xx server errors) --- */
+.ed-diagnostic {
+  padding: 0.625rem 0.75rem;
+  background: rgba(250, 176, 5, 0.08);
+  border-bottom: 1px solid rgba(250, 176, 5, 0.25);
+  font-size: 0.8125rem;
+}
+
+.ed-diagnostic-title {
+  color: #fab005;
+  font-weight: 600;
+  font-family: "Cascadia Code", "Fira Code", monospace;
+  margin-bottom: 0.25rem;
+}
+
+.ed-diagnostic-message {
+  color: #ddd;
+}
+
+.ed-diagnostic-hint {
+  color: #999;
+  font-size: 0.75rem;
+  margin-top: 0.375rem;
+  font-style: italic;
+}
+
 .ed-response-section {
   border-top: 1px solid #3c3c3c;
 }

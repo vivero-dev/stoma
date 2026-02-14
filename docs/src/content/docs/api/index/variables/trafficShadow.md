@@ -5,9 +5,9 @@ prev: false
 title: "trafficShadow"
 ---
 
-> `const` **trafficShadow**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **trafficShadow**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/traffic-shadow.ts:58](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/traffic-shadow.ts#L58)
+Defined in: [src/policies/traffic/traffic-shadow.ts:58](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/traffic-shadow.ts#L58)
 
 Traffic shadow policy.
 
@@ -17,7 +17,7 @@ the primary response.
 
 ## Parameters
 
-### config?
+### config
 
 [`TrafficShadowConfig`](/api/policies/interfaces/trafficshadowconfig/)
 

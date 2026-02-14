@@ -27,6 +27,7 @@ export interface ResponseData {
   status: number;
   statusText: string;
   headers: Record<string, string>;
+  requestHeaders: Record<string, string>;
   body: string;
   timingMs: number;
 }
@@ -102,6 +103,7 @@ export function useGatewayWorker(): UseGatewayWorkerReturn {
             status: msg.status,
             statusText: msg.statusText,
             headers: msg.headers,
+            requestHeaders: msg.requestHeaders || {},
             body: msg.body,
             timingMs: msg.timingMs,
           });

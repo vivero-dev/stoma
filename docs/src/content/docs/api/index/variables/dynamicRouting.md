@@ -5,9 +5,9 @@ prev: false
 title: "dynamicRouting"
 ---
 
-> `const` **dynamicRouting**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **dynamicRouting**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:63](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/dynamic-routing.ts#L63)
+Defined in: [src/policies/traffic/dynamic-routing.ts:63](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/dynamic-routing.ts#L63)
 
 Evaluate routing rules and expose the first match on request context.
 
@@ -16,7 +16,7 @@ and headers are set as context variables for downstream consumption.
 
 ## Parameters
 
-### config?
+### config
 
 [`DynamicRoutingConfig`](/api/policies/interfaces/dynamicroutingconfig/)
 

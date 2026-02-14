@@ -5,15 +5,15 @@ prev: false
 title: "assignAttributes"
 ---
 
-> `const` **assignAttributes**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **assignAttributes**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/transform/assign-attributes.ts:43](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/transform/assign-attributes.ts#L43)
+Defined in: [src/policies/transform/assign-attributes.ts:43](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/transform/assign-attributes.ts#L43)
 
 Set key-value attributes on the Hono request context.
 
 ## Parameters
 
-### config?
+### config
 
 [`AssignAttributesConfig`](/api/policies/interfaces/assignattributesconfig/)
 

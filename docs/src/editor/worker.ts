@@ -94,6 +94,7 @@ self.onmessage = async (event: MessageEvent) => {
       const init: RequestInit = {
         method: msg.method,
         headers: {
+          accept: "application/json",
           "x-stoma-debug": "trace",
           ...(msg.headers || {}),
         },
@@ -104,6 +105,13 @@ self.onmessage = async (event: MessageEvent) => {
       }
 
       const request = new Request(url, init);
+
+      // Capture the actual request headers for display
+      const requestHeaders: Record<string, string> = {};
+      request.headers.forEach((value, key) => {
+        requestHeaders[key] = value;
+      });
+
       const start = performance.now();
       const response = await gateway.app.fetch(request);
       const timingMs = Math.round((performance.now() - start) * 100) / 100;
@@ -122,6 +130,7 @@ self.onmessage = async (event: MessageEvent) => {
         status: response.status,
         statusText: response.statusText,
         headers,
+        requestHeaders,
         body,
         timingMs,
       });

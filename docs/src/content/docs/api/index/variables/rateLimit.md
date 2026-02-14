@@ -5,9 +5,9 @@ prev: false
 title: "rateLimit"
 ---
 
-> `const` **rateLimit**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **rateLimit**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/rate-limit.ts:194](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/rate-limit.ts#L194)
+Defined in: [src/policies/traffic/rate-limit.ts:194](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/rate-limit.ts#L194)
 
 Rate limit requests with pluggable storage backends.
 
@@ -17,7 +17,7 @@ throws a 429 when the limit is exceeded.
 
 ## Parameters
 
-### config?
+### config
 
 [`RateLimitConfig`](/api/policies/interfaces/ratelimitconfig/)
 

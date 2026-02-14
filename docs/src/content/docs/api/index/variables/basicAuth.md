@@ -5,9 +5,9 @@ prev: false
 title: "basicAuth"
 ---
 
-> `const` **basicAuth**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **basicAuth**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/auth/basic-auth.ts:42](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/auth/basic-auth.ts#L42)
+Defined in: [src/policies/auth/basic-auth.ts:43](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/auth/basic-auth.ts#L43)
 
 Basic Authentication policy — validate base64-encoded credentials.
 
@@ -16,7 +16,7 @@ The realm is sanitized to prevent header injection.
 
 ## Parameters
 
-### config?
+### config
 
 `BasicAuthConfig`
 

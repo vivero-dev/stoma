@@ -7,6 +7,7 @@ sidebar:
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import basicCaching from '@examples/caching/basic.ts?raw';
 import advancedCaching from '@examples/caching/advanced.ts?raw';
 
@@ -24,6 +25,7 @@ Caching is one of the most impactful things you can add to an API gateway. This 
 The simplest way to add caching uses `InMemoryCacheStore`:
 
 <Code code={basicCaching} lang="ts" title="examples/caching/basic.ts" />
+<EditorLink code={basicCaching} title="Basic Caching" />
 
 ### Testing It
 
@@ -203,6 +205,7 @@ Streaming responses (`Transfer-Encoding: chunked`) cannot be cached. The cache p
 Here's a real-world configuration for a product catalog:
 
 <Code code={advancedCaching} lang="ts" title="examples/caching/advanced.ts" />
+<EditorLink code={advancedCaching} title="Advanced Caching" />
 
 ## What's Next?
 

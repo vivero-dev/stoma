@@ -5,9 +5,9 @@ prev: false
 title: "requestLimit"
 ---
 
-> `const` **requestLimit**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
+> `const` **requestLimit**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/request-limit.ts:31](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/request-limit.ts#L31)
+Defined in: [src/policies/traffic/request-limit.ts:31](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/traffic/request-limit.ts#L31)
 
 Reject requests whose declared Content-Length exceeds `maxBytes`.
 
@@ -20,7 +20,7 @@ that enforces limits on the actual stream length.
 
 ## Parameters
 
-### config?
+### config
 
 [`RequestLimitConfig`](/api/policies/interfaces/requestlimitconfig/)
 

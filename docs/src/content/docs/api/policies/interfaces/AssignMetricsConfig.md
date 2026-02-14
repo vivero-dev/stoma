@@ -5,7 +5,7 @@ prev: false
 title: "AssignMetricsConfig"
 ---
 
-Defined in: [src/policies/observability/assign-metrics.ts:13](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/observability/assign-metrics.ts#L13)
+Defined in: [src/policies/observability/assign-metrics.ts:13](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/observability/assign-metrics.ts#L13)
 
 Configuration for the assignMetrics policy.
 
@@ -19,7 +19,7 @@ Configuration for the assignMetrics policy.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -43,7 +43,7 @@ Skip this policy when condition returns true
 
 > **tags**: `Record`\<`string`, `string` \| (`c`) => `string` \| `Promise`\<`string`\>\>
 
-Defined in: [src/policies/observability/assign-metrics.ts:18](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/observability/assign-metrics.ts#L18)
+Defined in: [src/policies/observability/assign-metrics.ts:18](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/observability/assign-metrics.ts#L18)
 
 Metric tags to attach to the request.
 Values can be static strings or functions that receive the context.

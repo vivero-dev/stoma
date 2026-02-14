@@ -5,7 +5,7 @@ prev: false
 title: "PostgresCacheStore"
 ---
 
-Defined in: [src/adapters/postgres.ts:291](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L291)
+Defined in: [src/adapters/postgres.ts:291](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L291)
 
 Response cache backed by PostgreSQL with base64-encoded body and expiry timestamp.
 
@@ -19,7 +19,7 @@ Response cache backed by PostgreSQL with base64-encoded body and expiry timestam
 
 > **new PostgresCacheStore**(`client`, `table`): `PostgresCacheStore`
 
-Defined in: [src/adapters/postgres.ts:292](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L292)
+Defined in: [src/adapters/postgres.ts:292](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L292)
 
 #### Parameters
 
@@ -41,7 +41,7 @@ Defined in: [src/adapters/postgres.ts:292](https://github.com/HomeGrower-club/st
 
 > **cleanup**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/postgres.ts:351](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L351)
+Defined in: [src/adapters/postgres.ts:351](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L351)
 
 Remove expired entries. Call periodically (e.g. via cron or waitUntil).
 
@@ -55,7 +55,7 @@ Remove expired entries. Call periodically (e.g. via cron or waitUntil).
 
 > **delete**(`key`): `Promise`\<`boolean`\>
 
-Defined in: [src/adapters/postgres.ts:342](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L342)
+Defined in: [src/adapters/postgres.ts:342](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L342)
 
 Delete a cached entry. Returns true if something was removed.
 
@@ -79,7 +79,7 @@ Delete a cached entry. Returns true if something was removed.
 
 > **get**(`key`): `Promise`\<`Response` \| `null`\>
 
-Defined in: [src/adapters/postgres.ts:297](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L297)
+Defined in: [src/adapters/postgres.ts:297](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L297)
 
 Retrieve a cached response by key. Returns null on miss.
 
@@ -103,7 +103,7 @@ Retrieve a cached response by key. Returns null on miss.
 
 > **put**(`key`, `response`, `ttlSeconds`): `Promise`\<`void`\>
 
-Defined in: [src/adapters/postgres.ts:321](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L321)
+Defined in: [src/adapters/postgres.ts:321](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/adapters/postgres.ts#L321)
 
 Store a response under key with a TTL in seconds.
 

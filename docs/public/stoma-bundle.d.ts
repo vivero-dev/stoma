@@ -4092,7 +4092,7 @@ export interface InMemoryRateLimitStoreOptions {
  * });
  * ```
  */
-export declare const rateLimit: (config?: RateLimitConfig | undefined) => Policy;
+export declare const rateLimit: (config: RateLimitConfig) => Policy;
 /** Bag of optional store implementations and runtime capabilities for a given runtime. */
 export interface GatewayAdapter {
 	rateLimitStore?: RateLimitStore;
@@ -5231,11 +5231,33 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
 	httpOnly?: true;
 }
 /**
+ * Extract the keys of T that are required (not optional).
+ * Evaluates to `never` when all keys are optional.
+ */
+export type RequiredKeys<T> = {
+	[K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
+/**
+ * Conditional policy factory type.
+ *
+ * When `TConfig` has at least one required key, the factory requires
+ * a config argument. When all keys are optional (or TConfig is the
+ * base `PolicyConfig`), config is optional.
+ *
+ * This closes the gap between "type-safe config" and the runtime
+ * `validate` callback — the editor catches missing required fields
+ * at compile time.
+ */
+export type PolicyFactory<TConfig extends PolicyConfig> = RequiredKeys<TConfig> extends never ? (config?: TConfig) => Policy : (config: TConfig) => Policy;
+/**
  * Create a policy factory from a declarative definition.
  *
- * The returned factory function accepts optional user config, merges it
- * with defaults, wires up skip logic, and injects a debug logger at
+ * The returned factory function accepts user config, merges it with
+ * defaults, wires up skip logic, and injects a debug logger at
  * request time.
+ *
+ * When `TConfig` has required keys, the factory requires a config
+ * argument. When all keys are optional, config is optional.
  *
  * @example
  * ```ts
@@ -5257,9 +5279,9 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
  * ```
  *
  * @param definition - Policy name, priority, defaults, and handler.
- * @returns A factory function: `(config?) => Policy`.
+ * @returns A factory function whose config parameter is required or optional based on TConfig.
  */
-export declare function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(definition: PolicyDefinition<TConfig>): (config?: TConfig) => Policy;
+export declare function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(definition: PolicyDefinition<TConfig>): PolicyFactory<TConfig>;
 export interface PolicyTestHarnessOptions {
 	/**
 	 * Custom upstream handler. Receives the Hono context after the policy
@@ -5464,7 +5486,7 @@ export interface ApiKeyAuthConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const apiKeyAuth: (config?: ApiKeyAuthConfig | undefined) => Policy;
+export declare const apiKeyAuth: (config: ApiKeyAuthConfig) => Policy;
 export interface BasicAuthConfig extends PolicyConfig {
 	/** Validate username/password. Return true if valid. */
 	validate: (username: string, password: string, c: Context) => boolean | Promise<boolean>;
@@ -5490,7 +5512,7 @@ export interface BasicAuthConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const basicAuth: (config?: BasicAuthConfig | undefined) => Policy;
+export declare const basicAuth: (config: BasicAuthConfig) => Policy;
 /** Clear the unified JWKS cache. Exported for testing. */
 export declare function clearJwksCache(): void;
 export interface GenerateHttpSignatureConfig extends PolicyConfig {
@@ -5515,7 +5537,7 @@ export interface GenerateHttpSignatureConfig extends PolicyConfig {
 	/** Include a nonce parameter. Default: false. */
 	nonce?: boolean;
 }
-export declare const generateHttpSignature: (config?: GenerateHttpSignatureConfig | undefined) => Policy;
+export declare const generateHttpSignature: (config: GenerateHttpSignatureConfig) => Policy;
 export interface GenerateJwtConfig extends PolicyConfig {
 	/** Signing algorithm */
 	algorithm: "HS256" | "HS384" | "HS512" | "RS256" | "RS384" | "RS512";
@@ -5552,7 +5574,7 @@ export interface GenerateJwtConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const generateJwt: (config?: GenerateJwtConfig | undefined) => Policy;
+export declare const generateJwt: (config: GenerateJwtConfig) => Policy;
 export interface JwsConfig extends PolicyConfig {
 	/** HMAC secret for verification */
 	secret?: string;
@@ -5720,7 +5742,7 @@ export interface VerifyHttpSignatureConfig extends PolicyConfig {
 	/** Expected signature label. Default: "sig1". */
 	label?: string;
 }
-export declare const verifyHttpSignature: (config?: VerifyHttpSignatureConfig | undefined) => Policy;
+export declare const verifyHttpSignature: (config: VerifyHttpSignatureConfig) => Policy;
 export interface RoutingRule {
 	/** Human-readable rule name for debugging. */
 	name?: string;
@@ -5767,7 +5789,7 @@ export interface DynamicRoutingConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const dynamicRouting: (config?: DynamicRoutingConfig | undefined) => Policy;
+export declare const dynamicRouting: (config: DynamicRoutingConfig) => Policy;
 export interface GeoIpFilterConfig extends PolicyConfig {
 	/** Country codes to allow (e.g. `["US", "CA", "GB"]`). Used in "allow" mode. */
 	allow?: string[];
@@ -5849,7 +5871,7 @@ export interface HttpCalloutConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const httpCallout: (config?: HttpCalloutConfig | undefined) => Policy;
+export declare const httpCallout: (config: HttpCalloutConfig) => Policy;
 export interface InterruptConfig extends PolicyConfig {
 	/** Predicate that determines whether to short-circuit. Required. */
 	condition: (c: Context) => boolean | Promise<boolean>;
@@ -5888,7 +5910,7 @@ export interface InterruptConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const interrupt: (config?: InterruptConfig | undefined) => Policy;
+export declare const interrupt: (config: InterruptConfig) => Policy;
 /**
  * IP allowlist/denylist filtering policy.
  *
@@ -6018,7 +6040,7 @@ export interface RegexThreatProtectionConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const regexThreatProtection: (config?: RegexThreatProtectionConfig | undefined) => Policy;
+export declare const regexThreatProtection: (config: RegexThreatProtectionConfig) => Policy;
 export interface RequestLimitConfig extends PolicyConfig {
 	/** Maximum allowed body size in bytes (based on Content-Length). */
 	maxBytes: number;
@@ -6038,7 +6060,7 @@ export interface RequestLimitConfig extends PolicyConfig {
  * @param config - Maximum byte limit and optional custom message.
  * @returns A {@link Policy} at priority 5 (EARLY).
  */
-export declare const requestLimit: (config?: RequestLimitConfig | undefined) => Policy;
+export declare const requestLimit: (config: RequestLimitConfig) => Policy;
 export interface ResourceFilterConfig extends PolicyConfig {
 	/** Filter mode: "deny" removes listed fields, "allow" keeps only listed fields */
 	mode: "allow" | "deny";
@@ -6069,7 +6091,7 @@ export interface ResourceFilterConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const resourceFilter: (config?: ResourceFilterConfig | undefined) => Policy;
+export declare const resourceFilter: (config: ResourceFilterConfig) => Policy;
 export interface SslEnforceConfig extends PolicyConfig {
 	/** Redirect HTTP to HTTPS (301). If false, block with 403. Default: true. */
 	redirect?: boolean;
@@ -6122,7 +6144,7 @@ export interface TrafficShadowConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const trafficShadow: (config?: TrafficShadowConfig | undefined) => Policy;
+export declare const trafficShadow: (config: TrafficShadowConfig) => Policy;
 export interface LatencyInjectionConfig extends PolicyConfig {
 	/** Base delay in milliseconds. Required. */
 	delayMs: number;
@@ -6150,7 +6172,7 @@ export interface LatencyInjectionConfig extends PolicyConfig {
  * latencyInjection({ delayMs: 200, jitter: 0.5, probability: 0.3 });
  * ```
  */
-export declare const latencyInjection: (config?: LatencyInjectionConfig | undefined) => Policy;
+export declare const latencyInjection: (config: LatencyInjectionConfig) => Policy;
 /**
  * Retry policy — automatic retry with configurable backoff for failed upstream calls.
  *
@@ -6264,7 +6286,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const assignAttributes: (config?: AssignAttributesConfig | undefined) => Policy;
+export declare const assignAttributes: (config: AssignAttributesConfig) => Policy;
 /** A field value — either a static value or a function resolving to one. */
 export type FieldValue = unknown | ((c: Context) => unknown | Promise<unknown>);
 export interface AssignContentConfig extends PolicyConfig {
@@ -6633,7 +6655,7 @@ export interface AssignMetricsConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare const assignMetrics: (config?: AssignMetricsConfig | undefined) => Policy;
+export declare const assignMetrics: (config: AssignMetricsConfig) => Policy;
 export interface MetricsReporterConfig extends PolicyConfig {
 	/** The metrics collector to record to. */
 	collector: MetricsCollector;
@@ -6650,7 +6672,7 @@ export interface MetricsReporterConfig extends PolicyConfig {
  * @param config - Must include a {@link MetricsCollector} instance.
  * @returns A {@link Policy} at priority 1.
  */
-export declare const metricsReporter: (config?: MetricsReporterConfig | undefined) => Policy;
+export declare const metricsReporter: (config: MetricsReporterConfig) => Policy;
 export interface RequestLogConfig extends PolicyConfig {
 	/** Additional fields to extract from the request */
 	extractFields?: (c: unknown) => Record<string, unknown>;
@@ -7005,7 +7027,7 @@ export declare class IDBRateLimitStore implements RateLimitStore {
 }
 
 declare namespace sdk {
-	export { PolicyDefinition, PolicyEvalHandlerContext, PolicyHandlerContext, PolicyTestHarnessOptions, PolicyTrace, PolicyTraceDetail, PolicyTraceEntry, Priority, PriorityLevel, TraceReporter, createPolicyTestHarness, definePolicy, getCollectedDebugHeaders, isDebugRequested, isTraceRequested, noopTraceReporter, parseDebugRequest, policyDebug, policyTrace, resolveConfig, safeCall, setDebugHeader, withSkip };
+	export { PolicyDefinition, PolicyEvalHandlerContext, PolicyFactory, PolicyHandlerContext, PolicyTestHarnessOptions, PolicyTrace, PolicyTraceDetail, PolicyTraceEntry, Priority, PriorityLevel, TraceReporter, createPolicyTestHarness, definePolicy, getCollectedDebugHeaders, isDebugRequested, isTraceRequested, noopTraceReporter, parseDebugRequest, policyDebug, policyTrace, resolveConfig, safeCall, setDebugHeader, withSkip };
 }
 
 export {

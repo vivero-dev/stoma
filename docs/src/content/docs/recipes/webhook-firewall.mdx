@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import webhookFirewall from '@examples/webhook-firewall/gateway.ts?raw';
 
 ## Use Case
@@ -15,6 +16,7 @@ Accept third-party webhooks safely by layering authentication, size limits, and 
 ## Recipe
 
 <Code code={webhookFirewall} lang="ts" title="examples/webhook-firewall/gateway.ts" />
+<EditorLink code={webhookFirewall} title="Webhook Firewall" />
 
 ## Why it works
 

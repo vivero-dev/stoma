@@ -5,7 +5,7 @@ prev: false
 title: "RequestTransformConfig"
 ---
 
-Defined in: [src/policies/transform/transform.ts:11](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/transform/transform.ts#L11)
+Defined in: [src/policies/transform/transform.ts:12](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/transform/transform.ts#L12)
 
 Configuration for requestTransform and responseTransform policies.
 
@@ -19,7 +19,7 @@ Configuration for requestTransform and responseTransform policies.
 
 > `optional` **removeHeaders**: `string`[]
 
-Defined in: [src/policies/transform/transform.ts:15](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/transform/transform.ts#L15)
+Defined in: [src/policies/transform/transform.ts:16](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/transform/transform.ts#L16)
 
 Header names to remove from the outgoing request.
 
@@ -29,7 +29,7 @@ Header names to remove from the outgoing request.
 
 > `optional` **renameHeaders**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/transform/transform.ts:17](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/transform/transform.ts#L17)
+Defined in: [src/policies/transform/transform.ts:18](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/transform/transform.ts#L18)
 
 Rename headers: keys are old names, values are new names.
 
@@ -39,7 +39,7 @@ Rename headers: keys are old names, values are new names.
 
 > `optional` **setHeaders**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/transform/transform.ts:13](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/transform/transform.ts#L13)
+Defined in: [src/policies/transform/transform.ts:14](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/transform/transform.ts#L14)
 
 Headers to add or overwrite on the outgoing request.
 
@@ -49,7 +49,7 @@ Headers to add or overwrite on the outgoing request.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

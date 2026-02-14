@@ -1,6 +1,6 @@
 let o = null, s = null;
-self.onmessage = async (c) => {
-  const e = c.data;
+self.onmessage = async (p) => {
+  const e = p.data;
   if (e.type === "deploy") {
     try {
       s && (URL.revokeObjectURL(s), s = null);
@@ -39,24 +39,30 @@ self.onmessage = async (c) => {
       const t = `http://editor.local${e.path}`, r = {
         method: e.method,
         headers: {
+          accept: "application/json",
           "x-stoma-debug": "trace",
           ...e.headers || {}
         }
       };
       e.body && !["GET", "HEAD"].includes(e.method) && (r.body = e.body);
-      const i = new Request(t, r), d = performance.now(), a = await o.app.fetch(i), l = Math.round((performance.now() - d) * 100) / 100, n = {};
-      a.headers.forEach((y, u) => {
-        n[u] = y;
+      const i = new Request(t, r), d = {};
+      i.headers.forEach((n, c) => {
+        d[c] = n;
       });
-      const p = await a.text();
+      const y = performance.now(), a = await o.app.fetch(i), u = Math.round((performance.now() - y) * 100) / 100, l = {};
+      a.headers.forEach((n, c) => {
+        l[c] = n;
+      });
+      const f = await a.text();
       self.postMessage({
         type: "response",
         id: e.id,
         status: a.status,
         statusText: a.statusText,
-        headers: n,
-        body: p,
-        timingMs: l
+        headers: l,
+        requestHeaders: d,
+        body: f,
+        timingMs: u
       });
     } catch (t) {
       self.postMessage({

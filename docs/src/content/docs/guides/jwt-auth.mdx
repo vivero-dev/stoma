@@ -7,6 +7,7 @@ sidebar:
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import hmacExample from '@examples/jwt-auth/hmac.ts?raw';
 import jwksExample from '@examples/jwt-auth/jwks.ts?raw';
 
@@ -28,6 +29,7 @@ This is the simplest approach. You have a secret that both signs and validates t
 ### Step 1: Create the Gateway
 
 <Code code={hmacExample} lang="ts" title="examples/jwt-auth/hmac.ts" />
+<EditorLink code={hmacExample} title="JWT Auth (HMAC)" />
 
 ### Step 2: How It Works
 
@@ -66,6 +68,7 @@ Your identity provider exposes keys at a well-known URL:
 ### Step 2: Configure the Gateway
 
 <Code code={jwksExample} lang="ts" title="examples/jwt-auth/jwks.ts" />
+<EditorLink code={jwksExample} title="JWT Auth (JWKS)" />
 
 ### Step 3: Understanding the Options
 

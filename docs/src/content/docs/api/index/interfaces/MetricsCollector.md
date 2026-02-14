@@ -5,7 +5,7 @@ prev: false
 title: "MetricsCollector"
 ---
 
-Defined in: [src/observability/metrics.ts:38](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L38)
+Defined in: [src/observability/metrics.ts:38](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L38)
 
 Pluggable metrics collector interface.
 
@@ -19,7 +19,7 @@ latencies, and error rates through this interface.
 
 > **gauge**(`name`, `value`, `tags?`): `void`
 
-Defined in: [src/observability/metrics.ts:44](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L44)
+Defined in: [src/observability/metrics.ts:44](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L44)
 
 Set a gauge to an absolute value.
 
@@ -47,7 +47,7 @@ Set a gauge to an absolute value.
 
 > **histogram**(`name`, `value`, `tags?`): `void`
 
-Defined in: [src/observability/metrics.ts:42](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L42)
+Defined in: [src/observability/metrics.ts:42](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L42)
 
 Record a histogram observation.
 
@@ -75,7 +75,7 @@ Record a histogram observation.
 
 > **increment**(`name`, `value?`, `tags?`): `void`
 
-Defined in: [src/observability/metrics.ts:40](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L40)
+Defined in: [src/observability/metrics.ts:40](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L40)
 
 Increment a counter by `value` (default 1).
 
@@ -103,7 +103,7 @@ Increment a counter by `value` (default 1).
 
 > **reset**(): `void`
 
-Defined in: [src/observability/metrics.ts:48](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L48)
+Defined in: [src/observability/metrics.ts:48](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L48)
 
 Reset all metrics to zero.
 
@@ -117,7 +117,7 @@ Reset all metrics to zero.
 
 > **snapshot**(): [`MetricsSnapshot`](/api/index/interfaces/metricssnapshot/)
 
-Defined in: [src/observability/metrics.ts:46](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/observability/metrics.ts#L46)
+Defined in: [src/observability/metrics.ts:46](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/observability/metrics.ts#L46)
 
 Return a point-in-time snapshot of all metrics.
 

@@ -8,6 +8,7 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 import { Code } from 'astro:components';
+import EditorLink from '../../../components/EditorLink.astro';
 import routeScopes from '@examples/route-scopes/gateway.ts?raw';
 
 The `scope()` function groups routes under a shared path prefix, prepends shared
@@ -180,6 +181,7 @@ Three or more levels work the same way -- each `scope()` call produces a flat
 Scoped routes spread alongside non-scoped routes in the `routes` array:
 
 <Code code={routeScopes} lang="ts" title="examples/route-scopes/gateway.ts" />
+<EditorLink code={routeScopes} title="Route Scopes" />
 
 The health check lives at `/health` outside any scope. The API routes live at
 `/api/v1/users/*` and `/api/v1/projects/*` with JWT auth from the scope and

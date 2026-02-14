@@ -7,7 +7,7 @@ title: "TraceReporter"
 
 > **TraceReporter** = (`action`, `data?`) => `void`
 
-Defined in: [src/policies/sdk/trace.ts:68](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L68)
+Defined in: [src/policies/sdk/trace.ts:68](https://github.com/HomeGrower-club/stoma/blob/08b5f2db5f15b4e339eff6647be9d231bf97a776/src/policies/sdk/trace.ts#L68)
 
 A trace reporter function. Always callable — no-op when tracing is inactive.
 

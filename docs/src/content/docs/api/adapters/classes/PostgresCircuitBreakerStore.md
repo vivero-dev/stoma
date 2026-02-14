@@ -5,7 +5,7 @@ prev: false
 title: "PostgresCircuitBreakerStore"
 ---
 
-Defined in: [src/adapters/postgres.ts:208](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L208)
+Defined in: [src/adapters/postgres.ts:208](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L208)
 
 Circuit breaker state store backed by PostgreSQL.
 
@@ -19,7 +19,7 @@ Circuit breaker state store backed by PostgreSQL.
 
 > **new PostgresCircuitBreakerStore**(`client`, `table`): `PostgresCircuitBreakerStore`
 
-Defined in: [src/adapters/postgres.ts:209](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L209)
+Defined in: [src/adapters/postgres.ts:209](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L209)
 
 #### Parameters
 
@@ -41,7 +41,7 @@ Defined in: [src/adapters/postgres.ts:209](https://github.com/HomeGrower-club/st
 
 > **getState**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/postgres.ts:214](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L214)
+Defined in: [src/adapters/postgres.ts:214](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L214)
 
 Read the current snapshot for a circuit key.
 
@@ -65,7 +65,7 @@ Read the current snapshot for a circuit key.
 
 > **recordFailure**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/postgres.ts:237](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L237)
+Defined in: [src/adapters/postgres.ts:237](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L237)
 
 Record a failed request and return the updated snapshot.
 
@@ -89,7 +89,7 @@ Record a failed request and return the updated snapshot.
 
 > **recordSuccess**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/postgres.ts:224](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L224)
+Defined in: [src/adapters/postgres.ts:224](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L224)
 
 Record a successful request and return the updated snapshot.
 
@@ -113,7 +113,7 @@ Record a successful request and return the updated snapshot.
 
 > **reset**(`key`): `Promise`\<`void`\>
 
-Defined in: [src/adapters/postgres.ts:281](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L281)
+Defined in: [src/adapters/postgres.ts:281](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L281)
 
 Fully reset a circuit, removing all state.
 
@@ -137,7 +137,7 @@ Fully reset a circuit, removing all state.
 
 > **transition**(`key`, `to`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/postgres.ts:251](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/postgres.ts#L251)
+Defined in: [src/adapters/postgres.ts:251](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/postgres.ts#L251)
 
 Transition the circuit to a new state and return the updated snapshot.
 

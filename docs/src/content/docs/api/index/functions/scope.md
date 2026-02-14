@@ -7,7 +7,7 @@ title: "scope"
 
 > **scope**\<`TBindings`\>(`config`): [`RouteConfig`](/api/index/interfaces/routeconfig/)\<`TBindings`\>[]
 
-Defined in: [src/core/scope.ts:98](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/scope.ts#L98)
+Defined in: [src/core/scope.ts:98](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/core/scope.ts#L98)
 
 Group routes under a shared path prefix with shared policies and metadata.
 

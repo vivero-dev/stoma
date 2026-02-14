@@ -3740,6 +3740,8 @@ export type DebugLogger = (message: string, ...args: unknown[]) => void;
  *   runtimes (ext_proc, WebSocket) to invoke the policy without Hono.
  * - {@link phases} — Which processing phases this policy participates in.
  *   Used by phase-based runtimes to skip irrelevant policies.
+ * - {@link httpOnly} — Set to `true` for policies that can ONLY work with
+ *   the HTTP protocol and don't make sense for ext_proc or WebSocket.
  */
 export interface Policy {
 	/** Unique policy name (e.g. "jwt-auth", "rate-limit") */
@@ -3770,6 +3772,24 @@ export interface Policy {
 	 * Default: `["request-headers"]` (most policies only inspect request headers).
 	 */
 	phases?: ProcessingPhase[];
+	/**
+	 * Set to `true` for policies that only work with the HTTP protocol.
+	 *
+	 * These policies rely on HTTP-specific concepts (Request/Response objects,
+	 * specific headers, HTTP status codes, etc.) and cannot be meaningfully
+	 * evaluated in other protocols like ext_proc or WebSocket.
+	 *
+	 * Examples:
+	 * - `cors` — uses HTTP-specific `Access-Control-*` headers
+	 * - `ssl-enforce` — HTTP-only protocol concept
+	 * - `proxy` — HTTP-to-HTTP forwarding
+	 * - `mock` — returns HTTP Response objects
+	 *
+	 * Tooling can use this flag to:
+	 * - Skip these policies when generating docs for non-HTTP runtimes
+	 * - Warn if an HTTP-only policy is used in a non-HTTP gateway config
+	 */
+	httpOnly?: true;
 }
 /** Base configuration shared by all policies */
 export interface PolicyConfig {
@@ -3845,6 +3865,8 @@ export interface CircuitBreakerStore {
 	transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot>;
 	/** Fully reset a circuit, removing all state. */
 	reset(key: string): Promise<void>;
+	/** Optional cleanup — release timers, close connections, etc. */
+	destroy?(): void;
 }
 export declare class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
 	private circuits;
@@ -3856,6 +3878,8 @@ export declare class InMemoryCircuitBreakerStore implements CircuitBreakerStore 
 	reset(key: string): Promise<void>;
 	/** Remove all circuits (for testing) */
 	clear(): void;
+	/** Release all state. */
+	destroy(): void;
 }
 export interface CircuitBreakerConfig extends PolicyConfig {
 	/** Number of failures before opening the circuit. Default: 5. */
@@ -3935,6 +3959,8 @@ export interface CacheStore {
 	put(key: string, response: Response, ttlSeconds: number): Promise<void>;
 	/** Delete a cached entry. Returns true if something was removed. */
 	delete(key: string): Promise<boolean>;
+	/** Optional cleanup — clear expired entries, release resources. */
+	destroy?(): void;
 }
 /** Options for the in-memory cache store. */
 export interface InMemoryCacheStoreOptions {
@@ -3952,6 +3978,8 @@ export declare class InMemoryCacheStore implements CacheStore {
 	clear(): void;
 	/** Current number of entries (for testing/inspection) */
 	get size(): number;
+	/** Release all cached entries. */
+	destroy(): void;
 }
 export interface CacheConfig extends PolicyConfig {
 	/** Cache TTL in seconds. Default: 300. */
@@ -4007,11 +4035,6 @@ export interface CacheConfig extends PolicyConfig {
  * ```
  */
 export declare function cache(config?: CacheConfig): Policy;
-/**
- * Rate limiting policy with pluggable counter storage.
- *
- * @module rate-limit
- */
 export interface RateLimitConfig extends PolicyConfig {
 	/** Maximum requests per window */
 	max: number;
@@ -4069,7 +4092,7 @@ export interface InMemoryRateLimitStoreOptions {
  * });
  * ```
  */
-export declare function rateLimit(config: RateLimitConfig): Policy;
+export declare const rateLimit: (config?: RateLimitConfig | undefined) => Policy;
 /** Bag of optional store implementations and runtime capabilities for a given runtime. */
 export interface GatewayAdapter {
 	rateLimitStore?: RateLimitStore;
@@ -4121,7 +4144,8 @@ export interface PolicyTrace {
  * @param data   - Optional structured context data.
  */
 export type TraceReporter = (action: string, data?: Record<string, unknown>) => void;
-declare const noopTraceReporter: TraceReporter;
+/** Shared no-op reporter instance — zero overhead when tracing is off. */
+export declare const noopTraceReporter: TraceReporter;
 /**
  * Get a trace reporter for a specific policy.
  *
@@ -4134,7 +4158,13 @@ declare const noopTraceReporter: TraceReporter;
  * @returns A {@link TraceReporter} — always callable.
  */
 export declare function policyTrace(c: Context, policyName: string): TraceReporter;
-declare function isTraceRequested(c: Context): boolean;
+/**
+ * Fast-path check: is tracing requested for this request?
+ *
+ * @param c - Hono request context.
+ * @returns `true` when the client requested tracing via `x-stoma-debug: trace`.
+ */
+export declare function isTraceRequested(c: Context): boolean;
 /**
  * Protocol-agnostic types for multi-runtime policy evaluation.
  *
@@ -4389,6 +4419,18 @@ export interface PolicyEvalContext {
  * };
  * ```
  */
+/**
+ * Current `evaluate` coverage across policy categories:
+ * - auth: 6/9 (jwt-auth, api-key-auth, basic-auth, oauth2, rbac, jws)
+ * - traffic: 5/13 (rate-limit, ip-filter, cache, geo-ip-filter, ssl-enforce)
+ * - transform: 5/7 (cors, assign-attributes, assign-content, request-transform, response-transform)
+ * - observability: 0/4
+ * - resilience: 0/4
+ *
+ * Total: 16/38 policies have evaluate support. The remaining policies
+ * will gain evaluate implementations as non-HTTP runtimes (ext_proc, WebSocket)
+ * are built out. See PLAN.md Phase 5 for the ext_proc roadmap.
+ */
 export interface PolicyEvaluator {
 	/**
 	 * Evaluate during request processing phases.
@@ -4640,7 +4682,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	/** Global policies applied to all routes */
 	policies?: Policy[];
 	/** Global error handler */
-	onError?: (error: Error, c: unknown) => Response | Promise<Response>;
+	onError?: (error: Error, c: Context) => Response | Promise<Response>;
 	/**
 	 * Enable internal debug logging for gateway operators.
 	 *
@@ -4791,14 +4833,14 @@ export interface UrlUpstream {
 }
 /**
  * Forward to another Cloudflare Worker via a Service Binding.
- * The binding must be configured in the consumer's `wrangler.toml`.
+ * The binding must be configured in the consumer's `wrangler.jsonc`.
  *
  * @typeParam TBindings - Worker bindings type. When provided, `service`
  *   autocompletes to valid binding names from your Env interface.
  */
 export interface ServiceBindingUpstream<TBindings = Record<string, unknown>> {
 	type: "service-binding";
-	/** Name of the Service Binding in `wrangler.toml` (e.g. `"AUTH_SERVICE"`). */
+	/** Name of the Service Binding in `wrangler.jsonc` (e.g. `"AUTH_SERVICE"`). */
 	service: Extract<keyof TBindings, string>;
 	/** Rewrite the path before forwarding to the bound service. */
 	rewritePath?: (path: string) => string;
@@ -5017,7 +5059,30 @@ export declare function policyDebug(c: Context, policyName: string): DebugLogger
  * @returns The original handler or a skip-aware wrapper.
  */
 export declare function withSkip(skipFn: ((c: unknown) => boolean | Promise<boolean>) | undefined, handler: MiddlewareHandler): MiddlewareHandler;
-declare function safeCall<T>(fn: () => Promise<T>, fallback: T, debug?: DebugLogger, label?: string): Promise<T>;
+/**
+ * Execute an async operation with graceful error handling.
+ *
+ * Designed for store-backed policies (cache, rate-limit, circuit-breaker)
+ * where a store failure should degrade gracefully — not crash the request.
+ * Returns the `fallback` value if `fn` throws.
+ *
+ * @param fn - The async operation to attempt.
+ * @param fallback - Value to return if `fn` throws.
+ * @param debug - Optional debug logger for error reporting.
+ * @param label - Optional label for the debug message (e.g. `"store.get()"`).
+ * @returns The result of `fn`, or `fallback` on error.
+ *
+ * @example
+ * ```ts
+ * const cached = await safeCall(
+ *   () => store.get(key),
+ *   null,
+ *   debug,
+ *   "store.get()",
+ * );
+ * ```
+ */
+export declare function safeCall<T>(fn: () => Promise<T>, fallback: T, debug?: DebugLogger, label?: string): Promise<T>;
 /**
  * Set a debug header value for client-requested debug output.
  *
@@ -5039,7 +5104,16 @@ declare function safeCall<T>(fn: () => Promise<T>, fallback: T, debug?: DebugLog
 export declare function setDebugHeader(c: Context, name: string, value: string | number | boolean): void;
 declare function parseDebugRequest(c: Context, requestHeaderName: string, allow?: string[]): void;
 declare function getCollectedDebugHeaders(c: Context): Map<string, string> | undefined;
-declare function isDebugRequested(c: Context): boolean;
+/**
+ * Check whether the client requested debug output via the `x-stoma-debug` header.
+ *
+ * Returns `true` when any debug header names were requested (i.e. the
+ * `_stomaDebugRequested` context key is a non-empty Set).
+ *
+ * @param c - Hono request context.
+ * @returns `true` if the client sent a valid `x-stoma-debug` request header.
+ */
+export declare function isDebugRequested(c: Context): boolean;
 /**
  * `definePolicy()` — full convenience wrapper for policy authors.
  *
@@ -5145,6 +5219,16 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
 	 * Default: `["request-headers"]`.
 	 */
 	phases?: ProcessingPhase[];
+	/**
+	 * Set to `true` for policies that only work with the HTTP protocol.
+	 *
+	 * These policies rely on HTTP-specific concepts (Request/Response objects,
+	 * specific headers, HTTP status codes, etc.) and cannot be meaningfully
+	 * evaluated in other protocols like ext_proc or WebSocket.
+	 *
+	 * When set, this is passed through to the returned Policy's `httpOnly` property.
+	 */
+	httpOnly?: true;
 }
 /**
  * Create a policy factory from a declarative definition.
@@ -5561,7 +5645,7 @@ export interface JwtAuthConfig extends PolicyConfig {
  * });
  * ```
  */
-export declare function jwtAuth(config: JwtAuthConfig): Policy;
+export declare const jwtAuth: (config?: JwtAuthConfig | undefined) => Policy;
 export interface OAuth2Config extends PolicyConfig {
 	/** OAuth2 token introspection endpoint (RFC 7662). */
 	introspectionUrl?: string;
@@ -5583,6 +5667,8 @@ export interface OAuth2Config extends PolicyConfig {
 	forwardTokenInfo?: Record<string, string>;
 	/** Cache introspection results for this many seconds. Default: 0 (no cache). */
 	cacheTtlSeconds?: number;
+	/** Maximum number of tokens to cache. Default: 100. */
+	cacheMaxEntries?: number;
 	/** Required scopes — token must have ALL of these (space-separated scope string). */
 	requiredScopes?: string[];
 	/** Introspection endpoint fetch timeout in milliseconds. Default: 5000. */
@@ -5604,6 +5690,12 @@ export interface RbacConfig extends PolicyConfig {
 	roleDelimiter?: string;
 	/** Custom deny message. Default: "Access denied: insufficient permissions". */
 	denyMessage?: string;
+	/**
+	 * Strip role/permission headers from incoming requests for security.
+	 * These headers should only be set by trusted upstream auth policies,
+	 * not by external clients. Default: true.
+	 */
+	stripHeaders?: boolean;
 }
 export declare const rbac: (config?: RbacConfig | undefined) => Policy;
 export interface HttpSignatureKey {
@@ -5799,6 +5891,10 @@ export interface InterruptConfig extends PolicyConfig {
 export declare const interrupt: (config?: InterruptConfig | undefined) => Policy;
 /**
  * IP allowlist/denylist filtering policy.
+ *
+ * Supports both HTTP (`handler`) and protocol-agnostic (`evaluate`) entry
+ * points. The evaluate path uses {@link PolicyInput.clientIp} when available
+ * (set by the runtime), falling back to header extraction.
  *
  * @module ip-filter
  */
@@ -6718,6 +6814,27 @@ export interface ErrorResponse {
 	requestId?: string;
 }
 /**
+ * Build a JSON {@link Response} from a {@link GatewayError}.
+ *
+ * Merges any custom headers from the error (e.g. `Retry-After`) into the
+ * response. Includes the request ID when available for tracing.
+ *
+ * @param error - The gateway error to convert.
+ * @param requestId - Optional request ID to include in the response body.
+ * @returns A `Response` with JSON body and appropriate status code.
+ */
+export declare function errorToResponse(error: GatewayError, requestId?: string): Response;
+/**
+ * Produce a generic 500 error response for unexpected (non-{@link GatewayError}) errors.
+ *
+ * Used by the global error handler when an unrecognized error reaches the
+ * gateway boundary. Does not leak internal error details.
+ *
+ * @param requestId - Optional request ID to include in the response body.
+ * @returns A 500 `Response` with a generic error message.
+ */
+export declare function defaultErrorResponse(requestId?: string, message?: string): Response;
+/**
  * Create a gateway instance from a declarative configuration.
  *
  * Registers all routes on a Hono app, builds per-route policy pipelines
@@ -6782,27 +6899,51 @@ export declare function getGatewayContext(c: Context): PolicyContext | undefined
  */
 /** Default ordered list of headers to inspect for the client IP. */
 export declare const DEFAULT_IP_HEADERS: string[];
+export interface ExtractClientIpOptions {
+	/** Ordered list of headers to inspect. Default: ["cf-connecting-ip", "x-forwarded-for"]. */
+	ipHeaders?: readonly string[];
+	/**
+	 * List of trusted proxy IP ranges (CIDR notation).
+	 * When specified, X-Forwarded-For will only be trusted if the client IP
+	 * (leftmost) is within one of these ranges.
+	 *
+	 * @example
+	 * // Only trust X-Forwarded-For from Cloudflare IPs
+	 * { ipHeaders: ["cf-connecting-ip", "x-forwarded-for"], trustedProxies: ["173.245.48.0/20"] }
+	 */
+	trustedProxies?: readonly string[];
+	/**
+	 * When true, use the rightmost IP from X-Forwarded-For instead of leftmost.
+	 * The rightmost IP is the one added by the most recent trusted proxy.
+	 * Default: false.
+	 */
+	useRightmostForwardedIp?: boolean;
+}
 /**
  * Extract the client IP address from request headers.
  *
  * Iterates through `ipHeaders` in order. For comma-separated headers like
- * `X-Forwarded-For`, only the first (leftmost) value is returned.
+ * `X-Forwarded-For`, the behavior depends on options:
+ * - By default, returns the first (leftmost) value
+ * - With `useRightmostForwardedIp: true`, returns the last (rightmost) value
+ * - With `trustedProxies`, validates the leftmost IP against trusted ranges
  *
  * @security The `X-Forwarded-For` header is trivially spoofable by clients
  * outside of trusted proxy infrastructure. An attacker can set arbitrary IP
  * values to bypass IP-based allowlists, rate limits, or geo-restrictions.
- * When deploying behind a load balancer or CDN, configure `ipHeaders` to
- * match your proxy's trusted header (e.g. `cf-connecting-ip` for Cloudflare,
- * `x-real-ip` for nginx) and ensure the proxy strips or overwrites any
- * client-supplied forwarding headers.
+ *
+ * To mitigate:
+ * 1. Use `cf-connecting-ip` when behind Cloudflare (not spoofable by clients)
+ * 2. Configure `trustedProxies` to validate X-Forwarded-For IPs
+ * 3. Use `useRightmostForwardedIp: true` when behind a trusted proxy
  *
  * @param headers - An object with a `.get(name)` method (e.g. `Headers`, Hono `c.req`).
- * @param ipHeaders - Ordered list of headers to inspect. Default: {@link DEFAULT_IP_HEADERS}.
+ * @param options - Configuration options for IP extraction.
  * @returns The extracted IP address, or `"unknown"` if none found.
  */
 export declare function extractClientIp(headers: {
 	get(name: string): string | null | undefined;
-}, ipHeaders?: readonly string[]): string;
+}, options?: ExtractClientIpOptions): string;
 /**
  * Constant-time string comparison to prevent timing side-channel attacks.
  *

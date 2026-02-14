@@ -7,7 +7,7 @@ title: "httpCallout"
 
 > `const` **httpCallout**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/http-callout.ts:66](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/http-callout.ts#L66)
+Defined in: [src/policies/traffic/http-callout.ts:66](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/http-callout.ts#L66)
 
 Make an external HTTP call mid-pipeline.
 

@@ -7,9 +7,9 @@ title: "bunAdapter"
 
 > **bunAdapter**(): [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [src/adapters/bun.ts:26](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/adapters/bun.ts#L26)
+Defined in: [src/adapters/bun.ts:27](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/adapters/bun.ts#L27)
 
-Create a GatewayAdapter for Bun. Provides in-memory defaults.
+Create a GatewayAdapter for Bun. Delegates to memoryAdapter() for in-memory stores.
 
 ## Returns
 

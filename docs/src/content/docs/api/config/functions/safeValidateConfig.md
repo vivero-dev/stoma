@@ -7,7 +7,7 @@ title: "safeValidateConfig"
 
 > **safeValidateConfig**(`config`): \{ `data`: [`GatewayConfig`](/api/index/interfaces/gatewayconfig/); `success`: `true`; \} \| \{ `error`: `ZodError`; `success`: `false`; \}
 
-Defined in: [src/config/schema.ts:155](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/config/schema.ts#L155)
+Defined in: [src/config/schema.ts:168](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/config/schema.ts#L168)
 
 Safely validate a gateway config, returning success/error without throwing.
 

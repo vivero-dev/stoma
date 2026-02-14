@@ -5,7 +5,7 @@ prev: false
 title: "PolicyTraceEntry"
 ---
 
-Defined in: [src/policies/sdk/trace.ts:45](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L45)
+Defined in: [src/policies/sdk/trace.ts:45](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L45)
 
 Combined baseline + optional detail for a single policy.
 
@@ -19,7 +19,7 @@ Combined baseline + optional detail for a single policy.
 
 > **calledNext**: `boolean`
 
-Defined in: [src/policies/sdk/trace.ts:34](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L34)
+Defined in: [src/policies/sdk/trace.ts:34](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L34)
 
 #### Inherited from
 
@@ -31,7 +31,7 @@ Defined in: [src/policies/sdk/trace.ts:34](https://github.com/HomeGrower-club/st
 
 > `optional` **detail**: [`PolicyTraceDetail`](/api/index/interfaces/policytracedetail/)
 
-Defined in: [src/policies/sdk/trace.ts:46](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L46)
+Defined in: [src/policies/sdk/trace.ts:46](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L46)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [src/policies/sdk/trace.ts:46](https://github.com/HomeGrower-club/st
 
 > **durationMs**: `number`
 
-Defined in: [src/policies/sdk/trace.ts:33](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L33)
+Defined in: [src/policies/sdk/trace.ts:33](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L33)
 
 #### Inherited from
 
@@ -51,7 +51,7 @@ Defined in: [src/policies/sdk/trace.ts:33](https://github.com/HomeGrower-club/st
 
 > **error**: `string` \| `null`
 
-Defined in: [src/policies/sdk/trace.ts:35](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L35)
+Defined in: [src/policies/sdk/trace.ts:35](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L35)
 
 #### Inherited from
 
@@ -63,7 +63,7 @@ Defined in: [src/policies/sdk/trace.ts:35](https://github.com/HomeGrower-club/st
 
 > **name**: `string`
 
-Defined in: [src/policies/sdk/trace.ts:31](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L31)
+Defined in: [src/policies/sdk/trace.ts:31](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L31)
 
 #### Inherited from
 
@@ -75,7 +75,7 @@ Defined in: [src/policies/sdk/trace.ts:31](https://github.com/HomeGrower-club/st
 
 > **priority**: `number`
 
-Defined in: [src/policies/sdk/trace.ts:32](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/trace.ts#L32)
+Defined in: [src/policies/sdk/trace.ts:32](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/sdk/trace.ts#L32)
 
 #### Inherited from
 

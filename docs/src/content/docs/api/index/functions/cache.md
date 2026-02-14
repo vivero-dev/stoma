@@ -7,7 +7,7 @@ title: "cache"
 
 > **cache**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/cache.ts:202](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/cache.ts#L202)
+Defined in: [src/policies/traffic/cache.ts:209](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/cache.ts#L209)
 
 Cache upstream responses to reduce latency and load.
 
@@ -18,7 +18,7 @@ Sets a cache status header on **every** response:
 - `SKIP` — not eligible for caching (wrong method or server error status)
 
 Server error responses (5xx) are never cached. Store failures degrade
-gracefully via safeCall — a broken cache store never crashes the
+gracefully via [safeCall](/api/index/functions/safecall/) — a broken cache store never crashes the
 request.
 
 For methods with a request body (POST, PUT, PATCH), the default cache key

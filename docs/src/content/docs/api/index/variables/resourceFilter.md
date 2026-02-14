@@ -7,7 +7,7 @@ title: "resourceFilter"
 
 > `const` **resourceFilter**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/resource-filter.ts:110](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/resource-filter.ts#L110)
+Defined in: [src/policies/traffic/resource-filter.ts:110](https://github.com/HomeGrower-club/stoma/blob/8ff27bd832ace97bceae4b05831dd71d1ac6ed6a/src/policies/traffic/resource-filter.ts#L110)
 
 Strip or allow fields from JSON responses.
 

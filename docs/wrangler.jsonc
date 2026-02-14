@@ -20,6 +20,10 @@
     {
       "pattern": "stoma.opensource.homegrower.club",
       "custom_domain": true
+    },
+    {
+      "pattern": "stoma.oss.homegrower.club",
+      "custom_domain": true
     }
 	],
 	/**

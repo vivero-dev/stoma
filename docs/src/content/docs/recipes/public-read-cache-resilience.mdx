@@ -5,36 +5,16 @@ sidebar:
   order: 4
 ---
 
+import { Code } from 'astro:components';
+import cacheResilience from '@examples/cache-resilience/gateway.ts?raw';
+
 ## Use Case
 
 Serve high-volume public GET endpoints with fast cached responses and graceful degradation when upstreams fail.
 
 ## Recipe
 
-```typescript
-{
-  path: "/v1/catalog/*",
-  methods: ["GET"],
-  pipeline: {
-    policies: [
-      rateLimit({ max: 1000, store: stores.rateLimitStore }),
-      cache({ ttlSeconds: 120, store: stores.cacheStore }),
-      circuitBreaker({ store: stores.circuitBreakerStore }),
-      retry({ maxRetries: 2 }),
-      timeout({ timeoutMs: 5000 }),
-      responseTransform({
-        setHeaders: {
-          "cache-control": "public, max-age=60",
-        },
-      }),
-    ],
-    upstream: {
-      type: "url",
-      target: "https://catalog.internal.example.com",
-    },
-  },
-}
-```
+<Code code={cacheResilience} lang="ts" title="examples/cache-resilience/gateway.ts" />
 
 ## Why it works
 

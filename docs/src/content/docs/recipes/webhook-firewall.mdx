@@ -5,38 +5,16 @@ sidebar:
   order: 3
 ---
 
+import { Code } from 'astro:components';
+import webhookFirewall from '@examples/webhook-firewall/gateway.ts?raw';
+
 ## Use Case
 
 Accept third-party webhooks safely by layering authentication, size limits, and threat checks before your internal handler/service sees the request.
 
 ## Recipe
 
-```typescript
-{
-  path: "/webhooks/provider-a",
-  methods: ["POST"],
-  pipeline: {
-    policies: [
-      apiKeyAuth({
-        headerName: "x-provider-signature",
-        validate: (sig) => verifySignature(sig),
-      }),
-      requestLimit({ maxBytes: 128_000 }),
-      jsonThreatProtection({ maxDepth: 10, maxArraySize: 50 }),
-      regexThreatProtection({
-        patterns: [
-          { regex: "<script", targets: ["body"] },
-        ],
-      }),
-      rateLimit({ max: 120 }),
-    ],
-    upstream: {
-      type: "service-binding",
-      service: "WEBHOOK_SERVICE",
-    },
-  },
-}
-```
+<Code code={webhookFirewall} lang="ts" title="examples/webhook-firewall/gateway.ts" />
 
 ## Why it works
 

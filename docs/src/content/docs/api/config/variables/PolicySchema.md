@@ -7,4 +7,4 @@ title: "PolicySchema"
 
 > `const` **PolicySchema**: `ZodObject`\<\{ `handler`: `ZodFunction`\<`$ZodFunctionArgs`, `$ZodFunctionOut`\>; `name`: `ZodString`; `priority`: `ZodOptional`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [src/config/schema.ts:20](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/config/schema.ts#L20)
+Defined in: [src/config/schema.ts:20](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/config/schema.ts#L20)

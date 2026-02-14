@@ -5,7 +5,7 @@ prev: false
 title: "InMemoryCircuitBreakerStore"
 ---
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:72](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L72)
+Defined in: [src/policies/resilience/circuit-breaker.ts:72](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L72)
 
 Three-state circuit breaker (closed/open/half-open) with pluggable state storage (priority 30).
 
@@ -29,7 +29,7 @@ Three-state circuit breaker (closed/open/half-open) with pluggable state storage
 
 > **clear**(): `void`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:123](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L123)
+Defined in: [src/policies/resilience/circuit-breaker.ts:123](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L123)
 
 Remove all circuits (for testing)
 
@@ -43,7 +43,7 @@ Remove all circuits (for testing)
 
 > **getState**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:84](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L84)
+Defined in: [src/policies/resilience/circuit-breaker.ts:84](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L84)
 
 Read the current snapshot for a circuit key.
 
@@ -67,7 +67,7 @@ Read the current snapshot for a circuit key.
 
 > **recordFailure**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:94](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L94)
+Defined in: [src/policies/resilience/circuit-breaker.ts:94](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L94)
 
 Record a failed request and return the updated snapshot.
 
@@ -91,7 +91,7 @@ Record a failed request and return the updated snapshot.
 
 > **recordSuccess**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:88](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L88)
+Defined in: [src/policies/resilience/circuit-breaker.ts:88](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L88)
 
 Record a successful request and return the updated snapshot.
 
@@ -115,7 +115,7 @@ Record a successful request and return the updated snapshot.
 
 > **reset**(`key`): `Promise`\<`void`\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:118](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L118)
+Defined in: [src/policies/resilience/circuit-breaker.ts:118](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L118)
 
 Fully reset a circuit, removing all state.
 
@@ -139,7 +139,7 @@ Fully reset a circuit, removing all state.
 
 > **transition**(`key`, `to`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:101](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/resilience/circuit-breaker.ts#L101)
+Defined in: [src/policies/resilience/circuit-breaker.ts:101](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L101)
 
 Transition the circuit to a new state and return the updated snapshot.
 

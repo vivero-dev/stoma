@@ -6,6 +6,9 @@ sidebar:
 ---
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from 'astro:components';
+import hmacExample from '@examples/jwt-auth/hmac.ts?raw';
+import jwksExample from '@examples/jwt-auth/jwks.ts?raw';
 
 JSON Web Tokens (JWTs) are the standard for API authentication. This tutorial shows you how to validate JWTs in Stoma — using a simple shared secret (HMAC) or public keys (RSA via JWKS).
 
@@ -24,35 +27,7 @@ This is the simplest approach. You have a secret that both signs and validates t
 
 ### Step 1: Create the Gateway
 
-```typescript
-import { createGateway, jwtAuth, cors, requestLog } from "@homegrower-club/stoma";
-
-const gateway = createGateway({
-  name: "secure-api",
-  basePath: "/api",
-  policies: [requestLog(), cors()],
-  routes: [
-    {
-      path: "/users/*",
-      pipeline: {
-        policies: [
-          jwtAuth({
-            secret: process.env.JWT_SECRET,  // HMAC shared secret
-            headerName: "Authorization",
-            tokenPrefix: "Bearer",
-          }),
-        ],
-        upstream: {
-          type: "url",
-          target: "https://users.internal",
-        },
-      },
-    },
-  ],
-});
-
-export default gateway.app;
-```
+<Code code={hmacExample} lang="ts" title="examples/jwt-auth/hmac.ts" />
 
 ### Step 2: How It Works
 
@@ -65,20 +40,8 @@ When a request comes in:
 
 ### Step 3: Forward Claims to Upstream
 
-Usually your upstream needs to know who's making the request:
+The example above already includes claim forwarding. The `forwardClaims` option extracts JWT claims and sets them as upstream headers:
 
-```typescript
-jwtAuth({
-  secret: process.env.JWT_SECRET,
-  forwardClaims: {
-    sub: "x-user-id",      // JWT "sub" → upstream header "x-user-id"
-    email: "x-user-email",
-    role: "x-user-role",
-  },
-})
-```
-
-Now your upstream receives:
 ```
 x-user-id: user_123abc
 x-user-email: alice@example.com
@@ -102,39 +65,7 @@ Your identity provider exposes keys at a well-known URL:
 
 ### Step 2: Configure the Gateway
 
-```typescript
-import { createGateway, jwtAuth, cors, requestLog } from "@homegrower-club/stoma";
-
-const gateway = createGateway({
-  name: "secure-api",
-  basePath: "/api",
-  policies: [requestLog(), cors()],
-  routes: [
-    {
-      path: "/users/*",
-      pipeline: {
-        policies: [
-          jwtAuth({
-            jwksUrl: "https://your-auth0-domain.auth0.com/.well-known/jwks.json",
-            issuer: "https://your-auth0-domain.auth0.com/",
-            audience: "https://api.yourapp.com",
-            forwardClaims: {
-              sub: "x-user-id",
-              email: "x-user-email",
-            },
-            // Cache JWKS for 5 minutes (default)
-            jwksCacheTtlMs: 300000,
-          }),
-        ],
-        upstream: {
-          type: "url",
-          target: "https://users.internal",
-        },
-      },
-    },
-  ],
-});
-```
+<Code code={jwksExample} lang="ts" title="examples/jwt-auth/jwks.ts" />
 
 ### Step 3: Understanding the Options
 
@@ -205,7 +136,7 @@ const multiAuth = definePolicy({
       issuer: "https://auth0.auth0.com/",
       audience: "https://api.example.com",
     });
-    
+
     const supabasePolicy = jwtAuth({
       jwksUrl: "https://xyz.supabase.co/auth/v1/.well-known/jwks.json",
       issuer: "https://xyz.supabase.co",

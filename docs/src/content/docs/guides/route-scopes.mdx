@@ -7,6 +7,8 @@ sidebar:
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { Code } from 'astro:components';
+import routeScopes from '@examples/route-scopes/gateway.ts?raw';
 
 The `scope()` function groups routes under a shared path prefix, prepends shared
 policies, and merges metadata -- eliminating repetition when multiple routes
@@ -177,39 +179,7 @@ Three or more levels work the same way -- each `scope()` call produces a flat
 
 Scoped routes spread alongside non-scoped routes in the `routes` array:
 
-```typescript
-import { createGateway, scope, health, jwtAuth, cors } from "@homegrower-club/stoma";
-
-const apiRoutes = scope({
-  prefix: "/api/v1",
-  policies: [jwtAuth({ secret: env.JWT_SECRET })],
-  routes: [
-    {
-      path: "/users/*",
-      pipeline: {
-        upstream: { type: "service-binding", service: "USERS_SERVICE" },
-      },
-    },
-    {
-      path: "/projects/*",
-      pipeline: {
-        upstream: { type: "service-binding", service: "PROJECTS_SERVICE" },
-      },
-    },
-  ],
-});
-
-const gateway = createGateway({
-  name: "my-api",
-  policies: [cors()],
-  routes: [
-    health({ path: "/health" }),
-    ...apiRoutes,
-  ],
-});
-
-export default gateway.app;
-```
+<Code code={routeScopes} lang="ts" title="examples/route-scopes/gateway.ts" />
 
 The health check lives at `/health` outside any scope. The API routes live at
 `/api/v1/users/*` and `/api/v1/projects/*` with JWT auth from the scope and

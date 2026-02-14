@@ -5,7 +5,7 @@ prev: false
 title: "TestAdapter"
 ---
 
-Defined in: [src/adapters/testing.ts:9](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/testing.ts#L9)
+Defined in: [src/adapters/testing.ts:9](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/testing.ts#L9)
 
 A GatewayAdapter implementation for unit testing.
 
@@ -32,7 +32,7 @@ allowing tests to `await adapter.waitAll()` before finishing.
 
 > **reset**(): `void`
 
-Defined in: [src/adapters/testing.ts:33](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/testing.ts#L33)
+Defined in: [src/adapters/testing.ts:33](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/testing.ts#L33)
 
 Reset the collected promises.
 
@@ -46,7 +46,7 @@ Reset the collected promises.
 
 > **waitAll**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/testing.ts:22](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/testing.ts#L22)
+Defined in: [src/adapters/testing.ts:22](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/testing.ts#L22)
 
 Await all pending background work collected via `waitUntil`.
 
@@ -60,7 +60,7 @@ Await all pending background work collected via `waitUntil`.
 
 > **waitUntil**(`promise`): `void`
 
-Defined in: [src/adapters/testing.ts:15](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/testing.ts#L15)
+Defined in: [src/adapters/testing.ts:15](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/testing.ts#L15)
 
 Add a promise to the background work queue.
 

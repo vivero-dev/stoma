@@ -7,7 +7,7 @@ title: "rateLimit"
 
 > **rateLimit**(`config`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/rate-limit.ts:160](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/policies/traffic/rate-limit.ts#L160)
+Defined in: [src/policies/traffic/rate-limit.ts:160](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L160)
 
 Rate limit requests with pluggable storage backends.
 

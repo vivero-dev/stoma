@@ -5,7 +5,7 @@ prev: false
 title: "RateLimiterDO"
 ---
 
-Defined in: [src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/durable-object.ts#L34)
+Defined in: [src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/durable-object.ts#L34)
 
 Durable Object that maintains an atomic rate limit counter.
 
@@ -43,7 +43,7 @@ export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
 
 > **new RateLimiterDO**(`state`): `RateLimiterDO`
 
-Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/durable-object.ts#L37)
+Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/durable-object.ts#L37)
 
 #### Parameters
 
@@ -61,7 +61,7 @@ Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-cl
 
 > **alarm**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/durable-object.ts:67](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/durable-object.ts#L67)
+Defined in: [src/adapters/durable-object.ts:67](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/durable-object.ts#L67)
 
 #### Returns
 
@@ -77,7 +77,7 @@ Defined in: [src/adapters/durable-object.ts:67](https://github.com/HomeGrower-cl
 
 > **fetch**(`request`): `Promise`\<`Response`\>
 
-Defined in: [src/adapters/durable-object.ts:41](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/durable-object.ts#L41)
+Defined in: [src/adapters/durable-object.ts:41](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/durable-object.ts#L41)
 
 #### Parameters
 

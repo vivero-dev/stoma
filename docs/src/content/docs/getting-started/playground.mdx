@@ -20,7 +20,7 @@ Every request below goes through the same policy pipeline that runs in productio
 - Click **GET /slow** — the handler sleeps for 2 seconds but the timeout policy cuts it off at 1 second
 </Aside>
 
-<Playground client:load />
+<Playground client:load client:only="react" />
 
 <Aside type="note" title="How it works">
 The playground uses a [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) to intercept `/playground/api/*` requests. Inside the worker, a Stoma gateway is configured with:

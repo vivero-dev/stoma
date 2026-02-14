@@ -6,6 +6,8 @@ sidebar:
 ---
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from 'astro:components';
+import oauthGateway from '@examples/oauth-supabase/gateway.ts?raw';
 
 This tutorial walks you through adding OAuth2 token validation to your Stoma gateway. We'll use Supabase as the example provider, but the pattern works with any RFC 7662-compliant introspection endpoint (Auth0, Okta, Keycloak, etc.).
 
@@ -46,60 +48,7 @@ Supabase uses JWTs by default, but the introspection endpoint gives you fresh va
 
 Here's a complete gateway that validates OAuth2 tokens:
 
-```typescript
-import { createGateway, oauth2, cors, requestLog } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
-
-const adapter = memoryAdapter();
-
-const gateway = createGateway({
-  name: "protected-api",
-  basePath: "/api",
-  
-  // Global policies apply to all routes
-  policies: [
-    requestLog(),
-    cors({ origins: ["https://your-app.com"] }),
-  ],
-
-  routes: [
-    {
-      path: "/protected/*",
-      pipeline: {
-        policies: [
-          oauth2({
-            introspectionUrl: "https://xyzcompany.supabase.co/auth/v1/introspect",
-            clientId: "your-anon-key",  // Supabase anon key works for introspection
-            clientSecret: "your-service-role-key",  // Or use a service role key
-            tokenLocation: "header",
-            headerName: "Authorization",
-            headerPrefix: "Bearer",
-            
-            // Forward user info to upstream
-            forwardTokenInfo: {
-              sub: "x-user-id",
-              email: "x-user-email",
-              role: "x-user-role",
-            },
-            
-            // Cache valid tokens for 5 minutes to reduce introspection calls
-            cacheTtlSeconds: 300,
-            
-            // Optional: require specific scopes
-            requiredScopes: ["authenticated"],
-          }),
-        ],
-        upstream: {
-          type: "url",
-          target: "https://your-backend.internal",
-        },
-      },
-    },
-  ],
-});
-
-export default gateway.app;
-```
+<Code code={oauthGateway} lang="ts" title="examples/oauth-supabase/gateway.ts" />
 
 ## Step 3: Understanding Each Option
 

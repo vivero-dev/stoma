@@ -24,6 +24,9 @@ hero:
 import { Card, CardGrid, Tabs, TabItem, Steps, Aside } from "@astrojs/starlight/components";
 import Playground from "../../components/Playground.tsx";
 
+_Named after the tiny pores in plant leaves that regulate what passes through,
+Stoma gives you the same fine-grained control over your API traffic._
+
 ## What is Stoma?
 
 Stoma is a **declarative API gateway you define in TypeScript** and deploy
@@ -42,12 +45,9 @@ deployed through your existing pipeline.
   resilience, and transformation -- composable, priority-ordered, and
   individually tree-shakeable.
 
-Named after the tiny pores in plant leaves that regulate what passes through,
-Stoma gives you the same fine-grained control over your API traffic.
-
 ### Even in the browser...
 
-<Playground client:load />
+<Playground client:load client:only="react"/>
 
 ---
 

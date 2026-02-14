@@ -7,7 +7,7 @@ title: "SemConv"
 
 > `const` **SemConv**: `object`
 
-Defined in: [src/observability/tracing.ts:73](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/observability/tracing.ts#L73)
+Defined in: [src/observability/tracing.ts:73](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/observability/tracing.ts#L73)
 
 OTel semantic convention attribute keys (HTTP subset).
 

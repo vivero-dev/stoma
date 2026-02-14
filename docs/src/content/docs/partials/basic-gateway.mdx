@@ -4,69 +4,10 @@
 title: basic-gateway
 ---
 
-```typescript title="src/index.ts"
-import { createGateway, cors, requestLog } from "@homegrower-club/stoma";
+import { Code } from 'astro:components';
+import basicGateway from '@examples/basic/gateway.ts?raw';
 
-// Create a gateway instance - this is your main entry point
-// The gateway validates your config at construction time and builds the middleware chain
-const gateway = createGateway({
-  // name: Friendly identifier for this gateway
-  // Appears in logs, admin UI, and metrics - helps identify which gateway is handling requests
-  name: "my-gateway",
-
-  // basePath: Prefix added to all route paths
-  // Requests to /api/users/* will match route path /users/*
-  basePath: "/api",
-
-  // policies: Global policies that run on every request
-  // These execute before route-specific policies
-  // - requestLog(): Logs each request with timing, status, etc.
-  // - cors(): Adds CORS headers for cross-origin requests
-  policies: [requestLog(), cors()],
-
-  // routes: Array of route definitions
-  // Processed top-to-bottom; first match wins
-  routes: [
-    {
-      // path: URL pattern with wildcard support
-      // * matches any path segment; ** matches multiple segments
-      // Examples: /users/* matches /users/123 but not /users/123/posts
-      //           /api/** matches /api/anything/anywhere
-      path: "/users/*",
-
-      // pipeline: The policy chain + upstream for this route
-      pipeline: {
-        // policies: Route-specific policies (in addition to global)
-        // These run after global policies, in the order specified
-        // Add auth, rate-limiting, caching, transforms, etc. here
-        policies: [],
-
-        // upstream: Where to send the request after policies pass
-        // Three types:
-        // - url: Proxy to any HTTP endpoint (use for external APIs)
-        // - service-binding: Call another Cloudflare Worker directly
-        // - handler: Return a response inline (use for mocks/health)
-        upstream: {
-          // type: The upstream configuration type
-          type: "url",
-
-          // target: The destination URL to proxy to
-          // Can be any HTTP/HTTPS endpoint
-          target: "https://api.example.com",
-
-          // rewritePath: Transform the request path before sending
-          // Receives the matched route path (without basePath)
-          // Here: /users/123 -> /users/123 (removes /api prefix)
-          rewritePath: (path) => path.replace("/api", ""),
-        },
-      },
-    },
-  ],
-});
-
-// Export the Hono app - this is what your runtime serves
-export default gateway.app;
-```
+<Code code={basicGateway} lang="ts" title="src/gateway.ts" />
 
 ## Key Concepts
 

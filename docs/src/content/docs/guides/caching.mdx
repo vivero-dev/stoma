@@ -6,6 +6,9 @@ sidebar:
 ---
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+import { Code } from 'astro:components';
+import basicCaching from '@examples/caching/basic.ts?raw';
+import advancedCaching from '@examples/caching/advanced.ts?raw';
 
 Caching is one of the most impactful things you can add to an API gateway. This tutorial shows you how to add response caching with Stoma — from simple in-memory caching to production-grade Cloudflare caching.
 
@@ -20,43 +23,7 @@ Caching is one of the most impactful things you can add to an API gateway. This 
 
 The simplest way to add caching uses `InMemoryCacheStore`:
 
-```typescript
-import { createGateway, cache, cors } from "@homegrower-club/stoma";
-import { InMemoryCacheStore } from "@homegrower-club/stoma";
-
-// Create a cache store
-const cacheStore = new InMemoryCacheStore({
-  maxSize: 100,      // Max number of cached responses
-  ttlSeconds: 300,   // Default TTL (5 minutes)
-});
-
-const gateway = createGateway({
-  name: "cached-api",
-  basePath: "/api",
-  policies: [cors()],
-  routes: [
-    {
-      path: "/products/*",
-      pipeline: {
-        policies: [
-          cache({
-            store: cacheStore,
-            ttlSeconds: 120,        // Cache for 2 minutes
-            methods: ["GET"],       // Only GET requests are cached
-            cacheStatusHeader: "x-cache",  // Shows HIT/MISS
-          }),
-        ],
-        upstream: {
-          type: "url",
-          target: "https://api.example.com",
-        },
-      },
-    },
-  ],
-});
-
-export default gateway.app;
-```
+<Code code={basicCaching} lang="ts" title="examples/caching/basic.ts" />
 
 ### Testing It
 
@@ -177,17 +144,17 @@ const gateway = createGateway({
           handler: async (c) => {
             const url = new URL(c.req.url);
             const pathToInvalidate = url.searchParams.get("path");
-            
+
             if (!pathToInvalidate) {
               return c.json({ error: "Missing path parameter" }, 400);
             }
 
             // Build the cache key the same way the cache policy does
             const cacheKey = `https://api.example.com${pathToInvalidate}`;
-            
+
             // Delete from cache
             await adapter.cacheStore.delete(cacheKey);
-            
+
             return c.json({ success: true, invalidated: cacheKey });
           },
         },
@@ -235,66 +202,7 @@ Streaming responses (`Transfer-Encoding: chunked`) cannot be cached. The cache p
 
 Here's a real-world configuration for a product catalog:
 
-```typescript
-import { createGateway, cache, rateLimit, cors } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
-
-const adapter = cloudflareAdapter({ cache: caches.default });
-
-const gateway = createGateway({
-  name: "catalog-api",
-  basePath: "/api",
-  policies: [
-    cors({ origins: ["https://shop.example.com"] }),
-  ],
-  routes: [
-    // Product listings - heavily cached, rate limited
-    {
-      path: "/products",
-      methods: ["GET"],
-      pipeline: {
-        policies: [
-          rateLimit({ max: 100, windowSeconds: 60 }),
-          cache({
-            store: adapter.cacheStore,
-            ttlSeconds: 60,        // Short TTL for listings
-            varyHeaders: ["accept-language"],
-          }),
-        ],
-        upstream: { type: "url", target: "https://api.example.com" },
-      },
-    },
-    // Product details - cached longer
-    {
-      path: "/products/:id",
-      methods: ["GET"],
-      pipeline: {
-        policies: [
-          rateLimit({ max: 200, windowSeconds: 60 }),
-          cache({
-            store: adapter.cacheStore,
-            ttlSeconds: 3600,      // 1 hour for product details
-            varyHeaders: ["accept-language"],
-          }),
-        ],
-        upstream: { type: "url", target: "https://api.example.com" },
-      },
-    },
-    // Admin mutations - never cached
-    {
-      path: "/products/*",
-      methods: ["POST", "PUT", "PATCH", "DELETE"],
-      pipeline: {
-        policies: [
-          rateLimit({ max: 20, windowSeconds: 60 }),
-          // No cache policy here!
-        ],
-        upstream: { type: "url", target: "https://api.example.com" },
-      },
-    },
-  ],
-});
-```
+<Code code={advancedCaching} lang="ts" title="examples/caching/advanced.ts" />
 
 ## What's Next?
 

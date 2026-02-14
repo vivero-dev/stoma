@@ -5,7 +5,7 @@ prev: false
 title: "GatewayAdapter"
 ---
 
-Defined in: [src/adapters/types.ts:6](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L6)
+Defined in: [src/adapters/types.ts:6](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L6)
 
 Bag of optional store implementations and runtime capabilities for a given runtime.
 
@@ -15,7 +15,7 @@ Bag of optional store implementations and runtime capabilities for a given runti
 
 > `optional` **cacheStore**: [`CacheStore`](/api/index/interfaces/cachestore/)
 
-Defined in: [src/adapters/types.ts:9](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L9)
+Defined in: [src/adapters/types.ts:9](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L9)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/adapters/types.ts:9](https://github.com/HomeGrower-club/stoma/b
 
 > `optional` **circuitBreakerStore**: [`CircuitBreakerStore`](/api/index/interfaces/circuitbreakerstore/)
 
-Defined in: [src/adapters/types.ts:8](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L8)
+Defined in: [src/adapters/types.ts:8](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L8)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [src/adapters/types.ts:8](https://github.com/HomeGrower-club/stoma/b
 
 > `optional` **dispatchBinding**: (`service`, `request`) => `Promise`\<`Response`\>
 
-Defined in: [src/adapters/types.ts:14](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L14)
+Defined in: [src/adapters/types.ts:14](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L14)
 
 Dispatch a request to a named service binding or sidecar.
 
@@ -55,7 +55,7 @@ Dispatch a request to a named service binding or sidecar.
 
 > `optional` **rateLimitStore**: [`RateLimitStore`](/api/index/interfaces/ratelimitstore/)
 
-Defined in: [src/adapters/types.ts:7](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L7)
+Defined in: [src/adapters/types.ts:7](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L7)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [src/adapters/types.ts:7](https://github.com/HomeGrower-club/stoma/b
 
 > `optional` **waitUntil**: (`promise`) => `void`
 
-Defined in: [src/adapters/types.ts:12](https://github.com/HomeGrower-club/stoma/blob/93629a961ba47d055ce6e141df342f8fb137ceba/src/adapters/types.ts#L12)
+Defined in: [src/adapters/types.ts:12](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/adapters/types.ts#L12)
 
 Schedule background work that outlives the response (e.g. Cloudflare `executionCtx.waitUntil`).
 

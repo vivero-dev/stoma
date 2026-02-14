@@ -1,12 +1,25 @@
+import path from "node:path";
 import react from "@astrojs/react";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
+import mermaid from 'astro-mermaid';
+import llmTxt from 'starlight-llms-txt'
 
 export default defineConfig({
-  site: "https://opensource.homegrower.club/stoma",
+  site: "https://stoma.opensource.homegrower.club/",
   markdown: {
     syntaxHighlight: "shiki",
+  },
+  vite: {
+    resolve: {
+      alias: {
+        "@examples": path.resolve(
+          new URL(".", import.meta.url).pathname,
+          "../examples",
+        ),
+      },
+    },
   },
   integrations: [
     react(),
@@ -62,6 +75,7 @@ export default defineConfig({
         baseUrl: "https://github.com/HomeGrower-club/stoma/edit/main/docs/",
       },
       plugins: [
+        // llmTxt(),
         starlightTypeDoc({
           entryPoints: [
             "../src/index.ts",
@@ -127,5 +141,10 @@ export default defineConfig({
         typeDocSidebarGroup,
       ],
     }),
+    mermaid({
+      theme: 'forest',
+      autoTheme: true
+    }),
+    
   ],
 });

@@ -7,6 +7,10 @@ sidebar:
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import { Code } from 'astro:components';
+import configGateway from '@examples/config-splitting/gateway.ts?raw';
+import authRoutes from '@examples/config-splitting/routes/auth.ts?raw';
+import apiRoutes from '@examples/config-splitting/routes/api.ts?raw';
 
 As a gateway grows, keeping the entire configuration in a single file becomes
 unwieldy. `mergeConfigs()` accepts any number of partial `GatewayConfig` objects
@@ -54,98 +58,12 @@ the earlier one.
 Organize route definitions by team or domain, with a shared base config for
 gateway-wide settings:
 
-```typescript
-// gateway/base.ts
-import { cors, requestLog, rateLimit } from "@homegrower-club/stoma";
-import type { GatewayConfig } from "@homegrower-club/stoma";
-
-export const baseConfig: Partial<GatewayConfig> = {
-  name: "platform-api",
-  basePath: "/api",
-  policies: [
-    cors({ origins: ["https://app.example.com"] }),
-    requestLog({ level: "info" }),
-    rateLimit({ max: 500, windowSeconds: 60 }),
-  ],
-};
-```
-
-```typescript
-// gateway/auth-routes.ts
-import { jwtAuth } from "@homegrower-club/stoma";
-import type { GatewayConfig } from "@homegrower-club/stoma";
-
-export const authRoutes: Partial<GatewayConfig> = {
-  routes: [
-    {
-      path: "/auth/login",
-      methods: ["POST"],
-      pipeline: {
-        upstream: { type: "url", target: "https://auth.internal" },
-      },
-    },
-    {
-      path: "/auth/refresh",
-      methods: ["POST"],
-      pipeline: {
-        policies: [jwtAuth({ secret: env.JWT_SECRET })],
-        upstream: { type: "url", target: "https://auth.internal" },
-      },
-    },
-  ],
-};
-```
-
-```typescript
-// gateway/user-routes.ts
-import { jwtAuth, cache } from "@homegrower-club/stoma";
-import type { GatewayConfig } from "@homegrower-club/stoma";
-
-export const userRoutes: Partial<GatewayConfig> = {
-  routes: [
-    {
-      path: "/users/*",
-      pipeline: {
-        policies: [jwtAuth({ secret: env.JWT_SECRET })],
-        upstream: { type: "service-binding", service: "USERS_SERVICE" },
-      },
-    },
-    {
-      path: "/users/:id/profile",
-      methods: ["GET"],
-      pipeline: {
-        policies: [
-          jwtAuth({ secret: env.JWT_SECRET }),
-          cache({ ttlSeconds: 60 }),
-        ],
-        upstream: { type: "service-binding", service: "USERS_SERVICE" },
-      },
-    },
-  ],
-};
-```
-
-```typescript
-// gateway/index.ts
-import { createGateway, mergeConfigs, health } from "@homegrower-club/stoma";
-import { baseConfig } from "./base";
-import { authRoutes } from "./auth-routes";
-import { userRoutes } from "./user-routes";
-
-const gateway = createGateway(
-  mergeConfigs(
-    baseConfig,
-    { routes: [health({ path: "/health" })] },
-    authRoutes,
-    userRoutes,
-  )
-);
-
-export default gateway.app;
-```
+<Code code={authRoutes} lang="ts" title="routes/auth.ts" />
+<Code code={apiRoutes} lang="ts" title="routes/api.ts" />
+<Code code={configGateway} lang="ts" title="gateway.ts" />
 
 Routes are concatenated in the order configs are passed. The global `cors`,
-`requestLog`, and `rateLimit` policies from `baseConfig` apply to every route.
+`requestLog`, and `rateLimit` policies from the base config apply to every route.
 
 ## Environment overrides
 

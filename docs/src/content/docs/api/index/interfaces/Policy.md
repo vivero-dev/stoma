@@ -5,7 +5,7 @@ prev: false
 title: "Policy"
 ---
 
-Defined in: [src/policies/types.ts:35](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L35)
+Defined in: [src/policies/types.ts:35](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L35)
 
 A Policy is a named middleware with priority ordering and optional
 protocol-agnostic evaluation.
@@ -25,7 +25,7 @@ protocol-agnostic evaluation.
 
 > `optional` **evaluate**: [`PolicyEvaluator`](/api/index/interfaces/policyevaluator/)
 
-Defined in: [src/policies/types.ts:53](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L53)
+Defined in: [src/policies/types.ts:53](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L53)
 
 Protocol-agnostic evaluation entry point.
 
@@ -42,7 +42,7 @@ Policies that only implement `handler` are HTTP-only.
 
 > **handler**: `MiddlewareHandler`
 
-Defined in: [src/policies/types.ts:39](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L39)
+Defined in: [src/policies/types.ts:39](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L39)
 
 The Hono middleware handler — HTTP runtime entry point.
 
@@ -52,7 +52,7 @@ The Hono middleware handler — HTTP runtime entry point.
 
 > `optional` **httpOnly**: `true`
 
-Defined in: [src/policies/types.ts:84](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L84)
+Defined in: [src/policies/types.ts:84](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L84)
 
 Set to `true` for policies that only work with the HTTP protocol.
 
@@ -76,7 +76,7 @@ Tooling can use this flag to:
 
 > **name**: `string`
 
-Defined in: [src/policies/types.ts:37](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L37)
+Defined in: [src/policies/types.ts:37](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L37)
 
 Unique policy name (e.g. "jwt-auth", "rate-limit")
 
@@ -86,7 +86,7 @@ Unique policy name (e.g. "jwt-auth", "rate-limit")
 
 > `optional` **phases**: [`ProcessingPhase`](/api/index/type-aliases/processingphase/)[]
 
-Defined in: [src/policies/types.ts:65](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L65)
+Defined in: [src/policies/types.ts:65](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L65)
 
 Processing phases this policy participates in.
 
@@ -103,6 +103,6 @@ Default: `["request-headers"]` (most policies only inspect request headers).
 
 > `optional` **priority**: `number`
 
-Defined in: [src/policies/types.ts:41](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L41)
+Defined in: [src/policies/types.ts:41](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/types.ts#L41)
 
 Policy priority — lower numbers execute first. Default: 100.

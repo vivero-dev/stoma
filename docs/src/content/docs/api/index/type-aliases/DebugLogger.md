@@ -7,7 +7,7 @@ title: "DebugLogger"
 
 > **DebugLogger** = (`message`, ...`args`) => `void`
 
-Defined in: [src/utils/debug.ts:24](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/utils/debug.ts#L24)
+Defined in: [src/utils/debug.ts:24](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/utils/debug.ts#L24)
 
 A debug logging function — call with a message and optional structured data.
 

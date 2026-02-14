@@ -7,7 +7,7 @@ title: "trafficShadow"
 
 > `const` **trafficShadow**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/traffic-shadow.ts:58](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/traffic/traffic-shadow.ts#L58)
+Defined in: [src/policies/traffic/traffic-shadow.ts:58](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/traffic/traffic-shadow.ts#L58)
 
 Traffic shadow policy.
 

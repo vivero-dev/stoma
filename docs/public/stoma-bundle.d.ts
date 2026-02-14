@@ -3691,6 +3691,59 @@ declare class Hono$1<E extends Env = BlankEnv, S extends Schema = BlankSchema, B
 	 */
 	constructor(options?: HonoOptions<E>);
 }
+/** Auto-captured by the pipeline for every policy when tracing is active. */
+export interface PolicyTraceBaseline {
+	name: string;
+	priority: number;
+	durationMs: number;
+	calledNext: boolean;
+	error: string | null;
+}
+/** Policy-reported detail (cooperative opt-in via `trace()`). */
+export interface PolicyTraceDetail {
+	action: string;
+	data?: Record<string, unknown>;
+}
+/** Combined baseline + optional detail for a single policy. */
+export interface PolicyTraceEntry extends PolicyTraceBaseline {
+	detail?: PolicyTraceDetail;
+}
+/** Full trace payload emitted as the `x-stoma-trace` response header. */
+export interface PolicyTrace {
+	requestId: string;
+	traceId: string;
+	route: string;
+	totalMs: number;
+	entries: PolicyTraceEntry[];
+}
+/**
+ * A trace reporter function. Always callable — no-op when tracing is inactive.
+ *
+ * @param action - Human-readable action string (e.g. `"HIT"`, `"allowed"`).
+ * @param data   - Optional structured context data.
+ */
+export type TraceReporter = (action: string, data?: Record<string, unknown>) => void;
+/** Shared no-op reporter instance — zero overhead when tracing is off. */
+export declare const noopTraceReporter: TraceReporter;
+/**
+ * Get a trace reporter for a specific policy.
+ *
+ * When tracing is active (`_stomaTraceRequested` is truthy), returns a
+ * function that stores the detail on the context. When inactive, returns
+ * {@link noopTraceReporter} — a no-op with zero overhead.
+ *
+ * @param c          - Hono request context.
+ * @param policyName - Policy name used as the Map key.
+ * @returns A {@link TraceReporter} — always callable.
+ */
+export declare function policyTrace(c: Context, policyName: string): TraceReporter;
+/**
+ * Fast-path check: is tracing requested for this request?
+ *
+ * @param c - Hono request context.
+ * @returns `true` when the client requested tracing via `x-stoma-debug: trace`.
+ */
+export declare function isTraceRequested(c: Context): boolean;
 /**
  * Zero-dependency debug logging for edge runtimes.
  *
@@ -4104,68 +4157,6 @@ export interface GatewayAdapter {
 	dispatchBinding?: (service: string, request: Request) => Promise<Response>;
 }
 /**
- * Policy trace — structured per-policy trace entries for deep debugging.
- *
- * Provides a zero-overhead reporter API (`TraceReporter`) that policies
- * call to record what they did. When tracing is not active, the reporter
- * is a no-op constant — no allocations, no Map lookups.
- *
- * @module trace
- */
-/** Auto-captured by the pipeline for every policy when tracing is active. */
-export interface PolicyTraceBaseline {
-	name: string;
-	priority: number;
-	durationMs: number;
-	calledNext: boolean;
-	error: string | null;
-}
-/** Policy-reported detail (cooperative opt-in via `trace()`). */
-export interface PolicyTraceDetail {
-	action: string;
-	data?: Record<string, unknown>;
-}
-/** Combined baseline + optional detail for a single policy. */
-export interface PolicyTraceEntry extends PolicyTraceBaseline {
-	detail?: PolicyTraceDetail;
-}
-/** Full trace payload emitted as the `x-stoma-trace` response header. */
-export interface PolicyTrace {
-	requestId: string;
-	traceId: string;
-	route: string;
-	totalMs: number;
-	entries: PolicyTraceEntry[];
-}
-/**
- * A trace reporter function. Always callable — no-op when tracing is inactive.
- *
- * @param action - Human-readable action string (e.g. `"HIT"`, `"allowed"`).
- * @param data   - Optional structured context data.
- */
-export type TraceReporter = (action: string, data?: Record<string, unknown>) => void;
-/** Shared no-op reporter instance — zero overhead when tracing is off. */
-export declare const noopTraceReporter: TraceReporter;
-/**
- * Get a trace reporter for a specific policy.
- *
- * When tracing is active (`_stomaTraceRequested` is truthy), returns a
- * function that stores the detail on the context. When inactive, returns
- * {@link noopTraceReporter} — a no-op with zero overhead.
- *
- * @param c          - Hono request context.
- * @param policyName - Policy name used as the Map key.
- * @returns A {@link TraceReporter} — always callable.
- */
-export declare function policyTrace(c: Context, policyName: string): TraceReporter;
-/**
- * Fast-path check: is tracing requested for this request?
- *
- * @param c - Hono request context.
- * @returns `true` when the client requested tracing via `x-stoma-debug: trace`.
- */
-export declare function isTraceRequested(c: Context): boolean;
-/**
  * Protocol-agnostic types for multi-runtime policy evaluation.
  *
  * These types define the contract between policy logic and protocol runtimes.
@@ -4445,6 +4436,70 @@ export interface PolicyEvaluator {
 	 */
 	onResponse?: (input: PolicyInput, ctx: PolicyEvalContext) => Promise<PolicyResult>;
 }
+/**
+ * Error handling utilities for the stoma gateway.
+ *
+ * {@link GatewayError} is thrown by policies and core code to produce
+ * structured JSON error responses. The gateway's `onError` handler catches
+ * these and converts them via {@link errorToResponse}. Unexpected errors
+ * fall through to {@link defaultErrorResponse}.
+ *
+ * @module errors
+ */
+/**
+ * Structured gateway error with HTTP status code, machine-readable code,
+ * and optional response headers (e.g. `Retry-After`, `X-RateLimit-*`).
+ *
+ * Throw this from policies or handlers to produce a structured JSON error
+ * response. The gateway error handler catches it automatically.
+ *
+ * @example
+ * ```ts
+ * throw new GatewayError(429, "rate_limited", "Too many requests", {
+ *   "retry-after": "60",
+ * });
+ * // Produces: { "error": "rate_limited", "message": "Too many requests", "statusCode": 429 }
+ * ```
+ */
+export declare class GatewayError extends Error {
+	readonly statusCode: number;
+	readonly code: string;
+	/** Optional headers to include in the error response (e.g. rate-limit headers) */
+	readonly headers?: Record<string, string>;
+	constructor(statusCode: number, code: string, message: string, headers?: Record<string, string>);
+}
+/** Standard JSON error response shape returned by all gateway errors. */
+export interface ErrorResponse {
+	/** Machine-readable error code (e.g. `"rate_limited"`, `"unauthorized"`). */
+	error: string;
+	/** Human-readable error description. */
+	message: string;
+	/** HTTP status code (e.g. 401, 429, 503). */
+	statusCode: number;
+	/** Request ID for tracing, when available. */
+	requestId?: string;
+}
+/**
+ * Build a JSON {@link Response} from a {@link GatewayError}.
+ *
+ * Merges any custom headers from the error (e.g. `Retry-After`) into the
+ * response. Includes the request ID when available for tracing.
+ *
+ * @param error - The gateway error to convert.
+ * @param requestId - Optional request ID to include in the response body.
+ * @returns A `Response` with JSON body and appropriate status code.
+ */
+export declare function errorToResponse(error: GatewayError, requestId?: string): Response;
+/**
+ * Produce a generic 500 error response for unexpected (non-{@link GatewayError}) errors.
+ *
+ * Used by the global error handler when an unrecognized error reaches the
+ * gateway boundary. Does not leak internal error details.
+ *
+ * @param requestId - Optional request ID to include in the response body.
+ * @returns A 500 `Response` with a generic error message.
+ */
+export declare function defaultErrorResponse(requestId?: string, message?: string): Response;
 /**
  * Pluggable metrics collection for the gateway pipeline.
  *
@@ -4897,6 +4952,50 @@ export interface GatewayInstance {
 	_registry: GatewayRegistry;
 }
 /**
+ * Create a gateway instance from a declarative configuration.
+ *
+ * Registers all routes on a Hono app, builds per-route policy pipelines
+ * (merging global + route-level policies), and wires up upstream dispatch.
+ * Returns a {@link GatewayInstance} whose `.app` property is the Hono app
+ * ready to be exported as a Cloudflare Worker default export.
+ *
+ * @param config - Full gateway configuration including routes, policies, and options.
+ * @returns A {@link GatewayInstance} with the configured Hono app.
+ * @throws {GatewayError} If no routes are provided.
+ *
+ * @example
+ * ```ts
+ * import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+ *
+ * const gateway = createGateway({
+ *   name: "my-api",
+ *   basePath: "/api",
+ *   routes: [
+ *     {
+ *       path: "/users/*",
+ *       pipeline: {
+ *         policies: [jwtAuth({ secret: env.JWT_SECRET }), rateLimit({ max: 100 })],
+ *         upstream: { type: "url", target: "https://users-service.internal" },
+ *       },
+ *     },
+ *   ],
+ * });
+ *
+ * export default gateway.app;
+ * ```
+ */
+export declare function createGateway<TBindings = Record<string, unknown>>(config: GatewayConfig<TBindings>): GatewayInstance;
+/**
+ * Retrieve the {@link PolicyContext} from a Hono context.
+ *
+ * Returns `undefined` if called outside the gateway pipeline (e.g. in
+ * a standalone Hono app without context injection).
+ *
+ * @param c - The Hono request context.
+ * @returns The gateway context, or `undefined` if not in a gateway pipeline.
+ */
+export declare function getGatewayContext(c: Context): PolicyContext | undefined;
+/**
  * Route scoping — group routes under a shared path prefix with shared policies.
  *
  * `scope()` transforms an array of {@link RouteConfig} by prepending a path
@@ -4952,380 +5051,6 @@ export interface ScopeConfig<TBindings = Record<string, unknown>> {
  * @returns Array of route configs with prefix, policies, and metadata applied.
  */
 export declare function scope<TBindings = Record<string, unknown>>(config: ScopeConfig<TBindings>): RouteConfig<TBindings>[];
-declare class TestAdapter implements GatewayAdapter {
-	private promises;
-	/**
-	 * Add a promise to the background work queue.
-	 */
-	waitUntil: (promise: Promise<unknown>) => void;
-	/**
-	 * Await all pending background work collected via `waitUntil`.
-	 */
-	waitAll(): Promise<void>;
-	/**
-	 * Reset the collected promises.
-	 */
-	reset(): void;
-}
-/**
- * Named priority constants for policy ordering.
- *
- * Lower numbers execute first. These replace magic numbers throughout
- * the built-in policies and are exported for custom policy authors.
- *
- * @module priority
- */
-export declare const Priority: {
-	/** Observability policies (e.g. requestLog) — wraps everything */
-	readonly OBSERVABILITY: 0;
-	/** IP filtering — runs before all other logic */
-	readonly IP_FILTER: 1;
-	/** Metrics collection — just after observability */
-	readonly METRICS: 1;
-	/** Early pipeline (e.g. cors) — before auth */
-	readonly EARLY: 5;
-	/** Authentication (e.g. jwtAuth, apiKeyAuth, basicAuth) */
-	readonly AUTH: 10;
-	/** Rate limiting — after auth */
-	readonly RATE_LIMIT: 20;
-	/** Circuit breaker — protects upstream */
-	readonly CIRCUIT_BREAKER: 30;
-	/** Caching — before upstream */
-	readonly CACHE: 40;
-	/** Request header transforms — mid-pipeline */
-	readonly REQUEST_TRANSFORM: 50;
-	/** Timeout — wraps upstream call */
-	readonly TIMEOUT: 85;
-	/** Retry — wraps upstream fetch */
-	readonly RETRY: 90;
-	/** Response header transforms — after upstream */
-	readonly RESPONSE_TRANSFORM: 92;
-	/** Proxy header manipulation — just before upstream */
-	readonly PROXY: 95;
-	/** Default priority for unspecified policies */
-	readonly DEFAULT: 100;
-	/** Mock — terminal, replaces upstream */
-	readonly MOCK: 999;
-};
-/** Union of all named priority levels. */
-export type PriorityLevel = (typeof Priority)[keyof typeof Priority];
-/**
- * Composable helpers for policy authors.
- *
- * Utilities that eliminate the most common boilerplate:
- * - {@link resolveConfig} — merge defaults with user config
- * - {@link policyDebug} — get a pre-namespaced debug logger
- * - {@link withSkip} — wrap a handler with `PolicyConfig.skip` logic
- * - {@link safeCall} — graceful store failure degradation
- * - {@link setDebugHeader} — contribute debug data for client-requested debug headers
- *
- * @module helpers
- */
-/**
- * Merge default config values with user-provided config.
- *
- * Performs a shallow merge: `{ ...defaults, ...userConfig }`.
- * Explicit `undefined` values in userConfig override defaults.
- *
- * @param defaults - Default values for all optional config fields.
- * @param userConfig - User-provided config (may be undefined).
- * @returns Fully merged config typed as `TConfig`.
- */
-export declare function resolveConfig<TConfig>(defaults: Partial<TConfig>, userConfig?: Partial<TConfig>): TConfig;
-/**
- * Get a debug logger pre-namespaced to `stoma:policy:{name}`.
- *
- * Returns {@link noopDebugLogger} when there is no gateway context
- * (e.g. outside a gateway pipeline) or when debug is disabled.
- * This eliminates the repeated `getGatewayContext(c)?.debug(...)` pattern.
- *
- * @param c - Hono request context.
- * @param policyName - Policy name used in the namespace.
- * @returns A {@link DebugLogger} — always callable, never undefined.
- */
-export declare function policyDebug(c: Context, policyName: string): DebugLogger;
-/**
- * Wrap a middleware handler with skip logic.
- *
- * If `skipFn` is undefined, returns the original handler unchanged
- * (zero overhead). Otherwise wraps it: when `skipFn(c)` returns `true`,
- * calls `next()` without running the handler.
- *
- * This implements the `PolicyConfig.skip` feature that was defined in
- * types but never enforced at runtime.
- *
- * @param skipFn - Optional predicate from `PolicyConfig.skip`.
- * @param handler - The policy's middleware handler.
- * @returns The original handler or a skip-aware wrapper.
- */
-export declare function withSkip(skipFn: ((c: unknown) => boolean | Promise<boolean>) | undefined, handler: MiddlewareHandler): MiddlewareHandler;
-/**
- * Execute an async operation with graceful error handling.
- *
- * Designed for store-backed policies (cache, rate-limit, circuit-breaker)
- * where a store failure should degrade gracefully — not crash the request.
- * Returns the `fallback` value if `fn` throws.
- *
- * @param fn - The async operation to attempt.
- * @param fallback - Value to return if `fn` throws.
- * @param debug - Optional debug logger for error reporting.
- * @param label - Optional label for the debug message (e.g. `"store.get()"`).
- * @returns The result of `fn`, or `fallback` on error.
- *
- * @example
- * ```ts
- * const cached = await safeCall(
- *   () => store.get(key),
- *   null,
- *   debug,
- *   "store.get()",
- * );
- * ```
- */
-export declare function safeCall<T>(fn: () => Promise<T>, fallback: T, debug?: DebugLogger, label?: string): Promise<T>;
-/**
- * Set a debug header value for client-requested debug output.
- *
- * Policies call this to contribute debug data. The value is only stored
- * if the client requested it via the `x-stoma-debug` request header AND
- * the gateway has debug headers enabled. When neither condition is met,
- * this is a no-op (single Map lookup).
- *
- * @param c - Hono request context.
- * @param name - Header name (e.g. `"x-stoma-cache-key"`).
- * @param value - Header value. Numbers and booleans are stringified.
- *
- * @example
- * ```ts
- * setDebugHeader(c, "x-stoma-cache-key", key);
- * setDebugHeader(c, "x-stoma-cache-ttl", resolved.ttlSeconds);
- * ```
- */
-export declare function setDebugHeader(c: Context, name: string, value: string | number | boolean): void;
-declare function parseDebugRequest(c: Context, requestHeaderName: string, allow?: string[]): void;
-declare function getCollectedDebugHeaders(c: Context): Map<string, string> | undefined;
-/**
- * Check whether the client requested debug output via the `x-stoma-debug` header.
- *
- * Returns `true` when any debug header names were requested (i.e. the
- * `_stomaDebugRequested` context key is a non-empty Set).
- *
- * @param c - Hono request context.
- * @returns `true` if the client sent a valid `x-stoma-debug` request header.
- */
-export declare function isDebugRequested(c: Context): boolean;
-/**
- * `definePolicy()` — full convenience wrapper for policy authors.
- *
- * Combines {@link resolveConfig}, {@link policyDebug}, and {@link withSkip}
- * into a single declarative API. Takes a {@link PolicyDefinition} and returns
- * a factory function `(config?) => Policy`.
- *
- * Supports both HTTP-specific handlers (Hono middleware) and protocol-agnostic
- * evaluators for multi-runtime policies (ext_proc, WebSocket).
- *
- * @module define-policy
- */
-/**
- * Context injected into every `definePolicy` handler invocation.
- *
- * Provides the fully-merged config, a pre-namespaced debug logger,
- * and the gateway context (request ID, trace ID, etc.).
- */
-export interface PolicyHandlerContext<TConfig> {
-	/** Fully merged config (defaults + user overrides). */
-	config: TConfig;
-	/** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
-	debug: DebugLogger;
-	/** Trace reporter — always callable, no-op when tracing is not active. */
-	trace: TraceReporter;
-	/** Gateway context, or `undefined` when running outside a gateway pipeline. */
-	gateway: PolicyContext | undefined;
-}
-/**
- * Context injected into `definePolicy` evaluate handlers.
- *
- * Parallel to {@link PolicyHandlerContext} but protocol-agnostic —
- * no Hono types. Extends the runtime-facing {@link PolicyEvalContext}
- * with the fully-merged, typed config.
- */
-export interface PolicyEvalHandlerContext<TConfig> extends PolicyEvalContext {
-	/** Fully merged config (defaults + user overrides). */
-	config: TConfig;
-}
-/**
- * Declarative policy definition passed to {@link definePolicy}.
- */
-export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
-	/** Unique policy name (e.g. `"my-auth"`, `"custom-cache"`). */
-	name: string;
-	/** Execution priority. Use {@link Priority} constants. Default: `Priority.DEFAULT` (100). */
-	priority?: number;
-	/** Default values for optional config fields. */
-	defaults?: Partial<TConfig>;
-	/**
-	 * Optional construction-time config validation.
-	 *
-	 * Called once when the factory is invoked (before any requests).
-	 * Throw a {@link GatewayError} to reject invalid config eagerly
-	 * rather than failing on the first request.
-	 */
-	validate?: (config: TConfig) => void;
-	/**
-	 * The HTTP policy handler. Receives the Hono context, `next`, and a
-	 * {@link PolicyHandlerContext} with config, debug, and gateway context.
-	 *
-	 * Used by the HTTP runtime ({@link createGateway}).
-	 */
-	handler: (c: Context, next: Next, ctx: PolicyHandlerContext<TConfig>) => Promise<void> | void;
-	/**
-	 * Protocol-agnostic evaluator for multi-runtime policies.
-	 *
-	 * Used by non-HTTP runtimes (ext_proc, WebSocket). The HTTP runtime
-	 * uses {@link handler} and ignores this field.
-	 *
-	 * Implement this alongside `handler` to make a policy work across
-	 * all runtimes. The `config` is pre-merged and injected into
-	 * {@link PolicyEvalHandlerContext}.
-	 *
-	 * @example
-	 * ```ts
-	 * const myPolicy = definePolicy<MyConfig>({
-	 *   name: "my-policy",
-	 *   priority: Priority.AUTH,
-	 *   phases: ["request-headers"],
-	 *   handler: async (c, next, { config }) => { ... },
-	 *   evaluate: {
-	 *     onRequest: async (input, { config }) => {
-	 *       const token = input.headers.get("authorization");
-	 *       if (!token) return { action: "reject", status: 401, code: "unauthorized", message: "Missing" };
-	 *       return { action: "continue" };
-	 *     },
-	 *   },
-	 * });
-	 * ```
-	 */
-	evaluate?: {
-		onRequest?: (input: PolicyInput, ctx: PolicyEvalHandlerContext<TConfig>) => Promise<PolicyResult>;
-		onResponse?: (input: PolicyInput, ctx: PolicyEvalHandlerContext<TConfig>) => Promise<PolicyResult>;
-	};
-	/**
-	 * Processing phases this policy participates in.
-	 *
-	 * Used by phase-based runtimes (ext_proc) to skip policies that
-	 * don't apply to the current phase. Passed through to the
-	 * returned {@link Policy.phases}.
-	 *
-	 * Default: `["request-headers"]`.
-	 */
-	phases?: ProcessingPhase[];
-	/**
-	 * Set to `true` for policies that only work with the HTTP protocol.
-	 *
-	 * These policies rely on HTTP-specific concepts (Request/Response objects,
-	 * specific headers, HTTP status codes, etc.) and cannot be meaningfully
-	 * evaluated in other protocols like ext_proc or WebSocket.
-	 *
-	 * When set, this is passed through to the returned Policy's `httpOnly` property.
-	 */
-	httpOnly?: true;
-}
-/**
- * Extract the keys of T that are required (not optional).
- * Evaluates to `never` when all keys are optional.
- */
-export type RequiredKeys<T> = {
-	[K in keyof T]-?: {} extends Pick<T, K> ? never : K;
-}[keyof T];
-/**
- * Conditional policy factory type.
- *
- * When `TConfig` has at least one required key, the factory requires
- * a config argument. When all keys are optional (or TConfig is the
- * base `PolicyConfig`), config is optional.
- *
- * This closes the gap between "type-safe config" and the runtime
- * `validate` callback — the editor catches missing required fields
- * at compile time.
- */
-export type PolicyFactory<TConfig extends PolicyConfig> = RequiredKeys<TConfig> extends never ? (config?: TConfig) => Policy : (config: TConfig) => Policy;
-/**
- * Create a policy factory from a declarative definition.
- *
- * The returned factory function accepts user config, merges it with
- * defaults, wires up skip logic, and injects a debug logger at
- * request time.
- *
- * When `TConfig` has required keys, the factory requires a config
- * argument. When all keys are optional, config is optional.
- *
- * @example
- * ```ts
- * import { definePolicy, Priority } from "@homegrower-club/stoma";
- *
- * const myPolicy = definePolicy<MyConfig>({
- *   name: "my-policy",
- *   priority: Priority.AUTH,
- *   defaults: { headerName: "x-custom" },
- *   handler: async (c, next, { config, debug }) => {
- *     debug("checking header");
- *     const value = c.req.header(config.headerName!);
- *     if (!value) throw new GatewayError(401, "unauthorized", "Missing header");
- *     await next();
- *   },
- * });
- *
- * // Usage: myPolicy({ headerName: "x-api-key" })
- * ```
- *
- * @param definition - Policy name, priority, defaults, and handler.
- * @returns A factory function whose config parameter is required or optional based on TConfig.
- */
-export declare function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(definition: PolicyDefinition<TConfig>): PolicyFactory<TConfig>;
-export interface PolicyTestHarnessOptions {
-	/**
-	 * Custom upstream handler. Receives the Hono context after the policy
-	 * runs. Default: returns `{ ok: true }` with status 200.
-	 */
-	upstream?: MiddlewareHandler;
-	/** Route path pattern for the test app. Default: `"/*"`. */
-	path?: string;
-	/** Gateway name injected into context. Default: `"test-gateway"`. */
-	gatewayName?: string;
-	/** Custom adapter to use. If not provided, a {@link TestAdapter} is created. */
-	adapter?: TestAdapter;
-}
-/**
- * Create a minimal test app with a single policy, error handling,
- * gateway context injection, and a configurable upstream.
- *
- * @example
- * ```ts
- * import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
- * import { myPolicy } from "./my-policy";
- *
- * const { request, adapter } = createPolicyTestHarness(myPolicy({ max: 10 }));
- *
- * it("should allow valid requests", async () => {
- *   const res = await request("/test");
- *   expect(res.status).toBe(200);
- *   // Await any background work (e.g. waitUntil)
- *   await adapter.waitAll();
- * });
- * ```
- *
- * @param policy - The policy instance to test.
- * @param options - Optional upstream, path, and gateway name.
- * @returns An object with `request()`, `app`, and the `adapter` used.
- */
-export declare function createPolicyTestHarness(policy: Policy, options?: PolicyTestHarnessOptions): {
-	/** The underlying Hono app for advanced test scenarios. */
-	app: Hono$1<BlankEnv, BlankSchema, "/">;
-	/** The adapter used by the harness. Call `adapter.waitAll()` to await background tasks. */
-	adapter: TestAdapter;
-	/** Make a test request through the policy pipeline. */
-	request: (reqPath: string, init?: RequestInit) => Response | Promise<Response>;
-};
 export interface MockConfig extends PolicyConfig {
 	/** HTTP status code to return. Default: 200. */
 	status?: number;
@@ -6793,123 +6518,379 @@ export interface ServerTimingConfig extends PolicyConfig {
  */
 export declare const serverTiming: (config?: ServerTimingConfig | undefined) => Policy;
 /**
- * Error handling utilities for the stoma gateway.
+ * Named priority constants for policy ordering.
  *
- * {@link GatewayError} is thrown by policies and core code to produce
- * structured JSON error responses. The gateway's `onError` handler catches
- * these and converts them via {@link errorToResponse}. Unexpected errors
- * fall through to {@link defaultErrorResponse}.
+ * Lower numbers execute first. These replace magic numbers throughout
+ * the built-in policies and are exported for custom policy authors.
  *
- * @module errors
+ * @module priority
+ */
+export declare const Priority: {
+	/** Observability policies (e.g. requestLog) — wraps everything */
+	readonly OBSERVABILITY: 0;
+	/** IP filtering — runs before all other logic */
+	readonly IP_FILTER: 1;
+	/** Metrics collection — just after observability */
+	readonly METRICS: 1;
+	/** Early pipeline (e.g. cors) — before auth */
+	readonly EARLY: 5;
+	/** Authentication (e.g. jwtAuth, apiKeyAuth, basicAuth) */
+	readonly AUTH: 10;
+	/** Rate limiting — after auth */
+	readonly RATE_LIMIT: 20;
+	/** Circuit breaker — protects upstream */
+	readonly CIRCUIT_BREAKER: 30;
+	/** Caching — before upstream */
+	readonly CACHE: 40;
+	/** Request header transforms — mid-pipeline */
+	readonly REQUEST_TRANSFORM: 50;
+	/** Timeout — wraps upstream call */
+	readonly TIMEOUT: 85;
+	/** Retry — wraps upstream fetch */
+	readonly RETRY: 90;
+	/** Response header transforms — after upstream */
+	readonly RESPONSE_TRANSFORM: 92;
+	/** Proxy header manipulation — just before upstream */
+	readonly PROXY: 95;
+	/** Default priority for unspecified policies */
+	readonly DEFAULT: 100;
+	/** Mock — terminal, replaces upstream */
+	readonly MOCK: 999;
+};
+/** Union of all named priority levels. */
+export type PriorityLevel = (typeof Priority)[keyof typeof Priority];
+/**
+ * Composable helpers for policy authors.
+ *
+ * Utilities that eliminate the most common boilerplate:
+ * - {@link resolveConfig} — merge defaults with user config
+ * - {@link policyDebug} — get a pre-namespaced debug logger
+ * - {@link withSkip} — wrap a handler with `PolicyConfig.skip` logic
+ * - {@link safeCall} — graceful store failure degradation
+ * - {@link setDebugHeader} — contribute debug data for client-requested debug headers
+ *
+ * @module helpers
  */
 /**
- * Structured gateway error with HTTP status code, machine-readable code,
- * and optional response headers (e.g. `Retry-After`, `X-RateLimit-*`).
+ * Merge default config values with user-provided config.
  *
- * Throw this from policies or handlers to produce a structured JSON error
- * response. The gateway error handler catches it automatically.
+ * Performs a shallow merge: `{ ...defaults, ...userConfig }`.
+ * Explicit `undefined` values in userConfig override defaults.
+ *
+ * @param defaults - Default values for all optional config fields.
+ * @param userConfig - User-provided config (may be undefined).
+ * @returns Fully merged config typed as `TConfig`.
+ */
+export declare function resolveConfig<TConfig>(defaults: Partial<TConfig>, userConfig?: Partial<TConfig>): TConfig;
+/**
+ * Get a debug logger pre-namespaced to `stoma:policy:{name}`.
+ *
+ * Returns {@link noopDebugLogger} when there is no gateway context
+ * (e.g. outside a gateway pipeline) or when debug is disabled.
+ * This eliminates the repeated `getGatewayContext(c)?.debug(...)` pattern.
+ *
+ * @param c - Hono request context.
+ * @param policyName - Policy name used in the namespace.
+ * @returns A {@link DebugLogger} — always callable, never undefined.
+ */
+export declare function policyDebug(c: Context, policyName: string): DebugLogger;
+/**
+ * Wrap a middleware handler with skip logic.
+ *
+ * If `skipFn` is undefined, returns the original handler unchanged
+ * (zero overhead). Otherwise wraps it: when `skipFn(c)` returns `true`,
+ * calls `next()` without running the handler.
+ *
+ * This implements the `PolicyConfig.skip` feature that was defined in
+ * types but never enforced at runtime.
+ *
+ * @param skipFn - Optional predicate from `PolicyConfig.skip`.
+ * @param handler - The policy's middleware handler.
+ * @returns The original handler or a skip-aware wrapper.
+ */
+export declare function withSkip(skipFn: ((c: unknown) => boolean | Promise<boolean>) | undefined, handler: MiddlewareHandler): MiddlewareHandler;
+/**
+ * Execute an async operation with graceful error handling.
+ *
+ * Designed for store-backed policies (cache, rate-limit, circuit-breaker)
+ * where a store failure should degrade gracefully — not crash the request.
+ * Returns the `fallback` value if `fn` throws.
+ *
+ * @param fn - The async operation to attempt.
+ * @param fallback - Value to return if `fn` throws.
+ * @param debug - Optional debug logger for error reporting.
+ * @param label - Optional label for the debug message (e.g. `"store.get()"`).
+ * @returns The result of `fn`, or `fallback` on error.
  *
  * @example
  * ```ts
- * throw new GatewayError(429, "rate_limited", "Too many requests", {
- *   "retry-after": "60",
- * });
- * // Produces: { "error": "rate_limited", "message": "Too many requests", "statusCode": 429 }
+ * const cached = await safeCall(
+ *   () => store.get(key),
+ *   null,
+ *   debug,
+ *   "store.get()",
+ * );
  * ```
  */
-export declare class GatewayError extends Error {
-	readonly statusCode: number;
-	readonly code: string;
-	/** Optional headers to include in the error response (e.g. rate-limit headers) */
-	readonly headers?: Record<string, string>;
-	constructor(statusCode: number, code: string, message: string, headers?: Record<string, string>);
-}
-/** Standard JSON error response shape returned by all gateway errors. */
-export interface ErrorResponse {
-	/** Machine-readable error code (e.g. `"rate_limited"`, `"unauthorized"`). */
-	error: string;
-	/** Human-readable error description. */
-	message: string;
-	/** HTTP status code (e.g. 401, 429, 503). */
-	statusCode: number;
-	/** Request ID for tracing, when available. */
-	requestId?: string;
-}
+export declare function safeCall<T>(fn: () => Promise<T>, fallback: T, debug?: DebugLogger, label?: string): Promise<T>;
 /**
- * Build a JSON {@link Response} from a {@link GatewayError}.
+ * Set a debug header value for client-requested debug output.
  *
- * Merges any custom headers from the error (e.g. `Retry-After`) into the
- * response. Includes the request ID when available for tracing.
+ * Policies call this to contribute debug data. The value is only stored
+ * if the client requested it via the `x-stoma-debug` request header AND
+ * the gateway has debug headers enabled. When neither condition is met,
+ * this is a no-op (single Map lookup).
  *
- * @param error - The gateway error to convert.
- * @param requestId - Optional request ID to include in the response body.
- * @returns A `Response` with JSON body and appropriate status code.
- */
-export declare function errorToResponse(error: GatewayError, requestId?: string): Response;
-/**
- * Produce a generic 500 error response for unexpected (non-{@link GatewayError}) errors.
- *
- * Used by the global error handler when an unrecognized error reaches the
- * gateway boundary. Does not leak internal error details.
- *
- * @param requestId - Optional request ID to include in the response body.
- * @returns A 500 `Response` with a generic error message.
- */
-export declare function defaultErrorResponse(requestId?: string, message?: string): Response;
-/**
- * Create a gateway instance from a declarative configuration.
- *
- * Registers all routes on a Hono app, builds per-route policy pipelines
- * (merging global + route-level policies), and wires up upstream dispatch.
- * Returns a {@link GatewayInstance} whose `.app` property is the Hono app
- * ready to be exported as a Cloudflare Worker default export.
- *
- * @param config - Full gateway configuration including routes, policies, and options.
- * @returns A {@link GatewayInstance} with the configured Hono app.
- * @throws {GatewayError} If no routes are provided.
+ * @param c - Hono request context.
+ * @param name - Header name (e.g. `"x-stoma-cache-key"`).
+ * @param value - Header value. Numbers and booleans are stringified.
  *
  * @example
  * ```ts
- * import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
- *
- * const gateway = createGateway({
- *   name: "my-api",
- *   basePath: "/api",
- *   routes: [
- *     {
- *       path: "/users/*",
- *       pipeline: {
- *         policies: [jwtAuth({ secret: env.JWT_SECRET }), rateLimit({ max: 100 })],
- *         upstream: { type: "url", target: "https://users-service.internal" },
- *       },
- *     },
- *   ],
- * });
- *
- * export default gateway.app;
+ * setDebugHeader(c, "x-stoma-cache-key", key);
+ * setDebugHeader(c, "x-stoma-cache-ttl", resolved.ttlSeconds);
  * ```
  */
-export declare function createGateway<TBindings = Record<string, unknown>>(config: GatewayConfig<TBindings>): GatewayInstance;
+export declare function setDebugHeader(c: Context, name: string, value: string | number | boolean): void;
+declare function parseDebugRequest(c: Context, requestHeaderName: string, allow?: string[]): void;
+declare function getCollectedDebugHeaders(c: Context): Map<string, string> | undefined;
 /**
- * Policy pipeline — merges, sorts, and wraps policies as Hono middleware.
+ * Check whether the client requested debug output via the `x-stoma-debug` header.
  *
- * The pipeline is the core execution model: global policies are merged with
- * route-level policies (route wins on name collision), sorted by priority
- * (ascending), and converted to Hono middleware handlers. A context injector
- * runs first on every request to set the request ID, timing, and debug factory.
+ * Returns `true` when any debug header names were requested (i.e. the
+ * `_stomaDebugRequested` context key is a non-empty Set).
  *
- * @module pipeline
+ * @param c - Hono request context.
+ * @returns `true` if the client sent a valid `x-stoma-debug` request header.
+ */
+export declare function isDebugRequested(c: Context): boolean;
+/**
+ * `definePolicy()` — full convenience wrapper for policy authors.
+ *
+ * Combines {@link resolveConfig}, {@link policyDebug}, and {@link withSkip}
+ * into a single declarative API. Takes a {@link PolicyDefinition} and returns
+ * a factory function `(config?) => Policy`.
+ *
+ * Supports both HTTP-specific handlers (Hono middleware) and protocol-agnostic
+ * evaluators for multi-runtime policies (ext_proc, WebSocket).
+ *
+ * @module define-policy
  */
 /**
- * Retrieve the {@link PolicyContext} from a Hono context.
+ * Context injected into every `definePolicy` handler invocation.
  *
- * Returns `undefined` if called outside the gateway pipeline (e.g. in
- * a standalone Hono app without context injection).
- *
- * @param c - The Hono request context.
- * @returns The gateway context, or `undefined` if not in a gateway pipeline.
+ * Provides the fully-merged config, a pre-namespaced debug logger,
+ * and the gateway context (request ID, trace ID, etc.).
  */
-export declare function getGatewayContext(c: Context): PolicyContext | undefined;
+export interface PolicyHandlerContext<TConfig> {
+	/** Fully merged config (defaults + user overrides). */
+	config: TConfig;
+	/** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
+	debug: DebugLogger;
+	/** Trace reporter — always callable, no-op when tracing is not active. */
+	trace: TraceReporter;
+	/** Gateway context, or `undefined` when running outside a gateway pipeline. */
+	gateway: PolicyContext | undefined;
+}
+/**
+ * Context injected into `definePolicy` evaluate handlers.
+ *
+ * Parallel to {@link PolicyHandlerContext} but protocol-agnostic —
+ * no Hono types. Extends the runtime-facing {@link PolicyEvalContext}
+ * with the fully-merged, typed config.
+ */
+export interface PolicyEvalHandlerContext<TConfig> extends PolicyEvalContext {
+	/** Fully merged config (defaults + user overrides). */
+	config: TConfig;
+}
+/**
+ * Declarative policy definition passed to {@link definePolicy}.
+ */
+export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
+	/** Unique policy name (e.g. `"my-auth"`, `"custom-cache"`). */
+	name: string;
+	/** Execution priority. Use {@link Priority} constants. Default: `Priority.DEFAULT` (100). */
+	priority?: number;
+	/** Default values for optional config fields. */
+	defaults?: Partial<TConfig>;
+	/**
+	 * Optional construction-time config validation.
+	 *
+	 * Called once when the factory is invoked (before any requests).
+	 * Throw a {@link GatewayError} to reject invalid config eagerly
+	 * rather than failing on the first request.
+	 */
+	validate?: (config: TConfig) => void;
+	/**
+	 * The HTTP policy handler. Receives the Hono context, `next`, and a
+	 * {@link PolicyHandlerContext} with config, debug, and gateway context.
+	 *
+	 * Used by the HTTP runtime ({@link createGateway}).
+	 */
+	handler: (c: Context, next: Next, ctx: PolicyHandlerContext<TConfig>) => Promise<void> | void;
+	/**
+	 * Protocol-agnostic evaluator for multi-runtime policies.
+	 *
+	 * Used by non-HTTP runtimes (ext_proc, WebSocket). The HTTP runtime
+	 * uses {@link handler} and ignores this field.
+	 *
+	 * Implement this alongside `handler` to make a policy work across
+	 * all runtimes. The `config` is pre-merged and injected into
+	 * {@link PolicyEvalHandlerContext}.
+	 *
+	 * @example
+	 * ```ts
+	 * const myPolicy = definePolicy<MyConfig>({
+	 *   name: "my-policy",
+	 *   priority: Priority.AUTH,
+	 *   phases: ["request-headers"],
+	 *   handler: async (c, next, { config }) => { ... },
+	 *   evaluate: {
+	 *     onRequest: async (input, { config }) => {
+	 *       const token = input.headers.get("authorization");
+	 *       if (!token) return { action: "reject", status: 401, code: "unauthorized", message: "Missing" };
+	 *       return { action: "continue" };
+	 *     },
+	 *   },
+	 * });
+	 * ```
+	 */
+	evaluate?: {
+		onRequest?: (input: PolicyInput, ctx: PolicyEvalHandlerContext<TConfig>) => Promise<PolicyResult>;
+		onResponse?: (input: PolicyInput, ctx: PolicyEvalHandlerContext<TConfig>) => Promise<PolicyResult>;
+	};
+	/**
+	 * Processing phases this policy participates in.
+	 *
+	 * Used by phase-based runtimes (ext_proc) to skip policies that
+	 * don't apply to the current phase. Passed through to the
+	 * returned {@link Policy.phases}.
+	 *
+	 * Default: `["request-headers"]`.
+	 */
+	phases?: ProcessingPhase[];
+	/**
+	 * Set to `true` for policies that only work with the HTTP protocol.
+	 *
+	 * These policies rely on HTTP-specific concepts (Request/Response objects,
+	 * specific headers, HTTP status codes, etc.) and cannot be meaningfully
+	 * evaluated in other protocols like ext_proc or WebSocket.
+	 *
+	 * When set, this is passed through to the returned Policy's `httpOnly` property.
+	 */
+	httpOnly?: true;
+}
+/**
+ * Extract the keys of T that are required (not optional).
+ * Evaluates to `never` when all keys are optional.
+ */
+export type RequiredKeys<T> = {
+	[K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
+/**
+ * Conditional policy factory type.
+ *
+ * When `TConfig` has at least one required key, the factory requires
+ * a config argument. When all keys are optional (or TConfig is the
+ * base `PolicyConfig`), config is optional.
+ *
+ * This closes the gap between "type-safe config" and the runtime
+ * `validate` callback — the editor catches missing required fields
+ * at compile time.
+ */
+export type PolicyFactory<TConfig extends PolicyConfig> = RequiredKeys<TConfig> extends never ? (config?: TConfig) => Policy : (config: TConfig) => Policy;
+/**
+ * Create a policy factory from a declarative definition.
+ *
+ * The returned factory function accepts user config, merges it with
+ * defaults, wires up skip logic, and injects a debug logger at
+ * request time.
+ *
+ * When `TConfig` has required keys, the factory requires a config
+ * argument. When all keys are optional, config is optional.
+ *
+ * @example
+ * ```ts
+ * import { definePolicy, Priority } from "@homegrower-club/stoma";
+ *
+ * const myPolicy = definePolicy<MyConfig>({
+ *   name: "my-policy",
+ *   priority: Priority.AUTH,
+ *   defaults: { headerName: "x-custom" },
+ *   handler: async (c, next, { config, debug }) => {
+ *     debug("checking header");
+ *     const value = c.req.header(config.headerName!);
+ *     if (!value) throw new GatewayError(401, "unauthorized", "Missing header");
+ *     await next();
+ *   },
+ * });
+ *
+ * // Usage: myPolicy({ headerName: "x-api-key" })
+ * ```
+ *
+ * @param definition - Policy name, priority, defaults, and handler.
+ * @returns A factory function whose config parameter is required or optional based on TConfig.
+ */
+export declare function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(definition: PolicyDefinition<TConfig>): PolicyFactory<TConfig>;
+declare class TestAdapter implements GatewayAdapter {
+	private promises;
+	/**
+	 * Add a promise to the background work queue.
+	 */
+	waitUntil: (promise: Promise<unknown>) => void;
+	/**
+	 * Await all pending background work collected via `waitUntil`.
+	 */
+	waitAll(): Promise<void>;
+	/**
+	 * Reset the collected promises.
+	 */
+	reset(): void;
+}
+export interface PolicyTestHarnessOptions {
+	/**
+	 * Custom upstream handler. Receives the Hono context after the policy
+	 * runs. Default: returns `{ ok: true }` with status 200.
+	 */
+	upstream?: MiddlewareHandler;
+	/** Route path pattern for the test app. Default: `"/*"`. */
+	path?: string;
+	/** Gateway name injected into context. Default: `"test-gateway"`. */
+	gatewayName?: string;
+	/** Custom adapter to use. If not provided, a {@link TestAdapter} is created. */
+	adapter?: TestAdapter;
+}
+/**
+ * Create a minimal test app with a single policy, error handling,
+ * gateway context injection, and a configurable upstream.
+ *
+ * @example
+ * ```ts
+ * import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+ * import { myPolicy } from "./my-policy";
+ *
+ * const { request, adapter } = createPolicyTestHarness(myPolicy({ max: 10 }));
+ *
+ * it("should allow valid requests", async () => {
+ *   const res = await request("/test");
+ *   expect(res.status).toBe(200);
+ *   // Await any background work (e.g. waitUntil)
+ *   await adapter.waitAll();
+ * });
+ * ```
+ *
+ * @param policy - The policy instance to test.
+ * @param options - Optional upstream, path, and gateway name.
+ * @returns An object with `request()`, `app`, and the `adapter` used.
+ */
+export declare function createPolicyTestHarness(policy: Policy, options?: PolicyTestHarnessOptions): {
+	/** The underlying Hono app for advanced test scenarios. */
+	app: Hono$1<BlankEnv, BlankSchema, "/">;
+	/** The adapter used by the harness. Call `adapter.waitAll()` to await background tasks. */
+	adapter: TestAdapter;
+	/** Make a test request through the policy pipeline. */
+	request: (reqPath: string, init?: RequestInit) => Response | Promise<Response>;
+};
 /**
  * Shared client IP extraction utility.
  *

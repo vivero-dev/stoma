@@ -5,7 +5,7 @@ prev: false
 title: "AttributeMutation"
 ---
 
-Defined in: [src/core/protocol.ts:249](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L249)
+Defined in: [src/core/protocol.ts:249](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L249)
 
 Set a cross-policy attribute.
 
@@ -18,7 +18,7 @@ In ext_proc, this maps to Envoy dynamic metadata.
 
 > **key**: `string`
 
-Defined in: [src/core/protocol.ts:252](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L252)
+Defined in: [src/core/protocol.ts:252](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L252)
 
 Attribute key. Use namespaced keys (e.g. `"auth.user_id"`) to avoid collisions.
 
@@ -28,7 +28,7 @@ Attribute key. Use namespaced keys (e.g. `"auth.user_id"`) to avoid collisions.
 
 > **type**: `"attribute"`
 
-Defined in: [src/core/protocol.ts:250](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L250)
+Defined in: [src/core/protocol.ts:250](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L250)
 
 ***
 
@@ -36,6 +36,6 @@ Defined in: [src/core/protocol.ts:250](https://github.com/HomeGrower-club/stoma/
 
 > **value**: `unknown`
 
-Defined in: [src/core/protocol.ts:254](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L254)
+Defined in: [src/core/protocol.ts:254](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L254)
 
 Attribute value.

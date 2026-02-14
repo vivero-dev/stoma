@@ -5,7 +5,7 @@ prev: false
 title: "PolicyInput"
 ---
 
-Defined in: [src/core/protocol.ts:69](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L69)
+Defined in: [src/core/protocol.ts:69](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L69)
 
 Protocol-agnostic view of what's being processed.
 
@@ -20,7 +20,7 @@ Constructed by each runtime from its native message type:
 
 > **attributes**: `Map`\<`string`, `unknown`\>
 
-Defined in: [src/core/protocol.ts:127](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L127)
+Defined in: [src/core/protocol.ts:127](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L127)
 
 Cross-policy attribute bag.
 
@@ -35,7 +35,7 @@ Runtime-populated attributes use the `runtime.*` namespace
 
 > `optional` **body**: `string` \| `ArrayBuffer`
 
-Defined in: [src/core/protocol.ts:109](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L109)
+Defined in: [src/core/protocol.ts:109](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L109)
 
 Message body, present only during body phases.
 
@@ -48,7 +48,7 @@ the runtime's buffering mode.
 
 > `optional` **clientIp**: `string`
 
-Defined in: [src/core/protocol.ts:101](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L101)
+Defined in: [src/core/protocol.ts:101](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L101)
 
 Client IP address, extracted by the runtime from protocol-specific
 sources (e.g. `CF-Connecting-IP`, `X-Forwarded-For`, gRPC peer address).
@@ -59,7 +59,7 @@ sources (e.g. `CF-Connecting-IP`, `X-Forwarded-For`, gRPC peer address).
 
 > **headers**: `Headers`
 
-Defined in: [src/core/protocol.ts:95](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L95)
+Defined in: [src/core/protocol.ts:95](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L95)
 
 Headers (HTTP) or metadata (gRPC).
 
@@ -72,7 +72,7 @@ Treat as read-only — express modifications via
 
 > **method**: `string`
 
-Defined in: [src/core/protocol.ts:79](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L79)
+Defined in: [src/core/protocol.ts:79](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L79)
 
 Request method or action.
 
@@ -85,7 +85,7 @@ Request method or action.
 
 > **path**: `string`
 
-Defined in: [src/core/protocol.ts:87](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L87)
+Defined in: [src/core/protocol.ts:87](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L87)
 
 Request path or resource identifier.
 
@@ -98,7 +98,7 @@ Request path or resource identifier.
 
 > **phase**: [`ProcessingPhase`](/api/index/type-aliases/processingphase/)
 
-Defined in: [src/core/protocol.ts:71](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L71)
+Defined in: [src/core/protocol.ts:71](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L71)
 
 Current processing phase.
 
@@ -108,7 +108,7 @@ Current processing phase.
 
 > **protocol**: [`ProtocolType`](/api/index/type-aliases/protocoltype/)
 
-Defined in: [src/core/protocol.ts:130](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L130)
+Defined in: [src/core/protocol.ts:130](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L130)
 
 The protocol runtime that constructed this input.
 
@@ -118,7 +118,7 @@ The protocol runtime that constructed this input.
 
 > `optional` **trailers**: `Headers`
 
-Defined in: [src/core/protocol.ts:117](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/protocol.ts#L117)
+Defined in: [src/core/protocol.ts:117](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/core/protocol.ts#L117)
 
 Trailers, present only during trailer phases.
 

@@ -7,7 +7,7 @@ title: "ipFilter"
 
 > **ipFilter**(`config`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/ip-filter.ts:48](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/traffic/ip-filter.ts#L48)
+Defined in: [src/policies/traffic/ip-filter.ts:48](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/policies/traffic/ip-filter.ts#L48)
 
 Block or allow requests based on client IP address or CIDR range.
 

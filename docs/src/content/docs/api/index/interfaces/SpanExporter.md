@@ -5,7 +5,7 @@ prev: false
 title: "SpanExporter"
 ---
 
-Defined in: [src/observability/tracing.ts:49](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L49)
+Defined in: [src/observability/tracing.ts:49](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/observability/tracing.ts#L49)
 
 Pluggable span exporter interface.
 
@@ -19,7 +19,7 @@ via `waitUntil()` so it does not block the response.
 
 > **export**(`spans`): `Promise`\<`void`\>
 
-Defined in: [src/observability/tracing.ts:50](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L50)
+Defined in: [src/observability/tracing.ts:50](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/observability/tracing.ts#L50)
 
 #### Parameters
 
@@ -37,7 +37,7 @@ Defined in: [src/observability/tracing.ts:50](https://github.com/HomeGrower-club
 
 > `optional` **shutdown**(): `Promise`\<`void`\>
 
-Defined in: [src/observability/tracing.ts:51](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L51)
+Defined in: [src/observability/tracing.ts:51](https://github.com/HomeGrower-club/stoma/blob/48ef00d6c13071f9fc03cba04228926dc2dd542c/src/observability/tracing.ts#L51)
 
 #### Returns
 

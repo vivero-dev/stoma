@@ -61,3 +61,30 @@ const gateway = createGateway({
 
 export default gateway.app;
 ```
+
+## Type-Safe Service Bindings
+
+Pass your Cloudflare Workers `Env` type to get autocomplete and type checking for service bindings:
+
+```ts
+interface Env {
+  AUTH_WORKER: Fetcher;
+  API_WORKER: Fetcher;
+}
+
+const gateway = createGateway<Env>({
+  routes: [
+    {
+      path: "/auth/*",
+      upstream: {
+        type: "service-binding",
+        service: "AUTH_WORKER",  // ← TypeScript autocompletes this!
+      },
+    },
+  ],
+});
+```
+
+The `TBindings` generic flows through to `ServiceBindingUpstream.service`, which uses `Extract<keyof TBindings, string>` to validate binding names.
+
+See [examples/service-binding](https://github.com/HomeGrower-club/stoma/tree/main/examples/service-binding) for a complete example.

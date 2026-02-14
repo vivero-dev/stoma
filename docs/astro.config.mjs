@@ -1,7 +1,7 @@
-import { defineConfig } from "astro/config";
-import starlight from "@astrojs/starlight";
-import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
 import react from "@astrojs/react";
+import starlight from "@astrojs/starlight";
+import { defineConfig } from "astro/config";
+import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
 
 export default defineConfig({
   site: "https://opensource.homegrower.club/stoma",
@@ -59,8 +59,7 @@ export default defineConfig({
       ],
       customCss: ["./src/styles/custom.css"],
       editLink: {
-        baseUrl:
-          "https://github.com/HomeGrower-club/stoma/edit/main/docs/",
+        baseUrl: "https://github.com/HomeGrower-club/stoma/edit/main/docs/",
       },
       plugins: [
         starlightTypeDoc({
@@ -89,6 +88,23 @@ export default defineConfig({
           autogenerate: { directory: "concepts" },
         },
         {
+          label: "Deployment",
+          items: [
+            { label: "Overview", link: "/deploy/" },
+            { label: "Cloudflare Workers", link: "/deploy/cloudflare/" },
+            { label: "Node.js", link: "/deploy/node/" },
+            {
+              label: "Docker",
+              items: [
+                { label: "Docker", link: "/deploy/docker/" },
+                { label: "Docker Compose", link: "/deploy/docker/compose/" },
+                { label: "Kubernetes", link: "/deploy/docker/kubernetes/" },
+              ],
+            },
+            { label: "Bun", link: "/deploy/bun/" },
+          ],
+        },
+        {
           label: "Policies",
           autogenerate: { directory: "policies" },
         },
@@ -101,12 +117,12 @@ export default defineConfig({
           autogenerate: { directory: "recipes" },
         },
         {
-          label: "Policy Authoring",
-          autogenerate: { directory: "policy-authoring" },
-        },
-        {
           label: "Guides",
           autogenerate: { directory: "guides" },
+        },
+        {
+          label: "Policy Authoring",
+          autogenerate: { directory: "policy-authoring" },
         },
         typeDocSidebarGroup,
       ],

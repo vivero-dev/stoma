@@ -79,14 +79,16 @@ const gateway = createGateway({
 
 ## Cloudflare setup
 
-`wrangler.toml`:
+`wrangler.jsonc`:
 
-```toml
-compatibility_flags = ["nodejs_compat"]
-
-[browser]
-binding = "MYBROWSER"
-remote = true
+```jsonc
+{
+  "compatibility_flags": ["nodejs_compat"],
+  "browser": {
+    "binding": "MYBROWSER",
+    "remote": true
+  }
+}
 ```
 
 Install:

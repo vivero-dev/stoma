@@ -1,0 +1,391 @@
+---
+title: Deploy to Cloudflare Workers
+description: Deploy your Stoma gateway to Cloudflare Workers with wrangler, secrets, and CI/CD.
+sidebar:
+  order: 1
+---
+
+import { Aside, Steps, Tabs, TabItem, LinkCard, CardGrid } from "@astrojs/starlight/components";
+
+Stoma is designed for Cloudflare Workers. Deploy your gateway to the edge with full access to Service Bindings, KV, Durable Objects, and the Cache API.
+
+## Prerequisites
+
+```sh
+npm install -g wrangler
+wrangler login
+```
+
+## Quick Deploy
+
+<Steps>
+1. **Install dependencies**
+
+   ```sh
+   npm install hono @homegrower-club/stoma
+   ```
+
+2. **Create your gateway**
+
+   ```typescript title="src/index.ts"
+   import { createGateway, cors, requestLog } from "@homegrower-club/stoma";
+
+   const gateway = createGateway({
+     name: "my-gateway",
+     basePath: "/api",
+     policies: [requestLog(), cors()],
+     routes: [
+       {
+         path: "/users/*",
+         pipeline: {
+           policies: [],
+           upstream: {
+             type: "url",
+             target: "https://api.example.com",
+             rewritePath: (path) => path.replace("/api", ""),
+           },
+         },
+       },
+     ],
+   });
+
+   export default gateway.app;
+   ```
+
+3. **Configure wrangler**
+
+   ```json title="wrangler.toml"
+   {
+     "name": "my-gateway",
+     "compatibility_date": "2025-01-01",
+     "compatibility_flags": ["nodejs_compat"],
+     "main": "src/index.ts"
+   }
+   ```
+
+4. **Deploy**
+
+   ```sh
+   wrangler deploy
+   ```
+</Steps>
+
+## Wrangler Configuration
+
+### Basic Configuration
+
+```json title="wrangler.toml"
+{
+  "name": "my-gateway",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/index.ts",
+  "observability": {
+    "enabled": true
+  }
+}
+```
+
+| Option | Description |
+|--------|-------------|
+| `name` | Worker name (used in URL: `<name>.workers.dev`) |
+| `compatibility_date` | Use a recent date for latest features |
+| `compatibility_flags` | `nodejs_compat` enables Node.js compatibility |
+| `main` | Entry point for your Worker |
+
+### Environment Configs
+
+Configure multiple environments for staging and production:
+
+```json title="wrangler.toml"
+{
+  "name": "my-gateway",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "env": {
+    "staging": {
+      "routes": [
+        { "pattern": "staging.myapp.com/*", "zone_name": "myapp.com" }
+      ]
+    },
+    "production": {
+      "routes": [
+        { "pattern": "api.myapp.com/*", "zone_name": "myapp.com" }
+      ]
+    }
+  }
+}
+```
+
+Deploy to a specific environment:
+
+```sh
+wrangler deploy --env staging
+wrangler deploy --env production
+```
+
+## Secrets Management
+
+### Using `wrangler secret`
+
+Store sensitive values securely:
+
+```sh
+# Interactive - will prompt for value
+wrangler secret put JWT_SECRET
+
+# Or pipe from stdin
+echo "my-secret-value" | wrangler secret put API_KEY
+```
+
+### In Your Code
+
+Access secrets via the `env` parameter:
+
+```typescript title="src/index.ts"
+interface Env {
+  JWT_SECRET: string;
+  API_KEY: string;
+  DATABASE_URL: string;
+}
+
+export default {
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    const gateway = createGateway({
+      // Use env.JWT_SECRET here
+    });
+    return gateway.app.fetch(request, env, ctx);
+  },
+};
+```
+
+### Secret Types
+
+| Secret Type | Use Case |
+|-------------|----------|
+| `wrangler secret put` | Runtime secrets (API keys, tokens) |
+| `wrangler kv:namespace create` | KV namespace binding |
+| `wrangler d1 create` | D1 database binding |
+| `wrangler r2 bucket create` | R2 storage binding |
+
+## Cloudflare-Specific Adapter
+
+Use the Cloudflare adapter for Service Bindings, KV rate limiting, and Durable Objects:
+
+```typescript title="src/index.ts"
+import {
+  createGateway,
+  cors,
+  rateLimit,
+  cache,
+  circuitBreaker,
+} from "@homegrower-club/stoma";
+import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+
+interface Env {
+  JWT_SECRET: string;
+  RATE_LIMIT_KV: KVNamespace;
+  CACHE_KV: KVNamespace;
+  USERS_SERVICE: Fetcher;
+}
+
+export default {
+  fetch(request: Request, env: Env, ctx: ExecutionContext) {
+    const adapter = cloudflareAdapter({
+      rateLimitKv: env.RATE_LIMIT_KV,
+      cacheKv: env.CACHE_KV,
+      executionCtx: ctx,
+      env,
+    });
+
+    const gateway = createGateway({
+      name: "my-gateway",
+      basePath: "/api",
+      adapter,
+      policies: [cors()],
+      routes: [
+        {
+          path: "/users/*",
+          pipeline: {
+            policies: [
+              rateLimit({
+                max: 100,
+                windowSeconds: 60,
+                store: adapter.rateLimitStore,
+              }),
+            ],
+            upstream: {
+              type: "service-binding",
+              service: "USERS_SERVICE",
+            },
+          },
+        },
+        {
+          path: "/products/*",
+          pipeline: {
+            policies: [
+              cache({
+                ttlSeconds: 300,
+                store: adapter.cacheStore,
+              }),
+            ],
+            upstream: {
+              type: "url",
+              target: "https://products.internal",
+            },
+          },
+        },
+      ],
+    });
+
+    return gateway.app.fetch(request, env, ctx);
+  },
+};
+```
+
+## GitHub Actions CI/CD
+
+Automate deployments with GitHub Actions:
+
+```yaml title=".github/workflows/deploy.yml"
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --env production
+
+      - name: Deploy to staging
+        if: github.event_name == 'pull_request'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --env staging
+```
+
+### Required Secrets
+
+Add these secrets to your GitHub repository:
+
+| Secret | How to Get |
+|--------|------------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Dashboard → Profile → API Tokens → Create Token (use "Edit Cloudflare Workers" template) |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → Overview → Account ID |
+
+## Custom Domains
+
+### Workers
+
+```sh
+# Add a custom domain
+wrangler routes update --pattern "api.example.com" --zone-name "example.com"
+```
+
+Or in `wrangler.toml`:
+
+```json
+{
+  "routes": [
+    { "pattern": "api.example.com/*", "zone_name": "example.com" }
+  ]
+}
+```
+
+### Pages
+
+For complex frontends with a gateway, consider Cloudflare Pages:
+
+```sh
+# Create a Pages project
+wrangler pages project create my-gateway
+wrangler pages deploy dist/ --project-name my-gateway
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**"Module not found" errors**
+
+Ensure `nodejs_compat` is in your compatibility_flags:
+
+```json
+{
+  "compatibility_flags": ["nodejs_compat"]
+}
+```
+
+**KV namespace not found**
+
+Bind the KV namespace in `wrangler.toml`:
+
+```json
+{
+  "kv_namespaces": [
+    { "binding": "RATE_LIMIT_KV", "id": "your-namespace-id" }
+  ]
+}
+```
+
+**Service Binding not working**
+
+Ensure the target Worker is deployed and accessible:
+
+```json
+{
+  "services": [
+    { "binding": "USERS_SERVICE", "service": "users-worker" }
+  ]
+}
+```
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard
+    title="Service Bindings"
+    href="/cloudflare/service-bindings/"
+    description="Learn about Worker-to-Worker communication"
+  />
+  <LinkCard
+    title="KV Rate Limiting"
+    href="/cloudflare/kv-rate-limiting/"
+    description="Distributed rate limiting with Cloudflare KV"
+  />
+  <LinkCard
+    title="Durable Objects"
+    href="/cloudflare/durable-objects/"
+    description="Use Durable Objects for stateful workloads"
+  />
+</CardGrid>

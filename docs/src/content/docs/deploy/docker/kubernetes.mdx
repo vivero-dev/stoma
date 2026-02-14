@@ -1,0 +1,141 @@
+---
+title: Kubernetes
+description: Deploy your Stoma gateway to Kubernetes.
+sidebar:
+  order: 2
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+Deploy your Stoma gateway to Kubernetes.
+
+## Deployment
+
+```yaml title="deployment.yaml"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stoma-gateway
+  labels:
+    app: stoma-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stoma-gateway
+  template:
+    metadata:
+      labels:
+        app: stoma-gateway
+    spec:
+      containers:
+        - name: gateway
+          image: stoma-gateway:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: UPSTREAM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: upstream-url
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+```
+
+## Service
+
+```yaml title="service.yaml"
+apiVersion: v1
+kind: Service
+metadata:
+  name: stoma-gateway
+spec:
+  selector:
+    app: stoma-gateway
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP
+```
+
+## Ingress
+
+```yaml title="ingress.yaml"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stoma-gateway
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stoma-gateway
+                port:
+                  number: 80
+```
+
+## Horizontal Pod Autoscaler
+
+```yaml title="hpa.yaml"
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: stoma-gateway
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: stoma-gateway
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+```
+
+## Apply Resources
+
+```sh
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+```
+
+## Check Status
+
+```sh
+kubectl get pods -l app=stoma-gateway
+kubectl get svc stoma-gateway
+kubectl describe ingress stoma-gateway
+```

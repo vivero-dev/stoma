@@ -1,0 +1,482 @@
+---
+title: Testing Guide
+draft: false
+sidebar:
+  order: 6
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This guide covers testing strategies for Stoma gateways and policies, from unit
+testing individual policies to full integration tests.
+
+## Running Tests
+
+Stoma uses Vitest with the Cloudflare Workers test pool. Tests run in a
+Workers-like environment without requiring actual Workers bindings.
+
+```sh
+# Run all tests
+yarn test
+
+# Run tests in watch mode
+yarn test:watch
+
+# Run a single test file
+npx vitest run src/core/__tests__/gateway.test.ts
+
+# Run with coverage
+yarn test:coverage
+```
+
+<Aside type="tip">
+The test pool uses workerd internally, which provides `crypto.subtle` support for
+HMAC signing in JWT tests.
+</Aside>
+
+## Policy Unit Tests
+
+Use `createPolicyTestHarness()` from the SDK to test policies in isolation. It
+sets up a minimal Hono app with gateway context injection, error handling, and
+a configurable upstream.
+
+```typescript
+import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+import { rateLimit, InMemoryRateLimitStore } from "@homegrower-club/stoma/policies";
+
+const store = new InMemoryRateLimitStore({ maxKeys: 100, cleanupIntervalMs: 1000 });
+const { request, adapter } = createPolicyTestHarness(
+  rateLimit({ max: 5, windowSeconds: 60, store }),
+  { path: "/api/*" }
+);
+
+it("should allow requests under the limit", async () => {
+  const res = await request("/api/users");
+  expect(res.status).toBe(200);
+});
+
+it("should reject requests over the limit", async () => {
+  // Exhaust the limit
+  for (let i = 0; i < 5; i++) {
+    await request("/api/users");
+  }
+
+  const res = await request("/api/users");
+  expect(res.status).toBe(429);
+});
+
+// Flush any background work from waitUntil()
+await adapter.waitAll();
+```
+
+### Harness Options
+
+The second argument to `createPolicyTestHarness()` accepts:
+
+```typescript
+interface PolicyTestHarnessOptions {
+  /** Custom upstream handler. Default returns `{ ok: true }` */
+  upstream?: MiddlewareHandler;
+  /** Route path. Default: `"/*"` */
+  path?: string;
+  /** Gateway name for context. Default: `"test-gateway"` */
+  gatewayName?: string;
+  /** Custom adapter. Default: creates a TestAdapter */
+  adapter?: TestAdapter;
+}
+```
+
+### Custom Upstream
+
+Test specific response scenarios by providing a custom upstream:
+
+```typescript
+const { request } = createPolicyTestHarness(
+  somePolicy(),
+  {
+    upstream: (c) => c.json({ error: "server error" }, 500),
+  }
+);
+
+it("should handle upstream errors", async () => {
+  const res = await request("/test");
+  expect(res.status).toBe(500);
+});
+```
+
+### Testing GatewayError Rejection
+
+Policies that reject requests throw `GatewayError`. The harness converts these
+to structured JSON responses automatically:
+
+```typescript
+const { request } = createPolicyTestHarness(
+  jwtAuth({ jwksUrl: "https://auth.example.com/.well-known/jwks.json" })
+);
+
+it("should reject requests without JWT", async () => {
+  const res = await request("/test");
+  expect(res.status).toBe(401);
+
+  const body = await res.json();
+  expect(body).toEqual({
+    error: "unauthorized",
+    message: "missing bearer token",
+  });
+});
+```
+
+## Gateway Integration Tests
+
+Test the full gateway by creating it and making requests directly to the Hono
+app. No HTTP server is required.
+
+```typescript
+import { createGateway } from "@homegrower-club/stoma";
+import { cors, rateLimit } from "@homegrower-club/stoma";
+import { InMemoryRateLimitStore } from "@homegrower-club/stoma";
+
+const store = new InMemoryRateLimitStore();
+afterEach(() => store.destroy());
+
+const gw = createGateway({
+  name: "test-gateway",
+  basePath: "/api",
+  policies: [cors({ origins: ["https://example.com"] })],
+  routes: [
+    {
+      path: "/users",
+      pipeline: {
+        policies: [
+          rateLimit({ max: 100, windowSeconds: 60, store }),
+        ],
+        upstream: {
+          type: "handler",
+          handler: (c) => c.json({ users: [] }),
+        },
+      },
+    },
+  ],
+});
+
+it("should apply global CORS and route-specific rate limiting", async () => {
+  const res = await gw.app.request("/api/users");
+
+  expect(res.status).toBe(200);
+  expect(res.headers.get("access-control-allow-origin")).toBe("https://example.com");
+});
+```
+
+### Testing Multiple Routes
+
+```typescript
+const gw = createGateway({
+  routes: [
+    {
+      path: "/users",
+      pipeline: {
+        upstream: { type: "handler", handler: (c) => c.json({ users: [] }) },
+      },
+    },
+    {
+      path: "/posts",
+      pipeline: {
+        upstream: { type: "handler", handler: (c) => c.json({ posts: [] }) },
+      },
+    },
+  ],
+});
+
+it("should route to correct handlers", async () => {
+  const usersRes = await gw.app.request("/users");
+  const postsRes = await gw.app.request("/posts");
+
+  expect((await usersRes.json()).users).toEqual([]);
+  expect((await postsRes.json()).posts).toEqual([]);
+});
+```
+
+### Testing Service Bindings
+
+When using service bindings, provide a dispatch function in your config:
+
+```typescript
+const mockDispatch = vi.fn((service, request) => {
+  return new Response(JSON.stringify({ service }), {
+    headers: { "content-type": "application/json" },
+  });
+});
+
+const gw = createGateway({
+  routes: [
+    {
+      path: "/proxy",
+      pipeline: {
+        upstream: { type: "service-binding", service: "BACKEND" },
+      },
+    },
+  ],
+  adapter: { dispatchBinding: mockDispatch },
+});
+
+it("should dispatch to service binding", async () => {
+  const res = await gw.app.request("/proxy");
+  expect(mockDispatch).toHaveBeenCalledWith("BACKEND", expect.any(Request));
+});
+```
+
+## Custom Policy Tests
+
+When authoring custom policies with `definePolicy()`, test them using either the
+harness or a direct Hono app approach.
+
+### Using the Harness
+
+```typescript
+import { definePolicy, Priority } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+
+interface Config {
+  headerName?: string;
+  requiredValue?: string;
+}
+
+const myPolicy = definePolicy<Config>({
+  name: "my-policy",
+  priority: Priority.AUTH,
+  defaults: { headerName: "x-api-key" },
+  handler: async (c, next, { config }) => {
+    const value = c.req.header(config.headerName!);
+    if (value !== config.requiredValue) {
+      throw new GatewayError(403, "forbidden", "Invalid API key");
+    }
+    await next();
+  },
+});
+
+// Test the factory
+const { request } = createPolicyTestHarness(myPolicy({ requiredValue: "secret" }));
+
+it("should allow matching header", async () => {
+  const res = await request("/test", { headers: { "x-api-key": "secret" } });
+  expect(res.status).toBe(200);
+});
+
+it("should reject non-matching header", async () => {
+  const res = await request("/test", { headers: { "x-api-key": "wrong" } });
+  expect(res.status).toBe(403);
+});
+```
+
+### Direct Hono App Testing
+
+For more control, create a Hono app directly:
+
+```typescript
+import { Hono } from "hono";
+import { createContextInjector } from "@homegrower-club/stoma/core/pipeline";
+import { errorToResponse, GatewayError } from "@homegrower-club/stoma/core/errors";
+import { TestAdapter } from "@homegrower-club/stoma/adapters";
+
+const policy = myPolicy({ requiredValue: "secret" });
+const adapter = new TestAdapter();
+
+const app = new Hono();
+
+// Inject gateway context
+app.use("/*", createContextInjector("test", "/*", undefined, undefined, adapter));
+
+// Run policy with error handling
+app.use("/*", async (c, next) => {
+  try {
+    await policy.handler(c, next);
+  } catch (err) {
+    if (err instanceof GatewayError) {
+      return errorToResponse(err);
+    }
+    throw err;
+  }
+});
+
+// Upstream
+app.get("/*", (c) => c.json({ ok: true }));
+
+const res = await app.request("/test");
+```
+
+## Test Utilities and Fixtures
+
+### TestAdapter
+
+`TestAdapter` provides a `waitUntil` implementation that collects background
+promises. Call `await adapter.waitAll()` to flush them before assertions.
+
+```typescript
+import { TestAdapter } from "@homegrower-club/stoma/adapters";
+
+const adapter = new TestAdapter();
+
+// Policies can call c.get("gateway").adapter.waitUntil(promise)
+const { request } = createPolicyTestHarness(policy, { adapter });
+
+await request("/test");
+await adapter.waitAll(); // Await any async work
+```
+
+### InMemory Stores
+
+For policies requiring stores, use in-memory implementations in tests:
+
+```typescript
+import { InMemoryRateLimitStore } from "@homegrower-club/stoma";
+import { InMemoryCacheStore } from "@homegrower-club/stoma";
+import { InMemoryCircuitBreakerStore } from "@homegrower-club/stoma";
+
+// Clean up after each test to prevent interval leaks
+afterEach(() => {
+  store.destroy();
+});
+```
+
+<Aside type="caution">
+Always call `.destroy()` on in-memory stores in `afterEach` or `afterAll`.
+These stores run internal cleanup intervals that will keep the test process
+alive if not properly disposed.
+</Aside>
+
+### JWT Test Helpers
+
+Create test JWTs using `crypto.subtle` (available in the workerd test pool):
+
+```typescript
+function base64UrlEncode(str: string): string {
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+async function createTestJwt(payload: Record<string, unknown>, secret: string) {
+  const header = { alg: "HS256", typ: "JWT" };
+  const encodedHeader = base64UrlEncode(JSON.stringify(header));
+  const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+  const data = `${encodedHeader}.${encodedPayload}`;
+
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
+  const encodedSignature = base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+
+  return `${data}.${encodedSignature}`;
+}
+
+// Usage
+const token = await createTestJwt({ sub: "user123" }, "my-secret");
+const res = await request("/test", { headers: { Authorization: `Bearer ${token}` } });
+```
+
+### Clearing JWKS Cache
+
+JWT policies cache JWKS responses. Clear the cache between tests:
+
+```typescript
+import { clearJwksCache } from "@homegrower-club/stoma";
+
+afterEach(() => {
+  clearJwksCache();
+});
+```
+
+### PolicyContext in Tests
+
+`PolicyContext` may be `undefined` when a policy runs outside a gateway. Access
+it via:
+
+```typescript
+const gateway = c.get("gateway"); // PolicyContext | undefined
+```
+
+When using `createPolicyTestHarness()` or `createContextInjector()`, the context
+is always populated.
+
+## Common Testing Patterns
+
+### Mocking Upstream Responses
+
+```typescript
+const { request } = createPolicyTestHarness(policy, {
+  upstream: (c) => c.json({ mock: true }, 201),
+});
+
+const res = await request("/test");
+expect(res.status).toBe(201);
+expect(await res.json()).toEqual({ mock: true });
+```
+
+### Testing Error Responses
+
+```typescript
+const { request } = createPolicyTestHarness(policy);
+
+const res = await request("/test");
+expect(res.status).toBe(400);
+
+const body = await res.json();
+expect(body).toHaveProperty("error");
+expect(body).toHaveProperty("message");
+```
+
+### Testing Header Manipulation
+
+```typescript
+const { request } = createPolicyTestHarness(policy);
+
+const res = await request("/test");
+expect(res.headers.get("x-rate-limit-limit")).toBe("100");
+```
+
+### Testing Async Policies
+
+For policies that perform async work (e.g., rate limiting, caching), always call
+`adapter.waitAll()`:
+
+```typescript
+it("should perform async cleanup", async () => {
+  await request("/test");
+  await adapter.waitAll(); // Important!
+  expect(store.getStats()).toEqual({ hits: 1 });
+});
+```
+
+### Using Fake Timers
+
+Some policies use timers for cleanup or expiration:
+
+```typescript
+import { vi } from "vitest";
+
+it("should handle time-based expiration", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2024-01-01"));
+
+  const store = new InMemoryCacheStore();
+  const { request, adapter } = createPolicyTestHarness(
+    cache({ store, ttlSeconds: 60 })
+  );
+
+  await request("/test");
+  await adapter.waitAll();
+
+  vi.setSystemTime(new Date("2024-01-01T00:01:30")); // Advance past TTL
+
+  const res = await request("/test");
+  expect(res.headers.get("x-cache")).toBe("MISS");
+
+  vi.useRealTimers();
+  store.destroy();
+});
+```

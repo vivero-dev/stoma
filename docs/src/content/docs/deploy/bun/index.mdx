@@ -1,0 +1,255 @@
+---
+title: Deploy with Bun
+description: Deploy your Stoma gateway to Bun's fast runtime.
+sidebar:
+  order: 4
+---
+
+import { Steps, Aside } from "@astrojs/starlight/components";
+
+Bun provides ultra-fast startup and execution. Deploy your Stoma gateway with Bun for maximum performance.
+
+## Quick Start
+
+<Steps>
+1. **Install dependencies**
+
+   ```sh
+   bun install hono @homegrower-club/stoma
+   ```
+
+2. **Create your gateway**
+
+   ```typescript title="src/index.ts"
+   import { createGateway, cors, requestLog } from "@homegrower-club/stoma";
+
+   const gateway = createGateway({
+     name: "my-gateway",
+     basePath: "/api",
+     policies: [requestLog(), cors()],
+     routes: [
+       {
+         path: "/users/*",
+         pipeline: {
+           policies: [],
+           upstream: {
+             type: "url",
+             target: "https://api.example.com",
+             rewritePath: (path) => path.replace("/api", ""),
+           },
+         },
+       },
+     ],
+   });
+
+   export default gateway.app;
+   ```
+
+3. **Create the server entry**
+
+   ```typescript title="src/server.ts"
+   import gateway from "./index";
+
+   Bun.serve({
+     fetch: gateway.fetch,
+     port: parseInt(process.env.PORT || "3000"),
+   });
+
+   console.log("Gateway running on http://localhost:3000");
+   ```
+
+4. **Run**
+
+   ```sh
+   bun run src/server.ts
+   ```
+</Steps>
+
+## Bun Adapter
+
+Use the Bun adapter for production deployments:
+
+```typescript title="src/index.ts"
+import {
+  createGateway,
+  cors,
+  rateLimit,
+  cache,
+} from "@homegrower-club/stoma";
+import { bunAdapter } from "@homegrower-club/stoma/adapters/bun";
+
+const adapter = bunAdapter();
+
+const gateway = createGateway({
+  name: "my-gateway",
+  basePath: "/api",
+  adapter,
+  policies: [cors()],
+  routes: [
+    {
+      path: "/users/*",
+      pipeline: {
+        policies: [
+          rateLimit({
+            max: 100,
+            windowSeconds: 60,
+            store: adapter.rateLimitStore,
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://api.example.com",
+        },
+      },
+    },
+  ],
+});
+
+export default gateway.app;
+```
+
+## Bun Serve Options
+
+### Basic Server
+
+```typescript title="src/server.ts"
+import gateway from "./index";
+
+const server = Bun.serve({
+  fetch: gateway.fetch,
+  port: 3000,
+});
+
+console.log(`Listening on http://localhost:${server.port}`);
+```
+
+### With TLS/HTTPS
+
+```typescript title="src/server.ts"
+import gateway from "./index";
+
+const server = Bun.serve({
+  fetch: gateway.fetch,
+  port: 443,
+  tls: {
+    cert: Bun.file("./cert.pem"),
+    key: Bun.file("./key.pem"),
+  },
+});
+```
+
+### With Unix Socket
+
+For reverse proxy integration (nginx, Caddy):
+
+```typescript title="src/server.ts"
+import gateway from "./index";
+
+Bun.serve({
+  fetch: gateway.fetch,
+  unix: "/tmp/gateway.sock",
+});
+```
+
+## Platform Deployment
+
+### Railway
+
+```yaml title="railway.toml"
+[build]
+builder = "bun"
+
+[deploy]
+startCommand = "bun run src/server.ts"
+```
+
+Or use `package.json`:
+
+```json
+{
+  "scripts": {
+    "start": "bun run src/server.ts"
+  }
+}
+```
+
+### Render
+
+```yaml title="render.yaml"
+services:
+  - type: runtime
+    runtime: bun
+    buildCommand: bun install
+    startCommand: bun run src/server.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
+```
+
+### Fly.io
+
+```toml title="fly.toml"
+app = "stoma-gateway"
+
+[build]
+  builder = "ghcr.io/oven-sh/bun-docker"
+
+[[vm]]
+  cpuKind = "shared"
+  cpus = 1
+  memoryMB = 256
+```
+
+### Deno Deploy
+
+If using Deno Deploy, you can run Bun-compiled code or use Deno:
+
+```typescript title="src/server.ts"
+import gateway from "./index";
+
+Deno.serve(gateway.app.fetch);
+```
+
+## Bun Performance Tips
+
+- Use Bun's built-in HTTP server (not Node.js compatibility mode)
+- Leverage Bun's native TypeScript support - no transpilation needed
+- Use `--bun` flag when running TypeScript directly:
+
+```sh
+bun --bun src/index.ts
+```
+
+## Environment Variables
+
+```typescript title="src/index.ts"
+const gateway = createGateway({
+  name: process.env.GATEWAY_NAME || "my-gateway",
+  basePath: process.env.BASE_PATH || "/api",
+  debug: process.env.DEBUG === "true",
+});
+```
+
+```sh
+# .env
+GATEWAY_NAME=my-gateway
+PORT=3000
+DEBUG=false
+```
+
+## Performance Comparison
+
+| Runtime | Cold Start | Request/Second |
+|---------|-----------|----------------|
+| Node.js | ~200ms | ~10k |
+| Bun | ~30ms | ~50k |
+| Cloudflare Workers | ~5ms | ~15k |
+
+<Aside type="tip">
+Bun is ideal for high-throughput workloads where cold start time matters but you don't need global edge distribution.
+</Aside>
+
+## Next Steps
+
+- [Deploy to Cloudflare →](/deploy/cloudflare/)
+- [Deploy with Docker →](/deploy/docker/)

@@ -5,7 +5,7 @@ prev: false
 title: "PolicyContinue"
 ---
 
-Defined in: [src/core/protocol.ts:153](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L153)
+Defined in: [src/core/protocol.ts:153](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L153)
 
 Allow processing to continue, optionally with mutations.
 
@@ -18,7 +18,7 @@ Equivalent to `await next()` in HTTP middleware, or ext_proc
 
 > **action**: `"continue"`
 
-Defined in: [src/core/protocol.ts:154](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L154)
+Defined in: [src/core/protocol.ts:154](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L154)
 
 ***
 
@@ -26,6 +26,6 @@ Defined in: [src/core/protocol.ts:154](https://github.com/HomeGrower-club/stoma/
 
 > `optional` **mutations**: [`Mutation`](/api/index/type-aliases/mutation/)[]
 
-Defined in: [src/core/protocol.ts:156](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L156)
+Defined in: [src/core/protocol.ts:156](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L156)
 
 Mutations to apply before continuing to the next policy or upstream.

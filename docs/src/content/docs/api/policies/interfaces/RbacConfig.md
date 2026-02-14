@@ -5,7 +5,7 @@ prev: false
 title: "RbacConfig"
 ---
 
-Defined in: [src/policies/auth/rbac.ts:14](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L14)
+Defined in: [src/policies/auth/rbac.ts:14](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L14)
 
 Configuration for the rbac policy.
 
@@ -19,7 +19,7 @@ Configuration for the rbac policy.
 
 > `optional` **denyMessage**: `string`
 
-Defined in: [src/policies/auth/rbac.ts:28](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L28)
+Defined in: [src/policies/auth/rbac.ts:28](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L28)
 
 Custom deny message. Default: "Access denied: insufficient permissions".
 
@@ -29,7 +29,7 @@ Custom deny message. Default: "Access denied: insufficient permissions".
 
 > `optional` **permissionDelimiter**: `string`
 
-Defined in: [src/policies/auth/rbac.ts:24](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L24)
+Defined in: [src/policies/auth/rbac.ts:24](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L24)
 
 Delimiter for permission string. Default: ",".
 
@@ -39,7 +39,7 @@ Delimiter for permission string. Default: ",".
 
 > `optional` **permissionHeader**: `string`
 
-Defined in: [src/policies/auth/rbac.ts:22](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L22)
+Defined in: [src/policies/auth/rbac.ts:22](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L22)
 
 Header containing permissions. Default: "x-user-permissions".
 
@@ -49,7 +49,7 @@ Header containing permissions. Default: "x-user-permissions".
 
 > `optional` **permissions**: `string`[]
 
-Defined in: [src/policies/auth/rbac.ts:20](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L20)
+Defined in: [src/policies/auth/rbac.ts:20](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L20)
 
 Required permissions — pass if user has ALL of these.
 
@@ -59,7 +59,7 @@ Required permissions — pass if user has ALL of these.
 
 > `optional` **roleDelimiter**: `string`
 
-Defined in: [src/policies/auth/rbac.ts:26](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L26)
+Defined in: [src/policies/auth/rbac.ts:26](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L26)
 
 Delimiter for role string. Default: ",".
 
@@ -69,7 +69,7 @@ Delimiter for role string. Default: ",".
 
 > `optional` **roleHeader**: `string`
 
-Defined in: [src/policies/auth/rbac.ts:16](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L16)
+Defined in: [src/policies/auth/rbac.ts:16](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L16)
 
 Header name containing the user's role(s). Default: "x-user-role".
 
@@ -79,7 +79,7 @@ Header name containing the user's role(s). Default: "x-user-role".
 
 > `optional` **roles**: `string`[]
 
-Defined in: [src/policies/auth/rbac.ts:18](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/rbac.ts#L18)
+Defined in: [src/policies/auth/rbac.ts:18](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/rbac.ts#L18)
 
 Allowed roles — pass if user has ANY of these.
 
@@ -89,7 +89,7 @@ Allowed roles — pass if user has ANY of these.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

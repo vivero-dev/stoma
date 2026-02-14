@@ -5,7 +5,7 @@ prev: false
 title: "AssignContentConfig"
 ---
 
-Defined in: [src/policies/transform/assign-content.ts:16](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/assign-content.ts#L16)
+Defined in: [src/policies/transform/assign-content.ts:16](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/assign-content.ts#L16)
 
 Configuration for the assignContent policy.
 
@@ -19,7 +19,7 @@ Configuration for the assignContent policy.
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [src/policies/transform/assign-content.ts:22](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/assign-content.ts#L22)
+Defined in: [src/policies/transform/assign-content.ts:22](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/assign-content.ts#L22)
 
 Only modify bodies with these content types. Default: `["application/json"]`.
 
@@ -29,7 +29,7 @@ Only modify bodies with these content types. Default: `["application/json"]`.
 
 > `optional` **request**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/policies/transform/assign-content.ts:18](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/assign-content.ts#L18)
+Defined in: [src/policies/transform/assign-content.ts:18](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/assign-content.ts#L18)
 
 Fields to set/override in the JSON request body.
 
@@ -39,7 +39,7 @@ Fields to set/override in the JSON request body.
 
 > `optional` **response**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/policies/transform/assign-content.ts:20](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/assign-content.ts#L20)
+Defined in: [src/policies/transform/assign-content.ts:20](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/assign-content.ts#L20)
 
 Fields to set/override in the JSON response body.
 
@@ -49,7 +49,7 @@ Fields to set/override in the JSON response body.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

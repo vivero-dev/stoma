@@ -5,7 +5,7 @@ prev: false
 title: "RateLimiterDO"
 ---
 
-Defined in: [src/adapters/durable-object.ts:27](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/adapters/durable-object.ts#L27)
+Defined in: [src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/adapters/durable-object.ts#L34)
 
 Durable Object that maintains an atomic rate limit counter.
 
@@ -13,12 +13,19 @@ Each unique rate limit key maps to one DO instance via `idFromName(key)`.
 The counter auto-expires using the DO alarm API.
 
 **Consumer setup**: Export this class from your Worker entry point and
-reference it in `wrangler.toml`:
+reference it in `wrangler.jsonc`:
 
-```toml
-[[durable_objects.bindings]]
-name = "RATE_LIMITER"
-class_name = "RateLimiterDO"
+```jsonc
+{
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RATE_LIMITER",
+        "class_name": "RateLimiterDO"
+      }
+    ]
+  }
+}
 ```
 
 ```ts
@@ -36,7 +43,7 @@ export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
 
 > **new RateLimiterDO**(`state`): `RateLimiterDO`
 
-Defined in: [src/adapters/durable-object.ts:30](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/adapters/durable-object.ts#L30)
+Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/adapters/durable-object.ts#L37)
 
 #### Parameters
 
@@ -54,7 +61,7 @@ Defined in: [src/adapters/durable-object.ts:30](https://github.com/HomeGrower-cl
 
 > **alarm**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/durable-object.ts:60](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/adapters/durable-object.ts#L60)
+Defined in: [src/adapters/durable-object.ts:67](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/adapters/durable-object.ts#L67)
 
 #### Returns
 
@@ -70,7 +77,7 @@ Defined in: [src/adapters/durable-object.ts:60](https://github.com/HomeGrower-cl
 
 > **fetch**(`request`): `Promise`\<`Response`\>
 
-Defined in: [src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/adapters/durable-object.ts#L34)
+Defined in: [src/adapters/durable-object.ts:41](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/adapters/durable-object.ts#L41)
 
 #### Parameters
 

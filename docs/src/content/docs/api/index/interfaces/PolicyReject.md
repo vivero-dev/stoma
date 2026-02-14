@@ -5,7 +5,7 @@ prev: false
 title: "PolicyReject"
 ---
 
-Defined in: [src/core/protocol.ts:165](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L165)
+Defined in: [src/core/protocol.ts:165](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L165)
 
 Reject the request with a structured error.
 
@@ -18,7 +18,7 @@ ext_proc `ImmediateResponse` with an error status code.
 
 > **action**: `"reject"`
 
-Defined in: [src/core/protocol.ts:166](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L166)
+Defined in: [src/core/protocol.ts:166](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L166)
 
 ***
 
@@ -26,7 +26,7 @@ Defined in: [src/core/protocol.ts:166](https://github.com/HomeGrower-club/stoma/
 
 > **code**: `string`
 
-Defined in: [src/core/protocol.ts:170](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L170)
+Defined in: [src/core/protocol.ts:170](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L170)
 
 Machine-readable error code (e.g. `"rate_limited"`, `"unauthorized"`).
 
@@ -36,7 +36,7 @@ Machine-readable error code (e.g. `"rate_limited"`, `"unauthorized"`).
 
 > `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [src/core/protocol.ts:174](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L174)
+Defined in: [src/core/protocol.ts:174](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L174)
 
 Additional headers to include on the error response.
 
@@ -46,7 +46,7 @@ Additional headers to include on the error response.
 
 > **message**: `string`
 
-Defined in: [src/core/protocol.ts:172](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L172)
+Defined in: [src/core/protocol.ts:172](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L172)
 
 Human-readable error message.
 
@@ -56,6 +56,6 @@ Human-readable error message.
 
 > **status**: `number`
 
-Defined in: [src/core/protocol.ts:168](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L168)
+Defined in: [src/core/protocol.ts:168](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L168)
 
 HTTP status code (or gRPC status equivalent).

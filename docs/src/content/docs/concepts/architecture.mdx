@@ -19,7 +19,7 @@ Five abstractions compose every stoma gateway:
 
 **Pipeline** -- A `PipelineConfig` pairs an ordered list of policies with an upstream target. The pipeline is the execution unit for a single route: policies run in priority order, and the final handler dispatches to the upstream.
 
-**Policy** -- A named Hono middleware with a numeric priority. Policies are the building blocks of pipelines. They can inspect, transform, short-circuit, or augment requests and responses. Stoma ships a comprehensive set of built-in policies across 6 categories, plus a Policy SDK for custom policy development. See the [Policy System](/concepts/policies/) page for details.
+**Policy** -- A named Hono middleware with a numeric priority. Policies are the building blocks of pipelines. They can inspect, transform, short-circuit, or augment requests and responses. Stoma ships a comprehensive set of built-in policies across multiple categories, plus a Policy SDK for custom policy development. See the [Policy System](/concepts/policies/) page for details.
 
 **Upstream** -- The terminal destination for a request. Stoma supports three upstream types: URL proxy, Cloudflare Service Binding, and inline handler. See the [Upstream Types](/concepts/upstreams/) page for details.
 

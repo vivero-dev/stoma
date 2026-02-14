@@ -42,12 +42,17 @@ const gateway = createGateway({
 
 ## Wrangler configuration
 
-Bind a KV namespace in your `wrangler.toml`:
+Bind a KV namespace in your `wrangler.jsonc`:
 
-```toml
-[[kv_namespaces]]
-binding = "RATE_LIMIT_KV"
-id = "your-kv-namespace-id"
+```jsonc
+{
+  "kv_namespaces": [
+    {
+      "binding": "RATE_LIMIT_KV",
+      "id": "your-kv-namespace-id"
+    }
+  ]
+}
 ```
 
 Create the namespace via the Cloudflare dashboard or the CLI:

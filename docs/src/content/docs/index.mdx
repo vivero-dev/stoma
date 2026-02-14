@@ -46,15 +46,19 @@ API gateways in the JavaScript ecosystem are often stuck between two suboptimal 
 <CardGrid>
   <Card title="Gateway as Code" icon="seti:typescript">
     Configured with **code, not YAML**. Version your gateway in Git, review changes in PRs, and rollback instantly with your standard deployment pipeline.
+    [Read More](/getting-started/configuration/)
   </Card>
   <Card title="Type-Safe Ergonomics" icon="pencil">
     Full type safety from configuration to runtime. Your editor provides autocomplete for policies and upstreams, catching mistakes before your users do.
+    [Read More](/guides/type-safe-bindings/)
   </Card>
   <Card title="Zero Infrastructure" icon="rocket">
-    Leverages Hono's ultrafast router (~12KB, zero dependencies). No extra servers to manage, no extra latency.
+    Leverages Hono's lightweight router (zero dependencies). No extra servers to manage, no extra latency.
+    [Read More](/getting-started/installation/)
   </Card>
   <Card title="Multi-runtime" icon="external">
     Runs on **any runtime** Hono supports: Cloudflare Workers, Node.js, Deno, Bun, Fastly, Lambda@Edge, Vercel, and more.
+    [Read More](/getting-started/installation/)
   </Card>
 </CardGrid>
 
@@ -67,15 +71,19 @@ Stoma is built by developers, for developers. We believe your gateway should be 
 <CardGrid>
   <Card title="Git Versionable" icon="comment-discussion">
     No more "hidden" configuration in an Admin UI. Your routes and policies live in your repo, making it easy to see *why* a change was made.
+    [Read More](/guides/config-splitting/)
   </Card>
   <Card title="Composable" icon="puzzle">
     Split large gateways into multiple modules. Use standard TypeScript patterns to share policies and route definitions across projects.
+    [Read More](/guides/config-splitting/)
   </Card>
   <Card title="Local Development" icon="laptop">
     Run your entire gateway locally with `wrangler dev` or `node`. No need for complex Docker setups just to test a rate limit.
+    [Read More](/getting-started/local-development/)
   </Card>
   <Card title="Type-Aware Pipelines" icon="check-selection">
     Built-in policies are fully typed. If a policy requires a specific configuration, TypeScript will tell you immediately.
+    [Read More](/concepts/policies/)
   </Card>
 </CardGrid>
 
@@ -139,6 +147,8 @@ Stoma is built by developers, for developers. We believe your gateway should be 
 | **Bundle size** | **Lightweight (Core)** | 100MB+ Image | 80MB+ Binary | 50MB+ Modules |
 | **Status** | **Active** | Active | Active | Unmaintained |
 
+[See full comparison →](/guides/comparison/)
+
 ---
 
 ## Batteries Included: Comprehensive Built-in Policies
@@ -148,15 +158,19 @@ Stoma ships with a comprehensive suite of policies, sorted into logical categori
 <CardGrid>
   <Card title="Authentication" icon="lock">
     JWT, API Key, Basic Auth, OAuth2 Introspection, RBAC, JWS, and RFC 9421 HTTP Signatures.
+    [Read More](/policies/auth/)
   </Card>
   <Card title="Traffic Control" icon="random">
     Rate Limiting, IP/Geo Filtering, Caching, SSL Enforcement, JSON Threat Protection, and Traffic Shadowing.
+    [Read More](/policies/traffic/)
   </Card>
   <Card title="Resilience" icon="warning">
     Circuit Breakers, Retries, Timeouts, and Latency Injection for testing.
+    [Read More](/policies/resilience/)
   </Card>
   <Card title="Transformation" icon="document">
     CORS, Request/Response Rewriting, JSON Validation, and Content Assignment.
+    [Read More](/policies/transform/)
   </Card>
 </CardGrid>
 
@@ -166,6 +180,8 @@ Stoma ships with a comprehensive suite of policies, sorted into logical categori
 
 While Stoma is runtime-agnostic, it can leverage platform-specific features like **Cloudflare Service Bindings** for zero-latency communication between Workers.
 
+[Read More about Upstreams](/concepts/upstreams/)
+
 <Tabs>
   <TabItem label="Cloudflare Workers">
     ```typescript
@@ -174,7 +190,7 @@ While Stoma is runtime-agnostic, it can leverage platform-specific features like
       service: "USERS_SERVICE",
     }
     ```
-    *Declare in `wrangler.toml` for high-performance Worker-to-Worker routing.*
+    *Declare in `wrangler.jsonc` for high-performance Worker-to-Worker routing.*
   </TabItem>
   <TabItem label="Universal Proxy">
     ```typescript
@@ -193,7 +209,7 @@ While Stoma is runtime-agnostic, it can leverage platform-specific features like
 
 <CardGrid>
   <Card title="Quick Start" icon="rocket">
-    Build your first gateway in 5 minutes.
+    Build your first gateway in minutes.
     [Go to Quick Start](/getting-started/quick-start/)
   </Card>
   <Card title="Policy Reference" icon="list-format">

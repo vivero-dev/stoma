@@ -5,7 +5,7 @@ prev: false
 title: "JwtAuthConfig"
 ---
 
-Defined in: [src/policies/auth/jwt-auth.ts:17](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L17)
+Defined in: [src/policies/auth/jwt-auth.ts:17](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L17)
 
 Configuration for the jwtAuth policy.
 
@@ -19,7 +19,7 @@ Configuration for the jwtAuth policy.
 
 > `optional` **audience**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:25](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L25)
+Defined in: [src/policies/auth/jwt-auth.ts:25](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L25)
 
 Expected JWT audience
 
@@ -29,7 +29,7 @@ Expected JWT audience
 
 > `optional` **clockSkewSeconds**: `number`
 
-Defined in: [src/policies/auth/jwt-auth.ts:37](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L37)
+Defined in: [src/policies/auth/jwt-auth.ts:37](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L37)
 
 Clock skew tolerance in seconds for expiry checks. Default: 0.
 
@@ -39,7 +39,7 @@ Clock skew tolerance in seconds for expiry checks. Default: 0.
 
 > `optional` **forwardClaims**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/auth/jwt-auth.ts:31](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L31)
+Defined in: [src/policies/auth/jwt-auth.ts:31](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L31)
 
 Claims to inject into request headers for upstream consumption
 
@@ -49,7 +49,7 @@ Claims to inject into request headers for upstream consumption
 
 > `optional` **headerName**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:27](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L27)
+Defined in: [src/policies/auth/jwt-auth.ts:27](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L27)
 
 Header to read the token from. Default: "Authorization"
 
@@ -59,7 +59,7 @@ Header to read the token from. Default: "Authorization"
 
 > `optional` **issuer**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:23](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L23)
+Defined in: [src/policies/auth/jwt-auth.ts:23](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L23)
 
 Expected JWT issuer
 
@@ -69,7 +69,7 @@ Expected JWT issuer
 
 > `optional` **jwksCacheTtlMs**: `number`
 
-Defined in: [src/policies/auth/jwt-auth.ts:33](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L33)
+Defined in: [src/policies/auth/jwt-auth.ts:33](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L33)
 
 JWKS cache TTL in milliseconds. Default: 300000 (5 minutes).
 
@@ -79,7 +79,7 @@ JWKS cache TTL in milliseconds. Default: 300000 (5 minutes).
 
 > `optional` **jwksTimeoutMs**: `number`
 
-Defined in: [src/policies/auth/jwt-auth.ts:35](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L35)
+Defined in: [src/policies/auth/jwt-auth.ts:35](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L35)
 
 JWKS fetch timeout in milliseconds. Default: 10000 (10 seconds).
 
@@ -89,7 +89,7 @@ JWKS fetch timeout in milliseconds. Default: 10000 (10 seconds).
 
 > `optional` **jwksUrl**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:21](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L21)
+Defined in: [src/policies/auth/jwt-auth.ts:21](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L21)
 
 JWKS endpoint URL (e.g. Supabase, Auth0)
 
@@ -99,7 +99,7 @@ JWKS endpoint URL (e.g. Supabase, Auth0)
 
 > `optional` **requireExp**: `boolean`
 
-Defined in: [src/policies/auth/jwt-auth.ts:39](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L39)
+Defined in: [src/policies/auth/jwt-auth.ts:39](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L39)
 
 Require the `exp` claim to be present. Default: false.
 
@@ -109,7 +109,7 @@ Require the `exp` claim to be present. Default: false.
 
 > `optional` **secret**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:19](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L19)
+Defined in: [src/policies/auth/jwt-auth.ts:19](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L19)
 
 JWT secret for HMAC verification
 
@@ -119,7 +119,7 @@ JWT secret for HMAC verification
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 
@@ -143,6 +143,6 @@ Skip this policy when condition returns true
 
 > `optional` **tokenPrefix**: `string`
 
-Defined in: [src/policies/auth/jwt-auth.ts:29](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L29)
+Defined in: [src/policies/auth/jwt-auth.ts:29](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L29)
 
 Token prefix. Default: "Bearer"

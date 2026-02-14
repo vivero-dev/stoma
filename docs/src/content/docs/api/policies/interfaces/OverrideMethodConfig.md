@@ -5,7 +5,7 @@ prev: false
 title: "OverrideMethodConfig"
 ---
 
-Defined in: [src/policies/transform/override-method.ts:15](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/override-method.ts#L15)
+Defined in: [src/policies/transform/override-method.ts:15](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/override-method.ts#L15)
 
 Configuration for the overrideMethod policy.
 
@@ -19,7 +19,7 @@ Configuration for the overrideMethod policy.
 
 > `optional` **allowedMethods**: `string`[]
 
-Defined in: [src/policies/transform/override-method.ts:19](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/override-method.ts#L19)
+Defined in: [src/policies/transform/override-method.ts:19](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/override-method.ts#L19)
 
 Methods allowed as overrides. Default: `["GET", "PUT", "PATCH", "DELETE"]`.
 
@@ -29,7 +29,7 @@ Methods allowed as overrides. Default: `["GET", "PUT", "PATCH", "DELETE"]`.
 
 > `optional` **header**: `string`
 
-Defined in: [src/policies/transform/override-method.ts:17](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/transform/override-method.ts#L17)
+Defined in: [src/policies/transform/override-method.ts:17](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/transform/override-method.ts#L17)
 
 Header name to read the override method from. Default: `"X-HTTP-Method-Override"`.
 
@@ -39,7 +39,7 @@ Header name to read the override method from. Default: `"X-HTTP-Method-Override"
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

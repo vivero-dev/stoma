@@ -154,7 +154,7 @@ Service Binding upstreams use Cloudflare's Worker-to-Worker communication for ze
 | Field | Type | Description |
 |-------|------|-------------|
 | `type` | `"service-binding"` | Discriminant field. |
-| `service` | `string` | Name of the Service Binding as configured in `wrangler.toml` (e.g. `"AUTH_SERVICE"`). |
+| `service` | `string` | Name of the Service Binding as configured in `wrangler.jsonc` (e.g. `"AUTH_SERVICE"`). |
 | `rewritePath` | `(path: string) => string` | Optional. Transform the request path before forwarding to the bound service. |
 
 ### Resolution steps
@@ -165,15 +165,20 @@ Service Binding upstreams use Cloudflare's Worker-to-Worker communication for ze
 4. **Dispatch.** The request is forwarded via `binding.fetch(request)`.
 5. **Response.** Hop-by-hop headers are stripped from the bound Worker's response before returning it.
 
-### wrangler.toml configuration
+### wrangler.jsonc configuration
 
-The Service Binding must be declared in the consuming Worker's `wrangler.toml`:
+The Service Binding must be declared in the consuming Worker's `wrangler.jsonc`:
 
-```toml
-[[services]]
-binding = "AUTH_SERVICE"
-service = "auth-worker"
-environment = "production"
+```jsonc
+{
+  "services": [
+    {
+      "binding": "AUTH_SERVICE",
+      "service": "auth-worker",
+      "environment": "production"
+    }
+  ]
+}
 ```
 
 The `binding` value must match the `service` field in the upstream config. The `service` value is the name of the target Worker as deployed on Cloudflare.

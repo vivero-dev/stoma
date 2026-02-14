@@ -27,7 +27,7 @@ microservice communication on Cloudflare Workers.
 ## Gateway configuration
 
 Use the `service-binding` upstream type and reference the binding name from
-your `wrangler.toml`:
+your `wrangler.jsonc`:
 
 ```typescript
 import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
@@ -70,17 +70,22 @@ export default gateway.app;
 ## Wrangler configuration
 
 The `service` field in the gateway config must match the `binding` name in your
-`wrangler.toml`. The `service` field in `wrangler.toml` is the name of the
+`wrangler.jsonc`. The `service` field in `wrangler.jsonc` is the name of the
 target Worker as deployed to your Cloudflare account:
 
-```toml
-[[services]]
-binding = "AUTH_WORKER"
-service = "auth-worker"
-
-[[services]]
-binding = "PROJECTS_WORKER"
-service = "projects-worker"
+```jsonc
+{
+  "services": [
+    {
+      "binding": "AUTH_WORKER",
+      "service": "auth-worker"
+    },
+    {
+      "binding": "PROJECTS_WORKER",
+      "service": "projects-worker"
+    }
+  ]
+}
 ```
 
 <Aside type="caution">
@@ -123,7 +128,7 @@ At request time, the gateway:
 6. Calls `binding.fetch()` with the rewritten request
 7. Returns the upstream response with hop-by-hop headers stripped
 
-If the binding is not available (missing from `wrangler.toml` or misconfigured),
+If the binding is not available (missing from `wrangler.jsonc` or misconfigured),
 the gateway returns a `502` error:
 
 ```json
@@ -158,7 +163,7 @@ The upstream config is typed as a `ServiceBindingUpstream`:
 ```typescript
 interface ServiceBindingUpstream {
   type: "service-binding";
-  /** Name of the Service Binding in wrangler.toml (e.g. "AUTH_SERVICE"). */
+  /** Name of the Service Binding in wrangler.jsonc (e.g. "AUTH_SERVICE"). */
   service: string;
   /** Rewrite the path before forwarding to the bound service. */
   rewritePath?: (path: string) => string;

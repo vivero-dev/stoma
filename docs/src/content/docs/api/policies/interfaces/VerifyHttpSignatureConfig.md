@@ -5,7 +5,7 @@ prev: false
 title: "VerifyHttpSignatureConfig"
 ---
 
-Defined in: [src/policies/auth/verify-http-signature.ts:30](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L30)
+Defined in: [src/policies/auth/verify-http-signature.ts:30](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L30)
 
 Configuration for the verifyHttpSignature policy.
 
@@ -19,7 +19,7 @@ Configuration for the verifyHttpSignature policy.
 
 > **keys**: `Record`\<`string`, [`HttpSignatureKey`](/api/policies/interfaces/httpsignaturekey/)\>
 
-Defined in: [src/policies/auth/verify-http-signature.ts:32](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L32)
+Defined in: [src/policies/auth/verify-http-signature.ts:32](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L32)
 
 Map of keyId to key material.
 
@@ -29,7 +29,7 @@ Map of keyId to key material.
 
 > `optional` **label**: `string`
 
-Defined in: [src/policies/auth/verify-http-signature.ts:42](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L42)
+Defined in: [src/policies/auth/verify-http-signature.ts:42](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L42)
 
 Expected signature label. Default: "sig1".
 
@@ -39,7 +39,7 @@ Expected signature label. Default: "sig1".
 
 > `optional` **maxAge**: `number`
 
-Defined in: [src/policies/auth/verify-http-signature.ts:36](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L36)
+Defined in: [src/policies/auth/verify-http-signature.ts:36](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L36)
 
 Max signature age in seconds. Default: 300 (5 min).
 
@@ -49,7 +49,7 @@ Max signature age in seconds. Default: 300 (5 min).
 
 > `optional` **requiredComponents**: `string`[]
 
-Defined in: [src/policies/auth/verify-http-signature.ts:34](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L34)
+Defined in: [src/policies/auth/verify-http-signature.ts:34](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L34)
 
 Components that MUST be in the signature. Default: ["@method"].
 
@@ -59,7 +59,7 @@ Components that MUST be in the signature. Default: ["@method"].
 
 > `optional` **signatureHeaderName**: `string`
 
-Defined in: [src/policies/auth/verify-http-signature.ts:38](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L38)
+Defined in: [src/policies/auth/verify-http-signature.ts:38](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L38)
 
 Signature header name. Default: "Signature".
 
@@ -69,7 +69,7 @@ Signature header name. Default: "Signature".
 
 > `optional` **signatureInputHeaderName**: `string`
 
-Defined in: [src/policies/auth/verify-http-signature.ts:40](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/verify-http-signature.ts#L40)
+Defined in: [src/policies/auth/verify-http-signature.ts:40](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/verify-http-signature.ts#L40)
 
 Signature-Input header name. Default: "Signature-Input".
 
@@ -79,7 +79,7 @@ Signature-Input header name. Default: "Signature-Input".
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 

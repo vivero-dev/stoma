@@ -8,7 +8,7 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-When using [Service Binding upstreams](/concepts/upstreams/), the `service` field is a string that must match a binding name in your `wrangler.toml`. A typo means a runtime 502 error. The `TBindings` generic parameter lets TypeScript catch these mistakes at compile time and gives you IDE autocomplete for valid binding names.
+When using [Service Binding upstreams](/concepts/upstreams/), the `service` field is a string that must match a binding name in your `wrangler.jsonc`. A typo means a runtime 502 error. The `TBindings` generic parameter lets TypeScript catch these mistakes at compile time and gives you IDE autocomplete for valid binding names.
 
 ## The generic parameter
 
@@ -27,12 +27,12 @@ When `TBindings` is provided, the `service` field on `ServiceBindingUpstream` is
 
 ## Basic example
 
-Define an `Env` interface that matches your `wrangler.toml` bindings, then pass it to `createGateway`:
+Define an `Env` interface that matches your `wrangler.jsonc` bindings, then pass it to `createGateway`:
 
 ```typescript
 import { createGateway, jwtAuth } from "@homegrower-club/stoma";
 
-// Your Worker's Env interface (matches wrangler.toml bindings)
+// Your Worker's Env interface (matches wrangler.jsonc bindings)
 interface Env {
   AUTH_SERVICE: Fetcher;
   USERS_SERVICE: Fetcher;

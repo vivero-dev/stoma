@@ -15,13 +15,13 @@ import { Aside } from "@astrojs/starlight/components";
 | Language | TypeScript | Lua / Go | Go | JavaScript |
 | Configuration | TypeScript (type-safe) | YAML / Admin API | JSON | YAML / JSON |
 | Type safety | Full (compile-time) | None | None | None |
-| Bundle size | ~12KB (Hono core) | 100MB+ image | 80MB+ binary | 50MB+ node\_modules |
+| Bundle size | Lightweight (Hono core) | 100MB+ image | 80MB+ binary | 50MB+ node_modules |
 | Service Bindings | Yes (Cloudflare Workers) | N/A | N/A | N/A |
 | Custom policies | Hono middleware (factory function) | Lua plugins | Go plugins | Express middleware |
 | Status | Active | Active | Active | Unmaintained |
 | Cold start | Sub-millisecond (Workers), fast (Bun/Deno) | N/A (always-on) | N/A (always-on) | Seconds |
 | Admin UI | Programmatic (admin routes) | Dashboard + Admin API | Dashboard | Admin UI |
-| Plugin ecosystem | npm (any Hono middleware) | Kong Hub (200+ plugins) | Community plugins | npm |
+| Plugin ecosystem | npm (any Hono middleware) | Kong Hub (large ecosystem) | Community plugins | npm |
 | gRPC support | No | Yes | Yes (transcoding) | No |
 | GraphQL federation | No | Via plugin | Built-in | No |
 
@@ -59,7 +59,7 @@ details.
 ## When to use something else
 
 **You need a GUI admin panel and plugin marketplace.** Kong offers a dashboard,
-a large plugin ecosystem (200+ plugins on Kong Hub), and an Admin API for
+a large plugin ecosystem, and an Admin API for
 runtime configuration changes. If your team manages API gateway configuration
 through a GUI rather than code, Kong is a better fit.
 

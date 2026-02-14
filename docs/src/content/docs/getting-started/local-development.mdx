@@ -1,0 +1,253 @@
+---
+title: Local Development
+description: Run your Stoma gateway locally with Node.js or Cloudflare Workers.
+draft: false
+sidebar:
+  order: 4
+---
+
+import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+This guide covers how to run your Stoma gateway locally during development.
+Choose the approach that matches your target runtime.
+
+## Option 1: Node.js with tsx
+
+The fastest way to iterate on your gateway is using Node.js with `tsx` (TypeScript execute). This works for any gateway that doesn't rely on Cloudflare-specific bindings.
+
+### Prerequisites
+
+```bash
+npm install -D tsx
+```
+
+### Create a runner script
+
+Create a simple entry point that starts a local server:
+
+```typescript
+// runner.ts
+import { serve } from "@hono/node-server";
+import { createGateway, rateLimit, health } from "@homegrower-club/stoma";
+import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+
+const adapter = memoryAdapter();
+
+const gateway = createGateway({
+  name: "dev-gateway",
+  basePath: "/api",
+  routes: [
+    health({ path: "/health" }),
+    {
+      path: "/users/*",
+      pipeline: {
+        policies: [
+          rateLimit({ max: 100, windowSeconds: 60, store: adapter.rateLimitStore }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://jsonplaceholder.typicode.com",
+        },
+      },
+    },
+  ],
+});
+
+const port = Number(process.env.PORT) || 3000;
+
+console.log(`🚀 Gateway running at http://localhost:${port}`);
+console.log(`   Health: http://localhost:${port}/api/health`);
+
+serve({
+  fetch: gateway.app.fetch,
+  port,
+});
+```
+
+### Run with tsx
+
+```bash
+npx tsx runner.ts
+```
+
+<Aside type="tip">
+Use `tsx --watch runner.ts` for auto-reload on file changes.
+</Aside>
+
+### What's supported
+
+- All URL-based upstreams
+- Handler upstreams
+- In-memory stores (rate limiting, caching, circuit breaker)
+- All policies that don't require Cloudflare-specific bindings
+
+### What's NOT supported
+
+- Service Bindings (Cloudflare-only)
+- Cloudflare KV, Durable Objects, or other Workers bindings
+- Browser Rendering bindings
+
+---
+
+## Option 2: Cloudflare Workers with wrangler
+
+If your gateway uses Cloudflare-specific features, run it with `wrangler dev`.
+
+### Prerequisites
+
+```bash
+npm install -D wrangler
+```
+
+### Create your gateway
+
+```typescript
+// src/index.ts
+import { createGateway, rateLimit, health, cors } from "@homegrower-club/stoma";
+
+const gateway = createGateway({
+  name: "my-gateway",
+  basePath: "/api",
+  policies: [cors()],
+  routes: [
+    health({ path: "/health" }),
+    {
+      path: "/users/*",
+      pipeline: {
+        policies: [
+          rateLimit({ max: 100, windowSeconds: 60 }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://jsonplaceholder.typicode.com",
+        },
+      },
+    },
+  ],
+});
+
+export default gateway.app;
+```
+
+### Configure wrangler
+
+Create a `wrangler.jsonc` in your project root:
+
+```jsonc
+{
+  "name": "my-gateway",
+  "compatibility_date": "2025-01-01",
+  "main": "src/index.ts"
+}
+```
+
+### Run locally
+
+```bash
+npx wrangler dev
+```
+
+This starts a local dev server at `http://localhost:8787`. Any changes to your code trigger an automatic rebuild.
+
+### Using Service Bindings locally
+
+If your gateway calls other Workers via Service Bindings, you can mock them in `wrangler.jsonc`:
+
+```jsonc
+{
+  "name": "my-gateway",
+  "compatibility_date": "2025-01-01",
+  "main": "src/index.ts",
+  "services": [
+    {
+      "binding": "AUTH_SERVICE",
+      "service": "auth-worker"
+    }
+  ]
+}
+```
+
+<Aside type="tip">
+When developing with Service Bindings, you can either:
+1. Run the target Worker locally too (`wrangler dev` in another terminal)
+2. Use `remote = true` to call a deployed version
+3. Mock the binding in your gateway code for local-only routes
+</Aside>
+
+---
+
+## Using the demo app
+
+The Stoma repository includes a demo gateway showcasing multiple policies. You can run it locally to explore features:
+
+```bash
+cd demo
+npm install
+npm run dev
+```
+
+This runs the demo with `wrangler dev`, giving you a live gateway with:
+- Rate limiting
+- Circuit breaker
+- Caching
+- Request/response transforms
+- Health checks
+- Markdown rendering (requires Browser Rendering binding)
+
+---
+
+## Environment variables
+
+Both Node.js and wrangler approaches support environment variables:
+
+<Tabs>
+  <TabItem label="Node.js (.env)">
+    Create a `.env` file and use `dotenv`:
+
+    ```bash
+    npm install dotenv
+    ```
+
+    ```typescript
+    import "dotenv/config";
+    // Your gateway code uses process.env.JWT_SECRET
+    ```
+  </TabItem>
+  <TabItem label="wrangler">
+    Use `wrangler.jsonc` secrets or `.dev.vars` for local development:
+
+    ```bash
+    # .dev.vars (local only, not committed)
+    JWT_SECRET=dev-secret
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Switching between local modes
+
+For projects that target both Node.js and Cloudflare, you can conditionally use different adapters:
+
+```typescript
+import { createGateway, rateLimit, health, cors } from "@homegrower-club/stoma";
+import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+
+const isCloudflare = process.env.WORKER_RUNTIME === "cloudflare";
+
+const gateway = createGateway({
+  name: "my-gateway",
+  adapter: isCloudflare 
+    ? undefined  // Use default (Cloudflare) adapter
+    : memoryAdapter(),  // Use in-memory for Node.js dev
+  // ... rest of config
+});
+```
+
+---
+
+## Next Steps
+
+- [Deploy to Cloudflare](/cloudflare/deploy/) - Push your gateway to production
+- [Testing Guide](/guides/testing-guide/) - Write tests for your policies
+- [Recipes](/recipes/) - Copy production-ready patterns

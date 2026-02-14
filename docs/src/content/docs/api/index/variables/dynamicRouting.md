@@ -7,7 +7,7 @@ title: "dynamicRouting"
 
 > `const` **dynamicRouting**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:63](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/traffic/dynamic-routing.ts#L63)
+Defined in: [src/policies/traffic/dynamic-routing.ts:63](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/traffic/dynamic-routing.ts#L63)
 
 Evaluate routing rules and expose the first match on request context.
 

@@ -5,7 +5,7 @@ prev: false
 title: "GenerateJwtConfig"
 ---
 
-Defined in: [src/policies/auth/generate-jwt.ts:14](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L14)
+Defined in: [src/policies/auth/generate-jwt.ts:14](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L14)
 
 Configuration for the generateJwt policy.
 
@@ -19,7 +19,7 @@ Configuration for the generateJwt policy.
 
 > **algorithm**: `"HS256"` \| `"HS384"` \| `"HS512"` \| `"RS256"` \| `"RS384"` \| `"RS512"`
 
-Defined in: [src/policies/auth/generate-jwt.ts:16](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L16)
+Defined in: [src/policies/auth/generate-jwt.ts:16](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L16)
 
 Signing algorithm
 
@@ -29,7 +29,7 @@ Signing algorithm
 
 > `optional` **audience**: `string`
 
-Defined in: [src/policies/auth/generate-jwt.ts:32](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L32)
+Defined in: [src/policies/auth/generate-jwt.ts:32](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L32)
 
 Audience claim
 
@@ -39,7 +39,7 @@ Audience claim
 
 > `optional` **claims**: `Record`\<`string`, `unknown`\> \| (`c`) => `Record`\<`string`, `unknown`\> \| `Promise`\<`Record`\<`string`, `unknown`\>\>
 
-Defined in: [src/policies/auth/generate-jwt.ts:22](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L22)
+Defined in: [src/policies/auth/generate-jwt.ts:22](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L22)
 
 Claims to include. Static record or dynamic function.
 
@@ -49,7 +49,7 @@ Claims to include. Static record or dynamic function.
 
 > `optional` **expiresIn**: `number`
 
-Defined in: [src/policies/auth/generate-jwt.ts:28](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L28)
+Defined in: [src/policies/auth/generate-jwt.ts:28](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L28)
 
 Token lifetime in seconds. Default: 3600 (1 hour)
 
@@ -59,7 +59,7 @@ Token lifetime in seconds. Default: 3600 (1 hour)
 
 > `optional` **headerName**: `string`
 
-Defined in: [src/policies/auth/generate-jwt.ts:34](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L34)
+Defined in: [src/policies/auth/generate-jwt.ts:34](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L34)
 
 Header name for the generated token. Default: "Authorization"
 
@@ -69,7 +69,7 @@ Header name for the generated token. Default: "Authorization"
 
 > `optional` **issuer**: `string`
 
-Defined in: [src/policies/auth/generate-jwt.ts:30](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L30)
+Defined in: [src/policies/auth/generate-jwt.ts:30](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L30)
 
 Issuer claim
 
@@ -79,7 +79,7 @@ Issuer claim
 
 > `optional` **privateKey**: `JsonWebKey`
 
-Defined in: [src/policies/auth/generate-jwt.ts:20](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L20)
+Defined in: [src/policies/auth/generate-jwt.ts:20](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L20)
 
 RSA private key as JWK (for RS* algorithms)
 
@@ -89,7 +89,7 @@ RSA private key as JWK (for RS* algorithms)
 
 > `optional` **secret**: `string`
 
-Defined in: [src/policies/auth/generate-jwt.ts:18](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L18)
+Defined in: [src/policies/auth/generate-jwt.ts:18](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L18)
 
 HMAC secret (for HS* algorithms)
 
@@ -99,7 +99,7 @@ HMAC secret (for HS* algorithms)
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/types.ts#L69)
+Defined in: [src/policies/types.ts:69](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/types.ts#L69)
 
 Skip this policy when condition returns true
 
@@ -123,6 +123,6 @@ Skip this policy when condition returns true
 
 > `optional` **tokenPrefix**: `string`
 
-Defined in: [src/policies/auth/generate-jwt.ts:36](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/generate-jwt.ts#L36)
+Defined in: [src/policies/auth/generate-jwt.ts:36](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/generate-jwt.ts#L36)
 
 Token prefix. Default: "Bearer"

@@ -7,7 +7,7 @@ title: "jwtAuth"
 
 > **jwtAuth**(`config`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/auth/jwt-auth.ts:88](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/auth/jwt-auth.ts#L88)
+Defined in: [src/policies/auth/jwt-auth.ts:88](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/auth/jwt-auth.ts#L88)
 
 Validate JWT tokens and optionally forward claims as upstream headers.
 

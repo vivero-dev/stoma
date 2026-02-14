@@ -70,18 +70,27 @@ export default {
 };
 ```
 
-### 2. Configure wrangler.toml
+### 2. Configure wrangler.jsonc
 
 Declare the Durable Object binding and class:
 
-```toml
-[[durable_objects.bindings]]
-name = "RATE_LIMITER"
-class_name = "RateLimiterDO"
-
-[[migrations]]
-tag = "v1"
-new_classes = ["RateLimiterDO"]
+```jsonc
+{
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RATE_LIMITER",
+        "class_name": "RateLimiterDO"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["RateLimiterDO"]
+    }
+  ]
+}
 ```
 
 The `name` field (`"RATE_LIMITER"`) is the binding you pass to

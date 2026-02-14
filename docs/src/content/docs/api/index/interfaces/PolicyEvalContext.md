@@ -5,7 +5,7 @@ prev: false
 title: "PolicyEvalContext"
 ---
 
-Defined in: [src/core/protocol.ts:267](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L267)
+Defined in: [src/core/protocol.ts:267](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L267)
 
 Runtime-facing evaluation context provided to policy evaluators.
 
@@ -24,7 +24,7 @@ via `PolicyEvalHandlerContext`.
 
 > `optional` **adapter**: [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [src/core/protocol.ts:277](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L277)
+Defined in: [src/core/protocol.ts:277](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L277)
 
 Runtime adapter (stores, waitUntil, etc.).
 
@@ -34,7 +34,7 @@ Runtime adapter (stores, waitUntil, etc.).
 
 > **debug**: [`DebugLogger`](/api/index/type-aliases/debuglogger/)
 
-Defined in: [src/core/protocol.ts:269](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L269)
+Defined in: [src/core/protocol.ts:269](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L269)
 
 Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable.
 
@@ -44,7 +44,7 @@ Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable.
 
 > **requestId**: `string`
 
-Defined in: [src/core/protocol.ts:273](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L273)
+Defined in: [src/core/protocol.ts:273](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L273)
 
 Unique request ID for correlation.
 
@@ -54,7 +54,7 @@ Unique request ID for correlation.
 
 > **trace**: [`TraceReporter`](/api/index/type-aliases/tracereporter/)
 
-Defined in: [src/core/protocol.ts:271](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L271)
+Defined in: [src/core/protocol.ts:271](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L271)
 
 Trace reporter — always callable, no-op when tracing is not active.
 
@@ -64,6 +64,6 @@ Trace reporter — always callable, no-op when tracing is not active.
 
 > **traceId**: `string`
 
-Defined in: [src/core/protocol.ts:275](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L275)
+Defined in: [src/core/protocol.ts:275](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L275)
 
 W3C trace ID (32-hex).

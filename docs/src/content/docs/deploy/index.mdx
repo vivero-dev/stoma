@@ -1,0 +1,70 @@
+---
+title: Deployment Guide
+description: Deploy your Stoma gateway to any runtime.
+sidebar:
+  order: 6
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Stoma runs anywhere Hono runs. Choose your deployment target below.
+
+## Supported Runtimes
+
+<CardGrid>
+  <Card title="Cloudflare Workers" icon="seti:cloud">
+    Deploy to the edge with Cloudflare Workers. Full support for Service Bindings, KV, Durable Objects, and Cache API.
+
+    [Deploy to Cloudflare →](/deploy/cloudflare/)
+  </Card>
+  <Card title="Node.js" icon="seti:nodejs">
+    Traditional Node.js deployment with Express, Fastify, or standalone HTTP servers.
+
+    [Deploy to Node.js →](/deploy/node/)
+  </Card>
+  <Card title="Docker" icon="seti:docker">
+    Containerize your gateway with Docker. Includes Alpine and multi-stage build examples.
+
+    [Deploy with Docker →](/deploy/docker/)
+  </Card>
+  <Card title="Bun" icon="seti:bun">
+    Ultra-fast deployment with Bun's built-in server.
+
+    [Deploy with Bun →](/deploy/bun/)
+  </Card>
+</CardGrid>
+
+## Quick Reference
+
+| Runtime | Adapter | Storage | Best For |
+|---------|---------|---------|----------|
+| Cloudflare Workers | `cloudflareAdapter` | KV, Durable Objects | Edge-first, global latency |
+| Node.js | `nodeAdapter` | In-memory / Redis | Traditional servers |
+| Docker | `memoryAdapter` | In-memory / Redis | Containers, Kubernetes |
+| Bun | `bunAdapter` | In-memory | Fast servers, Serverless |
+
+## Choosing a Runtime
+
+### Edge Runtimes (Cloudflare Workers)
+
+Choose edge deployment when you need:
+- Global low latency
+- Zero cold starts
+- Built-in DDoS protection
+- Auto-scaling without configuration
+
+### Container Runtimes (Docker)
+
+Choose containers when you need:
+- Kubernetes/ECS integration
+- Full control over runtime
+- Complex networking setups
+- Existing container infrastructure
+
+### Server Runtimes (Node.js, Bun)
+
+Choose server deployment when you need:
+- WebSocket support
+- Long-running processes
+- Complex state management
+- Integration with existing Node.js services

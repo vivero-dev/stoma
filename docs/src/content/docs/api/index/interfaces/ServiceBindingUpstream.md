@@ -5,10 +5,10 @@ prev: false
 title: "ServiceBindingUpstream"
 ---
 
-Defined in: [src/core/types.ts:200](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L200)
+Defined in: [src/core/types.ts:200](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L200)
 
 Forward to another Cloudflare Worker via a Service Binding.
-The binding must be configured in the consumer's `wrangler.toml`.
+The binding must be configured in the consumer's `wrangler.jsonc`.
 
 ## Type Parameters
 
@@ -25,7 +25,7 @@ Worker bindings type. When provided, `service`
 
 > `optional` **rewritePath**: (`path`) => `string`
 
-Defined in: [src/core/types.ts:205](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L205)
+Defined in: [src/core/types.ts:205](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L205)
 
 Rewrite the path before forwarding to the bound service.
 
@@ -45,9 +45,9 @@ Rewrite the path before forwarding to the bound service.
 
 > **service**: `Extract`\<keyof `TBindings`, `string`\>
 
-Defined in: [src/core/types.ts:203](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L203)
+Defined in: [src/core/types.ts:203](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L203)
 
-Name of the Service Binding in `wrangler.toml` (e.g. `"AUTH_SERVICE"`).
+Name of the Service Binding in `wrangler.jsonc` (e.g. `"AUTH_SERVICE"`).
 
 ***
 
@@ -55,4 +55,4 @@ Name of the Service Binding in `wrangler.toml` (e.g. `"AUTH_SERVICE"`).
 
 > **type**: `"service-binding"`
 
-Defined in: [src/core/types.ts:201](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L201)
+Defined in: [src/core/types.ts:201](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L201)

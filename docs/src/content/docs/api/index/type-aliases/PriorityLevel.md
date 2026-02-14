@@ -7,6 +7,6 @@ title: "PriorityLevel"
 
 > **PriorityLevel** = *typeof* [`Priority`](/api/index/variables/priority/)\[keyof *typeof* [`Priority`](/api/index/variables/priority/)\]
 
-Defined in: [src/policies/sdk/priority.ts:44](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/sdk/priority.ts#L44)
+Defined in: [src/policies/sdk/priority.ts:44](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/sdk/priority.ts#L44)
 
 Union of all named priority levels.

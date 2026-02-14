@@ -5,7 +5,7 @@ prev: false
 title: "CacheStore"
 ---
 
-Defined in: [src/policies/traffic/cache.ts:21](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/traffic/cache.ts#L21)
+Defined in: [src/policies/traffic/cache.ts:21](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/traffic/cache.ts#L21)
 
 Pluggable cache storage backend
 
@@ -15,7 +15,7 @@ Pluggable cache storage backend
 
 > **delete**(`key`): `Promise`\<`boolean`\>
 
-Defined in: [src/policies/traffic/cache.ts:27](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/traffic/cache.ts#L27)
+Defined in: [src/policies/traffic/cache.ts:27](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/traffic/cache.ts#L27)
 
 Delete a cached entry. Returns true if something was removed.
 
@@ -35,7 +35,7 @@ Delete a cached entry. Returns true if something was removed.
 
 > **get**(`key`): `Promise`\<`Response` \| `null`\>
 
-Defined in: [src/policies/traffic/cache.ts:23](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/traffic/cache.ts#L23)
+Defined in: [src/policies/traffic/cache.ts:23](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/traffic/cache.ts#L23)
 
 Retrieve a cached response by key. Returns null on miss.
 
@@ -55,7 +55,7 @@ Retrieve a cached response by key. Returns null on miss.
 
 > **put**(`key`, `response`, `ttlSeconds`): `Promise`\<`void`\>
 
-Defined in: [src/policies/traffic/cache.ts:25](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/policies/traffic/cache.ts#L25)
+Defined in: [src/policies/traffic/cache.ts:25](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/policies/traffic/cache.ts#L25)
 
 Store a response under key with a TTL in seconds.
 

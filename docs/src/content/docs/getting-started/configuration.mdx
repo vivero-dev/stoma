@@ -205,19 +205,8 @@ interface UrlUpstream {
   /** Headers to add or override on the forwarded request. */
   headers?: Record<string, string>;
 }
-```
 
-**SSRF protection**: After applying `rewritePath`, the gateway verifies that the
-resulting URL's origin (protocol + host + port) still matches the configured
-`target`. If it differs, the request is rejected with a 502 error. The proxy
-also sets `redirect: "manual"` to prevent redirect-based SSRF.
-
-**Hop-by-hop headers**: Connection-specific headers (`connection`, `keep-alive`,
-`transfer-encoding`, etc.) are stripped from both the forwarded request and the
-upstream response per RFC 2616.
-
-**Host header**: The `Host` header is automatically set to the upstream target's
-host. Additional headers can be added or overridden via the `headers` field.
+SSRF protection and hop-by-hop headers are documented in [Upstreams](/concepts/upstreams#url-upstream).
 
 Example:
 
@@ -236,13 +225,13 @@ upstream: {
 
 Forwards the request to another Cloudflare Worker via a
 [Service Binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/).
-The binding must be configured in the consuming Worker's `wrangler.toml`.
+The binding must be configured in the consuming Worker's `wrangler.jsonc`.
 
 ```typescript
 interface ServiceBindingUpstream {
   type: "service-binding";
 
-  /** Name of the Service Binding as declared in wrangler.toml (e.g. "AUTH_SERVICE"). */
+  /** Name of the Service Binding as declared in wrangler.jsonc (e.g. "AUTH_SERVICE"). */
   service: string;
 
   /** Rewrite the request path before forwarding. */
@@ -254,12 +243,17 @@ The gateway accesses the binding from `c.env[service]` and calls
 `binding.fetch()`. If the binding is not available at runtime, a 502 error is
 returned.
 
-Example `wrangler.toml` configuration:
+Example `wrangler.jsonc` configuration:
 
-```toml
-[[services]]
-binding = "AUTH_SERVICE"
-service = "auth-worker"
+```jsonc
+{
+  "services": [
+    {
+      "binding": "AUTH_SERVICE",
+      "service": "auth-worker"
+    }
+  ]
+}
 ```
 
 ```typescript
@@ -360,51 +354,7 @@ export default gateway.app;
 
 ## PolicyContext
 
-The gateway injects a `PolicyContext` into every request, accessible via
-`getGatewayContext(c)` from the main entry point. This provides request metadata,
-W3C Trace Context identifiers, and a debug logger to all policies.
-
-```typescript
-interface PolicyContext {
-  /** Unique request ID for tracing. */
-  requestId: string;
-
-  /** Timestamp when the request entered the gateway. */
-  startTime: number;
-
-  /** Gateway name from config. */
-  gatewayName: string;
-
-  /** Matched route path pattern (e.g. "/users/:id"). */
-  routePath: string;
-
-  /** W3C Trace Context -- 32-hex trace ID (propagated from incoming traceparent header, or generated). */
-  traceId: string;
-
-  /** W3C Trace Context -- 16-hex span ID for this gateway request. */
-  spanId: string;
-
-  /**
-   * Get a debug logger for the given namespace.
-   * Returns a no-op when debug is disabled (zero overhead).
-   */
-  debug: (namespace: string) => DebugLogger;
-}
-```
-
-Usage in a custom policy:
-
-```typescript
-import { getGatewayContext } from "@homegrower-club/stoma";
-
-const handler = async (c, next) => {
-  const ctx = getGatewayContext(c);
-  const debug = ctx?.debug("stoma:policy:my-policy");
-  debug?.("processing request", ctx?.requestId);
-  // ctx?.traceId and ctx?.spanId are available for W3C Trace Context propagation
-  await next();
-};
-```
+The `PolicyContext` interface is documented in [Policy System](/concepts/policies#policy-context).
 
 ## Admin introspection API
 
@@ -453,13 +403,7 @@ interface AdminConfig {
 
 ### Available endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /___gateway/routes` | List all registered routes with their methods, policy names, and upstream type |
-| `GET /___gateway/policies` | List all unique policies with their priority |
-| `GET /___gateway/config` | Serialized config with secrets redacted |
-| `GET /___gateway/metrics` | Prometheus text format metrics (requires `admin.metrics`) |
-| `GET /___gateway/health` | Basic health check with route and policy counts |
+Admin endpoints are documented in [Architecture](/concepts/architecture#admin-introspection-api).
 
 All admin endpoints return JSON. The `/metrics` endpoint returns Prometheus
 text format (`text/plain; version=0.0.4`). If `admin.auth` is configured,

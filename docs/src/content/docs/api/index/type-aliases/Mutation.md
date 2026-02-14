@@ -7,7 +7,7 @@ title: "Mutation"
 
 > **Mutation** = [`HeaderMutation`](/api/index/interfaces/headermutation/) \| [`BodyMutation`](/api/index/interfaces/bodymutation/) \| [`StatusMutation`](/api/index/interfaces/statusmutation/) \| [`AttributeMutation`](/api/index/interfaces/attributemutation/)
 
-Defined in: [src/core/protocol.ts:205](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/protocol.ts#L205)
+Defined in: [src/core/protocol.ts:205](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/protocol.ts#L205)
 
 A discrete modification to apply to the request or response.
 Discriminated on `type`.

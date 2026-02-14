@@ -1,0 +1,281 @@
+---
+title: Deploy to Node.js
+description: Deploy your Stoma gateway to Node.js with Express, Fastify, or standalone servers.
+sidebar:
+  order: 2
+---
+
+import { Steps, Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Stoma runs natively on Node.js. Deploy to traditional servers, containers, or serverless platforms.
+
+## Quick Start
+
+<Steps>
+1. **Install dependencies**
+
+   ```sh
+   npm install hono @homegrower-club/stoma @hono/node-server
+   ```
+
+2. **Create your gateway**
+
+   ```typescript title="src/index.ts"
+   import { createGateway, cors, requestLog } from "@homegrower-club/stoma";
+
+   const gateway = createGateway({
+     name: "my-gateway",
+     basePath: "/api",
+     policies: [requestLog(), cors()],
+     routes: [
+       {
+         path: "/users/*",
+         pipeline: {
+           policies: [],
+           upstream: {
+             type: "url",
+             target: "https://api.example.com",
+             rewritePath: (path) => path.replace("/api", ""),
+           },
+         },
+       },
+     ],
+   });
+
+   export default gateway.app;
+   ```
+
+3. **Create the server entry**
+
+   ```typescript title="src/server.ts"
+   import { createServer } from "@hono/node-server";
+   import gateway from "./index";
+
+   const port = parseInt(process.env.PORT || "3000");
+
+   createServer({
+     fetch: gateway.fetch,
+     port,
+   }).listen(() => {
+     console.log(`Server running on http://localhost:${port}`);
+   });
+   ```
+
+4. **Run**
+
+   ```sh
+   npx tsx src/server.ts
+   ```
+</Steps>
+
+## Node.js Adapter
+
+For production deployments, use the Node.js adapter:
+
+```typescript title="src/index.ts"
+import {
+  createGateway,
+  cors,
+  rateLimit,
+  cache,
+  circuitBreaker,
+} from "@homegrower-club/stoma";
+import { nodeAdapter } from "@homegrower-club/stoma/adapters/node";
+import { InMemoryMetricsCollector } from "@homegrower-club/stoma";
+import { metricsReporter } from "@homegrower-club/stoma";
+
+const adapter = nodeAdapter();
+const metrics = new InMemoryMetricsCollector();
+
+const gateway = createGateway({
+  name: "my-gateway",
+  basePath: "/api",
+  adapter,
+  policies: [
+    cors(),
+    metricsReporter({ collector: metrics }),
+  ],
+  routes: [
+    {
+      path: "/users/*",
+      pipeline: {
+        policies: [
+          rateLimit({
+            max: 100,
+            windowSeconds: 60,
+            store: adapter.rateLimitStore,
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://api.example.com",
+        },
+      },
+    },
+  ],
+});
+
+export default gateway.app;
+export { gateway };
+```
+
+## Server Options
+
+### Using `@hono/node-server`
+
+Best for simple deployments:
+
+```typescript title="src/server.ts"
+import { createServer } from "@hono/node-server";
+import gateway from "./index";
+
+const server = createServer({
+  fetch: gateway.fetch,
+  port: 3000,
+});
+
+server.listen();
+```
+
+### Using Express
+
+For integration with existing Express apps:
+
+```typescript title="src/server.ts"
+import express from "express";
+import { serve } from "@hono/node-server/serve";
+import gateway from "./index";
+
+const app = express();
+
+app.use("*", serve({ fetch: gateway.app.fetch }));
+
+app.listen(3000, () => {
+  console.log("Gateway listening on port 3000");
+});
+```
+
+### Using Fastify
+
+For better performance:
+
+```typescript title="src/server.ts"
+import Fastify from "fastify";
+import gateway from "./index";
+
+const fastify = Fastify();
+
+fastify.all("*", async (req, reply) => {
+  const response = await gateway.app.fetch(req.raw, {
+    // Pass any environment variables here
+  });
+  return response;
+});
+
+fastify.listen({ port: 3000 });
+```
+
+<Aside type="tip">
+When using Express or Fastify, you may need to convert the Node.js `IncomingMessage` and `ServerResponse` to Web standard `Request`/`Response`. The `@hono/node-server` package handles this automatically.
+</Aside>
+
+## Process Management with PM2
+
+### Install PM2
+
+```sh
+npm install -g pm2
+```
+
+### Start the Gateway
+
+```sh
+# Start with cluster mode
+pm2 start src/server.ts --name "stoma-gateway" --node-args "-r tsx"
+
+# Or with ecosystem file
+pm2 start ecosystem.config.js
+```
+
+### Ecosystem File
+
+```javascript title="ecosystem.config.js"
+module.exports = {
+  apps: [
+    {
+      name: "stoma-gateway",
+      script: "src/server.ts",
+      interpreter: "tsx",
+      env: {
+        NODE_ENV: "development",
+        PORT: 3000,
+      },
+      env_production: {
+        NODE_ENV: "production",
+        PORT: 8080,
+      },
+      instances: "max",
+      exec_mode: "cluster",
+      watch: false,
+      max_memory_restart: "500M",
+      autorestart: true,
+      restart_delay: 1000,
+    },
+  ],
+};
+```
+
+### PM2 Commands
+
+```sh
+# Start
+pm2 start ecosystem.config.js --env production
+
+# View logs
+pm2 logs stoma-gateway
+
+# Restart
+pm2 restart stoma-gateway
+
+# Stop
+pm2 stop stoma-gateway
+
+# Monitor
+pm2 monit
+```
+
+## Environment Variables
+
+Use environment variables for configuration:
+
+```typescript title="src/index.ts"
+const gateway = createGateway({
+  name: process.env.GATEWAY_NAME || "my-gateway",
+  basePath: process.env.BASE_PATH || "/api",
+  debug: process.env.DEBUG === "true",
+  // ...
+});
+```
+
+```sh
+# .env file
+PORT=8080
+GATEWAY_NAME=my-gateway
+DEBUG=false
+JWT_SECRET=your-secret
+```
+
+## Production Checklist
+
+- [ ] Use a process manager (PM2, systemd)
+- [ ] Set `NODE_ENV=production`
+- [ ] Configure health checks
+- [ ] Set up logging (JSON format recommended)
+- [ ] Use environment variables for secrets
+- [ ] Enable request logging with appropriate log levels
+- [ ] Configure appropriate timeouts
+
+## Next Steps
+
+- [Deploy with Docker →](/deploy/docker/)
+- [Configure health checks](/guides/testing-guide/)

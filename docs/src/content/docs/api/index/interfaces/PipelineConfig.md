@@ -5,7 +5,7 @@ prev: false
 title: "PipelineConfig"
 ---
 
-Defined in: [src/core/types.ts:161](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L161)
+Defined in: [src/core/types.ts:161](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L161)
 
 Pipeline: ordered chain of policies leading to an upstream.
 
@@ -23,7 +23,7 @@ Worker bindings type, propagated from [RouteConfig](/api/index/interfaces/routec
 
 > `optional` **policies**: [`Policy`](/api/index/interfaces/policy/)[]
 
-Defined in: [src/core/types.ts:163](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L163)
+Defined in: [src/core/types.ts:163](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L163)
 
 Policies executed in order before the upstream
 
@@ -33,6 +33,6 @@ Policies executed in order before the upstream
 
 > **upstream**: [`UpstreamConfig`](/api/index/type-aliases/upstreamconfig/)\<`TBindings`\>
 
-Defined in: [src/core/types.ts:165](https://github.com/HomeGrower-club/stoma/blob/c02d84b2ff5af3b1f7cb6124493cc3582359d8b0/src/core/types.ts#L165)
+Defined in: [src/core/types.ts:165](https://github.com/HomeGrower-club/stoma/blob/8b84574bca28149f020bbd910337511015437508/src/core/types.ts#L165)
 
 Upstream target configuration

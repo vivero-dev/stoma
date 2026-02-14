@@ -121,26 +121,7 @@ interface PolicyHandlerContext<TConfig> {
 
 ## Priority constants
 
-The SDK exports named `Priority` constants so you do not need magic numbers.
-All built-in policies use these constants:
-
-| Constant | Value | Tier | Examples |
-|----------|-------|------|----------|
-| `Priority.OBSERVABILITY` | 0 | Observability | `requestLog`, `assignMetrics` |
-| `Priority.IP_FILTER` | 1 | Early filters | `ipFilter` |
-| `Priority.METRICS` | 1 | Metrics | `metricsReporter` |
-| `Priority.EARLY` | 5 | Early transform | `cors`, `overrideMethod`, `latencyInjection` |
-| `Priority.AUTH` | 10 | Authentication | `jwtAuth`, `apiKeyAuth`, `basicAuth`, `oauth2`, `rbac`, `jws`, `verifyHttpSignature`, `requestValidation`, `jsonValidation` |
-| `Priority.RATE_LIMIT` | 20 | Rate limiting | `rateLimit` |
-| `Priority.CIRCUIT_BREAKER` | 30 | Resilience (pre) | `circuitBreaker` |
-| `Priority.CACHE` | 40 | Caching | `cache` |
-| `Priority.REQUEST_TRANSFORM` | 50 | Request transform | `requestTransform`, `assignAttributes`, `assignContent`, `generateJwt`, `dynamicRouting`, `httpCallout` |
-| `Priority.TIMEOUT` | 85 | Timeout | `timeout` |
-| `Priority.RETRY` | 90 | Retry | `retry` |
-| `Priority.RESPONSE_TRANSFORM` | 92 | Response transform | `responseTransform`, `trafficShadow`, `resourceFilter` |
-| `Priority.PROXY` | 95 | Proxy | `proxy`, `generateHttpSignature` |
-| `Priority.DEFAULT` | 100 | Default | Custom policies (when no priority specified) |
-| `Priority.MOCK` | 999 | Terminal | `mock` |
+Priority constants are documented in [Policy Execution](/concepts/policies#priority-order).
 
 ```typescript
 import { Priority } from "@homegrower-club/stoma/sdk";
@@ -220,56 +201,7 @@ return {
 
 ## Testing custom policies
 
-The SDK provides `createPolicyTestHarness()` to eliminate the repeated
-boilerplate of setting up a test Hono app. It creates a minimal app with the
-policy under test, GatewayError handling, gateway context injection, and a
-configurable upstream.
-
-```typescript
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
-import { tenantFilter } from "./tenant-filter";
-
-const { request } = createPolicyTestHarness(
-  tenantFilter({ allowedTenants: ["acme"] }),
-);
-
-it("should allow valid tenants", async () => {
-  const res = await request("/test", {
-    headers: { "x-tenant-id": "acme" },
-  });
-  expect(res.status).toBe(200);
-});
-
-it("should reject unknown tenants", async () => {
-  const res = await request("/test", {
-    headers: { "x-tenant-id": "evil-corp" },
-  });
-  expect(res.status).toBe(403);
-});
-```
-
-### Test harness options
-
-```typescript
-interface PolicyTestHarnessOptions {
-  /** Custom upstream handler. Default: returns { ok: true } with status 200. */
-  upstream?: MiddlewareHandler;
-  /** Route path pattern for the test app. Default: "/*". */
-  path?: string;
-  /** Gateway name injected into context. Default: "test-gateway". */
-  gatewayName?: string;
-}
-```
-
-Custom upstream for testing pass-through behavior:
-
-```typescript
-const { request } = createPolicyTestHarness(myPolicy(), {
-  upstream: async (c) => {
-    return c.json({ user: "test-user", role: "admin" });
-  },
-});
-```
+Testing policies is covered in [Testing Guide](/guides/testing-guide).
 
 ---
 
@@ -279,20 +211,7 @@ You can also create policies by returning a `Policy` object directly. This is
 the lower-level approach -- you handle config merging, skip logic, and debug
 logging yourself.
 
-### The Policy interface
-
-Every policy has three fields:
-
-```typescript
-interface Policy {
-  /** Unique name -- used for deduplication when merging global and route policies. */
-  name: string;
-  /** A standard Hono MiddlewareHandler. */
-  handler: MiddlewareHandler;
-  /** Execution priority -- lower numbers run first. Default: 100. */
-  priority?: number;
-}
-```
+The Policy interface is documented in [Policy System](/concepts/policies#policy-interface).
 
 ### Writing a manual policy factory
 

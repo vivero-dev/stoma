@@ -28,7 +28,10 @@ function createMockClient(): RedisClient & {
       let ttl: number | undefined;
       // Parse ioredis-style positional args: "EX", seconds
       for (let i = 0; i < args.length; i++) {
-        if (typeof args[i] === "string" && (args[i] as string).toUpperCase() === "EX") {
+        if (
+          typeof args[i] === "string" &&
+          (args[i] as string).toUpperCase() === "EX"
+        ) {
           ttl = args[i + 1] as number;
           break;
         }

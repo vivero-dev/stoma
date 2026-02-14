@@ -1,14 +1,14 @@
 /**
- * Server-Timing policy — surfaces per-policy timing as W3C Server-Timing headers.
+ * Server-Timing policy - surfaces per-policy timing as W3C Server-Timing headers.
  *
  * Reads the `_policyTimings` context key populated by the pipeline and
  * emits standard `Server-Timing` and `X-Response-Time` response headers.
  * Browser DevTools display `Server-Timing` entries natively.
  *
  * Visibility modes control when headers are emitted:
- * - `"always"` — every response (dev, internal APIs)
- * - `"debug-only"` — only when the client sent `x-stoma-debug` (safe for production)
- * - `"conditional"` — user-provided predicate function
+ * - `"always"` - every response (dev, internal APIs)
+ * - `"debug-only"` - only when the client sent `x-stoma-debug` (safe for production)
+ * - `"conditional"` - user-provided predicate function
  *
  * @module server-timing
  */
@@ -116,7 +116,7 @@ export const serverTiming = /*#__PURE__*/ definePolicy<ServerTimingConfig>({
     }
 
     if (!visible) {
-      debug("skipping — visibility check failed");
+      debug("skipping - visibility check failed");
       return;
     }
 
@@ -124,7 +124,7 @@ export const serverTiming = /*#__PURE__*/ definePolicy<ServerTimingConfig>({
     const precision = config.precision!;
 
     // Read per-policy timings accumulated by policiesToMiddleware().
-    // These are inclusive (onion-model) — convert to self-time for the header.
+    // These are inclusive (onion-model) - convert to self-time for the header.
     const rawTimings = c.get("_policyTimings") as
       | Array<{ name: string; durationMs: number }>
       | undefined;

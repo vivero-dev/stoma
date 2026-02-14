@@ -1,9 +1,9 @@
 /**
- * Stoma — declarative API gateway as a TypeScript library.
+ * Stoma - declarative API gateway as a TypeScript library.
  *
  * Built on Hono for Cloudflare Workers and edge runtimes. Define routes,
  * compose policies (auth, rate limiting, caching, transforms), and proxy
- * to upstream services — all from a single configuration object.
+ * to upstream services - all from a single configuration object.
  *
  * @packageDocumentation
  *
@@ -43,7 +43,7 @@
  * ```
  */
 
-// ── Protocol — multi-runtime policy evaluation ──────────────────────────
+// ── Protocol - multi-runtime policy evaluation ──────────────────────────
 
 export type {
   /** Set a cross-policy attribute in PolicyResult mutations. */
@@ -56,13 +56,13 @@ export type {
   Mutation,
   /** Allow processing to continue, optionally with mutations. */
   PolicyContinue,
-  /** Runtime-facing evaluation context (no typed config — see PolicyEvalHandlerContext for typed version). */
+  /** Runtime-facing evaluation context (no typed config - see PolicyEvalHandlerContext for typed version). */
   PolicyEvalContext,
   /** Protocol-agnostic policy evaluation entry point (onRequest, onResponse). */
   PolicyEvaluator,
   /** Short-circuit with a complete non-error response (cache hit, mock, redirect). */
   PolicyImmediateResponse,
-  /** Protocol-agnostic view of what's being processed — constructed by each runtime. */
+  /** Protocol-agnostic view of what's being processed - constructed by each runtime. */
   PolicyInput,
   /** Reject the request with a structured error response. */
   PolicyReject,
@@ -81,11 +81,13 @@ export type {
 /** Standard JSON error response shape returned by all gateway errors. */
 export type { ErrorResponse } from "./core/errors";
 /** Structured error with HTTP status, machine-readable code, and optional response headers. */
-export { GatewayError } from "./core/errors";
 /** Build a JSON Response from a GatewayError, merging custom headers and request ID. */
-export { errorToResponse } from "./core/errors";
 /** Produce a generic 500 error response for unexpected (non-GatewayError) errors. */
-export { defaultErrorResponse } from "./core/errors";
+export {
+  defaultErrorResponse,
+  errorToResponse,
+  GatewayError,
+} from "./core/errors";
 /** Compile a declarative {@link GatewayConfig} into a Hono app with policy pipelines and upstream dispatch. */
 export { createGateway } from "./core/gateway";
 /** Retrieve the {@link PolicyContext} (request ID, trace ID, timing) from a Hono context. */
@@ -127,14 +129,14 @@ export type {
   UrlUpstream,
 } from "./core/types";
 
-// ── Policies — root-level ───────────────────────────────────────────────
+// ── Policies - root-level ───────────────────────────────────────────────
 
 /** Return a static mock response, bypassing the upstream entirely (priority 999). */
 export { mock } from "./policies/mock";
 /** Per-route header manipulation, timeout control, and Host header preservation (priority 95). */
 export { proxy } from "./policies/proxy";
 
-// ── Policies — auth ─────────────────────────────────────────────────────
+// ── Policies - auth ─────────────────────────────────────────────────────
 
 /** Validate API keys from headers or query parameters using a custom validator function (priority 10). */
 export { apiKeyAuth } from "./policies/auth/api-key-auth";
@@ -146,7 +148,7 @@ export { clearJwksCache } from "./policies/auth/crypto";
 export { generateHttpSignature } from "./policies/auth/generate-http-signature";
 /** Mint JWTs (HMAC or RSA) and attach them to outgoing requests for upstream consumption (priority 50). */
 export { generateJwt } from "./policies/auth/generate-jwt";
-/** Verify JWS compact serialization signatures — embedded or detached payloads, HMAC or JWKS (priority 10). */
+/** Verify JWS compact serialization signatures - embedded or detached payloads, HMAC or JWKS (priority 10). */
 export { jws } from "./policies/auth/jws";
 /** Validate JWT bearer tokens via HMAC secret or JWKS endpoint, with optional claim forwarding (priority 10). */
 export { jwtAuth } from "./policies/auth/jwt-auth";
@@ -158,7 +160,7 @@ export { rbac } from "./policies/auth/rbac";
 /** Verify RFC 9421 HTTP Message Signatures on inbound requests with key ID lookup (priority 10). */
 export { verifyHttpSignature } from "./policies/auth/verify-http-signature";
 
-// ── Policies — traffic ──────────────────────────────────────────────────
+// ── Policies - traffic ──────────────────────────────────────────────────
 
 /** Response caching with pluggable storage, TTL, and automatic cache-control headers (priority 40). */
 export { cache, InMemoryCacheStore } from "./policies/traffic/cache";
@@ -174,7 +176,7 @@ export { interrupt } from "./policies/traffic/interrupt";
 /** Block or allow requests by client IP address or CIDR range in allowlist/denylist mode (priority 1). */
 export { ipFilter } from "./policies/traffic/ip-filter";
 
-/** Enforce structural limits on JSON request bodies — depth, key count, string length, array size (priority 5). */
+/** Enforce structural limits on JSON request bodies - depth, key count, string length, array size (priority 5). */
 export { jsonThreatProtection } from "./policies/traffic/json-threat-protection";
 /** Sliding-window rate limiting with pluggable counter storage and configurable key extraction (priority 20). */
 export { rateLimit } from "./policies/traffic/rate-limit";
@@ -189,7 +191,7 @@ export { sslEnforce } from "./policies/traffic/ssl-enforce";
 /** Mirror a percentage of traffic to a secondary upstream without affecting the primary response (priority 92). */
 export { trafficShadow } from "./policies/traffic/traffic-shadow";
 
-// ── Policies — resilience ───────────────────────────────────────────────
+// ── Policies - resilience ───────────────────────────────────────────────
 
 /** Three-state circuit breaker (closed/open/half-open) with pluggable state storage (priority 30). */
 export {
@@ -200,10 +202,10 @@ export {
 export { latencyInjection } from "./policies/resilience/latency-injection";
 /** Retry failed upstream calls with exponential or fixed backoff, jitter, and method filtering (priority 90). */
 export { retry } from "./policies/resilience/retry";
-/** Enforce a response time budget — races downstream execution against a configurable timer (priority 85). */
+/** Enforce a response time budget - races downstream execution against a configurable timer (priority 85). */
 export { timeout } from "./policies/resilience/timeout";
 
-// ── Policies — transform ────────────────────────────────────────────────
+// ── Policies - transform ────────────────────────────────────────────────
 
 /** Set key-value attributes on the Hono request context for downstream middleware consumption (priority 50). */
 export { assignAttributes } from "./policies/transform/assign-attributes";
@@ -211,7 +213,7 @@ export { assignAttributes } from "./policies/transform/assign-attributes";
 export { assignContent } from "./policies/transform/assign-content";
 /** Add CORS headers to responses, wrapping Hono's built-in CORS middleware as a composable policy (priority 5). */
 export { cors } from "./policies/transform/cors";
-/** Pluggable JSON body validation — wrap Zod, AJV, or any validator; falls back to JSON parse check (priority 10). */
+/** Pluggable JSON body validation - wrap Zod, AJV, or any validator; falls back to JSON parse check (priority 10). */
 export { jsonValidation } from "./policies/transform/json-validation";
 /** Override the HTTP method of POST requests via a configurable header (priority 5). */
 export { overrideMethod } from "./policies/transform/override-method";
@@ -225,7 +227,7 @@ export {
   responseTransform,
 } from "./policies/transform/transform";
 
-// ── Policies — observability ────────────────────────────────────────────
+// ── Policies - observability ────────────────────────────────────────────
 
 /** Create a health check route with optional upstream probing (returns a RouteConfig, not a Policy). */
 export { health } from "./core/health";
@@ -267,18 +269,18 @@ export {
   OTLPSpanExporter,
   /** OTel semantic convention attribute keys (HTTP subset). */
   SemConv,
-  /** Mutable span builder — accumulates attributes, events, and status during a request lifecycle. */
+  /** Mutable span builder - accumulates attributes, events, and status during a request lifecycle. */
   SpanBuilder,
 } from "./observability/tracing";
 
-// ── Policy SDK — shared primitives for built-in and custom policies ─────
+// ── Policy SDK - shared primitives for built-in and custom policies ─────
 
 export type {
   /** Declarative policy definition passed to {@link definePolicy}. */
   PolicyDefinition,
   /** Context injected into `definePolicy` evaluate handlers (protocol-agnostic, with typed config). */
   PolicyEvalHandlerContext,
-  /** Conditional factory type — config required when TConfig has required keys. */
+  /** Conditional factory type - config required when TConfig has required keys. */
   PolicyFactory,
   /** Context injected into `definePolicy` handlers: merged config, debug logger, and gateway context. */
   PolicyHandlerContext,
@@ -298,7 +300,7 @@ export type {
 export {
   /** Create a minimal test harness for a policy with error handling, context injection, and configurable upstream. */
   createPolicyTestHarness,
-  /** Create a policy factory from a declarative definition — combines resolveConfig, policyDebug, and withSkip. */
+  /** Create a policy factory from a declarative definition - combines resolveConfig, policyDebug, and withSkip. */
   definePolicy,
   /** Check whether the client requested debug output via the `x-stoma-debug` header. */
   isDebugRequested,
@@ -310,11 +312,11 @@ export {
   Priority,
   /** Get a debug logger pre-namespaced to `stoma:policy:{name}` from the gateway context. */
   policyDebug,
-  /** Get a trace reporter for a specific policy — always callable, no-op when not tracing. */
+  /** Get a trace reporter for a specific policy - always callable, no-op when not tracing. */
   policyTrace,
   /** Shallow-merge default config values with user-provided config. */
   resolveConfig,
-  /** Execute an async operation with graceful error handling — returns a fallback value on failure. */
+  /** Execute an async operation with graceful error handling - returns a fallback value on failure. */
   safeCall,
   /** Set a debug header value for client-requested debug output. */
   setDebugHeader,
@@ -324,7 +326,7 @@ export {
 
 // ── Debug ───────────────────────────────────────────────────────────────
 
-/** A debug logging function — call with a message and optional structured data. */
+/** A debug logging function - call with a message and optional structured data. */
 export type { DebugLogger } from "./utils/debug";
 
 // ── Utilities ───────────────────────────────────────────────────────────
@@ -336,7 +338,7 @@ export {
   extractClientIp,
 } from "./utils/ip";
 
-/** Constant-time string comparison for secrets and API keys — prevents timing side-channel attacks. */
+/** Constant-time string comparison for secrets and API keys - prevents timing side-channel attacks. */
 export { timingSafeEqual } from "./utils/timing-safe";
 
 // ── Types ───────────────────────────────────────────────────────────────
@@ -347,7 +349,7 @@ export type { GatewayAdapter } from "./adapters/types";
 export type {
   /** A histogram data point with accumulated numeric values. */
   HistogramEntry,
-  /** Pluggable metrics collector interface — increment counters, record histograms, set gauges. */
+  /** Pluggable metrics collector interface - increment counters, record histograms, set gauges. */
   MetricsCollector,
   /** Point-in-time snapshot of all collected metrics (counters, histograms, gauges). */
   MetricsSnapshot,
@@ -372,7 +374,7 @@ export type {
   /** The three circuit breaker states: `"closed"`, `"open"`, `"half-open"`. */
   CircuitState,
 } from "./policies/resilience/circuit-breaker";
-/** Pluggable cache storage backend — get, put, and delete cached responses. */
+/** Pluggable cache storage backend - get, put, and delete cached responses. */
 export type {
   CacheStore,
   InMemoryCacheStoreOptions,
@@ -386,7 +388,7 @@ export type {
 export type {
   /** A composable policy: name, priority, and Hono middleware handler. */
   Policy,
-  /** Base configuration interface for all policies — includes the `skip` conditional bypass. */
+  /** Base configuration interface for all policies - includes the `skip` conditional bypass. */
   PolicyConfig,
   /** Per-request gateway context: request ID, trace ID, span ID, timing, debug factory, and adapter. */
   PolicyContext,

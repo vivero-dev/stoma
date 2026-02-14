@@ -78,12 +78,8 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db885a3000000008a2e03707334n
-      );
-      expect(result!.mask).toBe(
-        0xffffffffffffffffffffffffffffffffn
-      );
+      expect(result!.network).toBe(0x20010db885a3000000008a2e03707334n);
+      expect(result!.mask).toBe(0xffffffffffffffffffffffffffffffffn);
     }
   });
 
@@ -92,12 +88,8 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db8000000000000000000000000n
-      );
-      expect(result!.mask).toBe(
-        0xffffffffffffffff0000000000000000n
-      );
+      expect(result!.network).toBe(0x20010db8000000000000000000000000n);
+      expect(result!.mask).toBe(0xffffffffffffffff0000000000000000n);
     }
   });
 
@@ -106,12 +98,8 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db8abcd00000000000000000000n
-      );
-      expect(result!.mask).toBe(
-        0xffffffffffff00000000000000000000n
-      );
+      expect(result!.network).toBe(0x20010db8abcd00000000000000000000n);
+      expect(result!.mask).toBe(0xffffffffffff00000000000000000000n);
     }
   });
 
@@ -121,9 +109,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
       expect(result!.network).toBe(1n);
-      expect(result!.mask).toBe(
-        0xffffffffffffffffffffffffffffffffn
-      );
+      expect(result!.mask).toBe(0xffffffffffffffffffffffffffffffffn);
     }
   });
 
@@ -132,9 +118,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0xfe800000000000000000000000000000n
-      );
+      expect(result!.network).toBe(0xfe800000000000000000000000000000n);
     }
   });
 
@@ -143,9 +127,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db8000000000000000000000001n
-      );
+      expect(result!.network).toBe(0x20010db8000000000000000000000001n);
     }
   });
 
@@ -165,9 +147,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
       expect(result!.network).toBe(1n);
-      expect(result!.mask).toBe(
-        0xffffffffffffffffffffffffffffffffn
-      );
+      expect(result!.mask).toBe(0xffffffffffffffffffffffffffffffffn);
     }
   });
 
@@ -176,9 +156,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0xfe800000000000000000000000000001n
-      );
+      expect(result!.network).toBe(0xfe800000000000000000000000000001n);
     }
   });
 
@@ -188,9 +166,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db8000000000000000000000000n
-      );
+      expect(result!.network).toBe(0x20010db8000000000000000000000000n);
     }
   });
 
@@ -225,9 +201,7 @@ describe("parseCIDR - IPv6", () => {
     expect(result).not.toBeNull();
     expect(result!.version).toBe(6);
     if (result!.version === 6) {
-      expect(result!.network).toBe(
-        0x20010db800000000000000000000abcdn
-      );
+      expect(result!.network).toBe(0x20010db800000000000000000000abcdn);
     }
   });
 });
@@ -270,10 +244,7 @@ describe("isInRange - IPv6", () => {
   });
 
   it("should handle mixed IPv4 and IPv6 ranges", () => {
-    const ranges = [
-      parseCIDR("10.0.0.0/8")!,
-      parseCIDR("2001:db8::/32")!,
-    ];
+    const ranges = [parseCIDR("10.0.0.0/8")!, parseCIDR("2001:db8::/32")!];
     expect(isInRange("10.0.0.1", ranges)).toBe(true);
     expect(isInRange("2001:db8::1", ranges)).toBe(true);
     expect(isInRange("192.168.1.1", ranges)).toBe(false);
@@ -283,9 +254,9 @@ describe("isInRange - IPv6", () => {
   it("should handle /64 boundary", () => {
     const ranges = [parseCIDR("2001:db8:abcd:0012::/64")!];
     expect(isInRange("2001:db8:abcd:0012::1", ranges)).toBe(true);
-    expect(
-      isInRange("2001:db8:abcd:0012:ffff:ffff:ffff:ffff", ranges)
-    ).toBe(true);
+    expect(isInRange("2001:db8:abcd:0012:ffff:ffff:ffff:ffff", ranges)).toBe(
+      true
+    );
     expect(isInRange("2001:db8:abcd:0013::1", ranges)).toBe(false);
   });
 });

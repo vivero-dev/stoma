@@ -6,7 +6,7 @@
  * a single self-contained ESM file at `public/stoma-bundle.esm.js`.
  */
 
-// Core Stoma API — everything from the main entry point
+// Core Stoma API - everything from the main entry point
 export * from "@homegrower-club/stoma";
 
 // Adapters users might reference

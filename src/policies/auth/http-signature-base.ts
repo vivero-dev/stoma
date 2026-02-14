@@ -32,14 +32,14 @@ function resolveDerivedComponent(
 }
 
 /**
- * Resolve a component value — derived (`@method`, `@path`, etc.) or
+ * Resolve a component value - derived (`@method`, `@path`, etc.) or
  * regular header name (lowercased).
  */
 function resolveComponentValue(componentId: string, request: Request): string {
   if (componentId.startsWith("@")) {
     return resolveDerivedComponent(componentId, request);
   }
-  // Regular header component — value from request headers
+  // Regular header component - value from request headers
   return request.headers.get(componentId) ?? "";
 }
 

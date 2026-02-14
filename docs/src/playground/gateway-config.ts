@@ -30,7 +30,7 @@ import { IDBRateLimitStore } from "./stores/idb-rate-limit-store";
 export const PLAYGROUND_CACHE_NAME = "stoma-playground";
 
 // ---------------------------------------------------------------------------
-// Factory — async because `caches.open()` returns a promise
+// Factory - async because `caches.open()` returns a promise
 // ---------------------------------------------------------------------------
 
 /**
@@ -39,10 +39,10 @@ export const PLAYGROUND_CACHE_NAME = "stoma-playground";
  * Adapter wiring:
  * - Rate limiting  → IndexedDB (persists across SW restarts)
  * - Caching        → Cache API (standard web API, not CF-specific)
- * - Circuit breaker → In-memory (ephemeral — fine for a demo)
+ * - Circuit breaker → In-memory (ephemeral - fine for a demo)
  */
 export async function createPlaygroundGateway(): Promise<GatewayInstance> {
-  // Open a named cache (standard Web API — works in any browser)
+  // Open a named cache (standard Web API - works in any browser)
   const cacheInstance = await caches.open(PLAYGROUND_CACHE_NAME);
 
   const adapter: GatewayAdapter = {
@@ -56,7 +56,7 @@ export async function createPlaygroundGateway(): Promise<GatewayInstance> {
     basePath: "/playground/api",
     adapter,
 
-    // Debug mode ON — so users can see policy internals in response headers
+    // Debug mode ON - so users can see policy internals in response headers
     debug: true,
     debugHeaders: true,
 
@@ -65,12 +65,12 @@ export async function createPlaygroundGateway(): Promise<GatewayInstance> {
 
     routes: [
       // -----------------------------------------------------------------
-      // Health check — simple liveness endpoint
+      // Health check - simple liveness endpoint
       // -----------------------------------------------------------------
       health(),
 
       // -----------------------------------------------------------------
-      // Echo — demonstrates rate limiting + response caching
+      // Echo - demonstrates rate limiting + response caching
       //
       // - 5 requests per 30s window, then 429
       // - Responses cached for 10s (GET only by default)
@@ -103,7 +103,7 @@ export async function createPlaygroundGateway(): Promise<GatewayInstance> {
       },
 
       // -----------------------------------------------------------------
-      // Protected — demonstrates API key authentication
+      // Protected - demonstrates API key authentication
       //
       // Send header `x-api-key: demo-key` to get access
       // -----------------------------------------------------------------
@@ -129,7 +129,7 @@ export async function createPlaygroundGateway(): Promise<GatewayInstance> {
       },
 
       // -----------------------------------------------------------------
-      // Slow — demonstrates timeout policy
+      // Slow - demonstrates timeout policy
       //
       // Handler sleeps 2s, but timeout is 1s → always times out
       // -----------------------------------------------------------------

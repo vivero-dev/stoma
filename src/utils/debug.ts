@@ -20,7 +20,7 @@
  * ```
  */
 
-/** A debug logging function — call with a message and optional structured data. */
+/** A debug logging function - call with a message and optional structured data. */
 export type DebugLogger = (message: string, ...args: unknown[]) => void;
 
 /** No-op logger used when debug is disabled */

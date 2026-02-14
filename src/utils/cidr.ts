@@ -116,7 +116,7 @@ function ipv6ToBigInt(raw: string): bigint | null {
     return groupsToBI(groups);
   }
 
-  // No :: — must have exactly 8 groups
+  // No :: - must have exactly 8 groups
   const groups = addr.split(":");
   if (groups.length !== 8) return null;
   return groupsToBI(groups);
@@ -146,7 +146,10 @@ function parseIPv6CIDR(ip: string, prefix: number): ParsedCIDRv6 | null {
   if (addr === null) return null;
   if (prefix < 0 || prefix > 128) return null;
 
-  const mask = prefix === 0 ? 0n : IPV6_FULL_MASK << BigInt(128 - prefix) & IPV6_FULL_MASK;
+  const mask =
+    prefix === 0
+      ? 0n
+      : (IPV6_FULL_MASK << BigInt(128 - prefix)) & IPV6_FULL_MASK;
   return { version: 6, network: addr & mask, mask };
 }
 
@@ -171,7 +174,7 @@ export function parseCIDR(cidr: string): ParsedCIDR | null {
   const slash = cidr.indexOf("/");
 
   if (slash === -1) {
-    // Bare IP — no prefix length
+    // Bare IP - no prefix length
     if (isIPv6(cidr)) {
       return parseIPv6CIDR(cidr, 128);
     }
@@ -193,7 +196,7 @@ export function parseCIDR(cidr: string): ParsedCIDR | null {
 /**
  * Check if an IP address (IPv4 or IPv6) falls within any of the parsed CIDR ranges.
  *
- * IPv4 addresses only match IPv4 ranges and vice versa — there is no
+ * IPv4 addresses only match IPv4 ranges and vice versa - there is no
  * cross-family matching.
  *
  * @param ip - IP address string.

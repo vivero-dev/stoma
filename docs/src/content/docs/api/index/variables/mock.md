@@ -7,12 +7,12 @@ title: "mock"
 
 > `const` **mock**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/mock.ts:63](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/mock.ts#L63)
+Defined in: [src/policies/mock.ts:63](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/mock.ts#L63)
 
 Return a static mock response, bypassing the upstream entirely.
 
 Useful for development stubs, testing, and placeholder routes. Runs at
-priority 999 (always last) and short-circuits — `next()` is never called,
+priority 999 (always last) and short-circuits - `next()` is never called,
 so no upstream request is made. Object bodies are automatically
 JSON-serialized with `content-type: application/json`.
 

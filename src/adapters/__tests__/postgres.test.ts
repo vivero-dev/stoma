@@ -33,10 +33,7 @@ function createMockClient(): PostgresClient & {
     _circuitBreakers: circuitBreakers,
     _cache: cache,
 
-    async query(
-      text: string,
-      params?: unknown[]
-    ): Promise<{ rows: Row[] }> {
+    async query(text: string, params?: unknown[]): Promise<{ rows: Row[] }> {
       const p = params ?? [];
 
       // --- Rate Limits ---
@@ -48,14 +45,16 @@ function createMockClient(): PostgresClient & {
         const existing = rateLimits.get(key);
         if (existing) {
           if (existing.reset_at <= now) {
-            // Window expired — reset
+            // Window expired - reset
             const entry = { count: 1, reset_at: newResetAt };
             rateLimits.set(key, entry);
             return { rows: [entry] };
           }
           // Increment
           existing.count++;
-          return { rows: [{ count: existing.count, reset_at: existing.reset_at }] };
+          return {
+            rows: [{ count: existing.count, reset_at: existing.reset_at }],
+          };
         }
         // New entry
         const entry = { count: 1, reset_at: newResetAt };
@@ -78,7 +77,11 @@ function createMockClient(): PostgresClient & {
         return { rows: row ? [row] : [] };
       }
 
-      if (text.includes("stoma_circuit_breakers") && text.includes("INSERT") && text.includes("success_count + 1")) {
+      if (
+        text.includes("stoma_circuit_breakers") &&
+        text.includes("INSERT") &&
+        text.includes("success_count + 1")
+      ) {
         const key = p[0] as string;
         const now = Number(p[1]);
         const existing = circuitBreakers.get(key);
@@ -97,7 +100,12 @@ function createMockClient(): PostgresClient & {
         return { rows: [{ ...row }] };
       }
 
-      if (text.includes("stoma_circuit_breakers") && text.includes("INSERT") && text.includes("failure_count") && text.includes("+ 1")) {
+      if (
+        text.includes("stoma_circuit_breakers") &&
+        text.includes("INSERT") &&
+        text.includes("failure_count") &&
+        text.includes("+ 1")
+      ) {
         const key = p[0] as string;
         const now = Number(p[1]);
         const existing = circuitBreakers.get(key);
@@ -117,7 +125,11 @@ function createMockClient(): PostgresClient & {
         return { rows: [{ ...row }] };
       }
 
-      if (text.includes("stoma_circuit_breakers") && text.includes("INSERT") && text.includes("state = $2")) {
+      if (
+        text.includes("stoma_circuit_breakers") &&
+        text.includes("INSERT") &&
+        text.includes("state = $2")
+      ) {
         // Transition
         const key = p[0] as string;
         const toState = p[1] as string;
@@ -179,14 +191,22 @@ function createMockClient(): PostgresClient & {
         return { rows: [row] };
       }
 
-      if (text.includes("stoma_cache") && text.includes("DELETE") && text.includes("key = $1")) {
+      if (
+        text.includes("stoma_cache") &&
+        text.includes("DELETE") &&
+        text.includes("key = $1")
+      ) {
         const key = p[0] as string;
         const existed = cache.has(key);
         cache.delete(key);
         return { rows: existed ? [{ key }] : [] };
       }
 
-      if (text.includes("stoma_cache") && text.includes("DELETE") && text.includes("expires_at")) {
+      if (
+        text.includes("stoma_cache") &&
+        text.includes("DELETE") &&
+        text.includes("expires_at")
+      ) {
         const now = Number(p[0]);
         for (const [k, v] of cache) {
           if (Number(v.expires_at) <= now) cache.delete(k);
@@ -226,7 +246,10 @@ describe("PostgresRateLimitStore", () => {
 
   it("resets counter when window expires", async () => {
     // Set an entry with an expired reset_at
-    client._rateLimits.set("expired", { count: 10, reset_at: Date.now() - 1000 });
+    client._rateLimits.set("expired", {
+      count: 10,
+      reset_at: Date.now() - 1000,
+    });
     const result = await store.increment("expired", 60);
     expect(result.count).toBe(1);
   });
@@ -506,7 +529,7 @@ describe("postgresAdapter", () => {
     const client = createMockClient();
     const adapter = postgresAdapter({ client, tablePrefix: "myapp_" });
 
-    // Store instances are created — we can verify they exist
+    // Store instances are created - we can verify they exist
     expect(adapter.rateLimitStore).toBeDefined();
     expect(adapter.circuitBreakerStore).toBeDefined();
     expect(adapter.cacheStore).toBeDefined();

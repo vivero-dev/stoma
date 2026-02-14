@@ -1,5 +1,5 @@
 /**
- * Circuit breaker policy — protect upstream services from cascading failures.
+ * Circuit breaker policy - protect upstream services from cascading failures.
  *
  * Implements the three-state circuit breaker pattern (closed / open / half-open)
  * with pluggable state storage via {@link CircuitBreakerStore}.
@@ -55,7 +55,7 @@ export interface CircuitBreakerStore {
   transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot>;
   /** Fully reset a circuit, removing all state. */
   reset(key: string): Promise<void>;
-  /** Optional cleanup — release timers, close connections, etc. */
+  /** Optional cleanup - release timers, close connections, etc. */
   destroy?(): void;
 }
 
@@ -152,7 +152,7 @@ export interface CircuitBreakerConfig extends PolicyConfig {
   /**
    * Callback invoked on every state transition.
    *
-   * Called via `safeCall` so errors are swallowed — a failing callback
+   * Called via `safeCall` so errors are swallowed - a failing callback
    * never blocks traffic. Useful for metrics, logging, or alerting.
    *
    * @param key - The circuit key that transitioned.
@@ -170,7 +170,7 @@ export interface CircuitBreakerConfig extends PolicyConfig {
  * Transition the circuit and invoke the onStateChange callback (if configured).
  *
  * Both the store transition and the callback are wrapped in safeCall so
- * failures are swallowed — a broken store or callback never blocks traffic.
+ * failures are swallowed - a broken store or callback never blocks traffic.
  */
 async function transitionAndNotify(
   resolvedStore: CircuitBreakerStore,
@@ -200,9 +200,9 @@ async function transitionAndNotify(
  * Protect upstream services by breaking the circuit on repeated failures.
  *
  * Implements the three-state circuit breaker pattern:
- * - **Closed** — requests flow normally; failures are counted.
- * - **Open** — requests are immediately rejected with 503; a `Retry-After` header is set.
- * - **Half-open** — a limited number of probe requests are allowed through to test recovery.
+ * - **Closed** - requests flow normally; failures are counted.
+ * - **Open** - requests are immediately rejected with 503; a `Retry-After` header is set.
+ * - **Half-open** - a limited number of probe requests are allowed through to test recovery.
  *
  * State transitions: `closed → open` when failures reach the threshold,
  * `open → half-open` after the reset timeout, `half-open → closed` on
@@ -259,7 +259,7 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
     const debug = policyDebug(c, "circuit-breaker");
     const key = config?.key ? config.key(c) : new URL(c.req.url).pathname;
 
-    // Resilient to store failures — fail-open (assume closed) if the
+    // Resilient to store failures - fail-open (assume closed) if the
     // store is unreachable, so a broken store never blocks traffic.
     const snap = await safeCall(
       () => resolvedStore.getState(key),
@@ -388,7 +388,7 @@ export function circuitBreaker(config?: CircuitBreakerConfig): Policy {
     try {
       await next();
     } catch (err) {
-      // If recordFailure fails, skip the threshold check entirely —
+      // If recordFailure fails, skip the threshold check entirely -
       // we have no snapshot to compare against.
       const updated = await safeCall(
         () => resolvedStore.recordFailure(key),

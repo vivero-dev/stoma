@@ -1,5 +1,5 @@
 /**
- * SSL enforcement policy — redirect or reject non-HTTPS requests.
+ * SSL enforcement policy - redirect or reject non-HTTPS requests.
  *
  * @module ssl-enforce
  */

@@ -1,5 +1,5 @@
 /**
- * JWT authentication policy — HMAC and JWKS verification.
+ * JWT authentication policy - HMAC and JWKS verification.
  *
  * @module jwt-auth
  */

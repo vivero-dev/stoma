@@ -3,7 +3,7 @@
  *
  * Supports dot-notation paths (`auth.token`) and single-level wildcards
  * (`*.password`) to match fields at any nesting level. Always deep-clones
- * before mutating — the original object is never modified.
+ * before mutating - the original object is never modified.
  *
  * @module redact
  */

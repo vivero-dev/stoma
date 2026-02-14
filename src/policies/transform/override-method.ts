@@ -22,7 +22,7 @@ export interface OverrideMethodConfig extends PolicyConfig {
 /**
  * Override the HTTP method of a POST request via a header.
  *
- * Only applies to POST requests — the industry-standard approach for
+ * Only applies to POST requests - the industry-standard approach for
  * tunneling other methods through POST. Non-POST requests with the
  * override header are ignored.
  *

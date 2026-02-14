@@ -247,7 +247,7 @@ describe("retry", () => {
 
     await app.request("/test");
 
-    // globalThis.fetch should still be our test mock — the retry policy
+    // globalThis.fetch should still be our test mock - the retry policy
     // never touches globalThis.fetch
     expect(globalThis.fetch).toBe(mock);
   });

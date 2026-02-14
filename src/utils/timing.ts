@@ -9,7 +9,7 @@
  * execution order.
  *
  * `policiesToMiddleware()` records inclusive wall-clock time for each
- * policy — meaning an outer policy's duration includes all inner
+ * policy - meaning an outer policy's duration includes all inner
  * policies plus the upstream. The timings array is ordered
  * innermost-first (the innermost middleware finishes first and pushes
  * its timing before outer ones).

@@ -7,14 +7,14 @@ title: "retry"
 
 > **retry**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/resilience/retry.ts:86](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/resilience/retry.ts#L86)
+Defined in: [src/policies/resilience/retry.ts:86](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/resilience/retry.ts#L86)
 
 Retry failed upstream calls with configurable backoff.
 
 After `next()` completes, checks the response status against `retryOn`
 codes. If a retry is warranted and a `_proxyRequest` is available on the
 context (set by `createUrlUpstream()` in `gateway.ts`), the policy clones
-the stored request and calls `fetch()` directly — fully concurrency-safe
+the stored request and calls `fetch()` directly - fully concurrency-safe
 with no `globalThis.fetch` patching.
 
 For handler-based or service-binding upstreams (no `_proxyRequest`), the

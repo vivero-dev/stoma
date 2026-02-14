@@ -25,7 +25,7 @@ export interface AssignMetricsConfig extends PolicyConfig {
  * `c.get("_metricsTags")`. The {@link metricsReporter} policy (or any custom
  * observer) can read these tags to enrich collected metrics.
  *
- * @param config - Must include `tags` — a record of tag names to values or resolver functions.
+ * @param config - Must include `tags` - a record of tag names to values or resolver functions.
  * @returns A {@link Policy} at priority 0 (OBSERVABILITY).
  *
  * @example

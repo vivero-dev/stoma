@@ -6,7 +6,7 @@
  * from KV, environment variables, or external sources).
  *
  * **Scope**: Validates the structural shape of `GatewayConfig` (routes, upstream
- * types, methods, admin config). Individual policy configs are **not** validated —
+ * types, methods, admin config). Individual policy configs are **not** validated -
  * each policy validates its own config internally via `resolveConfig()`. This
  * means `validateConfig()` catches structural misconfigurations (missing routes,
  * invalid upstream type) but won't catch typos in policy-specific options.
@@ -26,7 +26,7 @@ import type { GatewayConfig } from "../core/types";
 /**
  * Validates the Policy shape (name + handler + priority).
  *
- * This only checks that a policy _looks_ like a Policy — it does not validate
+ * This only checks that a policy _looks_ like a Policy - it does not validate
  * the policy's own config options. Policy-specific validation happens inside
  * each policy factory via `resolveConfig()` at construction time.
  */
@@ -135,7 +135,7 @@ const GatewayConfigSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
-// Exports — schemas
+// Exports - schemas
 // ---------------------------------------------------------------------------
 
 export {

@@ -397,7 +397,7 @@ describe("jwtAuth", () => {
 
     it("should reject HMAC token with unsupported algorithm (e.g. RS256 against secret)", async () => {
       const app = makeApp({ secret: TEST_SECRET });
-      // Craft a token claiming RS256 but signed with HMAC — should be rejected
+      // Craft a token claiming RS256 but signed with HMAC - should be rejected
       // because hmacAlgorithm() only accepts HS256/384/512
       const header = base64UrlEncode(
         JSON.stringify({ alg: "RS256", typ: "JWT" })

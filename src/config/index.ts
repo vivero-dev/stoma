@@ -2,7 +2,7 @@
  * Configuration types and optional Zod validation for stoma gateway configs.
  *
  * Import from `@homegrower-club/stoma/config` for gateway configuration types
- * and runtime validation utilities. The Zod schemas are **optional** — they
+ * and runtime validation utilities. The Zod schemas are **optional** - they
  * require the `zod` peer dependency. Consumers who only use the TypeScript
  * types never need to install Zod.
  *

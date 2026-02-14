@@ -62,7 +62,7 @@ function createStore() {
 }
 
 /**
- * Hono doesn't expose .head() — use only methods Hono supports as direct
+ * Hono doesn't expose .head() - use only methods Hono supports as direct
  * method calls to avoid "app[m] is not a function" when the gateway
  * registers routes with its default full method list.
  */
@@ -90,7 +90,7 @@ function handlerUpstream(body: unknown, status = 200) {
 // Full lifecycle tests
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — full lifecycle", () => {
+describe("Gateway integration - full lifecycle", () => {
   it("should route requests to correct handler based on path", async () => {
     const gw = createGateway({
       routes: [
@@ -216,7 +216,7 @@ describe("Gateway integration — full lifecycle", () => {
 // Policy chain execution order
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — policy chain execution order", () => {
+describe("Gateway integration - policy chain execution order", () => {
   it("should execute global policies before route policies", async () => {
     const executionOrder: string[] = [];
 
@@ -396,7 +396,7 @@ describe("Gateway integration — policy chain execution order", () => {
 // Auth + rate limit combined
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — auth + rate limit combined", () => {
+describe("Gateway integration - auth + rate limit combined", () => {
   it("should reject unauthenticated requests before rate limiting", async () => {
     const store = createStore();
     const gw = createGateway({
@@ -506,7 +506,7 @@ describe("Gateway integration — auth + rate limit combined", () => {
 // Multi-route gateway
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — multi-route gateway", () => {
+describe("Gateway integration - multi-route gateway", () => {
   it("should apply different policies to different routes (public vs protected)", async () => {
     const token = await createTestJwt(
       { sub: "user-1", exp: Math.floor(Date.now() / 1000) + 3600 },
@@ -628,7 +628,7 @@ describe("Gateway integration — multi-route gateway", () => {
 // Error handling end-to-end
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — error handling end-to-end", () => {
+describe("Gateway integration - error handling end-to-end", () => {
   it("should return structured JSON error for auth failure", async () => {
     const gw = createGateway({
       routes: [
@@ -785,7 +785,7 @@ describe("Gateway integration — error handling end-to-end", () => {
 // Mock upstream
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — mock upstream", () => {
+describe("Gateway integration - mock upstream", () => {
   it("should return mock response when mock policy is used", async () => {
     // Use mock as the sole handler via a handler upstream that delegates to
     // mock's handler directly, since mock returns a Response without calling
@@ -841,7 +841,7 @@ describe("Gateway integration — mock upstream", () => {
 // Handler upstream
 // ---------------------------------------------------------------------------
 
-describe("Gateway integration — handler upstream", () => {
+describe("Gateway integration - handler upstream", () => {
   it("should pass Hono context to handler upstream", async () => {
     const gw = createGateway({
       routes: [

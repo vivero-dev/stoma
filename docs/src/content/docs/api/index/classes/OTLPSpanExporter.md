@@ -5,13 +5,13 @@ prev: false
 title: "OTLPSpanExporter"
 ---
 
-Defined in: [src/observability/tracing.ts:284](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L284)
+Defined in: [src/observability/tracing.ts:284](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L284)
 
 OTLP/HTTP JSON span exporter.
 
 Ships spans to an OpenTelemetry Collector (or compatible endpoint)
 using `fetch()` with the OTLP JSON encoding. Designed for edge
-runtimes — no gRPC, no protobuf, no Node.js dependencies.
+runtimes - no gRPC, no protobuf, no Node.js dependencies.
 
 Export calls should be dispatched via `waitUntil()` so they do not
 block the response path.
@@ -26,7 +26,7 @@ block the response path.
 
 > **new OTLPSpanExporter**(`config`): `OTLPSpanExporter`
 
-Defined in: [src/observability/tracing.ts:291](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L291)
+Defined in: [src/observability/tracing.ts:291](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L291)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [src/observability/tracing.ts:291](https://github.com/HomeGrower-clu
 
 > **export**(`spans`): `Promise`\<`void`\>
 
-Defined in: [src/observability/tracing.ts:305](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L305)
+Defined in: [src/observability/tracing.ts:305](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L305)
 
 #### Parameters
 

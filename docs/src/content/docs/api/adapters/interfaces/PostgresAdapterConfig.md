@@ -5,9 +5,9 @@ prev: false
 title: "PostgresAdapterConfig"
 ---
 
-Defined in: [src/adapters/postgres.ts:37](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L37)
+Defined in: [src/adapters/postgres.ts:37](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L37)
 
-Config accepted by `postgresAdapter()` — client, table prefix, store toggles.
+Config accepted by `postgresAdapter()` - client, table prefix, store toggles.
 
 ## Properties
 
@@ -15,7 +15,7 @@ Config accepted by `postgresAdapter()` — client, table prefix, store toggles.
 
 > **client**: [`PostgresClient`](/api/adapters/interfaces/postgresclient/)
 
-Defined in: [src/adapters/postgres.ts:39](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L39)
+Defined in: [src/adapters/postgres.ts:39](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L39)
 
 PostgreSQL client instance (pg Pool, postgres.js, etc.).
 
@@ -25,7 +25,7 @@ PostgreSQL client instance (pg Pool, postgres.js, etc.).
 
 > `optional` **stores**: `object`
 
-Defined in: [src/adapters/postgres.ts:43](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L43)
+Defined in: [src/adapters/postgres.ts:43](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L43)
 
 Selectively enable/disable individual stores. All enabled by default.
 
@@ -47,7 +47,7 @@ Selectively enable/disable individual stores. All enabled by default.
 
 > `optional` **tablePrefix**: `string`
 
-Defined in: [src/adapters/postgres.ts:41](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L41)
+Defined in: [src/adapters/postgres.ts:41](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L41)
 
 Table name prefix. Default: `"stoma_"`.
 
@@ -57,7 +57,7 @@ Table name prefix. Default: `"stoma_"`.
 
 > `optional` **waitUntil**: (`promise`) => `void`
 
-Defined in: [src/adapters/postgres.ts:49](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L49)
+Defined in: [src/adapters/postgres.ts:49](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L49)
 
 Schedule background work that outlives the response.
 

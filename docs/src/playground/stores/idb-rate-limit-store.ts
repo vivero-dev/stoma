@@ -2,7 +2,7 @@
  * IndexedDB-backed rate limit store for the browser playground.
  *
  * Persists rate limit counters across service worker restarts using IndexedDB.
- * Expiry is checked on read — no background cleanup interval needed.
+ * Expiry is checked on read - no background cleanup interval needed.
  *
  * This file lives in docs/ only. It is NOT part of the Stoma library.
  */

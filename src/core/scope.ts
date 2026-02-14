@@ -1,11 +1,11 @@
 /**
- * Route scoping — group routes under a shared path prefix with shared policies.
+ * Route scoping - group routes under a shared path prefix with shared policies.
  *
  * `scope()` transforms an array of {@link RouteConfig} by prepending a path
  * prefix, prepending shared policies, and merging metadata. The output is a
  * flat `RouteConfig[]` that can be spread directly into `GatewayConfig.routes`.
  *
- * Nesting works naturally — pass the output of an inner `scope()` as the
+ * Nesting works naturally - pass the output of an inner `scope()` as the
  * `routes` of an outer `scope()`.
  *
  * @module scope

@@ -63,7 +63,7 @@ function parseTrace(res: Response): PolicyTrace | null {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("Policy Trace — integration", () => {
+describe("Policy Trace - integration", () => {
   it("should emit x-stoma-trace header when x-stoma-debug: trace is sent", async () => {
     const gw = createGateway({
       debugHeaders: true,
@@ -274,7 +274,7 @@ describe("Policy Trace — integration", () => {
 
     // Gateway handles the error via its error handler
     const trace = parseTrace(res);
-    // Trace may or may not be emitted depending on error handler behavior —
+    // Trace may or may not be emitted depending on error handler behavior -
     // if the error handler produces a response, the context injector post-next
     // phase runs and emits the trace. If not, there's no trace header.
     // With Hono's default onError, the context injector's post-next still runs.

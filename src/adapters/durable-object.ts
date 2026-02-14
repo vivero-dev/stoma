@@ -1,7 +1,7 @@
 import type { RateLimitStore } from "../policies/traffic/rate-limit";
 
 // ---------------------------------------------------------------------------
-// Durable Object class — exported for the consumer's wrangler.jsonc
+// Durable Object class - exported for the consumer's wrangler.jsonc
 // ---------------------------------------------------------------------------
 
 /**
@@ -54,7 +54,7 @@ export class RateLimiterDO implements DurableObject {
       } | null;
 
       if (stored && stored.resetAt > now) {
-        // Window still active — increment atomically
+        // Window still active - increment atomically
         const updated = { count: stored.count + 1, resetAt: stored.resetAt };
         await this.state.storage.put("counter", updated);
         return Response.json(updated);
@@ -77,7 +77,7 @@ export class RateLimiterDO implements DurableObject {
 }
 
 // ---------------------------------------------------------------------------
-// Client store — wraps the DO namespace for use with the rateLimit policy
+// Client store - wraps the DO namespace for use with the rateLimit policy
 // ---------------------------------------------------------------------------
 
 const DO_ORIGIN = "https://rate-limiter.internal";

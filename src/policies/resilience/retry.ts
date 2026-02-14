@@ -1,14 +1,14 @@
 /**
- * Retry policy — automatic retry with configurable backoff for failed upstream calls.
+ * Retry policy - automatic retry with configurable backoff for failed upstream calls.
  *
  * Retries work by inspecting the response status after `next()` completes.
  * When a retryable status code is detected and a `_proxyRequest` exists on
  * the Hono context (set by the URL upstream handler in `gateway.ts`), the
- * policy clones the stored request and re-issues it via `fetch()` directly —
+ * policy clones the stored request and re-issues it via `fetch()` directly -
  * no `globalThis.fetch` patching, fully concurrency-safe.
  *
  * For handler-based or service-binding upstreams there is no `_proxyRequest`,
- * so the retry policy is effectively a no-op — which is the correct behavior
+ * so the retry policy is effectively a no-op - which is the correct behavior
  * since those upstream types would require calling `next()` multiple times
  * (disallowed by Hono's compose model).
  *
@@ -59,7 +59,7 @@ function computeDelay(
  * After `next()` completes, checks the response status against `retryOn`
  * codes. If a retry is warranted and a `_proxyRequest` is available on the
  * context (set by `createUrlUpstream()` in `gateway.ts`), the policy clones
- * the stored request and calls `fetch()` directly — fully concurrency-safe
+ * the stored request and calls `fetch()` directly - fully concurrency-safe
  * with no `globalThis.fetch` patching.
  *
  * For handler-based or service-binding upstreams (no `_proxyRequest`), the
@@ -111,7 +111,7 @@ export function retry(config?: RetryConfig): Policy {
     await next();
 
     // Retrieve the stored proxy request (set by createUrlUpstream in gateway.ts).
-    // For handler/service-binding upstreams this is undefined — retry is a no-op.
+    // For handler/service-binding upstreams this is undefined - retry is a no-op.
     const proxyRequest = c.get("_proxyRequest") as Request | undefined;
     if (!proxyRequest) {
       return;
@@ -145,7 +145,7 @@ export function retry(config?: RetryConfig): Policy {
       try {
         retryResponse = await fetch(proxyRequest.clone());
       } catch {
-        // Network error during retry — treat as a retryable 502 so
+        // Network error during retry - treat as a retryable 502 so
         // the loop continues to the next attempt.
         debug(`retry attempt ${attempt + 1} fetch error, synthesizing 502`);
         retryResponse = new Response(null, { status: 502 });

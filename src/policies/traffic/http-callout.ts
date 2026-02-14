@@ -1,5 +1,5 @@
 /**
- * HTTP callout policy — make an external HTTP call mid-pipeline.
+ * HTTP callout policy - make an external HTTP call mid-pipeline.
  *
  * Use cases include external authorization, token exchange, data enrichment,
  * and webhook notification before proxying to the upstream service.
@@ -12,13 +12,13 @@ import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
 export interface HttpCalloutConfig extends PolicyConfig {
-  /** Target URL — static string or dynamic function. Required. */
+  /** Target URL - static string or dynamic function. Required. */
   url: string | ((c: Context) => string | Promise<string>);
   /** HTTP method. Default: "GET". */
   method?: string;
-  /** Request headers — static values or dynamic functions. */
+  /** Request headers - static values or dynamic functions. */
   headers?: Record<string, string | ((c: Context) => string | Promise<string>)>;
-  /** Request body — static or dynamic. JSON-serialized if object. */
+  /** Request body - static or dynamic. JSON-serialized if object. */
   body?: unknown | ((c: Context) => unknown | Promise<unknown>);
   /** Timeout in ms. Default: 5000. */
   timeout?: number;

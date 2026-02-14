@@ -64,7 +64,7 @@ function tagKey(tags?: Record<string, string>): string {
  * In-memory metrics collector for testing, development, and admin API.
  *
  * Accumulates counters, histograms, and gauges in plain arrays/maps.
- * Not intended for high-throughput production use — prefer shipping
+ * Not intended for high-throughput production use - prefer shipping
  * metrics to a dedicated backend for production workloads.
  */
 export class InMemoryMetricsCollector implements MetricsCollector {
@@ -163,7 +163,7 @@ export function toPrometheusText(snapshot: MetricsSnapshot): string {
     }
   }
 
-  // Histograms — emit sum and count
+  // Histograms - emit sum and count
   for (const [name, entries] of Object.entries(snapshot.histograms)) {
     lines.push(`# TYPE ${name} histogram`);
     for (const entry of entries) {

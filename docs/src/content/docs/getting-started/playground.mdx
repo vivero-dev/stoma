@@ -1,6 +1,6 @@
 ---
 title: Playground
-description: Try Stoma policies live in your browser — no server required.
+description: Try Stoma policies live in your browser - no server required.
 sidebar:
   order: 0.5
 tableOfContents: false
@@ -11,13 +11,13 @@ import Playground from "../../../components/Playground.tsx";
 
 This page runs a **fully-featured, real Stoma gateway** inside a service worker in your browser. 
 
-Every request below goes through the same policy pipeline that runs in production — rate limiting, caching, auth, timeout — all executing locally.
+Every request below goes through the same policy pipeline that runs in production - rate limiting, caching, auth, timeout - all executing locally.
 
 <Aside type="tip" title="Things to try">
-- Click **GET /echo** twice — the second response is a cache `HIT` (check the `x-cache` header)
-- Click **GET /echo** 6 times within 30 seconds — the 6th request returns `429 Too Many Requests`
-- Click **GET /protected** without a key, then **GET /protected (with key)** — see the `401` → `200` difference
-- Click **GET /slow** — the handler sleeps for 2 seconds but the timeout policy cuts it off at 1 second
+- Click **GET /echo** twice - the second response is a cache `HIT` (check the `x-cache` header)
+- Click **GET /echo** 6 times within 30 seconds - the 6th request returns `429 Too Many Requests`
+- Click **GET /protected** without a key, then **GET /protected (with key)** - see the `401` → `200` difference
+- Click **GET /slow** - the handler sleeps for 2 seconds but the timeout policy cuts it off at 1 second
 </Aside>
 
 <Playground client:load client:only="react" />

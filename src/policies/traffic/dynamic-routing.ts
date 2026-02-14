@@ -1,5 +1,5 @@
 /**
- * Dynamic routing policy — evaluate routing rules and expose match data on context.
+ * Dynamic routing policy - evaluate routing rules and expose match data on context.
  *
  * Evaluates an ordered list of routing rules against the request context.
  * The first matching rule sets context variables that downstream handlers

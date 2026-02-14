@@ -7,16 +7,16 @@ title: "mergeConfigs"
 
 > **mergeConfigs**\<`TBindings`\>(...`configs`): [`GatewayConfig`](/api/index/interfaces/gatewayconfig/)\<`TBindings`\>
 
-Defined in: [src/config/merge.ts:46](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/config/merge.ts#L46)
+Defined in: [src/config/merge.ts:46](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/config/merge.ts#L46)
 
 Merge multiple partial gateway configs into a single complete config.
 
 Merge semantics by field:
-- **routes** — concatenated (all routes from all configs, in order)
-- **policies** — deduplicated by `name` (later config wins on conflict)
-- **admin**, **debugHeaders** — shallow-merged when both are objects;
+- **routes** - concatenated (all routes from all configs, in order)
+- **policies** - deduplicated by `name` (later config wins on conflict)
+- **admin**, **debugHeaders** - shallow-merged when both are objects;
   last-defined wins when types differ (boolean vs object)
-- All other scalar fields — last-defined wins (undefined values are skipped)
+- All other scalar fields - last-defined wins (undefined values are skipped)
 
 ## Type Parameters
 

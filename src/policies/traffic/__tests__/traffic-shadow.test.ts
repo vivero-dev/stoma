@@ -73,7 +73,7 @@ describe("trafficShadow", () => {
       })
     );
 
-    // Make several requests — none should be mirrored
+    // Make several requests - none should be mirrored
     for (let i = 0; i < 10; i++) {
       await request("/test");
     }

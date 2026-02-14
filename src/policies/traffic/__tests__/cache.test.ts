@@ -324,7 +324,7 @@ describe("cache", () => {
   // VARIANT: error response caching behavior
   // =====================================================================
   // Currently the cache stores ANY status code. This means transient 500s
-  // or 503s get cached and served for the full TTL — a real production
+  // or 503s get cached and served for the full TTL - a real production
   // problem. 404s are debatable but server errors should not be cached.
 
   describe("VARIANT: error response caching", () => {
@@ -339,7 +339,7 @@ describe("cache", () => {
       expect(res2.status).toBe(500);
       expect(res2.headers.get("x-cache")).toBe("SKIP");
 
-      // The upstream should be called BOTH times — errors should not be cached
+      // The upstream should be called BOTH times - errors should not be cached
       expect(getCallCount()).toBe(2);
     });
 
@@ -427,7 +427,7 @@ describe("cache", () => {
 
       const res = await app.request("/test"); // Hono sends "GET" uppercase
       // Should this match? The current implementation compares
-      // "GET".toUpperCase() against ["get"] — this would NOT match!
+      // "GET".toUpperCase() against ["get"] - this would NOT match!
       // This is either a bug or the config should document uppercase-only.
       expect(res.headers.get("x-cache")).toBe("MISS");
     });
@@ -455,7 +455,7 @@ describe("cache", () => {
 
   describe("VARIANT: POST body cache key collision", () => {
     it("should produce different cache keys for POST requests with different bodies", async () => {
-      // BUG: The default cache key is `POST:URL` — it ignores the body.
+      // BUG: The default cache key is `POST:URL` - it ignores the body.
       // Two POST requests with different JSON bodies to the same URL
       // will get the same cached response. This is a data integrity issue.
       const app = new Hono();
@@ -522,7 +522,7 @@ describe("cache", () => {
 
       await app.request("/test");
 
-      // Exactly at TTL (10000ms) — should still be expired (> check)
+      // Exactly at TTL (10000ms) - should still be expired (> check)
       vi.advanceTimersByTime(10_001);
       const res = await app.request("/test");
       expect(res.headers.get("x-cache")).toBe("MISS");
@@ -876,7 +876,7 @@ describe("cache", () => {
       const skipped = await app.request("/test?nocache=1");
       expect(skipped.status).toBe(200);
       // When skipped, the policy doesn't run at all (withSkip bypasses it)
-      // So no x-cache header is expected — but is this correct behavior?
+      // So no x-cache header is expected - but is this correct behavior?
       // Arguably, a skipped policy should still indicate it was present.
 
       // Non-skipped request
@@ -1155,28 +1155,26 @@ describe("cache", () => {
         type: "binary",
         check: async (r: Response) => new Uint8Array(await r.arrayBuffer()),
       },
-    ])(
-      "should round-trip $type body with preserved status",
-      async ({ body, check }) => {
-        const original = new Response(body, {
-          status: 200,
-          headers: { "x-tag": "test" },
-        });
+    ])("should round-trip $type body with preserved status", async ({
+      body,
+      check,
+    }) => {
+      const original = new Response(body, {
+        status: 200,
+        headers: { "x-tag": "test" },
+      });
 
-        await store.put("rt", original, 300);
-        const cached = await store.get("rt");
+      await store.put("rt", original, 300);
+      const cached = await store.get("rt");
 
-        expect(cached).not.toBeNull();
-        expect(cached!.status).toBe(200);
-        expect(cached!.headers.get("x-tag")).toBe("test");
+      expect(cached).not.toBeNull();
+      expect(cached!.status).toBe(200);
+      expect(cached!.headers.get("x-tag")).toBe("test");
 
-        // Re-create originals for comparison (body is consumed)
-        const expected = await check(
-          new Response(body, { status: 200 })
-        );
-        const actual = await check(cached!);
-        expect(actual).toEqual(expected);
-      }
-    );
+      // Re-create originals for comparison (body is consumed)
+      const expected = await check(new Response(body, { status: 200 }));
+      const actual = await check(cached!);
+      expect(actual).toEqual(expected);
+    });
   });
 });

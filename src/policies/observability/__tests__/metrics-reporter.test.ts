@@ -179,7 +179,7 @@ describe("metricsReporter", () => {
     const app = new Hono();
     const reporter = metricsReporter({ collector });
 
-    // No context injector — context will be undefined
+    // No context injector - context will be undefined
     app.use("/*", reporter.handler);
     app.get("/test", (c) => c.json({ ok: true }));
 

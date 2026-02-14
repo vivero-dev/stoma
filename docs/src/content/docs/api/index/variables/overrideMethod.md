@@ -7,11 +7,11 @@ title: "overrideMethod"
 
 > `const` **overrideMethod**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/transform/override-method.ts:41](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/transform/override-method.ts#L41)
+Defined in: [src/policies/transform/override-method.ts:41](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/transform/override-method.ts#L41)
 
 Override the HTTP method of a POST request via a header.
 
-Only applies to POST requests — the industry-standard approach for
+Only applies to POST requests - the industry-standard approach for
 tunneling other methods through POST. Non-POST requests with the
 override header are ignored.
 

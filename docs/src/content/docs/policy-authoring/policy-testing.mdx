@@ -222,7 +222,7 @@ it("skips when skip condition returns true", async () => {
     }),
   );
 
-  // No tenant header, but policy is skipped — should pass through
+  // No tenant header, but policy is skipped - should pass through
   const res = await request("/test");
   expect(res.status).toBe(200);
 });

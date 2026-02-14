@@ -17,7 +17,7 @@ export interface ApiKeyAuthConfig extends PolicyConfig {
   headerName?: string;
   /** Query parameter name as fallback. Default: undefined (disabled) */
   queryParam?: string;
-  /** Validator function — return true if the key is valid */
+  /** Validator function - return true if the key is valid */
   validate: (key: string) => boolean | Promise<boolean>;
   /**
    * After successful validation, derive an identity string from the key

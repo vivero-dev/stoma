@@ -1,5 +1,5 @@
 /**
- * Request size limit policy — enforce maximum request body size via Content-Length.
+ * Request size limit policy - enforce maximum request body size via Content-Length.
  *
  * @module request-limit
  */

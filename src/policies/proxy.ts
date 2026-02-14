@@ -1,5 +1,5 @@
 /**
- * Proxy policy — per-route header manipulation and timeout control.
+ * Proxy policy - per-route header manipulation and timeout control.
  *
  * @module proxy
  */
@@ -28,7 +28,7 @@ export interface ProxyPolicyConfig extends PolicyConfig {
  * Use this when you need per-route header injection, header stripping, or
  * a custom timeout that wraps the upstream dispatch. The core proxy
  * forwarding (URL, Service Binding, Handler) is handled by the gateway's
- * upstream handler — this policy layers on top of it.
+ * upstream handler - this policy layers on top of it.
  *
  * `preserveHost` applies to URL upstreams, instructing the upstream handler
  * not to rewrite the Host header to the target host.
@@ -62,7 +62,7 @@ export function proxy(config?: ProxyPolicyConfig): Policy {
       c.set("_preserveHost", true);
     }
 
-    // Workers runtime has immutable Request.headers — clone into mutable copy
+    // Workers runtime has immutable Request.headers - clone into mutable copy
     if (config?.stripHeaders || config?.headers) {
       const stripHeaders = config?.stripHeaders;
       const headersToSet = config?.headers;

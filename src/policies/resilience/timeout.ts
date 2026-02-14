@@ -1,5 +1,5 @@
 /**
- * Timeout policy — enforce a response time budget for downstream handlers.
+ * Timeout policy - enforce a response time budget for downstream handlers.
  *
  * @module timeout
  */

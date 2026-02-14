@@ -36,7 +36,7 @@ export interface CacheStore {
   put(key: string, response: Response, ttlSeconds: number): Promise<void>;
   /** Delete a cached entry. Returns true if something was removed. */
   delete(key: string): Promise<boolean>;
-  /** Optional cleanup — clear expired entries, release resources. */
+  /** Optional cleanup - clear expired entries, release resources. */
   destroy?(): void;
 }
 
@@ -177,13 +177,13 @@ export interface CacheConfig extends PolicyConfig {
  * Cache upstream responses to reduce latency and load.
  *
  * Sets a cache status header on **every** response:
- * - `HIT` — served from cache
- * - `MISS` — fetched from upstream, now cached
- * - `BYPASS` — upstream Cache-Control directive prevented caching
- * - `SKIP` — not eligible for caching (wrong method or server error status)
+ * - `HIT` - served from cache
+ * - `MISS` - fetched from upstream, now cached
+ * - `BYPASS` - upstream Cache-Control directive prevented caching
+ * - `SKIP` - not eligible for caching (wrong method or server error status)
  *
  * Server error responses (5xx) are never cached. Store failures degrade
- * gracefully via {@link safeCall} — a broken cache store never crashes the
+ * gracefully via {@link safeCall} - a broken cache store never crashes the
  * request.
  *
  * For methods with a request body (POST, PUT, PATCH), the default cache key
@@ -251,7 +251,7 @@ export function cache(config?: CacheConfig): Policy {
           key += `|body:${hashHex}`;
         }
       } catch {
-        // Body already consumed or unreadable — use URL-only key
+        // Body already consumed or unreadable - use URL-only key
       }
     }
 
@@ -268,7 +268,7 @@ export function cache(config?: CacheConfig): Policy {
     const debug = policyDebug(c, "cache");
     const trace = policyTrace(c, "cache");
 
-    // Non-cacheable method — pass through with SKIP status
+    // Non-cacheable method - pass through with SKIP status
     if (!normalizedMethods.includes(c.req.method.toUpperCase())) {
       trace("SKIP", { method: c.req.method });
       await next();

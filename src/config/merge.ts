@@ -32,11 +32,11 @@ import type { Policy } from "../policies/types";
  * Merge multiple partial gateway configs into a single complete config.
  *
  * Merge semantics by field:
- * - **routes** — concatenated (all routes from all configs, in order)
- * - **policies** — deduplicated by `name` (later config wins on conflict)
- * - **admin**, **debugHeaders** — shallow-merged when both are objects;
+ * - **routes** - concatenated (all routes from all configs, in order)
+ * - **policies** - deduplicated by `name` (later config wins on conflict)
+ * - **admin**, **debugHeaders** - shallow-merged when both are objects;
  *   last-defined wins when types differ (boolean vs object)
- * - All other scalar fields — last-defined wins (undefined values are skipped)
+ * - All other scalar fields - last-defined wins (undefined values are skipped)
  *
  * @typeParam TBindings - Worker bindings type, propagated to routes.
  * @param configs - Partial configs to merge (left to right, later wins).
@@ -49,7 +49,7 @@ export function mergeConfigs<TBindings = Record<string, unknown>>(
   const mergedRoutes: GatewayConfig<TBindings>["routes"] = [];
   const policyMap = new Map<string, Policy>();
 
-  // Scalar fields — last-defined wins
+  // Scalar fields - last-defined wins
   let name: GatewayConfig<TBindings>["name"];
   let basePath: GatewayConfig<TBindings>["basePath"];
   let debug: GatewayConfig<TBindings>["debug"];
@@ -60,7 +60,7 @@ export function mergeConfigs<TBindings = Record<string, unknown>>(
   let onError: GatewayConfig<TBindings>["onError"];
   let adapter: GatewayConfig<TBindings>["adapter"];
 
-  // Object/boolean union fields — shallow-merge when both objects
+  // Object/boolean union fields - shallow-merge when both objects
   let admin: GatewayConfig<TBindings>["admin"];
   let debugHeaders: GatewayConfig<TBindings>["debugHeaders"];
 

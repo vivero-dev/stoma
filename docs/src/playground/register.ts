@@ -97,7 +97,7 @@ export async function registerPlaygroundSW(): Promise<ServiceWorkerRegistration>
 
   // Wait until the SW is both activated AND controlling this page.
   // `navigator.serviceWorker.ready` resolves when a SW is active for
-  // this scope. We also check `.controller` — the SW only intercepts
+  // this scope. We also check `.controller` - the SW only intercepts
   // fetches once it controls the page (after `clients.claim()`).
   await navigator.serviceWorker.ready;
 
@@ -173,7 +173,7 @@ export async function sendPlaygroundRequest(
     try {
       trace = JSON.parse(traceHeader) as PlaygroundTrace;
     } catch {
-      // Malformed trace — ignore
+      // Malformed trace - ignore
     }
   }
 

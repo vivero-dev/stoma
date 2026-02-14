@@ -5,7 +5,7 @@ prev: false
 title: "RedisCircuitBreakerStore"
 ---
 
-Defined in: [src/adapters/redis.ts:187](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L187)
+Defined in: [src/adapters/redis.ts:187](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L187)
 
 Circuit breaker state store backed by Redis JSON strings.
 
@@ -19,7 +19,7 @@ Circuit breaker state store backed by Redis JSON strings.
 
 > **new RedisCircuitBreakerStore**(`client`, `prefix`, `setWithTTL`): `RedisCircuitBreakerStore`
 
-Defined in: [src/adapters/redis.ts:188](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L188)
+Defined in: [src/adapters/redis.ts:188](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L188)
 
 #### Parameters
 
@@ -45,7 +45,7 @@ Defined in: [src/adapters/redis.ts:188](https://github.com/HomeGrower-club/stoma
 
 > **getState**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/redis.ts:222](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L222)
+Defined in: [src/adapters/redis.ts:222](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L222)
 
 Read the current snapshot for a circuit key.
 
@@ -69,7 +69,7 @@ Read the current snapshot for a circuit key.
 
 > **recordFailure**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/redis.ts:233](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L233)
+Defined in: [src/adapters/redis.ts:233](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L233)
 
 Record a failed request and return the updated snapshot.
 
@@ -93,7 +93,7 @@ Record a failed request and return the updated snapshot.
 
 > **recordSuccess**(`key`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/redis.ts:226](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L226)
+Defined in: [src/adapters/redis.ts:226](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L226)
 
 Record a successful request and return the updated snapshot.
 
@@ -117,7 +117,7 @@ Record a successful request and return the updated snapshot.
 
 > **reset**(`key`): `Promise`\<`void`\>
 
-Defined in: [src/adapters/redis.ts:259](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L259)
+Defined in: [src/adapters/redis.ts:259](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L259)
 
 Fully reset a circuit, removing all state.
 
@@ -141,7 +141,7 @@ Fully reset a circuit, removing all state.
 
 > **transition**(`key`, `to`): `Promise`\<[`CircuitBreakerSnapshot`](/api/index/interfaces/circuitbreakersnapshot/)\>
 
-Defined in: [src/adapters/redis.ts:241](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/redis.ts#L241)
+Defined in: [src/adapters/redis.ts:241](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/redis.ts#L241)
 
 Transition the circuit to a new state and return the updated snapshot.
 

@@ -5,7 +5,7 @@ prev: false
 title: "SpanEvent"
 ---
 
-Defined in: [src/observability/tracing.ts:36](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L36)
+Defined in: [src/observability/tracing.ts:36](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L36)
 
 A timestamped event recorded during a span's lifetime.
 
@@ -15,7 +15,7 @@ A timestamped event recorded during a span's lifetime.
 
 > `optional` **attributes**: `Record`\<`string`, `string` \| `number` \| `boolean`\>
 
-Defined in: [src/observability/tracing.ts:39](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L39)
+Defined in: [src/observability/tracing.ts:39](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L39)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/observability/tracing.ts:39](https://github.com/HomeGrower-club
 
 > **name**: `string`
 
-Defined in: [src/observability/tracing.ts:37](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L37)
+Defined in: [src/observability/tracing.ts:37](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L37)
 
 ***
 
@@ -31,4 +31,4 @@ Defined in: [src/observability/tracing.ts:37](https://github.com/HomeGrower-club
 
 > **timeMs**: `number`
 
-Defined in: [src/observability/tracing.ts:38](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/observability/tracing.ts#L38)
+Defined in: [src/observability/tracing.ts:38](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/observability/tracing.ts#L38)

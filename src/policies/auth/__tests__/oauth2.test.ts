@@ -225,13 +225,13 @@ describe("oauth2", () => {
       })
     );
 
-    // First request — calls fetch
+    // First request - calls fetch
     const res1 = await request("/test", {
       headers: { authorization: "Bearer cached-token" },
     });
     expect(res1.status).toBe(200);
 
-    // Second request — should use cache
+    // Second request - should use cache
     const res2 = await request("/test", {
       headers: { authorization: "Bearer cached-token" },
     });
@@ -274,7 +274,7 @@ describe("oauth2", () => {
         skip: () => true,
       })
     );
-    // No token — would normally 401, but skip bypasses
+    // No token - would normally 401, but skip bypasses
     const res = await request("/test");
     expect(res.status).toBe(200);
   });

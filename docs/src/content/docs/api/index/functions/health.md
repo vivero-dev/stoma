@@ -7,17 +7,17 @@ title: "health"
 
 > **health**\<`TBindings`\>(`config?`): [`RouteConfig`](/api/index/interfaces/routeconfig/)\<`TBindings`\>
 
-Defined in: [src/core/health.ts:76](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/core/health.ts#L76)
+Defined in: [src/core/health.ts:76](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/core/health.ts#L76)
 
 Create a health check route for liveness and upstream probing.
 
-Returns a [RouteConfig](/api/index/interfaces/routeconfig/) (not a Policy) — add it directly to the
+Returns a [RouteConfig](/api/index/interfaces/routeconfig/) (not a Policy) - add it directly to the
 gateway's `routes` array. Without upstream probes, returns a simple
 `{ status: "healthy" }` response. With probes, performs concurrent HEAD
 requests (5s timeout each) and reports aggregate status:
-- `"healthy"` — all probes passed
-- `"degraded"` — some probes failed
-- `"unhealthy"` — all probes failed (returns 503)
+- `"healthy"` - all probes passed
+- `"degraded"` - some probes failed
+- `"unhealthy"` - all probes failed (returns 503)
 
 ## Type Parameters
 

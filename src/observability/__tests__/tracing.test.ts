@@ -82,7 +82,7 @@ describe("SpanBuilder", () => {
       .setAttribute("http.status_code", 200)
       .setAttribute("cache.hit", true);
 
-    // Chainable — returns same instance
+    // Chainable - returns same instance
     expect(result).toBe(builder);
 
     const span = builder.end();

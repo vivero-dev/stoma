@@ -36,9 +36,9 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
   /**
    * Enable internal debug logging for gateway operators.
    *
-   * - `true` — log all namespaces
-   * - `false` / `undefined` — disabled (default, zero overhead)
-   * - `string` — comma-separated glob patterns to filter namespaces
+   * - `true` - log all namespaces
+   * - `false` / `undefined` - disabled (default, zero overhead)
+   * - `string` - comma-separated glob patterns to filter namespaces
    *
    * Namespaces: `stoma:gateway`, `stoma:pipeline`, `stoma:upstream`,
    * `stoma:policy:*` (e.g. `stoma:policy:cache`, `stoma:policy:jwt-auth`)
@@ -74,9 +74,9 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
   /**
    * Admin introspection API. Exposes `___gateway/*` routes for operational visibility.
    *
-   * - `true` — enable with defaults (no auth)
-   * - `AdminConfig` object — full customization
-   * - `false` / `undefined` — disabled (default)
+   * - `true` - enable with defaults (no auth)
+   * - `AdminConfig` object - full customization
+   * - `false` / `undefined` - disabled (default)
    */
   admin?: boolean | AdminConfig;
   /**
@@ -84,12 +84,12 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
    *
    * When enabled, clients can send an `x-stoma-debug` request header listing
    * the debug values they want returned as response headers. Policies contribute
-   * debug data via {@link setDebugHeader} from the SDK — only requested values
+   * debug data via {@link setDebugHeader} from the SDK - only requested values
    * are included in the response.
    *
-   * - `true` — enable with defaults
-   * - `DebugHeadersConfig` — full customization (request header name, allowlist)
-   * - `false` / `undefined` — disabled (default, zero overhead)
+   * - `true` - enable with defaults
+   * - `DebugHeadersConfig` - full customization (request header name, allowlist)
+   * - `false` / `undefined` - disabled (default, zero overhead)
    *
    * @example
    * ```
@@ -110,7 +110,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
    * INTERNAL child spans per policy, and CLIENT child spans for upstream
    * calls. Spans are exported asynchronously via `adapter.waitUntil()`.
    *
-   * Zero overhead when not configured — no span objects are allocated.
+   * Zero overhead when not configured - no span objects are allocated.
    *
    * @example
    * ```ts
@@ -166,7 +166,7 @@ export interface PipelineConfig<TBindings = Record<string, unknown>> {
 }
 
 /**
- * Upstream target — where the request is forwarded.
+ * Upstream target - where the request is forwarded.
  *
  * @typeParam TBindings - Worker bindings type, constrains {@link ServiceBindingUpstream.service}.
  */
@@ -231,7 +231,7 @@ export interface AdminConfig {
   enabled: boolean;
   /** Path prefix for admin routes. Default: `"___gateway"`. */
   prefix?: string;
-  /** Optional auth check — return `false` to deny access. */
+  /** Optional auth check - return `false` to deny access. */
   auth?: (c: Context) => boolean | Promise<boolean>;
   /** MetricsCollector instance for the `/metrics` endpoint. */
   metrics?: MetricsCollector;
@@ -258,7 +258,7 @@ export interface GatewayRegistry {
   gatewayName: string;
 }
 
-/** The instantiated gateway — a configured Hono app */
+/** The instantiated gateway - a configured Hono app */
 export interface GatewayInstance {
   /** The underlying Hono app, ready to be exported as a Worker */
   app: Hono;

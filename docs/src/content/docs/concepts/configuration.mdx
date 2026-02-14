@@ -365,13 +365,13 @@ your application routes and provide runtime insight into the gateway's state.
 ### Enabling admin routes
 
 ```typescript
-// Simple — no auth
+// Simple - no auth
 const gateway = createGateway({
   admin: true,
   // ...
 });
 
-// Full config — with auth and metrics
+// Full config - with auth and metrics
 const gateway = createGateway({
   admin: {
     enabled: true,

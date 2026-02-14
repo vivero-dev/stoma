@@ -14,7 +14,7 @@ export interface RateLimitConfig extends PolicyConfig {
   max: number;
   /** Time window in seconds. Default: 60. */
   windowSeconds?: number;
-  /** Key extractor — determines the rate limit bucket. Default: client IP. */
+  /** Key extractor - determines the rate limit bucket. Default: client IP. */
   keyBy?: (c: Context) => string | Promise<string>;
   /** Storage backend for counters */
   store?: RateLimitStore;
@@ -50,13 +50,13 @@ export interface InMemoryRateLimitStoreOptions {
  *
  * The store is bounded by `maxKeys` (default 100,000) to prevent unbounded
  * memory growth from unique rate-limit keys. When the store reaches capacity
- * and no expired entries can be evicted, it **fails closed** — returning
+ * and no expired entries can be evicted, it **fails closed** - returning
  * `MAX_SAFE_INTEGER` as the count to trigger rate limiting. This is an
  * intentional security design: memory safety takes priority over availability.
  *
  * Note the distinction between store-level and policy-level failure modes:
- * - **Store at capacity** (this class): fail-closed — reject the request
- * - **Store throws/times out** (policy handler via `safeCall`): fail-open — allow the request
+ * - **Store at capacity** (this class): fail-closed - reject the request
+ * - **Store throws/times out** (policy handler via `safeCall`): fail-open - allow the request
  */
 export class InMemoryRateLimitStore implements RateLimitStore {
   private counters = new Map<string, { count: number; resetAt: number }>();
@@ -91,7 +91,7 @@ export class InMemoryRateLimitStore implements RateLimitStore {
    * When the store reaches `maxKeys` capacity and no expired entries can
    * be evicted, returns `{ count: MAX_SAFE_INTEGER, resetAt }` to trigger
    * rate limiting (fail-closed). This prevents unbounded memory growth at
-   * the cost of potentially rejecting legitimate requests — an intentional
+   * the cost of potentially rejecting legitimate requests - an intentional
    * security trade-off where memory safety takes priority over availability.
    */
   async increment(
@@ -210,7 +210,7 @@ export const rateLimit = /*#__PURE__*/ definePolicy<RateLimitConfig>({
       key = extractClientIp(c.req.raw.headers, { ipHeaders: config.ipHeaders });
     }
 
-    // Resilient to store failures — fail-open (allow the request) if the
+    // Resilient to store failures - fail-open (allow the request) if the
     // store is unreachable, but skip rate-limit headers since we have no data.
     const result = await safeCall(
       () => store.increment(key, config.windowSeconds!),

@@ -1,9 +1,9 @@
 /**
- * Policy trace — structured per-policy trace entries for deep debugging.
+ * Policy trace - structured per-policy trace entries for deep debugging.
  *
  * Provides a zero-overhead reporter API (`TraceReporter`) that policies
  * call to record what they did. When tracing is not active, the reporter
- * is a no-op constant — no allocations, no Map lookups.
+ * is a no-op constant - no allocations, no Map lookups.
  *
  * @module trace
  */
@@ -60,7 +60,7 @@ export interface PolicyTrace {
 // ---------------------------------------------------------------------------
 
 /**
- * A trace reporter function. Always callable — no-op when tracing is inactive.
+ * A trace reporter function. Always callable - no-op when tracing is inactive.
  *
  * @param action - Human-readable action string (e.g. `"HIT"`, `"allowed"`).
  * @param data   - Optional structured context data.
@@ -70,7 +70,7 @@ export type TraceReporter = (
   data?: Record<string, unknown>
 ) => void;
 
-/** Shared no-op reporter instance — zero overhead when tracing is off. */
+/** Shared no-op reporter instance - zero overhead when tracing is off. */
 export const noopTraceReporter: TraceReporter = () => {};
 
 /**
@@ -78,11 +78,11 @@ export const noopTraceReporter: TraceReporter = () => {};
  *
  * When tracing is active (`_stomaTraceRequested` is truthy), returns a
  * function that stores the detail on the context. When inactive, returns
- * {@link noopTraceReporter} — a no-op with zero overhead.
+ * {@link noopTraceReporter} - a no-op with zero overhead.
  *
  * @param c          - Hono request context.
  * @param policyName - Policy name used as the Map key.
- * @returns A {@link TraceReporter} — always callable.
+ * @returns A {@link TraceReporter} - always callable.
  */
 export function policyTrace(c: Context, policyName: string): TraceReporter {
   if (!c.get(TRACE_REQUESTED_KEY)) return noopTraceReporter;

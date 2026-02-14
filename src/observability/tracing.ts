@@ -2,7 +2,7 @@
  * Lightweight OpenTelemetry-compatible tracing for edge runtimes.
  *
  * Provides span creation, OTLP/HTTP JSON export via `fetch()`, and
- * head-based sampling — all without any runtime dependencies beyond
+ * head-based sampling - all without any runtime dependencies beyond
  * the Web Platform APIs available in Cloudflare Workers.
  *
  * Follows the OTel data model but uses own lightweight types to avoid
@@ -83,7 +83,7 @@ export const SemConv = {
 // ---------------------------------------------------------------------------
 
 /**
- * Mutable span builder — accumulates attributes, events, and status
+ * Mutable span builder - accumulates attributes, events, and status
  * during a request lifecycle. Call {@link end} to produce an immutable
  * {@link ReadableSpan}.
  */
@@ -276,7 +276,7 @@ function toOtlpPayload(
  *
  * Ships spans to an OpenTelemetry Collector (or compatible endpoint)
  * using `fetch()` with the OTLP JSON encoding. Designed for edge
- * runtimes — no gRPC, no protobuf, no Node.js dependencies.
+ * runtimes - no gRPC, no protobuf, no Node.js dependencies.
  *
  * Export calls should be dispatched via `waitUntil()` so they do not
  * block the response path.

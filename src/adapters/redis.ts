@@ -1,5 +1,5 @@
 /**
- * Redis-backed adapter for stoma — production-ready stores for Node.js, Bun, and Deno.
+ * Redis-backed adapter for stoma - production-ready stores for Node.js, Bun, and Deno.
  *
  * Zero dependencies: define a minimal {@link RedisClient} interface that any Redis
  * library (ioredis, node-redis, etc.) satisfies, then pass it to {@link redisAdapter}.
@@ -20,7 +20,7 @@ import type { GatewayAdapter } from "./types";
 // ---------------------------------------------------------------------------
 
 /**
- * Minimal Redis client interface — satisfied by ioredis, node-redis v4, and most
+ * Minimal Redis client interface - satisfied by ioredis, node-redis v4, and most
  * Redis libraries. Only the methods stoma actually calls are required.
  */
 export interface RedisClient {
@@ -220,7 +220,7 @@ export class RedisCircuitBreakerStore implements CircuitBreakerStore {
   }
 
   async getState(key: string): Promise<CircuitBreakerSnapshot> {
-    return { ...await this.load(key) };
+    return { ...(await this.load(key)) };
   }
 
   async recordSuccess(key: string): Promise<CircuitBreakerSnapshot> {

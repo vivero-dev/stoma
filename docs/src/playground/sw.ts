@@ -22,7 +22,7 @@ declare const self: ServiceWorkerGlobalScope;
 // undefined on subsequent startups.
 //
 // The fetch handler awaits this promise before dispatching, so requests
-// arriving during init just wait — they're never dropped.
+// arriving during init just wait - they're never dropped.
 // ---------------------------------------------------------------------------
 const gatewayPromise = createPlaygroundGateway();
 
@@ -41,12 +41,12 @@ self.addEventListener("activate", (event) => {
 });
 
 // ---------------------------------------------------------------------------
-// Fetch handler — only intercepts /playground/ requests
+// Fetch handler - only intercepts /playground/ requests
 // ---------------------------------------------------------------------------
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Only handle playground API paths — let everything else pass through
+  // Only handle playground API paths - let everything else pass through
   if (!url.pathname.startsWith("/playground/")) {
     return;
   }

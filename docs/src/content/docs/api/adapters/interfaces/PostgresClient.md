@@ -5,9 +5,9 @@ prev: false
 title: "PostgresClient"
 ---
 
-Defined in: [src/adapters/postgres.ts:26](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L26)
+Defined in: [src/adapters/postgres.ts:26](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L26)
 
-Minimal PostgreSQL client interface — satisfied by `pg`, `postgres.js`, and most
+Minimal PostgreSQL client interface - satisfied by `pg`, `postgres.js`, and most
 Postgres libraries. Only a single `query` method is required.
 
 ## Methods
@@ -16,7 +16,7 @@ Postgres libraries. Only a single `query` method is required.
 
 > **query**(`text`, `params?`): `Promise`\<\{ `rows`: `Record`\<`string`, `unknown`\>[]; \}\>
 
-Defined in: [src/adapters/postgres.ts:27](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/adapters/postgres.ts#L27)
+Defined in: [src/adapters/postgres.ts:27](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/adapters/postgres.ts#L27)
 
 #### Parameters
 

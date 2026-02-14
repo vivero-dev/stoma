@@ -1,5 +1,5 @@
 /**
- * Latency injection policy — simulate network delays for chaos testing.
+ * Latency injection policy - simulate network delays for chaos testing.
  *
  * @module latency-injection
  */
@@ -35,30 +35,31 @@ export interface LatencyInjectionConfig extends PolicyConfig {
  * latencyInjection({ delayMs: 200, jitter: 0.5, probability: 0.3 });
  * ```
  */
-export const latencyInjection = /*#__PURE__*/ definePolicy<LatencyInjectionConfig>({
-  name: "latency-injection",
-  priority: Priority.EARLY,
-  httpOnly: true,
-  defaults: { jitter: 0, probability: 1 },
-  handler: async (_c, next, { config, debug }) => {
-    // Roll against probability
-    if (Math.random() >= config.probability!) {
-      debug("skipping injection (probability miss)");
+export const latencyInjection =
+  /*#__PURE__*/ definePolicy<LatencyInjectionConfig>({
+    name: "latency-injection",
+    priority: Priority.EARLY,
+    httpOnly: true,
+    defaults: { jitter: 0, probability: 1 },
+    handler: async (_c, next, { config, debug }) => {
+      // Roll against probability
+      if (Math.random() >= config.probability!) {
+        debug("skipping injection (probability miss)");
+        await next();
+        return;
+      }
+
+      // Compute delay with optional jitter
+      let delay = config.delayMs;
+      if (config.jitter! > 0) {
+        delay += (Math.random() * 2 - 1) * config.jitter! * config.delayMs;
+      }
+      // Clamp to minimum 0
+      delay = Math.max(0, delay);
+
+      debug(`injecting ${delay.toFixed(0)}ms latency`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
       await next();
-      return;
-    }
-
-    // Compute delay with optional jitter
-    let delay = config.delayMs;
-    if (config.jitter! > 0) {
-      delay += (Math.random() * 2 - 1) * config.jitter! * config.delayMs;
-    }
-    // Clamp to minimum 0
-    delay = Math.max(0, delay);
-
-    debug(`injecting ${delay.toFixed(0)}ms latency`);
-    await new Promise((resolve) => setTimeout(resolve, delay));
-
-    await next();
-  },
-});
+    },
+  });

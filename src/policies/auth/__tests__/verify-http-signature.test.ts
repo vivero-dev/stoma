@@ -297,7 +297,7 @@ describe("verifyHttpSignature", () => {
       verifyHttpSignature(makeConfig({ skip: () => true }))
     );
 
-    // No signature headers at all — should pass because skipped
+    // No signature headers at all - should pass because skipped
     const res = await request("/test");
     expect(res.status).toBe(200);
   });

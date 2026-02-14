@@ -1,5 +1,5 @@
 /**
- * JWS verification policy — verifies JSON Web Signature compact serialization.
+ * JWS verification policy - verifies JSON Web Signature compact serialization.
  *
  * Supports both embedded and detached payloads, HMAC (HS256/384/512) and
  * RSA (RS256/384/512) via JWKS endpoints.
@@ -56,7 +56,7 @@ export { clearJwksCache as clearJwsJwksCache } from "./crypto";
  *
  * The `none` algorithm is always rejected to prevent signature bypass attacks.
  * Config validation (`secret` or `jwksUrl` required) is performed at construction
- * time — a missing config throws immediately, not on first request.
+ * time - a missing config throws immediately, not on first request.
  *
  * @example
  * ```ts
@@ -65,7 +65,7 @@ export { clearJwksCache as clearJwsJwksCache } from "./crypto";
  * // HMAC verification with embedded payload
  * jws({ secret: env.JWS_SECRET });
  *
- * // Detached JWS — payload comes from the request body
+ * // Detached JWS - payload comes from the request body
  * jws({ secret: env.JWS_SECRET, payloadSource: "body" });
  * ```
  */

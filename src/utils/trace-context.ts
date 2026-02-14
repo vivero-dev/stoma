@@ -10,7 +10,7 @@
 
 /** Parsed W3C traceparent header fields. */
 export interface TraceContext {
-  /** Version — always "00" for the current spec. */
+  /** Version - always "00" for the current spec. */
   version: string;
   /** 32-character lowercase hex trace ID. */
   traceId: string;

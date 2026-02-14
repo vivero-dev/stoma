@@ -7,7 +7,7 @@
  */
 
 /* =================================================================== */
-/* Root layout — full viewport                                         */
+/* Root layout - full viewport                                         */
 /* =================================================================== */
 .ed-root {
   display: flex;
@@ -121,7 +121,7 @@
   }
 }
 
-/* Left pane — Monaco editor */
+/* Left pane - Monaco editor */
 .ed-pane-left {
   display: flex;
   flex-direction: column;
@@ -136,7 +136,7 @@
   }
 }
 
-/* Right pane — request builder + response */
+/* Right pane - request builder + response */
 .ed-pane-right {
   display: flex;
   flex-direction: column;

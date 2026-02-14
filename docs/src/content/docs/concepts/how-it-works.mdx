@@ -8,7 +8,7 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-Imagine you've deployed a Stoma gateway. Now a user clicks a button in your app. Here's what happens next — and why Stoma is built the way it is.
+Imagine you've deployed a Stoma gateway. Now a user clicks a button in your app. Here's what happens next - and why Stoma is built the way it is.
 
 ## The Journey of a Request
 
@@ -24,7 +24,7 @@ Behind the scenes, your Stoma gateway springs to life.
 
 ### 1. The Gateway Receives the Call
 
-Your gateway is just a Hono app. When the request arrives, Hono's router immediately gets to work — matching the path `/api/users/123` against the routes you've defined in your `GatewayConfig`.
+Your gateway is just a Hono app. When the request arrives, Hono's router immediately gets to work - matching the path `/api/users/123` against the routes you've defined in your `GatewayConfig`.
 
 Let's say your config looks like this:
 
@@ -52,11 +52,11 @@ Before any of your policies run, Stoma creates a **gateway context**. Think of t
 
 - A unique `requestId` (so you can trace this request in logs)
 - A `startTime` (to measure how long processing takes)
-- A `traceId` (for distributed tracing — connects this request to the larger system)
+- A `traceId` (for distributed tracing - connects this request to the larger system)
 - A `spanId` (identifies this specific hop in the trace)
 - A reference to your gateway name and the matched route path
 
-This happens automatically. You don't need to write any code — every policy can access this context if it needs to.
+This happens automatically. You don't need to write any code - every policy can access this context if it needs to.
 
 <Aside type="tip">
 The context is always available via `getGatewayContext(c)` inside any policy handler.
@@ -74,7 +74,7 @@ The `jwtAuth` policy runs. It:
 2. Extracts the JWT token
 3. Verifies the signature (using either a secret for HMAC or a JWKS endpoint for RSA keys)
 4. Checks the `exp` (expiration), `iss` (issuer), and `aud` (audience) claims if configured
-5. Forwards user info to the upstream — you configured `forwardClaims` to extract the `sub` claim and set it as an `x-user-id` header
+5. Forwards user info to the upstream - you configured `forwardClaims` to extract the `sub` claim and set it as an `x-user-id` header
 
 If any of this fails? The policy throws a `GatewayError`. The gateway catches it and returns a clean JSON response:
 
@@ -108,7 +108,7 @@ If they're over the limit:
 
 Plus a `Retry-After: 45` response header.
 
-The request never reaches your upstream. This is called **short-circuiting** — a policy can stop the request early by returning a response without calling `next()`.
+The request never reaches your upstream. This is called **short-circuiting** - a policy can stop the request early by returning a response without calling `next()`.
 
 ### 4. Onward to the Upstream
 
@@ -116,14 +116,14 @@ If all policies pass, the request is forwarded to your upstream. In this case, a
 
 Stoma handles all the messy details:
 
-- **SSRF protection** — ensures the path rewrite doesn't accidentally redirect to a different domain
-- **Hop-by-hop headers** — strips `Connection`, `Keep-Alive`, and other headers that shouldn't be forwarded
-- **Trace context** — adds W3C `traceparent` headers so your upstream knows this request came through the gateway
-- **Timeout wrapping** — if your upstream is slow, the gateway won't hang forever
+- **SSRF protection** - ensures the path rewrite doesn't accidentally redirect to a different domain
+- **Hop-by-hop headers** - strips `Connection`, `Keep-Alive`, and other headers that shouldn't be forwarded
+- **Trace context** - adds W3C `traceparent` headers so your upstream knows this request came through the gateway
+- **Timeout wrapping** - if your upstream is slow, the gateway won't hang forever
 
 ### 5. The Return Journey
 
-The upstream responds. Now the response travels back through the policies in **reverse order** (the standard middleware pattern — each policy that called `next()` gets control again after the upstream responds). Policies that ran before can now modify the response.
+The upstream responds. Now the response travels back through the policies in **reverse order** (the standard middleware pattern - each policy that called `next()` gets control again after the upstream responds). Policies that ran before can now modify the response.
 
 For example, `rateLimit` sets `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers on the response. Your client knows their current quota.
 
@@ -134,7 +134,7 @@ Before the response reaches your user, the context injector adds:
 - The `x-request-id` header (so they can reference this request in support)
 - The W3C `traceparent` header (for distributed tracing)
 
-And that's it — the response is delivered.
+And that's it - the response is delivered.
 
 ---
 
@@ -148,7 +148,7 @@ Every policy is a middleware function. If you can write middleware that takes `(
 
 ### Priority Controls Order
 
-By giving policies numeric priorities, Stoma ensures authentication always runs before authorization, rate limiting always happens after auth, and caching happens at the right moment. You don't need to think about ordering — just pick the right priority tier.
+By giving policies numeric priorities, Stoma ensures authentication always runs before authorization, rate limiting always happens after auth, and caching happens at the right moment. You don't need to think about ordering - just pick the right priority tier.
 
 ### Declarative, Not Imperative
 
@@ -164,6 +164,6 @@ Your gateway is just code. No separate service to deploy, no YAML files floating
 
 Now that you understand the flow:
 
-- [Quick Start](/getting-started/quick-start/) — build your first gateway
-- [Policy System](/concepts/policies/) — deep dive into how policies work
-- [Your First Custom Policy](/policy-authoring/your-first-policy/) — build a policy from scratch
+- [Quick Start](/getting-started/quick-start/) - build your first gateway
+- [Policy System](/concepts/policies/) - deep dive into how policies work
+- [Your First Custom Policy](/policy-authoring/your-first-policy/) - build a policy from scratch

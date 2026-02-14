@@ -1,5 +1,5 @@
 /**
- * Policy barrel — re-exports all built-in policies, their config types, and the policy SDK.
+ * Policy barrel - re-exports all built-in policies, their config types, and the policy SDK.
  *
  * Import from `@homegrower-club/stoma/policies` for direct access to all policies
  * and their configuration types, or from `@homegrower-club/stoma` which re-exports
@@ -25,7 +25,7 @@ export { basicAuth } from "./auth/basic-auth";
 export { generateHttpSignature } from "./auth/generate-http-signature";
 /** Mint JWTs (HMAC or RSA) and attach to outgoing requests (priority 50). */
 export { generateJwt } from "./auth/generate-jwt";
-/** Verify JWS compact serialization signatures — embedded or detached payloads (priority 10). */
+/** Verify JWS compact serialization signatures - embedded or detached payloads (priority 10). */
 export { clearJwsJwksCache, jws } from "./auth/jws";
 /** Validate JWT bearer tokens via HMAC secret or JWKS endpoint (priority 10). */
 export { clearJwksCache, jwtAuth } from "./auth/jwt-auth";
@@ -53,7 +53,7 @@ export { interrupt } from "./traffic/interrupt";
 /** Block or allow requests by client IP address or CIDR range (priority 1). */
 export { ipFilter } from "./traffic/ip-filter";
 
-/** Enforce structural limits on JSON bodies — depth, key count, string length, array size (priority 5). */
+/** Enforce structural limits on JSON bodies - depth, key count, string length, array size (priority 5). */
 export { jsonThreatProtection } from "./traffic/json-threat-protection";
 /** Sliding-window rate limiting with pluggable counter storage (priority 20). */
 export { InMemoryRateLimitStore, rateLimit } from "./traffic/rate-limit";
@@ -79,7 +79,7 @@ export {
 export { latencyInjection } from "./resilience/latency-injection";
 /** Retry failed upstream calls with exponential or fixed backoff and jitter (priority 90). */
 export { retry } from "./resilience/retry";
-/** Enforce a response time budget — races downstream against a timer (priority 85). */
+/** Enforce a response time budget - races downstream against a timer (priority 85). */
 export { timeout } from "./resilience/timeout";
 
 // ── Transform ───────────────────────────────────────────────────────────
@@ -90,7 +90,7 @@ export { assignAttributes } from "./transform/assign-attributes";
 export { assignContent } from "./transform/assign-content";
 /** Add CORS headers to responses via Hono's built-in CORS middleware (priority 5). */
 export { cors } from "./transform/cors";
-/** Pluggable JSON body validation — wrap Zod, AJV, or any validator (priority 10). */
+/** Pluggable JSON body validation - wrap Zod, AJV, or any validator (priority 10). */
 export { jsonValidation } from "./transform/json-validation";
 /** Override the HTTP method of POST requests via a header (priority 5). */
 export { overrideMethod } from "./transform/override-method";
@@ -113,7 +113,7 @@ export { requestLog } from "./observability/request-log";
 /** Emit W3C Server-Timing and X-Response-Time response headers with per-policy breakdown (priority 1). */
 export { serverTiming } from "./observability/server-timing";
 
-// ── SDK — shared primitives for built-in and custom policies ────────────
+// ── SDK - shared primitives for built-in and custom policies ────────────
 
 export type {
   /** Declarative policy definition passed to definePolicy. */
@@ -274,7 +274,7 @@ export type {
   PolicyContext,
 } from "./types";
 
-// ── Protocol — multi-runtime types ──────────────────────────────────────
+// ── Protocol - multi-runtime types ──────────────────────────────────────
 
 export type {
   AttributeMutation,

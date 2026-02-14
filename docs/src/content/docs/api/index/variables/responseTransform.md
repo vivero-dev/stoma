@@ -7,7 +7,7 @@ title: "responseTransform"
 
 > `const` **responseTransform**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/transform/transform.ts:150](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/transform/transform.ts#L150)
+Defined in: [src/policies/transform/transform.ts:151](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/transform/transform.ts#L151)
 
 Modify response headers after the upstream service returns.
 

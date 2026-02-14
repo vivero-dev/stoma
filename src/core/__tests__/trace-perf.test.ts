@@ -6,7 +6,7 @@
  * a realistic multi-policy pipeline with and without the `x-stoma-debug:
  * trace` header and asserts the overhead stays within bounds.
  *
- * These are NOT micro-benchmarks — they run in the workerd test pool
+ * These are NOT micro-benchmarks - they run in the workerd test pool
  * alongside the rest of the test suite. They exist to catch regressions,
  * not to produce publishable numbers.
  */
@@ -92,8 +92,8 @@ async function measureMedian(
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("Policy Trace — performance", () => {
-  // Shared gateway for all perf tests — constructed once with debug + trace
+describe("Policy Trace - performance", () => {
+  // Shared gateway for all perf tests - constructed once with debug + trace
   // support enabled so the activation path depends only on the request header.
   const gw = createGateway({
     debugHeaders: true,
@@ -169,7 +169,7 @@ describe("Policy Trace — performance", () => {
       expect(res.status).toBe(200);
     }
 
-    // Compare first quartile to last quartile — latency should not grow
+    // Compare first quartile to last quartile - latency should not grow
     // over time (no memory leak / unbounded accumulation).
     const q1Slice = durations.slice(0, Math.floor(count / 4));
     const q4Slice = durations.slice(Math.floor((count * 3) / 4));
@@ -191,7 +191,7 @@ describe("Policy Trace — performance", () => {
     const traceHeader = res.headers.get("x-stoma-trace")!;
     expect(traceHeader).toBeDefined();
 
-    // Trace header size should be reasonable — under 4KB for 5 policies.
+    // Trace header size should be reasonable - under 4KB for 5 policies.
     // Large trace payloads bloat response headers and can hit header size limits.
     const byteLength = new TextEncoder().encode(traceHeader).byteLength;
     expect(byteLength).toBeLessThan(4096);

@@ -206,7 +206,7 @@ describe("rbac", () => {
         stripHeaders: false,
       })
     );
-    // No role header — would normally 403, but skip bypasses
+    // No role header - would normally 403, but skip bypasses
     const res = await request("/test");
     expect(res.status).toBe(200);
   });

@@ -22,7 +22,7 @@ export interface BasicAuthConfig extends PolicyConfig {
 }
 
 /**
- * Basic Authentication policy — validate base64-encoded credentials.
+ * Basic Authentication policy - validate base64-encoded credentials.
  *
  * Sends a `WWW-Authenticate` header on failure to prompt browser credential dialogs.
  * The realm is sanitized to prevent header injection.

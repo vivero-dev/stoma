@@ -1,13 +1,13 @@
 ---
 title: "Guide: Runtime Adapters"
-description: Choose and configure the right adapter for your runtime — Cloudflare Workers, Node.js, Bun, Deno, or bring your own stores with Redis or PostgreSQL.
+description: Choose and configure the right adapter for your runtime - Cloudflare Workers, Node.js, Bun, Deno, or bring your own stores with Redis or PostgreSQL.
 sidebar:
   order: 7
 ---
 
 import { Aside, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
-Adapters bridge Stoma's policies to your runtime's storage and background-work primitives. Rate limiting needs a counter store, circuit breaking needs state persistence, and caching needs a response store. The adapter provides all three — plus optional `waitUntil` for background work and `dispatchBinding` for service binding dispatch.
+Adapters bridge Stoma's policies to your runtime's storage and background-work primitives. Rate limiting needs a counter store, circuit breaking needs state persistence, and caching needs a response store. The adapter provides all three - plus optional `waitUntil` for background work and `dispatchBinding` for service binding dispatch.
 
 ## Quick Reference
 
@@ -56,7 +56,7 @@ The Cloudflare adapter uses platform-native primitives for each store:
 
 - **Rate limiting**: Durable Objects (strongly consistent) or KV (eventually consistent)
 - **Caching**: Cache API (`caches.default`)
-- **Circuit breaker**: In-memory (per-isolate — acceptable since Workers are short-lived)
+- **Circuit breaker**: In-memory (per-isolate - acceptable since Workers are short-lived)
 
 ```typescript
 import { createGateway } from "@homegrower-club/stoma";
@@ -92,7 +92,7 @@ If you pass both `rateLimitDo` and `rateLimitKv`, Durable Objects wins. DO provi
 
 ## Redis
 
-Zero runtime dependencies — you provide any Redis client that satisfies the `RedisClient` interface (4 methods: `get`, `set`, `del`, `eval`). Works with ioredis, node-redis, and similar libraries.
+Zero runtime dependencies - you provide any Redis client that satisfies the `RedisClient` interface (4 methods: `get`, `set`, `del`, `eval`). Works with ioredis, node-redis, and similar libraries.
 
 <Tabs>
 <TabItem label="ioredis">
@@ -147,7 +147,7 @@ const gateway = createGateway({
 
 ## PostgreSQL
 
-Same pattern as Redis — provide any Postgres client that implements `query(text, params)`. Works with `pg`, `postgres.js`, and similar libraries.
+Same pattern as Redis - provide any Postgres client that implements `query(text, params)`. Works with `pg`, `postgres.js`, and similar libraries.
 
 <Steps>
 1. **Create the schema tables** (one-time setup):
@@ -234,7 +234,7 @@ await adapter.waitAll(); // flush waitUntil promises
 
 ## Custom Adapters
 
-The `GatewayAdapter` interface is intentionally minimal — implement only what your policies need:
+The `GatewayAdapter` interface is intentionally minimal - implement only what your policies need:
 
 ```typescript
 import type { GatewayAdapter } from "@homegrower-club/stoma";
@@ -249,10 +249,10 @@ function myAdapter(): GatewayAdapter {
 }
 ```
 
-Policies that require a store (rate limit, circuit breaker, cache) read it from `adapter` at request time. If the store is `undefined`, the policy degrades gracefully via `safeCall` — a missing store never crashes a request.
+Policies that require a store (rate limit, circuit breaker, cache) read it from `adapter` at request time. If the store is `undefined`, the policy degrades gracefully via `safeCall` - a missing store never crashes a request.
 
 ## What's Next?
 
-- [Tutorial: Response Caching](/guides/caching/) — caching with different adapters
-- [Testing Guide](/guides/testing-guide/) — TestAdapter for policy testing
-- [API: GatewayAdapter](/api/index/interfaces/gatewayadapter/) — full interface reference
+- [Tutorial: Response Caching](/guides/caching/) - caching with different adapters
+- [Testing Guide](/guides/testing-guide/) - TestAdapter for policy testing
+- [API: GatewayAdapter](/api/index/interfaces/gatewayadapter/) - full interface reference

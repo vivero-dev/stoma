@@ -1,5 +1,5 @@
 /**
- * Runtime adapters for stoma — plug in platform-specific stores and capabilities.
+ * Runtime adapters for stoma - plug in platform-specific stores and capabilities.
  *
  * Stoma runs on any runtime that supports Hono (Cloudflare Workers, Deno, Bun,
  * Node.js, and more). Adapters provide the bridge between the gateway's
@@ -41,9 +41,9 @@
  * @module adapters
  */
 
-/** Create an adapter for Bun — marker/extension point for Bun-specific capabilities. */
+/** Create an adapter for Bun - marker/extension point for Bun-specific capabilities. */
 export { bunAdapter } from "./bun";
-/** Bindings accepted by `cloudflareAdapter()` — KV, DO, Cache, ExecutionContext, and env. */
+/** Bindings accepted by `cloudflareAdapter()` - KV, DO, Cache, ExecutionContext, and env. */
 export type { CloudflareAdapterBindings } from "./cloudflare";
 /** Create a Cloudflare-native adapter with KV/DO rate limiting, Cache API caching, waitUntil, and service bindings. */
 export {
@@ -53,20 +53,20 @@ export {
   /** Rate limit store backed by Cloudflare Workers KV (eventually consistent). */
   KVRateLimitStore,
 } from "./cloudflare";
-/** Create an adapter for Deno Deploy — marker/extension point for Deno-specific capabilities. */
+/** Create an adapter for Deno Deploy - marker/extension point for Deno-specific capabilities. */
 export { denoAdapter } from "./deno";
-/** Durable Object class for atomic rate limit counters — export from your Worker entry and reference in wrangler.jsonc. */
+/** Durable Object class for atomic rate limit counters - export from your Worker entry and reference in wrangler.jsonc. */
 export {
   /** Rate limit store backed by Cloudflare Durable Objects (strongly consistent). */
   DurableObjectRateLimitStore,
   RateLimiterDO,
 } from "./durable-object";
-/** Create an adapter using in-memory stores — suitable for development, demos, and testing. */
+/** Create an adapter using in-memory stores - suitable for development, demos, and testing. */
 export { memoryAdapter } from "./memory";
 
-/** Create an adapter for Node.js (via `@hono/node-server`) — marker/extension point for Node-specific capabilities. */
+/** Create an adapter for Node.js (via `@hono/node-server`) - marker/extension point for Node-specific capabilities. */
 export { nodeAdapter } from "./node";
-/** Config accepted by `postgresAdapter()` — client, table prefix, store toggles. */
+/** Config accepted by `postgresAdapter()` - client, table prefix, store toggles. */
 export type { PostgresAdapterConfig, PostgresClient } from "./postgres";
 /** Create a PostgreSQL-backed adapter with upsert-based rate limiting, circuit breaker, and cache stores. */
 export {
@@ -80,7 +80,7 @@ export {
   PostgresRateLimitStore,
   postgresAdapter,
 } from "./postgres";
-/** Config accepted by `redisAdapter()` — client, prefix, setWithTTL override, store toggles. */
+/** Config accepted by `redisAdapter()` - client, prefix, setWithTTL override, store toggles. */
 export type { RedisAdapterConfig, RedisClient } from "./redis";
 /** Create a Redis-backed adapter with Lua-based rate limiting, JSON circuit breaker, and JSON cache stores. */
 export {
@@ -98,5 +98,5 @@ export {
   createTestAdapter,
   TestAdapter,
 } from "./testing";
-/** Runtime adapter interface — bag of optional store implementations and platform capabilities. */
+/** Runtime adapter interface - bag of optional store implementations and platform capabilities. */
 export type { GatewayAdapter } from "./types";

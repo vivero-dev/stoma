@@ -23,7 +23,7 @@
  * ```
  *
  * Hono powers the HTTP runtime. Other runtimes (ext_proc via gRPC,
- * WebSocket) are peer implementations — same policy definitions,
+ * WebSocket) are peer implementations - same policy definitions,
  * different wire protocols.
  *
  * @module protocol
@@ -40,7 +40,7 @@ import type { DebugLogger } from "../utils/debug";
  * Maps to:
  * - **HTTP**: `request-headers` → `request-body` → `response-headers` → `response-body`
  *   (trailers are N/A for HTTP/1.1; available in HTTP/2)
- * - **ext_proc**: All 6 phases — Envoy sends each as a `ProcessingRequest`
+ * - **ext_proc**: All 6 phases - Envoy sends each as a `ProcessingRequest`
  * - **WebSocket**: `request-headers` (upgrade) → `request-body` (per-message)
  */
 export type ProcessingPhase =
@@ -89,7 +89,7 @@ export interface PolicyInput {
   /**
    * Headers (HTTP) or metadata (gRPC).
    *
-   * Treat as read-only — express modifications via
+   * Treat as read-only - express modifications via
    * {@link PolicyResult} mutations, not by mutating this object.
    */
   headers: Headers;
@@ -135,9 +135,9 @@ export interface PolicyInput {
 /**
  * The outcome of a policy evaluation. Discriminated on `action`.
  *
- * - `"continue"` — Allow processing to continue, optionally with mutations.
- * - `"reject"` — Reject with a structured error response.
- * - `"immediate-response"` — Short-circuit with a complete non-error response.
+ * - `"continue"` - Allow processing to continue, optionally with mutations.
+ * - `"reject"` - Reject with a structured error response.
+ * - `"immediate-response"` - Short-circuit with a complete non-error response.
  */
 export type PolicyResult =
   | PolicyContinue
@@ -177,7 +177,7 @@ export interface PolicyReject {
 /**
  * Short-circuit with a complete non-error response.
  *
- * Used for cache hits, mock responses, redirects — cases where the
+ * Used for cache hits, mock responses, redirects - cases where the
  * policy provides the full response and upstream should not be called.
  *
  * Equivalent to returning a `Response` without calling `next()` in
@@ -259,7 +259,7 @@ export interface AttributeMutation {
 /**
  * Runtime-facing evaluation context provided to policy evaluators.
  *
- * This is the base context without typed config — runtimes construct
+ * This is the base context without typed config - runtimes construct
  * this from their native request representation. The policy SDK
  * ({@link definePolicy}) extends this with a typed `config` field
  * via `PolicyEvalHandlerContext`.
@@ -267,7 +267,7 @@ export interface AttributeMutation {
 export interface PolicyEvalContext {
   /** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
   debug: DebugLogger;
-  /** Trace reporter — always callable, no-op when tracing is not active. */
+  /** Trace reporter - always callable, no-op when tracing is not active. */
   trace: TraceReporter;
   /** Unique request ID for correlation. */
   requestId: string;
@@ -282,7 +282,7 @@ export interface PolicyEvalContext {
  *
  * Implement this on a {@link Policy} to make it work across all runtimes
  * (HTTP, ext_proc, WebSocket). The HTTP runtime uses {@link Policy.handler}
- * directly — `evaluate` is consumed by non-HTTP runtimes.
+ * directly - `evaluate` is consumed by non-HTTP runtimes.
  *
  * Runtimes call `onRequest` for request-phase processing and `onResponse`
  * for response-phase processing. A policy can implement one or both.

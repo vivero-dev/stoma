@@ -29,13 +29,13 @@ interface UpstreamStatus {
 /**
  * Create a health check route for liveness and upstream probing.
  *
- * Returns a {@link RouteConfig} (not a Policy) — add it directly to the
+ * Returns a {@link RouteConfig} (not a Policy) - add it directly to the
  * gateway's `routes` array. Without upstream probes, returns a simple
  * `{ status: "healthy" }` response. With probes, performs concurrent HEAD
  * requests (5s timeout each) and reports aggregate status:
- * - `"healthy"` — all probes passed
- * - `"degraded"` — some probes failed
- * - `"unhealthy"` — all probes failed (returns 503)
+ * - `"healthy"` - all probes passed
+ * - `"degraded"` - some probes failed
+ * - `"unhealthy"` - all probes failed (returns 503)
  *
  * @security Enabling `includeUpstreamStatus: true` causes the response to
  * include the URLs and availability status of internal upstream services.

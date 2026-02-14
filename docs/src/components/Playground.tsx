@@ -1,5 +1,5 @@
 /**
- * Interactive Stoma Playground — React component.
+ * Interactive Stoma Playground - React component.
  *
  * Runs a real Stoma gateway inside a service worker. Users click preset
  * buttons to send requests and see the full HTTP exchange: request info
@@ -228,7 +228,7 @@ export default function Playground() {
         ))}
       </div>
 
-      {/* Result panel — always visible, matches Astro version exactly */}
+      {/* Result panel - always visible, matches Astro version exactly */}
       <div className="pg-result">
         <div className="pg-topbar">
           <span className="pg-req-line">
@@ -271,7 +271,7 @@ export default function Playground() {
           </div>
         </div>
 
-        {/* Policy timing waterfall — full-width below the grid */}
+        {/* Policy timing waterfall - full-width below the grid */}
         {result && timingEntries.length > 0 && (
           <div className="pg-timing-section">
             <div className="pg-section-label">Policy Timing</div>
@@ -279,7 +279,7 @@ export default function Playground() {
           </div>
         )}
 
-        {/* Policy trace panel — shows what each policy did */}
+        {/* Policy trace panel - shows what each policy did */}
         {result?.res.trace && (
           <div className="pg-trace-section">
             <div className="pg-section-label">Policy Trace</div>

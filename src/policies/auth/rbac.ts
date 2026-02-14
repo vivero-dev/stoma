@@ -15,9 +15,9 @@ import type { PolicyConfig } from "../types";
 export interface RbacConfig extends PolicyConfig {
   /** Header name containing the user's role(s). Default: "x-user-role". */
   roleHeader?: string;
-  /** Allowed roles — pass if user has ANY of these. */
+  /** Allowed roles - pass if user has ANY of these. */
   roles?: string[];
-  /** Required permissions — pass if user has ALL of these. */
+  /** Required permissions - pass if user has ALL of these. */
   permissions?: string[];
   /** Header containing permissions. Default: "x-user-permissions". */
   permissionHeader?: string;

@@ -7,14 +7,14 @@ title: "proxy"
 
 > **proxy**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/proxy.ts:57](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/proxy.ts#L57)
+Defined in: [src/policies/proxy.ts:57](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/proxy.ts#L57)
 
 Apply additional header manipulation and timeout control to the upstream call.
 
 Use this when you need per-route header injection, header stripping, or
 a custom timeout that wraps the upstream dispatch. The core proxy
 forwarding (URL, Service Binding, Handler) is handled by the gateway's
-upstream handler — this policy layers on top of it.
+upstream handler - this policy layers on top of it.
 
 `preserveHost` applies to URL upstreams, instructing the upstream handler
 not to rewrite the Host header to the target host.

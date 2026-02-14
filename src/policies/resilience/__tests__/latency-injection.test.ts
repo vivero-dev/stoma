@@ -84,7 +84,7 @@ describe("latencyInjection", () => {
   // --- Minimum delay clamping ---
 
   it("should clamp delay to minimum 0 (jitter cannot make it negative)", async () => {
-    // delayMs=10, jitter=1.0 means range is 0-20ms — never negative
+    // delayMs=10, jitter=1.0 means range is 0-20ms - never negative
     // We mock Math.random to return 0 (which produces -1 * jitter * delay = -10, clamped to 0)
     const randomSpy = vi.spyOn(Math, "random");
     // First call: probability check (need < 1 to proceed) → 0.5

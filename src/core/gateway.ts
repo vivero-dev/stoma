@@ -1,9 +1,9 @@
 /**
- * Gateway factory — the main entry point for creating a stoma gateway.
+ * Gateway factory - the main entry point for creating a stoma gateway.
  *
  * Wires together route registration, the policy pipeline, error handling,
  * and upstream dispatch (URL proxy, Service Binding, or custom handler).
- * All configuration is declarative — pass a {@link GatewayConfig} to
+ * All configuration is declarative - pass a {@link GatewayConfig} to
  * {@link createGateway} and export the resulting Hono app as your Worker.
  *
  * @module gateway
@@ -128,7 +128,7 @@ export function createGateway<TBindings = Record<string, unknown>>(
       return errorToResponse(err, ctx?.requestId);
     }
 
-    // Log unexpected errors — these are bugs, not expected policy rejections
+    // Log unexpected errors - these are bugs, not expected policy rejections
     console.error(
       `[${gatewayName}] Unhandled error on ${c.req.method} ${c.req.path}:`,
       err
@@ -137,7 +137,7 @@ export function createGateway<TBindings = Record<string, unknown>>(
     return defaultErrorResponse(ctx?.requestId, config.defaultErrorMessage);
   });
 
-  // Catch-all for unmatched routes — return structured JSON instead of Hono's plain-text 404
+  // Catch-all for unmatched routes - return structured JSON instead of Hono's plain-text 404
   app.notFound((c) => {
     debug(`no route matches ${c.req.method} ${c.req.path}`);
     return c.json(
@@ -193,7 +193,7 @@ export function createGateway<TBindings = Record<string, unknown>>(
       config.defaultMethods ??
       (["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"] as HttpMethod[]);
 
-    // Use app.on() for safe method registration — avoids missing method issues
+    // Use app.on() for safe method registration - avoids missing method issues
     // (Hono handles HEAD automatically when GET is registered)
     const methodNames = methods.map((m) => m.toUpperCase());
     // biome-ignore lint/suspicious/noExplicitAny: Hono's overloaded .on() types don't infer well with dynamic method arrays
@@ -263,8 +263,8 @@ function joinPaths(basePath: string | undefined, routePath: string): string {
 }
 
 /** Create the terminal handler that dispatches to the upstream */
-// biome-ignore lint/suspicious/noExplicitAny: Internal function — TBindings is erased at runtime
 function createUpstreamHandler(
+  // biome-ignore lint/suspicious/noExplicitAny: Internal function - TBindings is erased at runtime
   route: RouteConfig<any>,
   debug = noopDebugLogger,
   adapter?: GatewayAdapter
@@ -287,7 +287,7 @@ function createUpstreamHandler(
   }
 }
 
-/** Handler upstream — invoke the custom function directly */
+/** Handler upstream - invoke the custom function directly */
 function createHandlerUpstream(upstream: HandlerUpstream) {
   return async (c: Context) => {
     return upstream.handler(c);
@@ -311,7 +311,7 @@ const HOP_BY_HOP_HEADERS = [
 ];
 
 /**
- * Service Binding upstream — forward to a named service binding or sidecar.
+ * Service Binding upstream - forward to a named service binding or sidecar.
  *
  * Requires `adapter.dispatchBinding` to be configured. On Cloudflare, pass
  * `env` to `cloudflareAdapter()`. On other runtimes, provide a custom
@@ -327,7 +327,7 @@ function createServiceBindingUpstream(
       throw new GatewayError(
         502,
         "config_error",
-        `Service binding "${upstream.service}" requires adapter.dispatchBinding — pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
+        `Service binding "${upstream.service}" requires adapter.dispatchBinding - pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
       );
     }
 
@@ -427,7 +427,7 @@ function createServiceBindingUpstream(
   };
 }
 
-/** URL upstream — proxy the request to a remote URL */
+/** URL upstream - proxy the request to a remote URL */
 function createUrlUpstream(upstream: UrlUpstream, debug = noopDebugLogger) {
   // Pre-validate the target URL at config time
   const targetBase = new URL(upstream.target);

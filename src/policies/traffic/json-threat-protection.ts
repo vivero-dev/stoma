@@ -1,8 +1,8 @@
 /**
- * JSON threat protection policy — structural limits on request bodies.
+ * JSON threat protection policy - structural limits on request bodies.
  *
  * Protects against JSON-based attacks by enforcing maximum depth, key count,
- * string length, array size, and raw body size. Zero external dependencies —
+ * string length, array size, and raw body size. Zero external dependencies -
  * uses a recursive JSON walker.
  *
  * @module json-threat-protection
@@ -116,149 +116,150 @@ function validateJsonStructure(
  * });
  * ```
  */
-export const jsonThreatProtection = /*#__PURE__*/ definePolicy<JsonThreatProtectionConfig>({
-  name: "json-threat-protection",
-  priority: Priority.EARLY,
-  phases: ["request-body"],
-  defaults: {
-    maxDepth: 20,
-    maxKeys: 100,
-    maxStringLength: 10000,
-    maxArraySize: 100,
-    maxBodySize: 1048576,
-    contentTypes: ["application/json"],
-  },
-  handler: async (c, next, { config, debug }) => {
-    const contentType = c.req.header("content-type") ?? "";
-    const matchedType = config.contentTypes!.some((ct) =>
-      contentType.includes(ct)
-    );
-
-    if (!matchedType) {
-      debug("skipping — content type %s not inspected", contentType);
-      await next();
-      return;
-    }
-
-    // Check Content-Length against maxBodySize BEFORE parsing
-    const contentLength = c.req.header("content-length");
-    if (contentLength !== undefined) {
-      const length = Number.parseInt(contentLength, 10);
-      if (!Number.isNaN(length) && length > config.maxBodySize!) {
-        debug("body size %d exceeds max %d", length, config.maxBodySize);
-        throw new GatewayError(
-          413,
-          "body_too_large",
-          "Request body exceeds maximum size"
-        );
-      }
-    }
-
-    // Clone the request so downstream handlers can still read the body
-    const cloned = c.req.raw.clone();
-    const text = await cloned.text();
-
-    if (!text) {
-      debug("empty body — passing through");
-      await next();
-      return;
-    }
-
-    // Parse JSON
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      debug("invalid JSON");
-      throw new GatewayError(
-        400,
-        "invalid_json",
-        "Invalid JSON in request body"
-      );
-    }
-
-    // Walk the parsed JSON and validate structural limits
-    validateJsonStructure(parsed, {
-      maxDepth: config.maxDepth!,
-      maxKeys: config.maxKeys!,
-      maxStringLength: config.maxStringLength!,
-      maxArraySize: config.maxArraySize!,
-    });
-
-    debug("JSON structure validated");
-    await next();
-  },
-  evaluate: {
-    onRequest: async (input, { config, debug }) => {
-      const contentType = input.headers.get("content-type") ?? "";
+export const jsonThreatProtection =
+  /*#__PURE__*/ definePolicy<JsonThreatProtectionConfig>({
+    name: "json-threat-protection",
+    priority: Priority.EARLY,
+    phases: ["request-body"],
+    defaults: {
+      maxDepth: 20,
+      maxKeys: 100,
+      maxStringLength: 10000,
+      maxArraySize: 100,
+      maxBodySize: 1048576,
+      contentTypes: ["application/json"],
+    },
+    handler: async (c, next, { config, debug }) => {
+      const contentType = c.req.header("content-type") ?? "";
       const matchedType = config.contentTypes!.some((ct) =>
         contentType.includes(ct)
       );
 
       if (!matchedType) {
-        debug("skipping — content type %s not inspected", contentType);
-        return { action: "continue" };
+        debug("skipping - content type %s not inspected", contentType);
+        await next();
+        return;
       }
 
       // Check Content-Length against maxBodySize BEFORE parsing
-      const contentLength = input.headers.get("content-length");
-      if (contentLength) {
+      const contentLength = c.req.header("content-length");
+      if (contentLength !== undefined) {
         const length = Number.parseInt(contentLength, 10);
         if (!Number.isNaN(length) && length > config.maxBodySize!) {
           debug("body size %d exceeds max %d", length, config.maxBodySize);
-          return {
-            action: "reject",
-            status: 413,
-            code: "body_too_large",
-            message: "Request body exceeds maximum size",
-          };
+          throw new GatewayError(
+            413,
+            "body_too_large",
+            "Request body exceeds maximum size"
+          );
         }
+      }
+
+      // Clone the request so downstream handlers can still read the body
+      const cloned = c.req.raw.clone();
+      const text = await cloned.text();
+
+      if (!text) {
+        debug("empty body - passing through");
+        await next();
+        return;
       }
 
       // Parse JSON
       let parsed: unknown;
       try {
-        if (!input.body) {
-          debug("empty body — passing through");
-          return { action: "continue" };
-        }
-        const bodyStr =
-          typeof input.body === "string"
-            ? input.body
-            : new TextDecoder().decode(input.body);
-        parsed = JSON.parse(bodyStr);
+        parsed = JSON.parse(text);
       } catch {
         debug("invalid JSON");
-        return {
-          action: "reject",
-          status: 400,
-          code: "invalid_json",
-          message: "Invalid JSON in request body",
-        };
+        throw new GatewayError(
+          400,
+          "invalid_json",
+          "Invalid JSON in request body"
+        );
       }
 
       // Walk the parsed JSON and validate structural limits
-      try {
-        validateJsonStructure(parsed, {
-          maxDepth: config.maxDepth!,
-          maxKeys: config.maxKeys!,
-          maxStringLength: config.maxStringLength!,
-          maxArraySize: config.maxArraySize!,
-        });
-      } catch (err) {
-        if (err instanceof GatewayError) {
-          return {
-            action: "reject",
-            status: err.statusCode,
-            code: err.code,
-            message: err.message,
-          };
-        }
-        throw err;
-      }
+      validateJsonStructure(parsed, {
+        maxDepth: config.maxDepth!,
+        maxKeys: config.maxKeys!,
+        maxStringLength: config.maxStringLength!,
+        maxArraySize: config.maxArraySize!,
+      });
 
       debug("JSON structure validated");
-      return { action: "continue" };
+      await next();
     },
-  },
-});
+    evaluate: {
+      onRequest: async (input, { config, debug }) => {
+        const contentType = input.headers.get("content-type") ?? "";
+        const matchedType = config.contentTypes!.some((ct) =>
+          contentType.includes(ct)
+        );
+
+        if (!matchedType) {
+          debug("skipping - content type %s not inspected", contentType);
+          return { action: "continue" };
+        }
+
+        // Check Content-Length against maxBodySize BEFORE parsing
+        const contentLength = input.headers.get("content-length");
+        if (contentLength) {
+          const length = Number.parseInt(contentLength, 10);
+          if (!Number.isNaN(length) && length > config.maxBodySize!) {
+            debug("body size %d exceeds max %d", length, config.maxBodySize);
+            return {
+              action: "reject",
+              status: 413,
+              code: "body_too_large",
+              message: "Request body exceeds maximum size",
+            };
+          }
+        }
+
+        // Parse JSON
+        let parsed: unknown;
+        try {
+          if (!input.body) {
+            debug("empty body - passing through");
+            return { action: "continue" };
+          }
+          const bodyStr =
+            typeof input.body === "string"
+              ? input.body
+              : new TextDecoder().decode(input.body);
+          parsed = JSON.parse(bodyStr);
+        } catch {
+          debug("invalid JSON");
+          return {
+            action: "reject",
+            status: 400,
+            code: "invalid_json",
+            message: "Invalid JSON in request body",
+          };
+        }
+
+        // Walk the parsed JSON and validate structural limits
+        try {
+          validateJsonStructure(parsed, {
+            maxDepth: config.maxDepth!,
+            maxKeys: config.maxKeys!,
+            maxStringLength: config.maxStringLength!,
+            maxArraySize: config.maxArraySize!,
+          });
+        } catch (err) {
+          if (err instanceof GatewayError) {
+            return {
+              action: "reject",
+              status: err.statusCode,
+              code: err.code,
+              message: err.message,
+            };
+          }
+          throw err;
+        }
+
+        debug("JSON structure validated");
+        return { action: "continue" };
+      },
+    },
+  });

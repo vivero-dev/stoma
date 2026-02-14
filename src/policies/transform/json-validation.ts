@@ -1,5 +1,5 @@
 /**
- * JSON body validation policy — pluggable validation with zero dependencies.
+ * JSON body validation policy - pluggable validation with zero dependencies.
  *
  * Accepts a user-provided `validate` function that can wrap any validation
  * library (Zod, AJV, Valibot, TypeBox, etc.). When no validator is provided,
@@ -75,7 +75,7 @@ export const jsonValidation = /*#__PURE__*/ definePolicy<JsonValidationConfig>({
 
     if (!matchedType) {
       debug(
-        "skipping — content type %s not in %o",
+        "skipping - content type %s not in %o",
         contentType,
         config.contentTypes
       );
@@ -89,7 +89,7 @@ export const jsonValidation = /*#__PURE__*/ definePolicy<JsonValidationConfig>({
       const cloned = c.req.raw.clone();
       const text = await cloned.text();
       if (!text) {
-        // Empty body with JSON content-type — treat as parse failure
+        // Empty body with JSON content-type - treat as parse failure
         debug("empty body with JSON content type");
         throw new GatewayError(
           config.rejectStatus!,
@@ -110,7 +110,7 @@ export const jsonValidation = /*#__PURE__*/ definePolicy<JsonValidationConfig>({
 
     // If no validate function provided, valid JSON parse is sufficient
     if (!config.validate) {
-      debug("no validator configured — JSON parsed successfully");
+      debug("no validator configured - JSON parsed successfully");
       await next();
       return;
     }
@@ -142,7 +142,7 @@ export const jsonValidation = /*#__PURE__*/ definePolicy<JsonValidationConfig>({
 
       if (!matchedType) {
         debug(
-          "skipping — content type %s not in %o",
+          "skipping - content type %s not in %o",
           contentType,
           config.contentTypes
         );
@@ -178,7 +178,7 @@ export const jsonValidation = /*#__PURE__*/ definePolicy<JsonValidationConfig>({
 
       // If no validate function provided, valid JSON parse is sufficient
       if (!config.validate) {
-        debug("no validator configured — JSON parsed successfully");
+        debug("no validator configured - JSON parsed successfully");
         return { action: "continue" };
       }
 

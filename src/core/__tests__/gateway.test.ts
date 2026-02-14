@@ -232,7 +232,7 @@ describe("createGateway - error handling", () => {
       ],
     });
 
-    // No adapter provided — dispatchBinding is unavailable
+    // No adapter provided - dispatchBinding is unavailable
     const res = await gw.app.request("/sb");
     expect(res.status).toBe(502);
     const body = (await res.json()) as Record<string, unknown>;
@@ -258,13 +258,10 @@ describe("createGateway - error handling", () => {
         },
       ],
       onError: (_err, c) => {
-        return new Response(
-          JSON.stringify({ custom: true, url: c.req.url }),
-          {
-            status: 418,
-            headers: { "content-type": "application/json" },
-          }
-        );
+        return new Response(JSON.stringify({ custom: true, url: c.req.url }), {
+          status: 418,
+          headers: { "content-type": "application/json" },
+        });
       },
     });
 
@@ -401,7 +398,7 @@ describe("createGateway - upstream fetch errors", () => {
     expect(res.status).toBe(500);
 
     const body = (await res.json()) as Record<string, unknown>;
-    // Should NOT be "upstream_error" — the timeout policy would normally
+    // Should NOT be "upstream_error" - the timeout policy would normally
     // catch this, but without it the global handler produces a generic error.
     expect(body.error).toBe("internal_error");
   });
@@ -545,7 +542,7 @@ describe("createGateway - security", () => {
 
     const res = await gw.app.request("/proxy/anything");
     // The URL constructor with base should resolve //evil.com as a path change
-    // to https://evil.com — our origin check should catch this
+    // to https://evil.com - our origin check should catch this
     expect(res.status).toBe(502);
   });
 

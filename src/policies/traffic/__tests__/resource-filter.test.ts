@@ -241,7 +241,7 @@ describe("resourceFilter", () => {
       }),
       {
         upstream: async (c) => {
-          // Respond with standard JSON content type — should not be filtered
+          // Respond with standard JSON content type - should not be filtered
           return c.json({ name: "Alice", password: "s3cret" });
         },
       }

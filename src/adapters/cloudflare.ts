@@ -97,9 +97,9 @@ export interface CloudflareAdapterBindings {
   cache?: Cache;
   /** Synthetic origin used for Cache API cache keys. Default: `"https://edge-gateway.internal"`. */
   cacheOrigin?: string;
-  /** Workers `ExecutionContext` — enables `waitUntil` for background work (e.g. traffic shadow). */
+  /** Workers `ExecutionContext` - enables `waitUntil` for background work (e.g. traffic shadow). */
   executionCtx?: ExecutionContext;
-  /** Workers `env` object — enables `dispatchBinding` for service binding dispatch via the adapter. */
+  /** Workers `env` object - enables `dispatchBinding` for service binding dispatch via the adapter. */
   env?: Record<string, unknown>;
 }
 

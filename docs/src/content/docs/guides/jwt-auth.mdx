@@ -11,7 +11,7 @@ import EditorLink from '../../../components/EditorLink.astro';
 import hmacExample from '@examples/jwt-auth/hmac.ts?raw';
 import jwksExample from '@examples/jwt-auth/jwks.ts?raw';
 
-JSON Web Tokens (JWTs) are the standard for API authentication. This tutorial shows you how to validate JWTs in Stoma — using a simple shared secret (HMAC) or public keys (RSA via JWKS).
+JSON Web Tokens (JWTs) are the standard for API authentication. This tutorial shows you how to validate JWTs in Stoma - using a simple shared secret (HMAC) or public keys (RSA via JWKS).
 
 ## Two Approaches
 
@@ -52,7 +52,7 @@ x-user-role: admin
 
 ## Part 2: JWKS Authentication (RSA Keys)
 
-When your tokens come from an external provider (Auth0, Supabase, Firebase, Okta), you can't share a secret — instead, you fetch their public keys from a JWKS endpoint.
+When your tokens come from an external provider (Auth0, Supabase, Firebase, Okta), you can't share a secret - instead, you fetch their public keys from a JWKS endpoint.
 
 ### Step 1: Find Your JWKS URL
 
@@ -75,13 +75,13 @@ Your identity provider exposes keys at a well-known URL:
 | Option | Purpose |
 |--------|---------|
 | `jwksUrl` | Where to fetch public keys |
-| `issuer` | Expected `iss` claim — prevents tokens from other issuers |
-| `audience` | Expected `aud` claim — prevents tokens for other audiences |
+| `issuer` | Expected `iss` claim - prevents tokens from other issuers |
+| `audience` | Expected `aud` claim - prevents tokens for other audiences |
 | `forwardClaims` | Extract claims and set as upstream headers |
 | `jwksCacheTtlMs` | How long to cache the JWKS (reduces network calls) |
 
 <Aside type="tip">
-Always specify `issuer` and `audience` when using JWKS. Without them, your gateway accepts any valid JWT — even ones meant for completely different services.
+Always specify `issuer` and `audience` when using JWKS. Without them, your gateway accepts any valid JWT - even ones meant for completely different services.
 </Aside>
 
 ## Testing JWT Auth
@@ -159,7 +159,7 @@ const multiAuth = definePolicy({
 
 ## What's Next?
 
-- [Auth Policies](/policies/auth/) — all authentication options
-- [OAuth2 Tutorial](/guides/oauth-supabase/) — token introspection approach
-- [RBAC Tutorial](/policies/auth/#rbac) — role-based access control
-- [Generate JWTs](/policies/auth/#generatejwt) — mint JWTs for upstream services
+- [Auth Policies](/policies/auth/) - all authentication options
+- [OAuth2 Tutorial](/guides/oauth-supabase/) - token introspection approach
+- [RBAC Tutorial](/policies/auth/#rbac) - role-based access control
+- [Generate JWTs](/policies/auth/#generatejwt) - mint JWTs for upstream services

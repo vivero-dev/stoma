@@ -1,5 +1,5 @@
 /**
- * PostgreSQL-backed adapter for stoma — production-ready stores for Node.js, Bun, and Deno.
+ * PostgreSQL-backed adapter for stoma - production-ready stores for Node.js, Bun, and Deno.
  *
  * Zero dependencies: define a minimal {@link PostgresClient} interface that any Postgres
  * library (pg, postgres.js, etc.) satisfies, then pass it to {@link postgresAdapter}.
@@ -20,7 +20,7 @@ import type { GatewayAdapter } from "./types";
 // ---------------------------------------------------------------------------
 
 /**
- * Minimal PostgreSQL client interface — satisfied by `pg`, `postgres.js`, and most
+ * Minimal PostgreSQL client interface - satisfied by `pg`, `postgres.js`, and most
  * Postgres libraries. Only a single `query` method is required.
  */
 export interface PostgresClient {
@@ -335,7 +335,13 @@ export class PostgresCacheStore implements CacheStore {
        VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (key) DO UPDATE SET
          status = $2, headers = $3, body = $4, expires_at = $5`,
-      [key, response.status, JSON.stringify(headers), uint8ToBase64(body), expiresAt]
+      [
+        key,
+        response.status,
+        JSON.stringify(headers),
+        uint8ToBase64(body),
+        expiresAt,
+      ]
     );
   }
 
@@ -349,9 +355,10 @@ export class PostgresCacheStore implements CacheStore {
 
   /** Remove expired entries. Call periodically (e.g. via cron or waitUntil). */
   async cleanup(): Promise<void> {
-    await this.client.query(`DELETE FROM ${this.table} WHERE expires_at <= $1`, [
-      Date.now(),
-    ]);
+    await this.client.query(
+      `DELETE FROM ${this.table} WHERE expires_at <= $1`,
+      [Date.now()]
+    );
   }
 }
 

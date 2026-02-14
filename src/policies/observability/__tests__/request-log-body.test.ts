@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createContextInjector } from "../../../core/pipeline";
 import { type LogEntry, requestLog } from "../request-log";
 
-describe("requestLog — body logging", () => {
+describe("requestLog - body logging", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -197,7 +197,7 @@ describe("requestLog — body logging", () => {
     app.use("/*", policy.handler);
     app.get("/test", (c) => c.json({ ok: true }));
 
-    // GET requests typically have no body — should handle gracefully
+    // GET requests typically have no body - should handle gracefully
     const res = await app.request("/test");
 
     expect(res.status).toBe(200);

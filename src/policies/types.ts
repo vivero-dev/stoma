@@ -1,5 +1,5 @@
 /**
- * Policy type system — the building blocks of gateway pipelines.
+ * Policy type system - the building blocks of gateway pipelines.
  *
  * A {@link Policy} is a named middleware with priority ordering and
  * optional protocol-agnostic evaluation. Policies are composed into
@@ -23,21 +23,21 @@ import type { DebugLogger } from "../utils/debug";
  * A Policy is a named middleware with priority ordering and optional
  * protocol-agnostic evaluation.
  *
- * - {@link handler} — HTTP runtime entry point (Hono middleware).
+ * - {@link handler} - HTTP runtime entry point (Hono middleware).
  *   Used by {@link createGateway}.
- * - {@link evaluate} — Protocol-agnostic entry point. Used by non-HTTP
+ * - {@link evaluate} - Protocol-agnostic entry point. Used by non-HTTP
  *   runtimes (ext_proc, WebSocket) to invoke the policy without Hono.
- * - {@link phases} — Which processing phases this policy participates in.
+ * - {@link phases} - Which processing phases this policy participates in.
  *   Used by phase-based runtimes to skip irrelevant policies.
- * - {@link httpOnly} — Set to `true` for policies that can ONLY work with
+ * - {@link httpOnly} - Set to `true` for policies that can ONLY work with
  *   the HTTP protocol and don't make sense for ext_proc or WebSocket.
  */
 export interface Policy {
   /** Unique policy name (e.g. "jwt-auth", "rate-limit") */
   name: string;
-  /** The Hono middleware handler — HTTP runtime entry point. */
+  /** The Hono middleware handler - HTTP runtime entry point. */
   handler: MiddlewareHandler;
-  /** Policy priority — lower numbers execute first. Default: 100. */
+  /** Policy priority - lower numbers execute first. Default: 100. */
   priority?: number;
 
   /**
@@ -72,10 +72,10 @@ export interface Policy {
    * evaluated in other protocols like ext_proc or WebSocket.
    *
    * Examples:
-   * - `cors` — uses HTTP-specific `Access-Control-*` headers
-   * - `ssl-enforce` — HTTP-only protocol concept
-   * - `proxy` — HTTP-to-HTTP forwarding
-   * - `mock` — returns HTTP Response objects
+   * - `cors` - uses HTTP-specific `Access-Control-*` headers
+   * - `ssl-enforce` - HTTP-only protocol concept
+   * - `proxy` - HTTP-to-HTTP forwarding
+   * - `mock` - returns HTTP Response objects
    *
    * Tooling can use this flag to:
    * - Skip these policies when generating docs for non-HTTP runtimes
@@ -100,9 +100,9 @@ export interface PolicyContext {
   gatewayName: string;
   /** Matched route path pattern */
   routePath: string;
-  /** W3C Trace Context — 32-hex trace ID (propagated or generated). */
+  /** W3C Trace Context - 32-hex trace ID (propagated or generated). */
   traceId: string;
-  /** W3C Trace Context — 16-hex span ID for this gateway request. */
+  /** W3C Trace Context - 16-hex span ID for this gateway request. */
   spanId: string;
   /**
    * Get a debug logger for the given namespace.

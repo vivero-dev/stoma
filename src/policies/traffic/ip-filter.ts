@@ -57,7 +57,7 @@ export function ipFilter(config: IpFilterConfig): Policy {
     .map(parseCIDR)
     .filter((r): r is ParsedCIDR => r !== null);
 
-  // ── Shared logic — used by both handler and evaluate ────────────
+  // ── Shared logic - used by both handler and evaluate ────────────
   function checkIp(ip: string): PolicyResult {
     if (mode === "allow") {
       if (!isInRange(ip, allowRanges)) {

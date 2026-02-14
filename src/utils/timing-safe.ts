@@ -32,12 +32,12 @@ export function timingSafeEqual(a: string, b: string): boolean {
   const bufA = encoder.encode(a);
   const bufB = encoder.encode(b);
 
-  // Length mismatch — still compare to avoid early exit timing leak
+  // Length mismatch - still compare to avoid early exit timing leak
   const maxLen = Math.max(bufA.length, bufB.length);
   let mismatch = bufA.length !== bufB.length ? 1 : 0;
 
   for (let i = 0; i < maxLen; i++) {
-    // Use 0 as fallback for shorter buffer — still accumulates XOR
+    // Use 0 as fallback for shorter buffer - still accumulates XOR
     const byteA = i < bufA.length ? bufA[i] : 0;
     const byteB = i < bufB.length ? bufB[i] : 0;
     mismatch |= byteA ^ byteB;

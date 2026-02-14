@@ -7,18 +7,18 @@ title: "cache"
 
 > **cache**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/cache.ts:209](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/traffic/cache.ts#L209)
+Defined in: [src/policies/traffic/cache.ts:209](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/traffic/cache.ts#L209)
 
 Cache upstream responses to reduce latency and load.
 
 Sets a cache status header on **every** response:
-- `HIT` — served from cache
-- `MISS` — fetched from upstream, now cached
-- `BYPASS` — upstream Cache-Control directive prevented caching
-- `SKIP` — not eligible for caching (wrong method or server error status)
+- `HIT` - served from cache
+- `MISS` - fetched from upstream, now cached
+- `BYPASS` - upstream Cache-Control directive prevented caching
+- `SKIP` - not eligible for caching (wrong method or server error status)
 
 Server error responses (5xx) are never cached. Store failures degrade
-gracefully via [safeCall](/api/index/functions/safecall/) — a broken cache store never crashes the
+gracefully via [safeCall](/api/index/functions/safecall/) - a broken cache store never crashes the
 request.
 
 For methods with a request body (POST, PUT, PATCH), the default cache key

@@ -2,7 +2,7 @@
  * Default gateway configuration code shown in the Monaco editor.
  *
  * New to Stoma? Start with the Policy Authoring tutorial series at
- * /policy-authoring/your-first-policy/ — each page has "Open in Editor"
+ * /policy-authoring/your-first-policy/ - each page has "Open in Editor"
  * buttons that pre-load the tutorial code here.
  */
 export const DEFAULT_CODE = `import {
@@ -50,7 +50,7 @@ export async function createPlaygroundGateway() {
       // Health check
       health(),
 
-      // Echo — with rate limiting + caching
+      // Echo - with rate limiting + caching
       {
         path: "/echo",
         methods: ["GET", "POST"],
@@ -78,7 +78,7 @@ export async function createPlaygroundGateway() {
         },
       },
 
-      // Protected — API key auth
+      // Protected - API key auth
       {
         path: "/protected",
         methods: ["GET"],
@@ -100,7 +100,7 @@ export async function createPlaygroundGateway() {
         },
       },
 
-      // Slow — timeout policy (2s handler, 1s timeout)
+      // Slow - timeout policy (2s handler, 1s timeout)
       {
         path: "/slow",
         methods: ["GET"],

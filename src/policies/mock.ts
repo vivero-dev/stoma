@@ -1,5 +1,5 @@
 /**
- * Mock policy — return static responses for development and testing.
+ * Mock policy - return static responses for development and testing.
  *
  * @module mock
  */
@@ -24,7 +24,7 @@ export interface MockConfig extends PolicyConfig {
  * Return a static mock response, bypassing the upstream entirely.
  *
  * Useful for development stubs, testing, and placeholder routes. Runs at
- * priority 999 (always last) and short-circuits — `next()` is never called,
+ * priority 999 (always last) and short-circuits - `next()` is never called,
  * so no upstream request is made. Object bodies are automatically
  * JSON-serialized with `content-type: application/json`.
  *
@@ -68,7 +68,7 @@ export const mock = /*#__PURE__*/ definePolicy<MockConfig>({
   validate: (config) => {
     if (!config.allowInProduction) {
       console.warn(
-        "[stoma] mock policy active — intended for development/testing only"
+        "[stoma] mock policy active - intended for development/testing only"
       );
     }
   },
@@ -93,7 +93,7 @@ export const mock = /*#__PURE__*/ definePolicy<MockConfig>({
     // Middleware that ran before mock (context injector, auth, etc.)
     // already ran their pre-next() code. The context injector adds
     // x-request-id via c.res.headers after next(), which won't fire
-    // for mock — but that's acceptable for mock/dev scenarios.
+    // for mock - but that's acceptable for mock/dev scenarios.
     c.res = new Response(body, { status: config.status!, headers });
   },
 });

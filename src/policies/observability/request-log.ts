@@ -1,5 +1,5 @@
 /**
- * Request logging policy — structured JSON logs for every request.
+ * Request logging policy - structured JSON logs for every request.
  *
  * @module request-log
  */
@@ -11,7 +11,7 @@ import type { PolicyConfig } from "../types";
 export interface RequestLogConfig extends PolicyConfig {
   /** Additional fields to extract from the request */
   extractFields?: (c: unknown) => Record<string, unknown>;
-  /** Custom log sink — defaults to console.log with structured JSON */
+  /** Custom log sink - defaults to console.log with structured JSON */
   sink?: (entry: LogEntry) => void | Promise<void>;
   /** Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-ip", "x-forwarded-for"]`. */
   ipHeaders?: string[];
@@ -49,9 +49,9 @@ export interface LogEntry {
   routePath: string;
   /** Upstream identifier (reserved for future enrichment). */
   upstream: string;
-  /** W3C Trace Context — 32-hex trace ID. */
+  /** W3C Trace Context - 32-hex trace ID. */
   traceId?: string;
-  /** W3C Trace Context — 16-hex span ID for this gateway request. */
+  /** W3C Trace Context - 16-hex span ID for this gateway request. */
   spanId?: string;
   /** Captured request body (when `logRequestBody` is enabled). */
   requestBody?: unknown;
@@ -212,7 +212,7 @@ async function captureRequestBody(
         }
         return parsed;
       } catch {
-        // Invalid JSON — return as string
+        // Invalid JSON - return as string
         return truncated;
       }
     }

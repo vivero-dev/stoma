@@ -25,7 +25,7 @@ import { getGatewayContext } from "@homegrower-club/stoma";
 // Inside a policy handler:
 const adapter = getGatewayContext(c)?.adapter;
 if (!adapter?.rateLimitStore) {
-  // No store available — degrade gracefully
+  // No store available - degrade gracefully
   await next();
   return;
 }

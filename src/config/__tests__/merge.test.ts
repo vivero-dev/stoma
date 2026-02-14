@@ -15,18 +15,18 @@ import { mergeConfigs } from "../merge";
 const route = (path: string): RouteConfig<any> => ({
   path,
   pipeline: {
-    // biome-ignore lint/suspicious/noExplicitAny: minimal test helper
     upstream: {
       type: "handler" as const,
+      // biome-ignore lint/suspicious/noExplicitAny: minimal test helper
       handler: (c: any) => c.json({ ok: true }),
     },
   },
 });
 
-// biome-ignore lint/suspicious/noExplicitAny: minimal test helper
 const policy = (name: string, priority = 100): Policy => ({
   name,
   priority,
+  // biome-ignore lint/suspicious/noExplicitAny: minimal test helper
   handler: async (_c: any, next: any) => next(),
 });
 
@@ -394,7 +394,7 @@ describe("mergeConfigs - generic type safety", () => {
       AUTH_SERVICE: Fetcher;
     }
 
-    // This is a compile-time type check — if TBindings doesn't flow through,
+    // This is a compile-time type check - if TBindings doesn't flow through,
     // TypeScript would error on the service-binding route.
     const merged = mergeConfigs<MyEnv>(
       {

@@ -99,7 +99,7 @@ describe("jws", () => {
 
   it("should verify detached JWS (payload from body)", async () => {
     const bodyContent = '{"action":"transfer","amount":100}';
-    // Create a detached JWS — the signing input uses the payload,
+    // Create a detached JWS - the signing input uses the payload,
     // but the compact serialization has an empty payload section
     const header = { alg: "HS256", typ: "JOSE" };
     const encodedHeader = base64UrlEncode(JSON.stringify(header));
@@ -286,7 +286,7 @@ describe("jws", () => {
       })
     );
 
-    // No JWS header — should pass because policy is skipped
+    // No JWS header - should pass because policy is skipped
     const res = await request("/test");
     expect(res.status).toBe(200);
   });

@@ -220,7 +220,7 @@ describe("dynamicRouting", () => {
         ],
       })
     );
-    // Just verify it completes without error — debug logging is internal
+    // Just verify it completes without error - debug logging is internal
     const res = await request("/test");
     expect(res.status).toBe(200);
   });
@@ -242,7 +242,7 @@ describe("dynamicRouting", () => {
           c.json({ target: c.get("_dynamicTarget") ?? null }),
       }
     );
-    // Skip means the policy doesn't run — no target set, no 404 thrown
+    // Skip means the policy doesn't run - no target set, no 404 thrown
     const res = await request("/test");
     expect(res.status).toBe(200);
     const body = (await res.json()) as Record<string, unknown>;
@@ -258,7 +258,7 @@ describe("dynamicRouting", () => {
             target: "https://never.internal",
           },
         ],
-        // No explicit fallthrough — should default to true
+        // No explicit fallthrough - should default to true
       })
     );
     const res = await request("/test");

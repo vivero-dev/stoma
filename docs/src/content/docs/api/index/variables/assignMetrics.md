@@ -7,7 +7,7 @@ title: "assignMetrics"
 
 > `const` **assignMetrics**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/observability/assign-metrics.ts:43](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/observability/assign-metrics.ts#L43)
+Defined in: [src/policies/observability/assign-metrics.ts:43](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/observability/assign-metrics.ts#L43)
 
 Attach metric tags to the request context for downstream consumers.
 
@@ -21,7 +21,7 @@ observer) can read these tags to enrich collected metrics.
 
 [`AssignMetricsConfig`](/api/policies/interfaces/assignmetricsconfig/)
 
-Must include `tags` — a record of tag names to values or resolver functions.
+Must include `tags` - a record of tag names to values or resolver functions.
 
 ## Returns
 

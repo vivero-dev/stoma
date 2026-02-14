@@ -1,0 +1,37 @@
+---
+title: About Stoma
+description: What Stoma is, why it exists, and what drives the project.
+sidebar:
+  order: 0
+---
+
+import { LinkCard, CardGrid } from "@astrojs/starlight/components";
+import StomaIntro from "../partials/stoma-intro.mdx";
+
+<StomaIntro />
+
+---
+
+## The project
+
+Stoma is built and maintained with 💚 in the EU. 🇪🇺
+
+It was born from a simple observation: running dedicated API gateway infrastructure is 
+wasteful - wasteful of compute, wasteful of energy, and wasteful of developer time.
+
+Stoma believes gateway logic belongs in your codebase, can be deployed to shared edge infrastructure, where it consumes resources only 
+when handling actual traffic. That conviction shapes every design decision in Stoma - from its single runtime dependency, 
+to its tree-shakeable policies, to its priority-ordered pipeline that short-circuits as early as possible.
+
+<CardGrid>
+  <LinkCard
+    title="Sustainability"
+    description="The environmental case for edge-first API gateways, grounded in research."
+    href="/about/sustainability/"
+  />
+  <LinkCard
+    title="Get Started"
+    description="Install Stoma and build your first gateway in minutes."
+    href="/getting-started/installation/"
+  />
+</CardGrid>

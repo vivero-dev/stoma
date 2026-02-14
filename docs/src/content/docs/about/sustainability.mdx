@@ -1,0 +1,199 @@
+---
+title: Sustainability
+description: How edge-first API gateways reduce environmental impact, and the design choices in Stoma that compound those savings.
+sidebar:
+  order: 1
+---
+
+import { Aside, Card, CardGrid } from "@astrojs/starlight/components";
+
+Stoma exists because running API gateway logic on the edge - close to users, on shared infrastructure, with zero idle capacity - 
+is a fundamentally more efficient way to handle API traffic. This page documents the environmental case for that architecture, 
+grounded in research.
+
+## The problem: idle servers
+
+Traditional API gateways run on dedicated servers or containers. Those servers draw power around the clock, whether they are processing requests or not.
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Average enterprise server utilization | 12–18% | [NRDC (2014)](https://www.nrdc.org/sites/default/files/data-center-efficiency-assessment-IB.pdf) |
+| Power draw at idle | 30–60% of maximum | [ACM - PowerNap (2009)](https://dl.acm.org/doi/10.1145/2528521.1508269) |
+| Comatose servers (no useful work for 6+ months) | 30% of enterprise servers | [Koomey & Taylor - Anthesis Group](https://www.anthesisgroup.com/insights/zombie-servers-hunting-down-the-lost-capital/) |
+
+A server running at 15% utilization still draws roughly half its peak power. Scale that across millions of enterprise servers and the waste is enormous.
+
+Globally, the IEA estimates data centres consumed approximately **415 TWh** in 2024 - roughly 1.5% of global electricity - and projects that figure to double by 2030 ([IEA - Energy and AI](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai)).
+
+In Europe, the picture is stark. The European Commission's Joint Research Centre estimated EU data centres used 45–65 
+TWh in 2022 ([JRC135926](https://publications.jrc.ec.europa.eu/repository/handle/JRC135926)). Just two years later, that 
+figure reached **96 TWh** - 3% of total European electricity 
+demand ([Ember, 2025](https://ember-energy.org/latest-insights/grids-for-data-centres-ambitious-grid-planning-can-win-europes-ai-race/)). 
+In some member states, the concentration is extreme: data centres now consume approximately **22% of Ireland's national 
+electricity** ([IIEA](https://www.iiea.com/blog/data-centres-in-ireland-the-state-of-play)) and **7% in the Netherlands** (Ember, 2025). 
+Ember projects European data centre demand will reach **168 TWh by 2030** - an increase larger than the projected electricity demand from 
+electric vehicles across the continent.
+
+A traditional API gateway deployment - Kong on Kubernetes, KrakenD in Docker, or similar always-on infrastructure - contributes to this problem. 
+The gateway runs 24/7 regardless of traffic, alongside whatever services it fronts.
+
+## Why edge computing changes the equation
+
+Edge platforms like Cloudflare Workers take a fundamentally different approach. Instead of dedicating servers to individual workloads, 
+they run thousands of tenants on shared infrastructure using lightweight V8 isolates.
+
+<CardGrid>
+  <Card title="No idle capacity">
+    Serverless platforms only consume resources when handling requests. No traffic means no compute, no power draw.
+  </Card>
+  <Card title="Dense multi-tenancy">
+    V8 isolates use roughly 1/10th the memory of a Node.js process (~1–2 MB per Worker). Thousands of tenants share each machine at high utilization.
+  </Card>
+  <Card title="Proximity to users">
+    Processing at the edge eliminates cross-region round trips, reducing both latency and the energy cost of data transmission.
+  </Card>
+  <Card title="Shared efficiency investments">
+    Hyperscale operators invest in cooling optimization, renewable energy, and hardware efficiency at a scale individual organizations cannot match.
+  </Card>
+</CardGrid>
+
+The numbers support this:
+
+- **Cloudflare's network runs on 100% renewable energy** and has committed to removing all historical emissions back to its 2010 founding ([Cloudflare Impact](https://www.cloudflare.com/impact/)).
+- An independent study by **Analysys Mason found that switching enterprise network services to Cloudflare reduces carbon emissions by 78–96%**, with the majority of gains coming from improved server utilization through service consolidation ([Analysys Mason for Cloudflare, 2023](https://blog.cloudflare.com/switching-cloudflare-cut-your-network-carbon-emissions-sbti/)).
+- **Hyperscale data centers achieve a PUE of ~1.09** (Google, Meta), compared to the industry average of 1.56 ([Uptime Institute, 2024](https://journal.uptimeinstitute.com/large-data-centers-are-mostly-more-efficient-analysis-confirms/)). Lower PUE means less energy wasted on cooling and overhead.
+- Research in the MDPI Sustainability journal found that **serverless computing can reduce energy consumption by up to 70%** compared to always-on servers ([MDPI, 2025](https://www.mdpi.com/2071-1050/17/7/2999)).
+- **Hyperscale cloud infrastructure is 3.6x more energy-efficient** than the median enterprise data centre ([451 Research, 2019](https://d39w7f4ix9f5s9.cloudfront.net/e3/79/42bf75c94c279c67d777f002051f/carbon-reduction-opportunity-of-moving-to-aws.pdf)). Cloudflare Workers, using V8 isolates rather than containers, achieves even higher density.
+
+<Aside type="note">
+  The environmental case for edge computing is strongest for workloads with variable traffic - which describes most API gateways. 
+  A gateway that handles 10,000 requests per minute at peak and 50 per minute at 3 AM should not require the same infrastructure at both times.
+</Aside>
+
+## The regulatory direction
+
+The EU is ahead of other regions in regulating data center sustainability, and the direction is clear: mandatory efficiency 
+reporting is here, with minimum performance standards on the way.
+
+The European Commission's **Data Centre Energy Efficiency Package**, planned for 2026, will introduce an EU-wide labelling 
+scheme and minimum performance standards ([European Commission](https://energy.ec.europa.eu/news/focus-data-centres-energy-hungry-challenge-2025-11-17_en)). 
+The EU's voluntary Code of Conduct for Data Centre Energy Efficiency, managed by the JRC since 2008, is expected to form 
+the basis for these mandatory requirements ([JRC - EU DC CoC](https://e3p.jrc.ec.europa.eu/en/groups/data-centres-code-conduct)).
+
+This regulatory trajectory rewards architectures that eliminate dedicated infrastructure. A Stoma gateway running on Cloudflare 
+Workers has no PUE to report, no idle servers to justify, no waste heat to account for - because there is no dedicated infrastructure. 
+The compute runs on shared, renewable-powered edge nodes that are already optimised at scale.
+
+## How Stoma compounds the advantage
+
+First-class support for running on the edge is the foundation, but Stoma's architecture is designed to extract maximum efficiency from that foundation. 
+Every unnecessary byte transmitted, every wasted CPU cycle, every redundant upstream call has an energy cost - and Stoma's design aims to systematically eliminate them.
+
+### Early termination through priority-ordered policies
+
+Stoma's [policy pipeline](/concepts/policies/) executes policies in strict priority order. Cheap rejection policies run first:
+
+| Priority | Policy | Purpose |
+|----------|--------|---------|
+| 0 | `requestLog` | Observability (pass-through) |
+| 1 | `ipFilter` | Block disallowed IPs |
+| 10 | `jwtAuth`, `apiKeyAuth` | Authenticate the request |
+| 20 | `rateLimit` | Enforce rate limits |
+| 30 | `circuitBreaker` | Reject if upstream is failing |
+
+A request blocked at `ipFilter` (priority 1) never reaches authentication, never triggers a rate limit lookup, never touches 
+the upstream. Across millions of requests, the compute that *does not happen* adds up. Every short-circuited request is CPU time, memory, 
+and network I/O that is never consumed.
+
+### Caching at the edge
+
+The [`cache` policy](/policies/traffic/#cache) (priority 40) serves cached responses directly from the edge without contacting the upstream at all. 
+No cross-region fetch, no origin server CPU time, no database query. For read-heavy APIs - which most public APIs are - 
+this eliminates the majority of upstream traffic.
+
+### Zero idle infrastructure
+
+Because Stoma is, at minimum, a library - not always a standalone proxy ([although still can be just a worker](/deploy/cloudflare/)) - 
+there is no separate gateway tier to maintain. No Kong containers, no Envoy sidecars, no dedicated gateway cluster running 24/7. 
+The gateway logic runs inside the same Worker (or process) that handles your application traffic. 
+When traffic drops to zero, resource consumption drops to zero.
+
+### Minimal runtime footprint
+
+Stoma has one runtime dependency: [Hono](https://hono.dev). Every policy is tree-shakeable - you only ship the code you use. 
+Compare this to a Kong deployment (100 MB+ container image) or KrakenD (80 MB+ binary). 
+A typical Stoma gateway compiles to a fraction of that (currently Stoma Core Gateway + Hono + Adapters + all Policies  = ~28KB gzipped), 
+meaning less storage, less memory, faster cold starts, and less energy per invocation.
+
+### No redundant infrastructure layers
+
+Traditional gateway architectures often involve multiple proxy hops:
+
+```
+Client → CDN → Load Balancer → API Gateway → Service Mesh Sidecar → Application
+```
+
+Each hop is a server (or container) that must be provisioned, powered, and maintained. With Stoma + Application on Cloudflare Workers:
+
+Minimal:
+```
+Client → Edge (Stoma gateway + application logic)
+```
+
+Fewer hops means fewer servers, less network transmission, and less energy.
+
+## Design choices that prioritize efficiency
+
+Beyond the architecture, specific implementation decisions in Stoma reflect an efficiency-first mindset:
+
+- **Debug logging is zero-cost when disabled.** The [debug system](/concepts/architecture/) replaces loggers with no-op functions when debug mode is off. No string interpolation, no object serialization, no wasted cycles.
+
+- **Policy deduplication.** When global and route-level policies share the same name, Stoma keeps only the route-level version. No duplicate middleware execution.
+
+- **`skip` conditions.** Every policy supports a [`skip` function](/concepts/policies/) that bypasses execution entirely when the condition is met. The policy handler never runs - not even to check its own config.
+
+- **Header stripping.** The [proxy policy](/concepts/upstreams/) strips hop-by-hop headers automatically, reducing response payload size on every proxied request.
+
+- **Timeout-based abort.** The [`timeout` policy](/policies/resilience/#timeout) uses `AbortSignal` to cancel in-flight fetches. When a request times out, the upstream connection is terminated immediately rather than consuming resources until the response completes.
+
+## The cumulative argument
+
+No single optimization saves the planet. But the argument is cumulative and systemic:
+
+1. **Edge platforms eliminate idle capacity** - the single largest source of wasted energy in traditional infrastructure.
+2. **Stoma eliminates a dedicated gateway tier** - removing an entire class of always-on servers.
+3. **Priority-ordered policies prevent unnecessary work** - every early rejection avoids a cascade of downstream compute.
+4. **Edge caching eliminates redundant upstream calls** - the greenest request is the one that never leaves the edge.
+5. **Minimal footprint reduces per-invocation cost** - less code means less memory, faster execution, and less energy per request.
+
+If the pattern of "gateway logic runs where the request lands, on shared infrastructure, with early termination" becomes 
+the norm rather than the exception, the aggregate energy savings across the industry are meaningful.
+
+Stoma does not save the planet on its own. But it makes the environmentally better architectural choice 
+the easy choice. That is how systemic change works.
+
+## Further reading
+
+### European Union
+
+- [JRC - Energy Consumption in Data Centres and Broadband Networks in the EU (2024)](https://publications.jrc.ec.europa.eu/repository/handle/JRC135926) - EU-specific consumption estimates
+- [Ember - Grids for Data Centres in Europe (2025)](https://ember-energy.org/latest-insights/grids-for-data-centres-ambitious-grid-planning-can-win-europes-ai-race/) - European demand projections to 2035
+- [European Commission - Energy Performance of Data Centres](https://energy.ec.europa.eu/topics/energy-efficiency/energy-efficiency-targets-directive-and-rules/energy-efficiency-directive/energy-performance-data-centres_en) - EED Article 12 reporting requirements
+- [Climate Neutral Data Centre Pact](https://www.climateneutraldatacentre.net/) - Industry self-regulation targets for 2025 and 2030
+- [JRC - EU Code of Conduct for Data Centre Energy Efficiency (2025)](https://publications.jrc.ec.europa.eu/repository/handle/JRC141521) - Voluntary best practices since 2008
+- [European Commission - Data Centres: An Energy-Hungry Challenge (2025)](https://energy.ec.europa.eu/news/focus-data-centres-energy-hungry-challenge-2025-11-17_en) - Upcoming EU labelling and minimum standards
+
+### Global and industry research
+
+- [IEA - Energy and AI (2024)](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai) - Global data centre energy projections
+- [Uptime Institute - Global Data Center Survey (2024)](https://journal.uptimeinstitute.com/large-data-centers-are-mostly-more-efficient-analysis-confirms/) - PUE trends and utilization
+- [Koomey & Taylor - Zombie Servers (Anthesis Group)](https://www.anthesisgroup.com/insights/zombie-servers-hunting-down-the-lost-capital/) - 30% comatose server finding
+- [MDPI Sustainability - Serverless Computing Energy Reduction (2025)](https://www.mdpi.com/2071-1050/17/7/2999) - Up to 70% energy savings
+- [NRDC - Data Center Efficiency Assessment (2014)](https://www.nrdc.org/sites/default/files/data-center-efficiency-assessment-IB.pdf) - Server utilization benchmarks
+
+### Edge and serverless platforms
+
+- [Cloudflare - Sustainability commitments](https://www.cloudflare.com/impact/) - Renewable energy and emissions removal
+- [Analysys Mason - Carbon Savings of Enterprise Network Functions (2023)](https://blog.cloudflare.com/switching-cloudflare-cut-your-network-carbon-emissions-sbti/) - 78–96% emissions reduction study
+- [Cloudflare - Cloud Computing without Containers (2018)](https://blog.cloudflare.com/cloud-computing-without-containers/) - V8 isolate efficiency
+- [451 Research - Carbon Reduction Opportunity of Moving to Cloud (2019)](https://d39w7f4ix9f5s9.cloudfront.net/e3/79/42bf75c94c279c67d777f002051f/carbon-reduction-opportunity-of-moving-to-aws.pdf) - 3.6x efficiency advantage

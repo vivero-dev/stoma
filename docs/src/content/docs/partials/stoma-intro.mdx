@@ -1,0 +1,36 @@
+---
+# Reusable introduction to Stoma - used on the About page and anywhere
+# a concise "what is Stoma?" + playground embed is needed.
+title: stoma-intro
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+import Playground from "../../../components/Playground.tsx";
+
+_Named after the tiny pores in plant leaves that regulate what passes through,
+Stoma gives you the same fine-grained control over your API traffic._
+
+Stoma is a **declarative API gateway you define in TypeScript** and deploy
+with your standard workflow. Instead of maintaining a separate proxy service
+with YAML files or admin dashboards, you define routes, policies, and upstreams
+as typed objects in your codebase - version-controlled, PR-reviewed, and
+deployed through your existing pipeline.
+
+<CardGrid>
+  <Card title="Gateway as Code" icon="seti:typescript">
+    Configured with **code, not YAML**. Version your gateway in Git, review changes in PRs, and rollback with your standard deployment pipeline.
+  </Card>
+  <Card title="Type-Safe Ergonomics" icon="pencil">
+    Full type safety from configuration to runtime. Your editor provides autocomplete for policies and upstreams, catching mistakes before your users do.
+  </Card>
+  <Card title="No Extra Infrastructure" icon="rocket">
+    No sidecars, no control planes, no admin UIs. Define your gateway in code and deploy it with your existing pipeline.
+  </Card>
+  <Card title="Multi-runtime" icon="external">
+    Runs on Cloudflare Workers, Node.js, Deno, Bun, Fastly, Lambda@Edge, and more - using standard Web APIs.
+  </Card>
+</CardGrid>
+
+### Try it in the browser
+
+<Playground client:load client:only="react"/>

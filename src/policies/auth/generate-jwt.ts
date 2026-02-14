@@ -1,5 +1,5 @@
 /**
- * JWT generation policy — mints JWTs for upstream consumption.
+ * JWT generation policy - mints JWTs for upstream consumption.
  *
  * Signs tokens using HMAC (HS256/384/512) or RSA (RS256/384/512) and
  * attaches them to the outgoing request as a header.

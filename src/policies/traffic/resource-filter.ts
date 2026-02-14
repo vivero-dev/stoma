@@ -1,5 +1,5 @@
 /**
- * Resource filter policy — strip or allow fields from JSON responses.
+ * Resource filter policy - strip or allow fields from JSON responses.
  *
  * Runs after the upstream response and modifies the JSON body by either
  * removing specified fields (deny mode) or keeping only specified fields
@@ -79,7 +79,7 @@ function filterObject(
   if (mode === "allow") {
     return allowFields(obj, fields);
   }
-  // deny mode — clone shallowly and delete fields
+  // deny mode - clone shallowly and delete fields
   const clone = structuredClone(obj);
   for (const field of fields) {
     deleteField(clone, field);
@@ -119,7 +119,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
     await next();
 
     if (config.fields.length === 0) {
-      debug("no fields configured — passing through");
+      debug("no fields configured - passing through");
       return;
     }
 
@@ -130,7 +130,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
 
     if (!matchedType) {
       debug(
-        "skipping — response content type %s not in %o",
+        "skipping - response content type %s not in %o",
         contentType,
         config.contentTypes
       );
@@ -142,7 +142,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
       const text = await c.res.text();
       body = JSON.parse(text);
     } catch {
-      debug("response body is not valid JSON — passing through");
+      debug("response body is not valid JSON - passing through");
       return;
     }
 
@@ -159,7 +159,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
             : item
         );
       } else {
-        // applyToArrayItems: false — don't filter array items
+        // applyToArrayItems: false - don't filter array items
         filtered = body;
       }
     } else if (body != null && typeof body === "object") {
@@ -169,7 +169,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
         config.fields
       );
     } else {
-      // Primitive JSON value — nothing to filter
+      // Primitive JSON value - nothing to filter
       filtered = body;
     }
 
@@ -187,7 +187,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
   evaluate: {
     onResponse: async (input, { config, debug }) => {
       if (config.fields.length === 0) {
-        debug("no fields configured — passing through");
+        debug("no fields configured - passing through");
         return { action: "continue" };
       }
 
@@ -198,7 +198,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
 
       if (!matchedType) {
         debug(
-          "skipping — response content type %s not in %o",
+          "skipping - response content type %s not in %o",
           contentType,
           config.contentTypes
         );
@@ -217,7 +217,7 @@ export const resourceFilter = /*#__PURE__*/ definePolicy<ResourceFilterConfig>({
             : new TextDecoder().decode(input.body);
         body = JSON.parse(bodyStr);
       } catch {
-        debug("response body is not valid JSON — passing through");
+        debug("response body is not valid JSON - passing through");
         return { action: "continue" };
       }
 

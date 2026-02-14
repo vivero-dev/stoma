@@ -7,12 +7,12 @@ title: "safeCall"
 
 > **safeCall**\<`T`\>(`fn`, `fallback`, `debug?`, `label?`): `Promise`\<`T`\>
 
-Defined in: [src/policies/sdk/helpers.ts:107](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/sdk/helpers.ts#L107)
+Defined in: [src/policies/sdk/helpers.ts:107](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/sdk/helpers.ts#L107)
 
 Execute an async operation with graceful error handling.
 
 Designed for store-backed policies (cache, rate-limit, circuit-breaker)
-where a store failure should degrade gracefully — not crash the request.
+where a store failure should degrade gracefully - not crash the request.
 Returns the `fallback` value if `fn` throws.
 
 ## Type Parameters

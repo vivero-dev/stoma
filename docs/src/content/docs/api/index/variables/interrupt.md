@@ -7,12 +7,12 @@ title: "interrupt"
 
 > `const` **interrupt**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/traffic/interrupt.ts#L49)
+Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/traffic/interrupt.ts#L49)
 
 Conditionally short-circuit the pipeline and return a static response.
 
 Evaluates a predicate against the incoming request context. When the
-condition returns `true`, the pipeline is interrupted — a response is
+condition returns `true`, the pipeline is interrupted - a response is
 returned immediately and `next()` is never called (upstream is skipped).
 When the condition returns `false`, the pipeline continues normally.
 
@@ -28,7 +28,7 @@ Condition predicate, status code, body, and headers.
 
 [`Policy`](/api/index/interfaces/policy/)
 
-A [Policy](/api/index/interfaces/policy/) at priority 100 (default — users typically set a custom priority).
+A [Policy](/api/index/interfaces/policy/) at priority 100 (default - users typically set a custom priority).
 
 ## Example
 

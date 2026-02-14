@@ -5,11 +5,11 @@
  * Blob URL, and exposes the gateway's `app.fetch()` for request processing.
  *
  * Message protocol:
- *   → { type: "deploy", code: string }        — deploy compiled JS code
- *   ← { type: "deployed", registry }           — gateway ready, here are routes
- *   ← { type: "deploy-error", error: string }  — compilation/deploy failed
+ *   → { type: "deploy", code: string }        - deploy compiled JS code
+ *   ← { type: "deployed", registry }           - gateway ready, here are routes
+ *   ← { type: "deploy-error", error: string }  - compilation/deploy failed
  *
- *   → { type: "request", id, method, path, headers, body }  — send a request
+ *   → { type: "request", id, method, path, headers, body }  - send a request
  *   ← { type: "response", id, status, statusText, headers, body, timing }
  *   ← { type: "request-error", id, error: string }
  */

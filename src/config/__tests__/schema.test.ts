@@ -32,7 +32,7 @@ function validPolicy(name = "test-policy") {
 }
 
 // ---------------------------------------------------------------------------
-// validateConfig — valid configs
+// validateConfig - valid configs
 // ---------------------------------------------------------------------------
 
 describe("validateConfig", () => {
@@ -195,7 +195,7 @@ describe("validateConfig", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // validateConfig — invalid configs
+  // validateConfig - invalid configs
   // ---------------------------------------------------------------------------
 
   it("should reject config with no routes", () => {
@@ -369,7 +369,7 @@ describe("safeValidateConfig", () => {
 });
 
 // ---------------------------------------------------------------------------
-// GatewayConfigSchema — direct usage
+// GatewayConfigSchema - direct usage
 // ---------------------------------------------------------------------------
 
 describe("GatewayConfigSchema", () => {

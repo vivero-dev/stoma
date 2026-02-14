@@ -2,13 +2,13 @@
  * Shared client IP extraction utility.
  *
  * Centralises the IP header lookup logic used by rate limiting, IP filtering,
- * and request logging. The header priority order is configurable — the first
+ * and request logging. The header priority order is configurable - the first
  * header that contains a value wins.
  *
  * @module ip
  */
 
-import { type ParsedCIDR, isInRange, parseCIDR } from "./cidr";
+import { isInRange, type ParsedCIDR, parseCIDR } from "./cidr";
 
 /** Default ordered list of headers to inspect for the client IP. */
 export const DEFAULT_IP_HEADERS = ["cf-connecting-ip", "x-forwarded-for"];
@@ -67,9 +67,9 @@ export function extractClientIp(
   } = options;
 
   const parsedTrustedProxies: ParsedCIDR[] | null = trustedProxies
-    ? (trustedProxies
+    ? trustedProxies
         .map((cidr) => parseCIDR(cidr))
-        .filter((r): r is ParsedCIDR => r !== null))
+        .filter((r): r is ParsedCIDR => r !== null)
     : null;
 
   for (const header of ipHeaders) {

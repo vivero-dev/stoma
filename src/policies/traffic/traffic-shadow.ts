@@ -77,7 +77,7 @@ export const trafficShadow = /*#__PURE__*/ definePolicy<TrafficShadowConfig>({
           shadowBody = null;
         }
       } catch {
-        // No body or unreadable — proceed without body
+        // No body or unreadable - proceed without body
         shadowBody = null;
       }
     }
@@ -92,13 +92,13 @@ export const trafficShadow = /*#__PURE__*/ definePolicy<TrafficShadowConfig>({
     );
 
     if (!allowedMethods.has(method)) {
-      debug("method %s not in shadow methods — skipping", method);
+      debug("method %s not in shadow methods - skipping", method);
       return;
     }
 
     const roll = Math.random() * 100;
     if (roll >= (config.percentage ?? 100)) {
-      debug("rolled %.1f >= %d%% — skipping shadow", roll, config.percentage);
+      debug("rolled %.1f >= %d%% - skipping shadow", roll, config.percentage);
       return;
     }
 

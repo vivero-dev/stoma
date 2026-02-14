@@ -7,14 +7,14 @@ title: "circuitBreaker"
 
 > **circuitBreaker**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:236](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/resilience/circuit-breaker.ts#L236)
+Defined in: [src/policies/resilience/circuit-breaker.ts:236](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/resilience/circuit-breaker.ts#L236)
 
 Protect upstream services by breaking the circuit on repeated failures.
 
 Implements the three-state circuit breaker pattern:
-- **Closed** — requests flow normally; failures are counted.
-- **Open** — requests are immediately rejected with 503; a `Retry-After` header is set.
-- **Half-open** — a limited number of probe requests are allowed through to test recovery.
+- **Closed** - requests flow normally; failures are counted.
+- **Open** - requests are immediately rejected with 503; a `Retry-After` header is set.
+- **Half-open** - a limited number of probe requests are allowed through to test recovery.
 
 State transitions: `closed → open` when failures reach the threshold,
 `open → half-open` after the reset timeout, `half-open → closed` on

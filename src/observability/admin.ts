@@ -1,5 +1,5 @@
 /**
- * Admin introspection API — auto-registered `___gateway/*` routes.
+ * Admin introspection API - auto-registered `___gateway/*` routes.
  *
  * Exposes gateway internals for operational visibility: registered routes,
  * active policies, redacted config, Prometheus metrics, and health status.
@@ -41,7 +41,7 @@ export function registerAdminRoutes(
     await next();
   };
 
-  // GET /___gateway/routes — list all registered routes
+  // GET /___gateway/routes - list all registered routes
   app.get(`${prefix}/routes`, authMiddleware, (c) => {
     return c.json({
       gateway: registry.gatewayName,
@@ -49,7 +49,7 @@ export function registerAdminRoutes(
     });
   });
 
-  // GET /___gateway/policies — list all unique policies with priority
+  // GET /___gateway/policies - list all unique policies with priority
   app.get(`${prefix}/policies`, authMiddleware, (c) => {
     return c.json({
       gateway: registry.gatewayName,
@@ -57,7 +57,7 @@ export function registerAdminRoutes(
     });
   });
 
-  // GET /___gateway/config — serialized config with secrets redacted
+  // GET /___gateway/config - serialized config with secrets redacted
   app.get(`${prefix}/config`, authMiddleware, (c) => {
     return c.json(
       redactConfig({
@@ -68,7 +68,7 @@ export function registerAdminRoutes(
     );
   });
 
-  // GET /___gateway/metrics — Prometheus text format
+  // GET /___gateway/metrics - Prometheus text format
   app.get(`${prefix}/metrics`, authMiddleware, (c) => {
     if (!config.metrics) {
       return c.json(
@@ -88,7 +88,7 @@ export function registerAdminRoutes(
     });
   });
 
-  // GET /___gateway/health — basic health check
+  // GET /___gateway/health - basic health check
   app.get(`${prefix}/health`, authMiddleware, (c) => {
     return c.json({
       status: "healthy",

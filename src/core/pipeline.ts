@@ -1,5 +1,5 @@
 /**
- * Policy pipeline — merges, sorts, and wraps policies as Hono middleware.
+ * Policy pipeline - merges, sorts, and wraps policies as Hono middleware.
  *
  * The pipeline is the core execution model: global policies are merged with
  * route-level policies (route wins on name collision), sorted by priority
@@ -126,7 +126,7 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
         return;
       }
 
-      // Slow path: tracing active (policy trace, OTel, or both) —
+      // Slow path: tracing active (policy trace, OTel, or both) -
       // track calledNext, errors, and push entries.
       let calledNext = false;
       let errorMsg: string | null = null;
@@ -337,9 +337,9 @@ export function createContextInjector(
       const childSpans = (c.get("_otelSpans") ?? []) as ReadableSpan[];
       const allSpans = [rootReadable, ...childSpans];
 
-      // Export asynchronously — don't block the response
+      // Export asynchronously - don't block the response
       const exportPromise = tracing!.exporter.export(allSpans).catch(() => {
-        // Swallow export errors — tracing must never break the request
+        // Swallow export errors - tracing must never break the request
       });
 
       if (adapter?.waitUntil) {

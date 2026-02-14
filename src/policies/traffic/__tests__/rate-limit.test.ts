@@ -277,7 +277,7 @@ describe("rateLimit", () => {
     });
     expect(res2.status).toBe(429);
 
-    // DIFFERENT spoofed IP bypasses rate limit — this is expected behavior
+    // DIFFERENT spoofed IP bypasses rate limit - this is expected behavior
     // for the default key extractor.
     const res3 = await app.request("/test", {
       headers: { "x-forwarded-for": "spoofed-5.6.7.8" },
@@ -289,7 +289,7 @@ describe("rateLimit", () => {
     const store = createStore();
     const app = createApp({ max: 1, store });
 
-    // Send with both headers — CF-Connecting-IP should win
+    // Send with both headers - CF-Connecting-IP should win
     const res1 = await app.request("/test", {
       headers: {
         "cf-connecting-ip": "real-ip",
@@ -326,7 +326,7 @@ describe("rateLimit", () => {
     const store = createStore();
     const app = createApp({ max: 1, store });
 
-    // No IP headers — all requests share the "unknown" bucket
+    // No IP headers - all requests share the "unknown" bucket
     const res1 = await app.request("/test");
     expect(res1.status).toBe(200);
 

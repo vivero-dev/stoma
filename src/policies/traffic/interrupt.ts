@@ -1,5 +1,5 @@
 /**
- * Interrupt policy — conditionally short-circuit the pipeline with a static response.
+ * Interrupt policy - conditionally short-circuit the pipeline with a static response.
  *
  * @module interrupt
  */
@@ -22,12 +22,12 @@ export interface InterruptConfig extends PolicyConfig {
  * Conditionally short-circuit the pipeline and return a static response.
  *
  * Evaluates a predicate against the incoming request context. When the
- * condition returns `true`, the pipeline is interrupted — a response is
+ * condition returns `true`, the pipeline is interrupted - a response is
  * returned immediately and `next()` is never called (upstream is skipped).
  * When the condition returns `false`, the pipeline continues normally.
  *
  * @param config - Condition predicate, status code, body, and headers.
- * @returns A {@link Policy} at priority 100 (default — users typically set a custom priority).
+ * @returns A {@link Policy} at priority 100 (default - users typically set a custom priority).
  *
  * @example
  * ```ts

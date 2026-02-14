@@ -2,11 +2,11 @@
  * Composable helpers for policy authors.
  *
  * Utilities that eliminate the most common boilerplate:
- * - {@link resolveConfig} — merge defaults with user config
- * - {@link policyDebug} — get a pre-namespaced debug logger
- * - {@link withSkip} — wrap a handler with `PolicyConfig.skip` logic
- * - {@link safeCall} — graceful store failure degradation
- * - {@link setDebugHeader} — contribute debug data for client-requested debug headers
+ * - {@link resolveConfig} - merge defaults with user config
+ * - {@link policyDebug} - get a pre-namespaced debug logger
+ * - {@link withSkip} - wrap a handler with `PolicyConfig.skip` logic
+ * - {@link safeCall} - graceful store failure degradation
+ * - {@link setDebugHeader} - contribute debug data for client-requested debug headers
  *
  * @module helpers
  */
@@ -43,7 +43,7 @@ export function resolveConfig<TConfig>(
  *
  * @param c - Hono request context.
  * @param policyName - Policy name used in the namespace.
- * @returns A {@link DebugLogger} — always callable, never undefined.
+ * @returns A {@link DebugLogger} - always callable, never undefined.
  */
 export function policyDebug(c: Context, policyName: string): DebugLogger {
   return (
@@ -85,7 +85,7 @@ export function withSkip(
  * Execute an async operation with graceful error handling.
  *
  * Designed for store-backed policies (cache, rate-limit, circuit-breaker)
- * where a store failure should degrade gracefully — not crash the request.
+ * where a store failure should degrade gracefully - not crash the request.
  * Returns the `fallback` value if `fn` throws.
  *
  * @param fn - The async operation to attempt.
@@ -211,7 +211,7 @@ export function parseDebugRequest(
   }
 
   // Activate tracing when "trace" is explicitly requested or "*" wildcard is used.
-  // Respects the allowlist — if an allowlist exists and "trace" isn't in it, tracing is blocked.
+  // Respects the allowlist - if an allowlist exists and "trace" isn't in it, tracing is blocked.
   if (requested.has("trace") || requested.has("*")) {
     c.set(TRACE_REQUESTED_KEY, true);
   }

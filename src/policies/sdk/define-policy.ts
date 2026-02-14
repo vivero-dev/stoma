@@ -1,5 +1,5 @@
 /**
- * `definePolicy()` — full convenience wrapper for policy authors.
+ * `definePolicy()` - full convenience wrapper for policy authors.
  *
  * Combines {@link resolveConfig}, {@link policyDebug}, and {@link withSkip}
  * into a single declarative API. Takes a {@link PolicyDefinition} and returns
@@ -36,7 +36,7 @@ export interface PolicyHandlerContext<TConfig> {
   config: TConfig;
   /** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
   debug: DebugLogger;
-  /** Trace reporter — always callable, no-op when tracing is not active. */
+  /** Trace reporter - always callable, no-op when tracing is not active. */
   trace: TraceReporter;
   /** Gateway context, or `undefined` when running outside a gateway pipeline. */
   gateway: PolicyContext | undefined;
@@ -45,7 +45,7 @@ export interface PolicyHandlerContext<TConfig> {
 /**
  * Context injected into `definePolicy` evaluate handlers.
  *
- * Parallel to {@link PolicyHandlerContext} but protocol-agnostic —
+ * Parallel to {@link PolicyHandlerContext} but protocol-agnostic -
  * no Hono types. Extends the runtime-facing {@link PolicyEvalContext}
  * with the fully-merged, typed config.
  */
@@ -161,7 +161,7 @@ type RequiredKeys<T> = {
  * base `PolicyConfig`), config is optional.
  *
  * This closes the gap between "type-safe config" and the runtime
- * `validate` callback — the editor catches missing required fields
+ * `validate` callback - the editor catches missing required fields
  * at compile time.
  */
 export type PolicyFactory<TConfig extends PolicyConfig> =
@@ -210,7 +210,7 @@ export function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(
       userConfig as Partial<TConfig> | undefined
     );
 
-    // Construction-time validation — fail fast on bad config
+    // Construction-time validation - fail fast on bad config
     if (definition.validate) {
       definition.validate(config);
     }

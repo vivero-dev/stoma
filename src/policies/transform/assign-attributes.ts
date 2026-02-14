@@ -25,7 +25,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
 /**
  * Set key-value attributes on the Hono request context.
  *
- * @param config - Must include `attributes` — a record of keys to values or resolver functions.
+ * @param config - Must include `attributes` - a record of keys to values or resolver functions.
  * @returns A {@link Policy} at priority 50 (REQUEST_TRANSFORM).
  *
  * @example
@@ -40,38 +40,39 @@ export interface AssignAttributesConfig extends PolicyConfig {
  * });
  * ```
  */
-export const assignAttributes = /*#__PURE__*/ definePolicy<AssignAttributesConfig>({
-  name: "assign-attributes",
-  priority: Priority.REQUEST_TRANSFORM,
-  phases: ["request-headers"],
-  handler: async (c, next, { config, debug }) => {
-    for (const [key, value] of Object.entries(config.attributes)) {
-      if (typeof value === "function") {
-        const resolved = await value(c);
-        c.set(key, resolved);
-        debug("set %s = %s (dynamic)", key, resolved);
-      } else {
-        c.set(key, value);
-        debug("set %s = %s (static)", key, value);
-      }
-    }
-
-    await next();
-  },
-  evaluate: {
-    onRequest: async (_input, { config, debug }) => {
-      const mutations = [];
+export const assignAttributes =
+  /*#__PURE__*/ definePolicy<AssignAttributesConfig>({
+    name: "assign-attributes",
+    priority: Priority.REQUEST_TRANSFORM,
+    phases: ["request-headers"],
+    handler: async (c, next, { config, debug }) => {
       for (const [key, value] of Object.entries(config.attributes)) {
-        const resolved =
-          typeof value === "function" ? value({} as Context) : value;
-        debug("set %s = %s", key, resolved);
-        mutations.push({
-          type: "attribute" as const,
-          key,
-          value: resolved,
-        });
+        if (typeof value === "function") {
+          const resolved = await value(c);
+          c.set(key, resolved);
+          debug("set %s = %s (dynamic)", key, resolved);
+        } else {
+          c.set(key, value);
+          debug("set %s = %s (static)", key, value);
+        }
       }
-      return { action: "continue", mutations };
+
+      await next();
     },
-  },
-});
+    evaluate: {
+      onRequest: async (_input, { config, debug }) => {
+        const mutations = [];
+        for (const [key, value] of Object.entries(config.attributes)) {
+          const resolved =
+            typeof value === "function" ? value({} as Context) : value;
+          debug("set %s = %s", key, resolved);
+          mutations.push({
+            type: "attribute" as const,
+            key,
+            value: resolved,
+          });
+        }
+        return { action: "continue", mutations };
+      },
+    },
+  });

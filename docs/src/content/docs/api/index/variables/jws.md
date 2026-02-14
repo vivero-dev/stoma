@@ -7,13 +7,13 @@ title: "jws"
 
 > `const` **jws**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/auth/jws.ts:72](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/auth/jws.ts#L72)
+Defined in: [src/policies/auth/jws.ts:72](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/auth/jws.ts#L72)
 
 Verify JWS compact serialization signatures on requests.
 
 The `none` algorithm is always rejected to prevent signature bypass attacks.
 Config validation (`secret` or `jwksUrl` required) is performed at construction
-time — a missing config throws immediately, not on first request.
+time - a missing config throws immediately, not on first request.
 
 ## Parameters
 
@@ -33,6 +33,6 @@ import { jws } from "@homegrower-club/stoma";
 // HMAC verification with embedded payload
 jws({ secret: env.JWS_SECRET });
 
-// Detached JWS — payload comes from the request body
+// Detached JWS - payload comes from the request body
 jws({ secret: env.JWS_SECRET, payloadSource: "body" });
 ```

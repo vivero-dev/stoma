@@ -11,7 +11,7 @@ import type { Mutation } from "../../core/protocol";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
-/** A field value — either a static value or a function resolving to one. */
+/** A field value - either a static value or a function resolving to one. */
 type FieldValue = unknown | ((c: Context) => unknown | Promise<unknown>);
 
 export interface AssignContentConfig extends PolicyConfig {
@@ -24,7 +24,7 @@ export interface AssignContentConfig extends PolicyConfig {
 }
 
 /**
- * Resolve a field map — evaluates dynamic functions, keeps static values.
+ * Resolve a field map - evaluates dynamic functions, keeps static values.
  */
 async function resolveFields(
   c: Context,
@@ -83,7 +83,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
     contentTypes: ["application/json"],
   },
   handler: async (c, next, { config, debug }) => {
-    // Request phase — modify request body before upstream
+    // Request phase - modify request body before upstream
     if (config.request) {
       const reqContentType = c.req.header("content-type");
       if (contentTypeMatches(reqContentType, config.contentTypes!)) {
@@ -97,7 +97,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
             body = JSON.parse(text) as Record<string, unknown>;
           }
         } catch {
-          // No body or invalid JSON — start with empty object
+          // No body or invalid JSON - start with empty object
         }
 
         // Resolve and merge fields
@@ -123,7 +123,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
         });
       } else {
         debug(
-          "request content-type %s not in allowed types — skipping request modification",
+          "request content-type %s not in allowed types - skipping request modification",
           reqContentType
         );
       }
@@ -131,7 +131,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
 
     await next();
 
-    // Response phase — modify response body after upstream
+    // Response phase - modify response body after upstream
     if (config.response) {
       const resContentType = c.res.headers.get("content-type");
       if (
@@ -145,7 +145,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
             body = JSON.parse(text) as Record<string, unknown>;
           }
         } catch {
-          // Invalid JSON — start with empty object
+          // Invalid JSON - start with empty object
         }
 
         // Resolve and merge fields
@@ -165,7 +165,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
         c.res = newRes;
       } else {
         debug(
-          "response content-type %s not in allowed types — skipping response modification",
+          "response content-type %s not in allowed types - skipping response modification",
           resContentType
         );
       }
@@ -180,7 +180,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
       const contentType = input.headers.get("content-type") ?? "";
       if (!contentTypeMatches(contentType, config.contentTypes!)) {
         debug(
-          "request content-type %s not in allowed types — skipping request modification",
+          "request content-type %s not in allowed types - skipping request modification",
           contentType
         );
         return { action: "continue" };
@@ -199,7 +199,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
           }
         }
       } catch {
-        // Invalid JSON — start with empty object
+        // Invalid JSON - start with empty object
       }
 
       // Resolve and merge fields (can't use dynamic functions in evaluate)
@@ -235,7 +235,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
       const contentType = input.headers.get("content-type") ?? "";
       if (!contentTypeMatches(contentType, config.contentTypes!)) {
         debug(
-          "response content-type %s not in allowed types — skipping response modification",
+          "response content-type %s not in allowed types - skipping response modification",
           contentType
         );
         return { action: "continue" };
@@ -254,7 +254,7 @@ export const assignContent = /*#__PURE__*/ definePolicy<AssignContentConfig>({
           }
         }
       } catch {
-        // Invalid JSON — start with empty object
+        // Invalid JSON - start with empty object
       }
 
       // Resolve and merge fields (can't use dynamic functions in evaluate)

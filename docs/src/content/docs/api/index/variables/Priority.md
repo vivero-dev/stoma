@@ -7,7 +7,7 @@ title: "Priority"
 
 > `const` **Priority**: `object`
 
-Defined in: [src/policies/sdk/priority.ts:10](https://github.com/HomeGrower-club/stoma/blob/6880413a743383e902605a267467fc2697cf2b73/src/policies/sdk/priority.ts#L10)
+Defined in: [src/policies/sdk/priority.ts:10](https://github.com/HomeGrower-club/stoma/blob/64d47b2a9c6564c1291a5dd9d515f24b13c13c53/src/policies/sdk/priority.ts#L10)
 
 ## Type Declaration
 
@@ -21,13 +21,13 @@ Authentication (e.g. jwtAuth, apiKeyAuth, basicAuth)
 
 > `readonly` **CACHE**: `40` = `40`
 
-Caching — before upstream
+Caching - before upstream
 
 ### CIRCUIT\_BREAKER
 
 > `readonly` **CIRCUIT\_BREAKER**: `30` = `30`
 
-Circuit breaker — protects upstream
+Circuit breaker - protects upstream
 
 ### DEFAULT
 
@@ -39,64 +39,64 @@ Default priority for unspecified policies
 
 > `readonly` **EARLY**: `5` = `5`
 
-Early pipeline (e.g. cors) — before auth
+Early pipeline (e.g. cors) - before auth
 
 ### IP\_FILTER
 
 > `readonly` **IP\_FILTER**: `1` = `1`
 
-IP filtering — runs before all other logic
+IP filtering - runs before all other logic
 
 ### METRICS
 
 > `readonly` **METRICS**: `1` = `1`
 
-Metrics collection — just after observability
+Metrics collection - just after observability
 
 ### MOCK
 
 > `readonly` **MOCK**: `999` = `999`
 
-Mock — terminal, replaces upstream
+Mock - terminal, replaces upstream
 
 ### OBSERVABILITY
 
 > `readonly` **OBSERVABILITY**: `0` = `0`
 
-Observability policies (e.g. requestLog) — wraps everything
+Observability policies (e.g. requestLog) - wraps everything
 
 ### PROXY
 
 > `readonly` **PROXY**: `95` = `95`
 
-Proxy header manipulation — just before upstream
+Proxy header manipulation - just before upstream
 
 ### RATE\_LIMIT
 
 > `readonly` **RATE\_LIMIT**: `20` = `20`
 
-Rate limiting — after auth
+Rate limiting - after auth
 
 ### REQUEST\_TRANSFORM
 
 > `readonly` **REQUEST\_TRANSFORM**: `50` = `50`
 
-Request header transforms — mid-pipeline
+Request header transforms - mid-pipeline
 
 ### RESPONSE\_TRANSFORM
 
 > `readonly` **RESPONSE\_TRANSFORM**: `92` = `92`
 
-Response header transforms — after upstream
+Response header transforms - after upstream
 
 ### RETRY
 
 > `readonly` **RETRY**: `90` = `90`
 
-Retry — wraps upstream fetch
+Retry - wraps upstream fetch
 
 ### TIMEOUT
 
 > `readonly` **TIMEOUT**: `85` = `85`
 
-Timeout — wraps upstream call
+Timeout - wraps upstream call

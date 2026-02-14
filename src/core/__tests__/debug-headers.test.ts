@@ -234,7 +234,7 @@ describe("debug headers", () => {
       { "x-stoma-cache-key": "custom-header-test" }
     );
 
-    // Using default header name — should not work when custom is configured
+    // Using default header name - should not work when custom is configured
     const res = await app.request("/test", {
       headers: { "x-stoma-debug": "x-stoma-cache-key" },
     });
@@ -276,7 +276,7 @@ describe("debug headers", () => {
 
     expect(res.headers.get("x-stoma-cache-key")).toBe("key1");
     expect(res.headers.get("x-stoma-cache-ttl")).toBe("300");
-    // Not in allowlist — should not appear even with *
+    // Not in allowlist - should not appear even with *
     expect(res.headers.get("x-stoma-circuit-state")).toBeNull();
   });
 
@@ -391,14 +391,14 @@ describe("debug headers", () => {
       ],
     });
 
-    // First request: MISS — no expires-in
+    // First request: MISS - no expires-in
     const miss = await gw.app.request("/cached", {
       headers: { "x-stoma-debug": "*" },
     });
     expect(miss.headers.get("x-stoma-cache-status")).toBe("MISS");
     expect(miss.headers.get("x-stoma-cache-expires-in")).toBeNull();
 
-    // Second request: HIT — should have expires-in
+    // Second request: HIT - should have expires-in
     const hit = await gw.app.request("/cached", {
       headers: { "x-stoma-debug": "*" },
     });

@@ -2,7 +2,7 @@
  * OAuth2 token validation policy via introspection or local validation.
  *
  * Validates bearer tokens issued by an external authorization server.
- * This is NOT an OAuth2 server — it only validates tokens.
+ * This is NOT an OAuth2 server - it only validates tokens.
  *
  * @module oauth2
  */
@@ -36,7 +36,7 @@ export interface OAuth2Config extends PolicyConfig {
   cacheTtlSeconds?: number;
   /** Maximum number of tokens to cache. Default: 100. */
   cacheMaxEntries?: number;
-  /** Required scopes — token must have ALL of these (space-separated scope string). */
+  /** Required scopes - token must have ALL of these (space-separated scope string). */
   requiredScopes?: string[];
   /** Introspection endpoint fetch timeout in milliseconds. Default: 5000. */
   introspectionTimeoutMs?: number;

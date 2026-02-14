@@ -5,6 +5,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@homegrower-club/stoma/config": path.resolve(import.meta.dirname, "src/config/index.ts"),
+      "@homegrower-club/stoma/adapters/redis": path.resolve(import.meta.dirname, "src/adapters/redis.ts"),
+      "@homegrower-club/stoma/adapters/postgres": path.resolve(import.meta.dirname, "src/adapters/postgres.ts"),
       "@homegrower-club/stoma/adapters": path.resolve(import.meta.dirname, "src/adapters/index.ts"),
       "@homegrower-club/stoma": path.resolve(import.meta.dirname, "src/index.ts"),
     },
@@ -15,7 +17,7 @@ export default defineConfig({
       "examples/__tests__/**/*.test.ts",
     ],
     exclude: [
-      "src/adapters/__tests__/**", // Requires Cloudflare Workers pool — see vitest.cloudflare.ts
+      "src/adapters/__tests__/durable-object.test.ts", // Requires Cloudflare Workers pool — see vitest.cloudflare.ts
     ],
     coverage: {
       provider: "istanbul",

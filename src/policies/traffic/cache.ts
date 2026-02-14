@@ -36,6 +36,8 @@ export interface CacheStore {
   put(key: string, response: Response, ttlSeconds: number): Promise<void>;
   /** Delete a cached entry. Returns true if something was removed. */
   delete(key: string): Promise<boolean>;
+  /** Optional cleanup — clear expired entries, release resources. */
+  destroy?(): void;
 }
 
 // --- In-memory default ---
@@ -120,6 +122,11 @@ export class InMemoryCacheStore implements CacheStore {
   /** Current number of entries (for testing/inspection) */
   get size(): number {
     return this.entries.size;
+  }
+
+  /** Release all cached entries. */
+  destroy(): void {
+    this.entries.clear();
   }
 }
 

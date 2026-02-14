@@ -32,7 +32,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
   /** Global policies applied to all routes */
   policies?: Policy[];
   /** Global error handler */
-  onError?: (error: Error, c: unknown) => Response | Promise<Response>;
+  onError?: (error: Error, c: Context) => Response | Promise<Response>;
   /**
    * Enable internal debug logging for gateway operators.
    *

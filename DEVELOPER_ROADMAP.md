@@ -170,7 +170,7 @@ interface UrlUpstreamConfig {
 **Runtime handling:**
 - **Node.js:** Use `https.request()` with `{ cert, key, ca }` options
 - **Bun:** Use fetch with TLS options or custom implementation
-- **Cloudflare Workers:** Throw at config validation time with clear error message recommending Cloudflare Access
+- **Cloudflare Workers:** Not supported natively. Cloudflare Workers' `fetch()` doesn't support client certificates. Recommend using Cloudflare Zero Trust (Access/Gateway) as the infrastructure layer to handle downstream mTLS — the gateway forwards to the Zero Trust tunnel, which terminates mTLS to the upstream.
 
 **Files:**
 

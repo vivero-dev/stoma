@@ -1102,6 +1102,17 @@ describe("cache", () => {
       expect(await store.get("b")).toBeNull();
     });
 
+    it("should destroy all entries via destroy()", async () => {
+      await store.put("x", new Response("x"), 300);
+      await store.put("y", new Response("y"), 300);
+
+      store.destroy();
+
+      expect(await store.get("x")).toBeNull();
+      expect(await store.get("y")).toBeNull();
+      expect(store.size).toBe(0);
+    });
+
     it("should store binary data correctly", async () => {
       const bytes = new Uint8Array([0x00, 0xff, 0x89, 0x50]);
       await store.put("bin", new Response(bytes), 300);

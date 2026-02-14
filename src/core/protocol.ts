@@ -302,6 +302,18 @@ export interface PolicyEvalContext {
  * };
  * ```
  */
+/**
+ * Current `evaluate` coverage across policy categories:
+ * - auth: 6/9 (jwt-auth, api-key-auth, basic-auth, oauth2, rbac, jws)
+ * - traffic: 5/13 (rate-limit, ip-filter, cache, geo-ip-filter, ssl-enforce)
+ * - transform: 5/7 (cors, assign-attributes, assign-content, request-transform, response-transform)
+ * - observability: 0/4
+ * - resilience: 0/4
+ *
+ * Total: 16/38 policies have evaluate support. The remaining policies
+ * will gain evaluate implementations as non-HTTP runtimes (ext_proc, WebSocket)
+ * are built out. See PLAN.md Phase 5 for the ext_proc roadmap.
+ */
 export interface PolicyEvaluator {
   /**
    * Evaluate during request processing phases.

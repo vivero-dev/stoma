@@ -345,6 +345,16 @@ describe("circuitBreaker", () => {
       expect(snapA.failureCount).toBe(0);
       expect(snapB.failureCount).toBe(0);
     });
+
+    it("should destroy all state via destroy()", async () => {
+      await store.recordFailure("x");
+      await store.recordFailure("y");
+      store.destroy();
+      const snapX = await store.getState("x");
+      const snapY = await store.getState("y");
+      expect(snapX.failureCount).toBe(0);
+      expect(snapY.failureCount).toBe(0);
+    });
   });
 
   // --- Store failure resilience ---

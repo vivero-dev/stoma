@@ -257,11 +257,14 @@ describe("createGateway - error handling", () => {
           },
         },
       ],
-      onError: (_err, _c) => {
-        return new Response(JSON.stringify({ custom: true }), {
-          status: 418,
-          headers: { "content-type": "application/json" },
-        });
+      onError: (_err, c) => {
+        return new Response(
+          JSON.stringify({ custom: true, url: c.req.url }),
+          {
+            status: 418,
+            headers: { "content-type": "application/json" },
+          }
+        );
       },
     });
 
@@ -270,6 +273,7 @@ describe("createGateway - error handling", () => {
 
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.custom).toBe(true);
+    expect(body.url).toContain("/err");
   });
 
   it("should return structured JSON error for GatewayError thrown by policies", async () => {

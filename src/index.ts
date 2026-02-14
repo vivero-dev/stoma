@@ -82,6 +82,10 @@ export type {
 export type { ErrorResponse } from "./core/errors";
 /** Structured error with HTTP status, machine-readable code, and optional response headers. */
 export { GatewayError } from "./core/errors";
+/** Build a JSON Response from a GatewayError, merging custom headers and request ID. */
+export { errorToResponse } from "./core/errors";
+/** Produce a generic 500 error response for unexpected (non-GatewayError) errors. */
+export { defaultErrorResponse } from "./core/errors";
 /** Compile a declarative {@link GatewayConfig} into a Hono app with policy pipelines and upstream dispatch. */
 export { createGateway } from "./core/gateway";
 /** Retrieve the {@link PolicyContext} (request ID, trace ID, timing) from a Hono context. */
@@ -294,6 +298,12 @@ export {
   createPolicyTestHarness,
   /** Create a policy factory from a declarative definition — combines resolveConfig, policyDebug, and withSkip. */
   definePolicy,
+  /** Check whether the client requested debug output via the `x-stoma-debug` header. */
+  isDebugRequested,
+  /** Fast-path check: is tracing requested for this request? */
+  isTraceRequested,
+  /** Shared no-op trace reporter instance. */
+  noopTraceReporter,
   /** Named priority constants (OBSERVABILITY, AUTH, RATE_LIMIT, etc.) for policy ordering. */
   Priority,
   /** Get a debug logger pre-namespaced to `stoma:policy:{name}` from the gateway context. */
@@ -302,6 +312,8 @@ export {
   policyTrace,
   /** Shallow-merge default config values with user-provided config. */
   resolveConfig,
+  /** Execute an async operation with graceful error handling — returns a fallback value on failure. */
+  safeCall,
   /** Set a debug header value for client-requested debug output. */
   setDebugHeader,
   /** Wrap a middleware handler with `PolicyConfig.skip` conditional bypass logic. */

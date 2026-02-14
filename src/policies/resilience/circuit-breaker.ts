@@ -55,6 +55,8 @@ export interface CircuitBreakerStore {
   transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot>;
   /** Fully reset a circuit, removing all state. */
   reset(key: string): Promise<void>;
+  /** Optional cleanup — release timers, close connections, etc. */
+  destroy?(): void;
 }
 
 // --- In-memory default ---
@@ -121,6 +123,11 @@ export class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
 
   /** Remove all circuits (for testing) */
   clear(): void {
+    this.circuits.clear();
+  }
+
+  /** Release all state. */
+  destroy(): void {
     this.circuits.clear();
   }
 }

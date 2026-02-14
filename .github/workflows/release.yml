@@ -28,6 +28,9 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Cache node_modules
         id: cache-deps
         uses: actions/cache@v4

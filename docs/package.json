@@ -9,7 +9,8 @@
     "build:editor-worker": "vite build --config vite.editor-worker.config.ts",
     "build:types": "dts-bundle-generator --no-check --external-inlines hono -o public/stoma-bundle.d.ts src/editor/stoma-entry.ts",
     "build:assets": "yarn build:sw && yarn build:stoma-bundle && yarn build:editor-worker && yarn build:types",
-    "build": "yarn build:assets && astro build",
+    "build:check-worker": "wrangler deploy --dry-run --outdir .wrangler/tmp 2>&1 | tail -5",
+    "build": "yarn build:assets && astro build && yarn build:check-worker",
     "dev": "yarn build:assets && astro dev",
     "dev:sw": "vite build --config vite.sw.config.ts --watch",
     "preview": "astro preview"

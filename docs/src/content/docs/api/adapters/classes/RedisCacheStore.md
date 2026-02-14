@@ -5,7 +5,7 @@ prev: false
 title: "RedisCacheStore"
 ---
 
-Defined in: [src/adapters/redis.ts:275](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/redis.ts#L275)
+Defined in: [src/adapters/redis.ts:275](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/redis.ts#L275)
 
 Response cache backed by Redis with base64-encoded body and TTL-based expiry.
 
@@ -19,7 +19,7 @@ Response cache backed by Redis with base64-encoded body and TTL-based expiry.
 
 > **new RedisCacheStore**(`client`, `prefix`, `setWithTTL`): `RedisCacheStore`
 
-Defined in: [src/adapters/redis.ts:276](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/redis.ts#L276)
+Defined in: [src/adapters/redis.ts:276](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/redis.ts#L276)
 
 #### Parameters
 
@@ -45,7 +45,7 @@ Defined in: [src/adapters/redis.ts:276](https://github.com/HomeGrower-club/stoma
 
 > **delete**(`key`): `Promise`\<`boolean`\>
 
-Defined in: [src/adapters/redis.ts:330](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/redis.ts#L330)
+Defined in: [src/adapters/redis.ts:330](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/redis.ts#L330)
 
 Delete a cached entry. Returns true if something was removed.
 
@@ -69,7 +69,7 @@ Delete a cached entry. Returns true if something was removed.
 
 > **get**(`key`): `Promise`\<`Response` \| `null`\>
 
-Defined in: [src/adapters/redis.ts:286](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/redis.ts#L286)
+Defined in: [src/adapters/redis.ts:286](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/redis.ts#L286)
 
 Retrieve a cached response by key. Returns null on miss.
 
@@ -93,7 +93,7 @@ Retrieve a cached response by key. Returns null on miss.
 
 > **put**(`key`, `response`, `ttlSeconds`): `Promise`\<`void`\>
 
-Defined in: [src/adapters/redis.ts:304](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/redis.ts#L304)
+Defined in: [src/adapters/redis.ts:304](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/redis.ts#L304)
 
 Store a response under key with a TTL in seconds.
 

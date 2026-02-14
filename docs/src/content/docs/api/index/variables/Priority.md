@@ -7,7 +7,7 @@ title: "Priority"
 
 > `const` **Priority**: `object`
 
-Defined in: [src/policies/sdk/priority.ts:10](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/priority.ts#L10)
+Defined in: [src/policies/sdk/priority.ts:10](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/priority.ts#L10)
 
 ## Type Declaration
 

@@ -5,7 +5,7 @@ prev: false
 title: "PostgresRateLimitStore"
 ---
 
-Defined in: [src/adapters/postgres.ts:136](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/postgres.ts#L136)
+Defined in: [src/adapters/postgres.ts:136](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/postgres.ts#L136)
 
 Rate limit store backed by PostgreSQL using atomic upsert.
 
@@ -22,7 +22,7 @@ atomically reset or increment the counter in a single query.
 
 > **new PostgresRateLimitStore**(`client`, `table`): `PostgresRateLimitStore`
 
-Defined in: [src/adapters/postgres.ts:137](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/postgres.ts#L137)
+Defined in: [src/adapters/postgres.ts:137](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/postgres.ts#L137)
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: [src/adapters/postgres.ts:137](https://github.com/HomeGrower-club/st
 
 > **cleanup**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/postgres.ts:176](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/postgres.ts#L176)
+Defined in: [src/adapters/postgres.ts:176](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/postgres.ts#L176)
 
 Remove expired entries. Call periodically (e.g. via cron or waitUntil).
 
@@ -58,7 +58,7 @@ Remove expired entries. Call periodically (e.g. via cron or waitUntil).
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [src/adapters/postgres.ts:142](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/adapters/postgres.ts#L142)
+Defined in: [src/adapters/postgres.ts:142](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/adapters/postgres.ts#L142)
 
 Increment the counter for a key, returning the new count and TTL
 

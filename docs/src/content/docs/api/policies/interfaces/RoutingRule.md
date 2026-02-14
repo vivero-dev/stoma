@@ -5,7 +5,7 @@ prev: false
 title: "RoutingRule"
 ---
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:15](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L15)
+Defined in: [src/policies/traffic/dynamic-routing.ts:15](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L15)
 
 Configuration for the dynamicRouting policy.
 
@@ -15,7 +15,7 @@ Configuration for the dynamicRouting policy.
 
 > **condition**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:19](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L19)
+Defined in: [src/policies/traffic/dynamic-routing.ts:19](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L19)
 
 Condition that determines if this rule applies.
 
@@ -35,7 +35,7 @@ Condition that determines if this rule applies.
 
 > `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:25](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L25)
+Defined in: [src/policies/traffic/dynamic-routing.ts:25](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L25)
 
 Optional headers to add to the upstream request.
 
@@ -45,7 +45,7 @@ Optional headers to add to the upstream request.
 
 > `optional` **name**: `string`
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:17](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L17)
+Defined in: [src/policies/traffic/dynamic-routing.ts:17](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L17)
 
 Human-readable rule name for debugging.
 
@@ -55,7 +55,7 @@ Human-readable rule name for debugging.
 
 > `optional` **rewritePath**: (`path`) => `string`
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:23](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L23)
+Defined in: [src/policies/traffic/dynamic-routing.ts:23](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L23)
 
 Optional path rewrite function.
 
@@ -75,6 +75,6 @@ Optional path rewrite function.
 
 > **target**: `string`
 
-Defined in: [src/policies/traffic/dynamic-routing.ts:21](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/dynamic-routing.ts#L21)
+Defined in: [src/policies/traffic/dynamic-routing.ts:21](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/dynamic-routing.ts#L21)
 
 Target upstream URL to route to.

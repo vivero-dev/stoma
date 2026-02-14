@@ -5,7 +5,7 @@ prev: false
 title: "RequestLimitConfig"
 ---
 
-Defined in: [src/policies/traffic/request-limit.ts:11](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/request-limit.ts#L11)
+Defined in: [src/policies/traffic/request-limit.ts:11](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/request-limit.ts#L11)
 
 Configuration for the requestLimit policy.
 
@@ -19,7 +19,7 @@ Configuration for the requestLimit policy.
 
 > **maxBytes**: `number`
 
-Defined in: [src/policies/traffic/request-limit.ts:13](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/request-limit.ts#L13)
+Defined in: [src/policies/traffic/request-limit.ts:13](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/request-limit.ts#L13)
 
 Maximum allowed body size in bytes (based on Content-Length).
 
@@ -29,7 +29,7 @@ Maximum allowed body size in bytes (based on Content-Length).
 
 > `optional` **message**: `string`
 
-Defined in: [src/policies/traffic/request-limit.ts:15](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/request-limit.ts#L15)
+Defined in: [src/policies/traffic/request-limit.ts:15](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/request-limit.ts#L15)
 
 Custom error message. Default: "Request body too large".
 
@@ -39,7 +39,7 @@ Custom error message. Default: "Request body too large".
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

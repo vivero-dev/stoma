@@ -7,7 +7,7 @@ title: "interrupt"
 
 > `const` **interrupt**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/traffic/interrupt.ts#L49)
+Defined in: [src/policies/traffic/interrupt.ts:49](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/traffic/interrupt.ts#L49)
 
 Conditionally short-circuit the pipeline and return a static response.
 

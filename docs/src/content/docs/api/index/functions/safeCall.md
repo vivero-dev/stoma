@@ -7,7 +7,7 @@ title: "safeCall"
 
 > **safeCall**\<`T`\>(`fn`, `fallback`, `debug?`, `label?`): `Promise`\<`T`\>
 
-Defined in: [src/policies/sdk/helpers.ts:107](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/helpers.ts#L107)
+Defined in: [src/policies/sdk/helpers.ts:107](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/helpers.ts#L107)
 
 Execute an async operation with graceful error handling.
 

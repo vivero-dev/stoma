@@ -5,7 +5,7 @@ prev: false
 title: "PolicyConfig"
 ---
 
-Defined in: [src/policies/types.ts:88](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/types.ts#L88)
+Defined in: [src/policies/types.ts:88](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/types.ts#L88)
 
 Base configuration shared by all policies
 
@@ -53,7 +53,7 @@ Base configuration shared by all policies
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

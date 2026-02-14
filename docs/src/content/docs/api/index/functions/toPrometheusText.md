@@ -7,7 +7,7 @@ title: "toPrometheusText"
 
 > **toPrometheusText**(`snapshot`): `string`
 
-Defined in: [src/observability/metrics.ts:155](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/observability/metrics.ts#L155)
+Defined in: [src/observability/metrics.ts:155](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/observability/metrics.ts#L155)
 
 Serialize a metrics snapshot to Prometheus text exposition format.
 

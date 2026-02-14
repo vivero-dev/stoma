@@ -5,7 +5,7 @@ prev: false
 title: "PolicyTraceDetail"
 ---
 
-Defined in: [src/policies/sdk/trace.ts:39](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/trace.ts#L39)
+Defined in: [src/policies/sdk/trace.ts:39](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/trace.ts#L39)
 
 Policy-reported detail (cooperative opt-in via `trace()`).
 
@@ -15,7 +15,7 @@ Policy-reported detail (cooperative opt-in via `trace()`).
 
 > **action**: `string`
 
-Defined in: [src/policies/sdk/trace.ts:40](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/trace.ts#L40)
+Defined in: [src/policies/sdk/trace.ts:40](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/trace.ts#L40)
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: [src/policies/sdk/trace.ts:40](https://github.com/HomeGrower-club/st
 
 > `optional` **data**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/policies/sdk/trace.ts:41](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/trace.ts#L41)
+Defined in: [src/policies/sdk/trace.ts:41](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/trace.ts#L41)

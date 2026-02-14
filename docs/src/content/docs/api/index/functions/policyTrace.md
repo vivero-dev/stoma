@@ -7,7 +7,7 @@ title: "policyTrace"
 
 > **policyTrace**(`c`, `policyName`): [`TraceReporter`](/api/index/type-aliases/tracereporter/)
 
-Defined in: [src/policies/sdk/trace.ts:87](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/policies/sdk/trace.ts#L87)
+Defined in: [src/policies/sdk/trace.ts:87](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/policies/sdk/trace.ts#L87)
 
 Get a trace reporter for a specific policy.
 

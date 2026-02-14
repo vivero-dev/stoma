@@ -5,7 +5,7 @@ prev: false
 title: "RegisteredRoute"
 ---
 
-Defined in: [src/core/types.ts:241](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/core/types.ts#L241)
+Defined in: [src/core/types.ts:241](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/core/types.ts#L241)
 
 Registered route information for admin introspection.
 
@@ -15,7 +15,7 @@ Registered route information for admin introspection.
 
 > **methods**: `string`[]
 
-Defined in: [src/core/types.ts:243](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/core/types.ts#L243)
+Defined in: [src/core/types.ts:243](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/core/types.ts#L243)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/core/types.ts:243](https://github.com/HomeGrower-club/stoma/blo
 
 > **path**: `string`
 
-Defined in: [src/core/types.ts:242](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/core/types.ts#L242)
+Defined in: [src/core/types.ts:242](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/core/types.ts#L242)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [src/core/types.ts:242](https://github.com/HomeGrower-club/stoma/blo
 
 > **policyNames**: `string`[]
 
-Defined in: [src/core/types.ts:244](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/core/types.ts#L244)
+Defined in: [src/core/types.ts:244](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/core/types.ts#L244)
 
 ***
 
@@ -39,4 +39,4 @@ Defined in: [src/core/types.ts:244](https://github.com/HomeGrower-club/stoma/blo
 
 > **upstreamType**: `string`
 
-Defined in: [src/core/types.ts:245](https://github.com/HomeGrower-club/stoma/blob/75d04472e736fafe9528e258514a9fe3e352e511/src/core/types.ts#L245)
+Defined in: [src/core/types.ts:245](https://github.com/HomeGrower-club/stoma/blob/6293f5d254fea2989ebdf0b4b444e914a25475fc/src/core/types.ts#L245)

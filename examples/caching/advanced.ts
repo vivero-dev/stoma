@@ -1,6 +1,7 @@
 // Advanced caching example: e-commerce product catalog with tiered TTLs.
 // Demonstrates different cache durations for listings vs. details,
 // rate limiting, and language-aware cache keys via varyHeaders.
+// Demo API: https://stoma.opensource.homegrower.club/demo-api
 
 import { createGateway, cache, rateLimit, cors, InMemoryCacheStore } from "@homegrower-club/stoma";
 
@@ -26,7 +27,7 @@ const gateway = createGateway({
             varyHeaders: ["accept-language"],
           }),
         ],
-        upstream: { type: "url", target: "https://api.example.com" },
+        upstream: { type: "url", target: "https://stoma.opensource.homegrower.club/demo-api" },
       },
     },
     // Product details — cached longer
@@ -42,7 +43,7 @@ const gateway = createGateway({
             varyHeaders: ["accept-language"],
           }),
         ],
-        upstream: { type: "url", target: "https://api.example.com" },
+        upstream: { type: "url", target: "https://stoma.opensource.homegrower.club/demo-api" },
       },
     },
     // Admin mutations — never cached
@@ -53,7 +54,7 @@ const gateway = createGateway({
         policies: [
           rateLimit({ max: 20, windowSeconds: 60 }),
         ],
-        upstream: { type: "url", target: "https://api.example.com" },
+        upstream: { type: "url", target: "https://stoma.opensource.homegrower.club/demo-api" },
       },
     },
   ],

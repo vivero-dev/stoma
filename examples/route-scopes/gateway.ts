@@ -1,6 +1,7 @@
 // Route scopes: group routes under shared path prefixes and policies
 // using scope(). Eliminates repetition when multiple routes share
 // the same base path or middleware stack.
+// Demo API: https://stoma.opensource.homegrower.club/demo-api
 
 import { createGateway, scope, health, jwtAuth, cors } from "@homegrower-club/stoma";
 
@@ -12,13 +13,13 @@ const apiRoutes = scope({
     {
       path: "/users/*",
       pipeline: {
-        upstream: { type: "url", target: "https://users.internal" },
+        upstream: { type: "url", target: "https://stoma.opensource.homegrower.club/demo-api" },
       },
     },
     {
       path: "/projects/*",
       pipeline: {
-        upstream: { type: "url", target: "https://projects.internal" },
+        upstream: { type: "url", target: "https://stoma.opensource.homegrower.club/demo-api" },
       },
     },
   ],

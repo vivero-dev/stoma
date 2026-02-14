@@ -1,6 +1,7 @@
 // Public read API with caching and resilience: serve high-volume
 // GET endpoints with fast cached responses and graceful degradation
 // when upstreams fail.
+// Demo API: https://stoma.opensource.homegrower.club/demo-api
 
 import {
   createGateway,
@@ -37,7 +38,7 @@ const gateway = createGateway({
         ],
         upstream: {
           type: "url",
-          target: "https://catalog.internal.example.com",
+          target: "https://stoma.opensource.homegrower.club/demo-api",
         },
       },
     },

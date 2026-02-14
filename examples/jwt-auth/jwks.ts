@@ -1,6 +1,7 @@
 // JWT authentication using JWKS (RSA public keys) from an external provider.
 // Use this approach when tokens are signed by an identity provider like
 // Auth0, Supabase, Firebase, or Okta.
+// Demo API: https://stoma.opensource.homegrower.club/demo-api
 
 import { createGateway, jwtAuth, cors, requestLog } from "@homegrower-club/stoma";
 
@@ -31,7 +32,7 @@ const gateway = createGateway({
         ],
         upstream: {
           type: "url",
-          target: "https://users.internal",
+          target: "https://stoma.opensource.homegrower.club/demo-api",
         },
       },
     },

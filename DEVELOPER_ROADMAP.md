@@ -111,6 +111,82 @@ const httpHandler = evaluateToMiddleware(myPolicy.evaluate);
 - `definePolicy()` passes through `httpOnly` from definition to returned Policy
 - Tooling can use this flag to warn when HTTP-only policies are used in non-HTTP gateway configs
 
+## Policies
+
+### 33. mTLS Policy (Inbound + Outbound)
+
+**Problem:** Users need mutual TLS support — both verifying client certificates from incoming requests (inbound mTLS) and presenting client certificates to upstream services (outbound mTLS).
+
+**Solution:** Two-part implementation:
+
+#### Part A — Inbound mTLS Policy
+
+Create `src/policies/auth/mtls.ts` using the `definePolicy` pattern:
+
+```typescript
+interface MtlsConfig extends PolicyConfig {
+  /** Reject requests without a valid client certificate */
+  require?: boolean;
+  /** Allowed SHA256 certificate fingerprints (hex, no colons) */
+  allowedFingerprints?: string[];
+  /** Allowed certificate issuers (CN or O) */
+  allowedIssuers?: string[];
+  /** Forward certificate info to upstream as headers */
+  forwardCertInfo?: {
+    fingerprint?: string;
+    issuer?: string;
+    subject?: string;
+    verified?: string;
+  };
+}
+```
+
+- Priority: `Priority.AUTH` (10)
+- Reads `cf.tlsClientAuth` from Cloudflare Workers request
+- Falls back to checking custom headers for non-CF runtimes (allows load balancers to pass cert info)
+- Throws `GatewayError(403)` on validation failure
+
+#### Part B — Outbound mTLS Support
+
+Extend `UrlUpstreamConfig` in `src/core/types.ts`:
+
+```typescript
+interface UrlUpstreamConfig {
+  type: "url";
+  target: string;
+  // ... existing options
+  /** Outbound mTLS configuration */
+  mtls?: {
+    /** Client certificate in PEM format */
+    cert: string;
+    /** Private key in PEM format */
+    key: string;
+    /** CA certificate for verifying upstream (optional) */
+    ca?: string;
+  };
+}
+```
+
+**Runtime handling:**
+- **Node.js:** Use `https.request()` with `{ cert, key, ca }` options
+- **Bun:** Use fetch with TLS options or custom implementation
+- **Cloudflare Workers:** Throw at config validation time with clear error message recommending Cloudflare Access
+
+**Files:**
+
+| File | Action |
+|------|--------|
+| `src/policies/auth/mtls.ts` | Create |
+| `src/policies/auth/index.ts` | Modify — export `mtls` |
+| `src/policies/auth/__tests__/mtls.test.ts` | Create |
+| `src/core/types.ts` | Modify — add `mtls` to `UrlUpstreamConfig` |
+| `src/core/gateway.ts` | Modify — handle outbound mTLS in upstream dispatch |
+| `docs/src/content/docs/policies/mtls.mdx` | Create |
+
+**Estimated effort:** ~8-12 hours total
+
+---
+
 ## Core Ergonomics & Composition
 
 ### 22. Route Groups & Scopes

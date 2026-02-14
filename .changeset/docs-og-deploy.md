@@ -1,6 +1,8 @@
 ---
-"@homegrower-club/stoma-docs": patch
+"@homegrower-club/stoma": patch
 ---
+
+# Docs updates only:
 
 Add Open Graph meta tags and decouple docs deployment from package releases
 

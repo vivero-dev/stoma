@@ -69,7 +69,7 @@ jobs:
   deploy-docs:
     needs: release
     runs-on: ubuntu-latest
-    if: needs.release.outputs.published == 'true'
+    if: always() && needs.release.result == 'success'
     steps:
       - uses: actions/checkout@v4
 

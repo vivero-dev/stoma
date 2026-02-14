@@ -58,9 +58,9 @@
       "default": "./dist/config/index.js"
     },
     "./sdk": {
-      "types": "./dist/sdk/index.d.ts",
-      "import": "./dist/sdk/index.js",
-      "default": "./dist/sdk/index.js"
+      "types": "./dist/policies/sdk/index.d.ts",
+      "import": "./dist/policies/sdk/index.js",
+      "default": "./dist/policies/sdk/index.js"
     },
     "./adapters": {
       "types": "./dist/adapters/index.d.ts",

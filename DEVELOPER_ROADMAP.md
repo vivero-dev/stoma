@@ -90,10 +90,26 @@ import { evaluateToMiddleware } from "@homegrower-club/stoma/sdk";
 const httpHandler = evaluateToMiddleware(myPolicy.evaluate);
 ```
 
-### 21. Built-in Policy Migration
-**Problem:** All 43 built-in policies currently only implement `handler`. To be useful with ext_proc/WebSocket runtimes, they need `evaluate` too.
+### 21. Built-in Policy Migration ✅
+**Status:** Complete. Added `evaluate` implementations to 18 policies across auth, traffic, and transform categories. Also added `httpOnly: true` flag to 15 HTTP-specific policies.
 
-**Solution:** Progressively add `evaluate` implementations to built-in policies, starting with the most universally useful: auth policies (jwt-auth, api-key-auth, oauth2), traffic policies (rate-limit, ip-filter), and transform policies (cors, request/response transforms). Non-HTTP-specific policies like circuit-breaker and retry may not need `evaluate` since those concerns are handled by Envoy itself in the ext_proc model.
+**Policies with `evaluate` (18 total):**
+- **Auth (6):** api-key-auth, basic-auth, oauth2, jwt-auth, jws, rbac
+- **Traffic (4):** ip-filter, geo-ip-filter, request-limit, json-threat-protection
+- **Transform (8):** requestTransform, responseTransform, assignAttributes, assignContent, requestValidation, jsonValidation, resourceFilter
+
+**Policies marked `httpOnly: true` (15 total):**
+- **Core (2):** proxy, mock
+- **Traffic (5):** ssl-enforce, dynamic-routing, interrupt, http-callout, traffic-shadow
+- **Resilience (4):** latency-injection, timeout, retry, circuit-breaker
+- **Transform (1):** cors
+- **Observability (4):** request-log, metrics-reporter, server-timing, assign-metrics
+
+**Key design decisions:**
+- Policies that only implement `handler` (no `evaluate`) are HTTP-only by default
+- New `httpOnly?: true` flag on Policy type explicitly marks HTTP-specific policies
+- `definePolicy()` passes through `httpOnly` from definition to returned Policy
+- Tooling can use this flag to warn when HTTP-only policies are used in non-HTTP gateway configs
 
 ## Core Ergonomics & Composition
 
@@ -115,9 +131,32 @@ const adminRoutes = scope({
 **Problem:** A single `gateway.ts` file can get huge.
 **Solution:** First-class support for loading route definitions from multiple files/modules, potentially with auto-discovery or a simple `mergeConfigs` utility.
 
-### 24. Type-Safe Upstream Bindings
-**Problem:** `ServiceBindingUpstream` relies on stringly-typed service names (`service: "AUTH_SERVICE"`).
-**Solution:** Use TypeScript generics to validate service names against the user's `Env` interface.
+### 24. Type-Safe Upstream Bindings ✅
+**Status:** Done. The type system already supports this via generics:
+
+```typescript
+interface Env {
+  AUTH_SERVICE: Fetcher;
+  API_SERVICE: Fetcher;
+}
+
+// Pass your Env type to createGateway
+createGateway<Env>({
+  routes: [{
+    path: "/api",
+    upstream: {
+      type: "service-binding",
+      service: "AUTH_SERVICE"  // TypeScript autocompletes valid binding names!
+    }
+  }]
+})
+```
+
+The generic `TBindings` flows from `createGateway<TBindings>` through `GatewayConfig`, `RouteConfig`, `UpstreamConfig`, to `ServiceBindingUpstream.service` which uses `Extract<keyof TBindings, string>`.
+
+**What's needed:**
+- More service-binding examples (in progress)
+- Documentation improvements (in progress)
 
 ## Developer Experience (DX)
 

@@ -7,7 +7,7 @@ title: "createGateway"
 
 > **createGateway**\<`TBindings`\>(`config`): [`GatewayInstance`](/api/index/interfaces/gatewayinstance/)
 
-Defined in: [src/core/gateway.ts:99](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/gateway.ts#L99)
+Defined in: [src/core/gateway.ts:99](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/gateway.ts#L99)
 
 Create a gateway instance from a declarative configuration.
 
@@ -61,30 +61,3 @@ const gateway = createGateway({
 
 export default gateway.app;
 ```
-
-## Type-Safe Service Bindings
-
-Pass your Cloudflare Workers `Env` type to get autocomplete and type checking for service bindings:
-
-```ts
-interface Env {
-  AUTH_WORKER: Fetcher;
-  API_WORKER: Fetcher;
-}
-
-const gateway = createGateway<Env>({
-  routes: [
-    {
-      path: "/auth/*",
-      upstream: {
-        type: "service-binding",
-        service: "AUTH_WORKER",  // ← TypeScript autocompletes this!
-      },
-    },
-  ],
-});
-```
-
-The `TBindings` generic flows through to `ServiceBindingUpstream.service`, which uses `Extract<keyof TBindings, string>` to validate binding names.
-
-See [examples/service-binding](https://github.com/HomeGrower-club/stoma/tree/main/examples/service-binding) for a complete example.

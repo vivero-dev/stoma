@@ -5,7 +5,7 @@ prev: false
 title: "GatewayError"
 ---
 
-Defined in: [src/core/errors.ts:27](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/errors.ts#L27)
+Defined in: [src/core/errors.ts:27](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/errors.ts#L27)
 
 Structured gateway error with HTTP status code, machine-readable code,
 and optional response headers (e.g. `Retry-After`, `X-RateLimit-*`).
@@ -32,7 +32,7 @@ throw new GatewayError(429, "rate_limited", "Too many requests", {
 
 > **new GatewayError**(`statusCode`, `code`, `message`, `headers?`): `GatewayError`
 
-Defined in: [src/core/errors.ts:33](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/errors.ts#L33)
+Defined in: [src/core/errors.ts:33](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/errors.ts#L33)
 
 #### Parameters
 
@@ -78,7 +78,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > `readonly` **code**: `string`
 
-Defined in: [src/core/errors.ts:29](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/errors.ts#L29)
+Defined in: [src/core/errors.ts:29](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/errors.ts#L29)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [src/core/errors.ts:29](https://github.com/HomeGrower-club/stoma/blo
 
 > `readonly` `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [src/core/errors.ts:31](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/errors.ts#L31)
+Defined in: [src/core/errors.ts:31](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/errors.ts#L31)
 
 Optional headers to include in the error response (e.g. rate-limit headers)
 
@@ -132,4 +132,4 @@ Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > `readonly` **statusCode**: `number`
 
-Defined in: [src/core/errors.ts:28](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/core/errors.ts#L28)
+Defined in: [src/core/errors.ts:28](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/core/errors.ts#L28)

@@ -5,14 +5,17 @@ prev: false
 title: "extractClientIp"
 ---
 
-> **extractClientIp**(`headers`, `ipHeaders?`): `string`
+> **extractClientIp**(`headers`, `options?`): `string`
 
-Defined in: [src/utils/ip.ts:32](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/utils/ip.ts#L32)
+Defined in: [src/utils/ip.ts:59](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/utils/ip.ts#L59)
 
 Extract the client IP address from request headers.
 
 Iterates through `ipHeaders` in order. For comma-separated headers like
-`X-Forwarded-For`, only the first (leftmost) value is returned.
+`X-Forwarded-For`, the behavior depends on options:
+- By default, returns the first (leftmost) value
+- With `useRightmostForwardedIp: true`, returns the last (rightmost) value
+- With `trustedProxies`, validates the leftmost IP against trusted ranges
 
 ## Parameters
 
@@ -22,11 +25,11 @@ An object with a `.get(name)` method (e.g. `Headers`, Hono `c.req`).
 
 #### get
 
-### ipHeaders?
+### options?
 
-readonly `string`[] = `DEFAULT_IP_HEADERS`
+`ExtractClientIpOptions` = `{}`
 
-Ordered list of headers to inspect. Default: [DEFAULT\_IP\_HEADERS](/api/index/variables/default_ip_headers/).
+Configuration options for IP extraction.
 
 ## Returns
 
@@ -39,7 +42,8 @@ The extracted IP address, or `"unknown"` if none found.
 The `X-Forwarded-For` header is trivially spoofable by clients
 outside of trusted proxy infrastructure. An attacker can set arbitrary IP
 values to bypass IP-based allowlists, rate limits, or geo-restrictions.
-When deploying behind a load balancer or CDN, configure `ipHeaders` to
-match your proxy's trusted header (e.g. `cf-connecting-ip` for Cloudflare,
-`x-real-ip` for nginx) and ensure the proxy strips or overwrites any
-client-supplied forwarding headers.
+
+To mitigate:
+1. Use `cf-connecting-ip` when behind Cloudflare (not spoofable by clients)
+2. Configure `trustedProxies` to validate X-Forwarded-For IPs
+3. Use `useRightmostForwardedIp: true` when behind a trusted proxy

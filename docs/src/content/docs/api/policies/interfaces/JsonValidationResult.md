@@ -5,7 +5,7 @@ prev: false
 title: "JsonValidationResult"
 ---
 
-Defined in: [src/policies/transform/json-validation.ts:16](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/transform/json-validation.ts#L16)
+Defined in: [src/policies/transform/json-validation.ts:16](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/transform/json-validation.ts#L16)
 
 Result shape returned by the user-provided validation function.
 
@@ -15,7 +15,7 @@ Result shape returned by the user-provided validation function.
 
 > `optional` **errors**: `string`[]
 
-Defined in: [src/policies/transform/json-validation.ts:18](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/transform/json-validation.ts#L18)
+Defined in: [src/policies/transform/json-validation.ts:18](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/transform/json-validation.ts#L18)
 
 ***
 
@@ -23,4 +23,4 @@ Defined in: [src/policies/transform/json-validation.ts:18](https://github.com/Ho
 
 > **valid**: `boolean`
 
-Defined in: [src/policies/transform/json-validation.ts:17](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/transform/json-validation.ts#L17)
+Defined in: [src/policies/transform/json-validation.ts:17](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/transform/json-validation.ts#L17)

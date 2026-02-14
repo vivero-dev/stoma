@@ -7,7 +7,7 @@ title: "rbac"
 
 > `const` **rbac**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/auth/rbac.ts:31](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/auth/rbac.ts#L31)
+Defined in: [src/policies/auth/rbac.ts:37](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/auth/rbac.ts#L37)
 
 Role-based access control using claims forwarded as request headers by auth policies (priority 10).
 

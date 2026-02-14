@@ -7,7 +7,7 @@ title: "resolveConfig"
 
 > **resolveConfig**\<`TConfig`\>(`defaults`, `userConfig?`): `TConfig`
 
-Defined in: [src/policies/sdk/helpers.ts:29](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/sdk/helpers.ts#L29)
+Defined in: [src/policies/sdk/helpers.ts:29](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/sdk/helpers.ts#L29)
 
 Merge default config values with user-provided config.
 

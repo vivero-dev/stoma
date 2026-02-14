@@ -7,7 +7,7 @@ title: "metricsReporter"
 
 > `const` **metricsReporter**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/observability/metrics-reporter.ts:31](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/observability/metrics-reporter.ts#L31)
+Defined in: [src/policies/observability/metrics-reporter.ts:31](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/observability/metrics-reporter.ts#L31)
 
 Record standard gateway metrics for every request.
 

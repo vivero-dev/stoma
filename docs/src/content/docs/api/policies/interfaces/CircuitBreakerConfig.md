@@ -5,7 +5,7 @@ prev: false
 title: "CircuitBreakerConfig"
 ---
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:130](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L130)
+Defined in: [src/policies/resilience/circuit-breaker.ts:130](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L130)
 
 Base configuration shared by all policies
 
@@ -19,7 +19,7 @@ Base configuration shared by all policies
 
 > `optional` **failureOn**: `number`[]
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:138](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L138)
+Defined in: [src/policies/resilience/circuit-breaker.ts:138](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L138)
 
 Status codes considered failures. Default: [500, 502, 503, 504].
 
@@ -29,7 +29,7 @@ Status codes considered failures. Default: [500, 502, 503, 504].
 
 > `optional` **failureThreshold**: `number`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:132](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L132)
+Defined in: [src/policies/resilience/circuit-breaker.ts:132](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L132)
 
 Number of failures before opening the circuit. Default: 5.
 
@@ -39,7 +39,7 @@ Number of failures before opening the circuit. Default: 5.
 
 > `optional` **halfOpenMax**: `number`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:136](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L136)
+Defined in: [src/policies/resilience/circuit-breaker.ts:136](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L136)
 
 Max concurrent probes allowed in half-open state. Default: 1.
 
@@ -49,7 +49,7 @@ Max concurrent probes allowed in half-open state. Default: 1.
 
 > `optional` **key**: (`c`) => `string`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:142](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L142)
+Defined in: [src/policies/resilience/circuit-breaker.ts:142](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L142)
 
 Key extractor. Default: request URL pathname.
 
@@ -69,7 +69,7 @@ Key extractor. Default: request URL pathname.
 
 > `optional` **onStateChange**: (`key`, `from`, `to`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:155](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L155)
+Defined in: [src/policies/resilience/circuit-breaker.ts:155](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L155)
 
 Callback invoked on every state transition.
 
@@ -106,7 +106,7 @@ The new circuit state.
 
 > `optional` **openStatusCode**: `number`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:144](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L144)
+Defined in: [src/policies/resilience/circuit-breaker.ts:144](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L144)
 
 HTTP status code when the circuit is open. Default: 503.
 
@@ -116,7 +116,7 @@ HTTP status code when the circuit is open. Default: 503.
 
 > `optional` **resetTimeoutMs**: `number`
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:134](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L134)
+Defined in: [src/policies/resilience/circuit-breaker.ts:134](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L134)
 
 Time in ms before transitioning from open → half-open. Default: 30000.
 
@@ -126,7 +126,7 @@ Time in ms before transitioning from open → half-open. Default: 30000.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -150,6 +150,6 @@ Skip this policy when condition returns true
 
 > `optional` **store**: [`CircuitBreakerStore`](/api/index/interfaces/circuitbreakerstore/)
 
-Defined in: [src/policies/resilience/circuit-breaker.ts:140](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/resilience/circuit-breaker.ts#L140)
+Defined in: [src/policies/resilience/circuit-breaker.ts:140](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/resilience/circuit-breaker.ts#L140)
 
 Storage backend. Default: InMemoryCircuitBreakerStore.

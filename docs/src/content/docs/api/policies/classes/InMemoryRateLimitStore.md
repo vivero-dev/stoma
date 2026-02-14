@@ -5,9 +5,19 @@ prev: false
 title: "InMemoryRateLimitStore"
 ---
 
-Defined in: [src/policies/traffic/rate-limit.ts:56](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L56)
+Defined in: [src/policies/traffic/rate-limit.ts:61](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/rate-limit.ts#L61)
 
-Sliding-window rate limiting with pluggable counter storage (priority 20).
+Default in-memory rate limit store backed by a `Map`.
+
+The store is bounded by `maxKeys` (default 100,000) to prevent unbounded
+memory growth from unique rate-limit keys. When the store reaches capacity
+and no expired entries can be evicted, it **fails closed** — returning
+`MAX_SAFE_INTEGER` as the count to trigger rate limiting. This is an
+intentional security design: memory safety takes priority over availability.
+
+Note the distinction between store-level and policy-level failure modes:
+- **Store at capacity** (this class): fail-closed — reject the request
+- **Store throws/times out** (policy handler via `safeCall`): fail-open — allow the request
 
 ## Implements
 
@@ -19,7 +29,7 @@ Sliding-window rate limiting with pluggable counter storage (priority 20).
 
 > **new InMemoryRateLimitStore**(`options?`): `InMemoryRateLimitStore`
 
-Defined in: [src/policies/traffic/rate-limit.ts:63](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L63)
+Defined in: [src/policies/traffic/rate-limit.ts:68](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/rate-limit.ts#L68)
 
 #### Parameters
 
@@ -37,7 +47,7 @@ Defined in: [src/policies/traffic/rate-limit.ts:63](https://github.com/HomeGrowe
 
 > **destroy**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:123](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L123)
+Defined in: [src/policies/traffic/rate-limit.ts:137](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/rate-limit.ts#L137)
 
 Stop the cleanup interval (for testing)
 
@@ -55,9 +65,15 @@ Stop the cleanup interval (for testing)
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [src/policies/traffic/rate-limit.ts:83](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L83)
+Defined in: [src/policies/traffic/rate-limit.ts:97](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/rate-limit.ts#L97)
 
-Increment the counter for a key, returning the new count and TTL
+Increment the counter for a key within the given time window.
+
+When the store reaches `maxKeys` capacity and no expired entries can
+be evicted, returns `{ count: MAX_SAFE_INTEGER, resetAt }` to trigger
+rate limiting (fail-closed). This prevents unbounded memory growth at
+the cost of potentially rejecting legitimate requests — an intentional
+security trade-off where memory safety takes priority over availability.
 
 #### Parameters
 
@@ -83,7 +99,7 @@ Increment the counter for a key, returning the new count and TTL
 
 > **reset**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:131](https://github.com/HomeGrower-club/stoma/blob/512cbe1c3920cd195327e7c8f58f5202130d56a5/src/policies/traffic/rate-limit.ts#L131)
+Defined in: [src/policies/traffic/rate-limit.ts:145](https://github.com/HomeGrower-club/stoma/blob/d1b9da31b27a718636c280386dadc9788d6e0044/src/policies/traffic/rate-limit.ts#L145)
 
 Reset all counters (for testing)
 

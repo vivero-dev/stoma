@@ -1,5 +1,35 @@
 # @homegrower-club/stoma
 
+## 0.1.0-rc.3
+### Patch Changes
+
+
+
+- [`e7ecfb7`](https://github.com/HomeGrower-club/stoma/commit/e7ecfb763ef8b7a750984690436ce8bf7253f804) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - # Docs updates only:
+  
+  Add Open Graph meta tags and decouple docs deployment from package releases
+  
+  - Add `og:image` and related OG headers to Starlight config
+  - Decouple `deploy-docs` CI job from npm publish — docs now deploy on any successful release job
+
+
+- [`c1485eb`](https://github.com/HomeGrower-club/stoma/commit/c1485eb0e5933c1e45cb0ba05dff75d11569f46d) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - Tree-shakeable builds — 57% smaller bundles for consumers
+  
+  ### Build
+  
+  - **Unbundled dist output**: Switched tsup from bundled code-splitting (`splitting: true`) to per-file transpilation (`bundle: false`). The published `dist/` now mirrors the `src/` module structure, allowing consumer bundlers (esbuild, Rollup, webpack) to tree-shake at the module level instead of importing a monolithic chunk.
+  - **`sideEffects: false`**: Added to `package.json` so bundlers can safely drop unused modules.
+  - **`/*#__PURE__*/` annotations**: Added to all 33 `definePolicy()` call sites across policy files. These tell bundlers the factory calls can be dropped when their return values are unused.
+  
+  ### Impact
+  
+  A basic gateway with `requestLog` + `cors` drops from **89 KB / 28 KB gzip** to **38 KB / 15 KB gzip**. Consumers only pay for the policies they actually import.
+  
+  ### Docs
+  
+  - Fixed rate-limit error response in how-it-works guide: error code corrected from `rate_limit_exceeded` to `rate_limited`, `retryAfter` moved from JSON body to response header (matching actual implementation).
+  - Fixed IP extraction order: `cf-connecting-ip` checked first, then `x-forwarded-for`.
+
 ## 0.1.0-rc.2
 ### Patch Changes
 

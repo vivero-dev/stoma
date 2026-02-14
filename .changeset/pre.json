@@ -5,8 +5,10 @@
     "@homegrower-club/stoma": "0.0.1"
   },
   "changesets": [
+    "docs-og-deploy",
     "stoma-rc-010",
     "stoma-rc-020",
-    "stoma-rc-030"
+    "stoma-rc-030",
+    "tree-shaking"
   ]
 }

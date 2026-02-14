@@ -2434,7 +2434,7 @@ const qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   safeCall: E,
   setDebugHeader: $,
   withSkip: M
-}, Symbol.toStringTag, { value: "Module" })), Cs = v({
+}, Symbol.toStringTag, { value: "Module" })), Cs = /* @__PURE__ */ v({
   name: "mock",
   priority: S.MOCK,
   httpOnly: !0,
@@ -2480,7 +2480,7 @@ function Ps(e) {
     httpOnly: !0
   };
 }
-const Ns = v({
+const Ns = /* @__PURE__ */ v({
   name: "api-key-auth",
   priority: S.AUTH,
   defaults: { headerName: "x-api-key" },
@@ -2537,7 +2537,7 @@ const Ns = v({
       return { action: "continue" };
     }
   }
-}), Ds = v({
+}), Ds = /* @__PURE__ */ v({
   name: "basic-auth",
   priority: S.AUTH,
   defaults: { realm: "Restricted" },
@@ -2788,7 +2788,7 @@ function es(e) {
     r[s] = t.charCodeAt(s);
   return r;
 }
-const Ls = v({
+const Ls = /* @__PURE__ */ v({
   name: "generate-http-signature",
   priority: S.PROXY,
   defaults: {
@@ -2852,7 +2852,7 @@ function ts(e) {
 function Be(e) {
   return e.startsWith("HS");
 }
-const Bs = v({
+const Bs = /* @__PURE__ */ v({
   name: "generate-jwt",
   priority: S.REQUEST_TRANSFORM,
   defaults: {
@@ -2909,7 +2909,7 @@ const Bs = v({
       T.set(r.headerName, b);
     }), await t();
   }
-}), Js = v({
+}), Js = /* @__PURE__ */ v({
   name: "jws",
   priority: S.AUTH,
   defaults: {
@@ -3175,7 +3175,7 @@ const Bs = v({
       return r("JWS verified"), { action: "continue" };
     }
   }
-}), Ks = v({
+}), Ks = /* @__PURE__ */ v({
   name: "jwt-auth",
   priority: S.AUTH,
   phases: ["request-headers"],
@@ -3437,7 +3437,7 @@ function ss(e) {
     t && P.delete(t);
   }
 }
-const Fs = v({
+const Fs = /* @__PURE__ */ v({
   name: "oauth2",
   priority: S.AUTH,
   phases: ["request-headers"],
@@ -3624,7 +3624,7 @@ async function Fe(e, t, r, s, n = 0, a, o = rs) {
     expiresAt: Date.now() + n * 1e3
   })), u;
 }
-const zs = v({
+const zs = /* @__PURE__ */ v({
   name: "rbac",
   priority: S.AUTH,
   defaults: {
@@ -3701,7 +3701,7 @@ const zs = v({
       return { action: "continue" };
     }
   }
-}), Ws = v({
+}), Ws = /* @__PURE__ */ v({
   name: "verify-http-signature",
   priority: S.AUTH,
   defaults: {
@@ -3970,7 +3970,7 @@ function Vs(e) {
     handler: M(e?.skip, i)
   };
 }
-const Ys = v({
+const Ys = /* @__PURE__ */ v({
   name: "dynamic-routing",
   priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
@@ -4041,7 +4041,7 @@ function Gs(e) {
     }
   };
 }
-const Xs = v({
+const Xs = /* @__PURE__ */ v({
   name: "http-callout",
   priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
@@ -4092,7 +4092,7 @@ const Xs = v({
     }
     await r.onResponse(i, e), await t();
   }
-}), Qs = v({
+}), Qs = /* @__PURE__ */ v({
   name: "interrupt",
   priority: S.DEFAULT,
   httpOnly: !0,
@@ -4287,7 +4287,7 @@ function oe(e, t, r = 0) {
     }
   }
 }
-const en = v({
+const en = /* @__PURE__ */ v({
   name: "json-threat-protection",
   priority: S.EARLY,
   phases: ["request-body"],
@@ -4449,7 +4449,7 @@ function us(e) {
   let t = Ye.get(e);
   return t || (t = new $t(), Ye.set(e, t)), t;
 }
-const tn = v({
+const tn = /* @__PURE__ */ v({
   name: "rate-limit",
   priority: S.RATE_LIMIT,
   defaults: {
@@ -4504,7 +4504,7 @@ function ds(e, t) {
   }
   return r;
 }
-const rn = v({
+const rn = /* @__PURE__ */ v({
   name: "regex-threat-protection",
   priority: S.EARLY,
   defaults: {
@@ -4558,7 +4558,7 @@ const rn = v({
     }
     s("all patterns passed"), await t();
   }
-}), sn = v({
+}), sn = /* @__PURE__ */ v({
   name: "request-limit",
   priority: S.EARLY,
   phases: ["request-headers"],
@@ -4618,7 +4618,7 @@ function Q(e, t, r) {
     hs(s, n);
   return s;
 }
-const nn = v({
+const nn = /* @__PURE__ */ v({
   name: "resource-filter",
   priority: S.RESPONSE_TRANSFORM,
   phases: ["response-body"],
@@ -4719,7 +4719,7 @@ const nn = v({
       };
     }
   }
-}), an = v({
+}), an = /* @__PURE__ */ v({
   name: "ssl-enforce",
   priority: S.EARLY,
   httpOnly: !0,
@@ -4754,7 +4754,7 @@ const nn = v({
   "trailer",
   "transfer-encoding",
   "upgrade"
-]), on = v({
+]), on = /* @__PURE__ */ v({
   name: "traffic-shadow",
   priority: S.RESPONSE_TRANSFORM,
   httpOnly: !0,
@@ -5013,7 +5013,7 @@ function cn(e) {
     httpOnly: !0
   };
 }
-const ln = v({
+const ln = /* @__PURE__ */ v({
   name: "latency-injection",
   priority: S.EARLY,
   httpOnly: !0,
@@ -5088,7 +5088,7 @@ function un(e) {
     httpOnly: !0
   };
 }
-const dn = v({
+const dn = /* @__PURE__ */ v({
   name: "timeout",
   priority: S.TIMEOUT,
   httpOnly: !0,
@@ -5122,7 +5122,7 @@ const dn = v({
       clearTimeout(a);
     }
   }
-}), hn = v({
+}), hn = /* @__PURE__ */ v({
   name: "assign-attributes",
   priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
@@ -5159,7 +5159,7 @@ async function Xe(e, t) {
 function Z(e, t) {
   return e ? t.some((r) => e.includes(r)) : !1;
 }
-const pn = v({
+const pn = /* @__PURE__ */ v({
   name: "assign-content",
   priority: S.REQUEST_TRANSFORM,
   defaults: {
@@ -5341,7 +5341,7 @@ function mn(e) {
     httpOnly: !0
   };
 }
-const fn = v({
+const fn = /* @__PURE__ */ v({
   name: "json-validation",
   priority: S.AUTH,
   phases: ["request-body"],
@@ -5439,7 +5439,7 @@ const fn = v({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), yn = v({
+}), yn = /* @__PURE__ */ v({
   name: "override-method",
   priority: S.EARLY,
   phases: ["request-headers"],
@@ -5480,7 +5480,7 @@ const fn = v({
 function Qe(e) {
   return typeof e == "boolean" ? { valid: e } : e;
 }
-const wn = v({
+const wn = /* @__PURE__ */ v({
   name: "request-validation",
   priority: S.AUTH,
   phases: ["request-body"],
@@ -5569,7 +5569,7 @@ const wn = v({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), gn = v({
+}), gn = /* @__PURE__ */ v({
   name: "request-transform",
   priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
@@ -5610,7 +5610,7 @@ const wn = v({
       return r.length > 0 ? { action: "continue", mutations: r } : { action: "continue" };
     }
   }
-}), Sn = v({
+}), Sn = /* @__PURE__ */ v({
   name: "response-transform",
   priority: S.RESPONSE_TRANSFORM,
   phases: ["response-headers"],
@@ -5697,7 +5697,7 @@ function vn(e) {
     }
   };
 }
-const Tn = v({
+const Tn = /* @__PURE__ */ v({
   name: "assign-metrics",
   priority: S.OBSERVABILITY,
   httpOnly: !0,
@@ -5712,7 +5712,7 @@ const Tn = v({
       ), s("tag %s = %s (dynamic)", a, n[a])) : (n[a] = o, s("tag %s = %s (static)", a, o));
     e.set("_metricsTags", n), await t();
   }
-}), bn = v({
+}), bn = /* @__PURE__ */ v({
   name: "metrics-reporter",
   priority: S.METRICS,
   httpOnly: !0,
@@ -5791,7 +5791,7 @@ function te(e, t, r, s) {
 function Ht(e) {
   return typeof e == "object" && e !== null && !Array.isArray(e);
 }
-const Ss = 8192, xn = v({
+const Ss = 8192, xn = /* @__PURE__ */ v({
   name: "request-log",
   priority: S.OBSERVABILITY,
   httpOnly: !0,
@@ -5890,7 +5890,7 @@ function Ze(e, t, r, s) {
   const n = xs(e), a = t.toFixed(r), o = s?.(e);
   return o ? `${n};dur=${a};desc="${Se(o)}"` : `${n};dur=${a}`;
 }
-const Rn = v({
+const Rn = /* @__PURE__ */ v({
   name: "server-timing",
   priority: S.METRICS,
   httpOnly: !0,

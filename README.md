@@ -293,8 +293,6 @@ Policies execute in **priority order** (lowest number first), then in **declarat
 ## Documentation & Resources
 
 - [Architecture Design](ARCHITECTURE.md) - Deep dive into the gateway's internal design and decisions.
-- [Implementation Plan](PLAN.md) - Roadmap and current status of the project.
-- [Security Audit](SECURITY_AUDIT.md) - Security considerations and review status.
 - [Full Documentation](https://stoma.opensource.homegrower.club) - Comprehensive guides, recipes, and API reference.
 
 ## Package Exports

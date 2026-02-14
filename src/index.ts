@@ -278,6 +278,8 @@ export type {
   PolicyDefinition,
   /** Context injected into `definePolicy` evaluate handlers (protocol-agnostic, with typed config). */
   PolicyEvalHandlerContext,
+  /** Conditional factory type — config required when TConfig has required keys. */
+  PolicyFactory,
   /** Context injected into `definePolicy` handlers: merged config, debug logger, and gateway context. */
   PolicyHandlerContext,
   /** Options for {@link createPolicyTestHarness}: custom upstream, path, gateway name, adapter. */

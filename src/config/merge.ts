@@ -10,7 +10,7 @@
  * ```ts
  * import { mergeConfigs, createGateway } from "@homegrower-club/stoma";
  *
- * const base = { name: "my-gw", policies: [cors(), rateLimit()] };
+ * const base = { name: "my-gw", policies: [cors(), rateLimit({ max: 100 })] };
  * const authRoutes = { routes: [{ path: "/auth/*", ... }] };
  * const apiRoutes  = { routes: [{ path: "/api/*", ... }] };
  *

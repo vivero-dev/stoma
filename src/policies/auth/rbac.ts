@@ -8,6 +8,7 @@
  */
 
 import { GatewayError } from "../../core/errors";
+import { withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
@@ -47,24 +48,17 @@ export const rbac = definePolicy<RbacConfig>({
   },
   phases: ["request-headers"],
   handler: async (c, next, { config, debug }) => {
-    // Strip security-sensitive headers from incoming requests to prevent spoofing.
-    // These should only be set by trusted upstream auth policies.
     if (config.stripHeaders) {
-      const headers = new Headers(c.req.raw.headers);
-      let modified = false;
-      if (config.roleHeader && headers.has(config.roleHeader)) {
-        headers.delete(config.roleHeader);
-        modified = true;
-        debug("stripped role header from incoming request");
-      }
-      if (config.permissionHeader && headers.has(config.permissionHeader)) {
-        headers.delete(config.permissionHeader);
-        modified = true;
-        debug("stripped permission header from incoming request");
-      }
-      if (modified) {
-        c.req.raw = new Request(c.req.raw, { headers });
-      }
+      withModifiedHeaders(c, (headers) => {
+        if (config.roleHeader && headers.has(config.roleHeader)) {
+          headers.delete(config.roleHeader);
+          debug("stripped role header from incoming request");
+        }
+        if (config.permissionHeader && headers.has(config.permissionHeader)) {
+          headers.delete(config.permissionHeader);
+          debug("stripped permission header from incoming request");
+        }
+      });
     }
 
     const hasRoleCheck = config.roles && config.roles.length > 0;

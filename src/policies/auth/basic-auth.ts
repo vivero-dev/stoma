@@ -6,6 +6,7 @@
 
 import type { Context } from "hono";
 import { GatewayError } from "../../core/errors";
+import { escapeHeaderValue, sanitizeHeaderValue } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
@@ -46,9 +47,9 @@ export const basicAuth = definePolicy<BasicAuthConfig>({
   phases: ["request-headers"],
   handler: async (c, next, { config }) => {
     // Sanitize realm to prevent header injection (escape quotes, strip control chars)
-    const realm = (config.realm ?? "Restricted")
-      .replace(/[\r\n\0]/g, "")
-      .replace(/"/g, '\\"');
+    const realm = escapeHeaderValue(
+      sanitizeHeaderValue(config.realm ?? "Restricted")
+    );
 
     const authHeader = c.req.header("authorization");
 
@@ -90,9 +91,9 @@ export const basicAuth = definePolicy<BasicAuthConfig>({
   evaluate: {
     onRequest: async (input, { config }) => {
       // Sanitize realm to prevent header injection
-      const realm = (config.realm ?? "Restricted")
-        .replace(/[\r\n\0]/g, "")
-        .replace(/"/g, '\\"');
+      const realm = escapeHeaderValue(
+        sanitizeHeaderValue(config.realm ?? "Restricted")
+      );
 
       const authHeader = input.headers.get("authorization");
 

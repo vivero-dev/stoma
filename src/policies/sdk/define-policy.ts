@@ -146,11 +146,38 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
 }
 
 /**
+ * Extract the keys of T that are required (not optional).
+ * Evaluates to `never` when all keys are optional.
+ */
+type RequiredKeys<T> = {
+  [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
+}[keyof T];
+
+/**
+ * Conditional policy factory type.
+ *
+ * When `TConfig` has at least one required key, the factory requires
+ * a config argument. When all keys are optional (or TConfig is the
+ * base `PolicyConfig`), config is optional.
+ *
+ * This closes the gap between "type-safe config" and the runtime
+ * `validate` callback — the editor catches missing required fields
+ * at compile time.
+ */
+export type PolicyFactory<TConfig extends PolicyConfig> =
+  RequiredKeys<TConfig> extends never
+    ? (config?: TConfig) => Policy
+    : (config: TConfig) => Policy;
+
+/**
  * Create a policy factory from a declarative definition.
  *
- * The returned factory function accepts optional user config, merges it
- * with defaults, wires up skip logic, and injects a debug logger at
+ * The returned factory function accepts user config, merges it with
+ * defaults, wires up skip logic, and injects a debug logger at
  * request time.
+ *
+ * When `TConfig` has required keys, the factory requires a config
+ * argument. When all keys are optional, config is optional.
  *
  * @example
  * ```ts
@@ -172,12 +199,12 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
  * ```
  *
  * @param definition - Policy name, priority, defaults, and handler.
- * @returns A factory function: `(config?) => Policy`.
+ * @returns A factory function whose config parameter is required or optional based on TConfig.
  */
 export function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(
   definition: PolicyDefinition<TConfig>
-): (config?: TConfig) => Policy {
-  return (userConfig?: TConfig): Policy => {
+): PolicyFactory<TConfig> {
+  return ((userConfig?: TConfig): Policy => {
     const config = resolveConfig<TConfig>(
       (definition.defaults ?? {}) as Partial<TConfig>,
       userConfig as Partial<TConfig> | undefined
@@ -222,5 +249,5 @@ export function definePolicy<TConfig extends PolicyConfig = PolicyConfig>(
       phases: definition.phases,
       httpOnly: definition.httpOnly,
     };
-  };
+  }) as PolicyFactory<TConfig>;
 }

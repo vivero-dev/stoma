@@ -205,6 +205,29 @@ describe("retry", () => {
     expect(res.headers.get("x-retry-count")).toBeNull();
   });
 
+  // --- Fetch error during retry ---
+
+  it("should synthesize a 502 on fetch error and continue retrying", async () => {
+    const app = createApp({ maxRetries: 3, baseDelayMs: 1, retryOn: [502] });
+    let callCount = 0;
+    globalThis.fetch = vi.fn(async () => {
+      callCount++;
+      if (callCount <= 2) {
+        // First two calls (original + first retry) throw network errors
+        throw new TypeError("fetch failed");
+      }
+      // Third call succeeds
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    }) as unknown as typeof fetch;
+
+    const res = await app.request("/test");
+    // The upstream handler catches the first fetch error and returns 502.
+    // The retry policy then retries: second fetch also throws (synthesized 502),
+    // third fetch succeeds with 200.
+    expect(res.status).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  });
+
   // --- Default config values ---
 
   it("should use default config values", () => {

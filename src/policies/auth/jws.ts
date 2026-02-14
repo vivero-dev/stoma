@@ -8,6 +8,7 @@
  */
 
 import { GatewayError } from "../../core/errors";
+import { sanitizeHeaderValue, withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 import {
@@ -237,10 +238,12 @@ export const jws = definePolicy<JwsConfig>({
     if (config.forwardPayload) {
       try {
         const decodedPayload = base64UrlDecode(verifyPayloadB64);
-        const headers = new Headers(c.req.raw.headers);
-        const sanitized = decodedPayload.replace(/[\r\n\0]/g, "");
-        headers.set(config.forwardHeaderName!, sanitized);
-        c.req.raw = new Request(c.req.raw, { headers });
+        withModifiedHeaders(c, (headers) => {
+          headers.set(
+            config.forwardHeaderName!,
+            sanitizeHeaderValue(decodedPayload)
+          );
+        });
       } catch {
         // If payload isn't decodable, skip forwarding
       }
@@ -404,7 +407,6 @@ export const jws = definePolicy<JwsConfig>({
       if (config.forwardPayload) {
         try {
           const decodedPayload = base64UrlDecode(verifyPayloadB64);
-          const sanitized = decodedPayload.replace(/[\r\n\0]/g, "");
           return {
             action: "continue",
             mutations: [
@@ -412,7 +414,7 @@ export const jws = definePolicy<JwsConfig>({
                 type: "header" as const,
                 op: "set" as const,
                 name: config.forwardHeaderName!,
-                value: sanitized,
+                value: sanitizeHeaderValue(decodedPayload),
               },
             ],
           };

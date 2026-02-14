@@ -8,6 +8,7 @@
  * @module api-key-auth
  */
 import { GatewayError } from "../../core/errors";
+import { sanitizeHeaderValue, withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
@@ -100,11 +101,11 @@ export const apiKeyAuth = definePolicy<ApiKeyAuthConfig>({
 
     // Forward key identity as a request header if configured
     if (config.forwardKeyIdentity) {
-      const identity = await config.forwardKeyIdentity.identityFn(key);
-      const sanitized = identity.replace(/[\r\n\0]/g, "");
-      const headers = new Headers(c.req.raw.headers);
-      headers.set(config.forwardKeyIdentity.headerName, sanitized);
-      c.req.raw = new Request(c.req.raw, { headers });
+      const fwd = config.forwardKeyIdentity;
+      const identity = await fwd.identityFn(key);
+      withModifiedHeaders(c, (headers) => {
+        headers.set(fwd.headerName, sanitizeHeaderValue(identity));
+      });
       debug(
         `forwarded key identity as ${config.forwardKeyIdentity.headerName}`
       );
@@ -150,8 +151,8 @@ export const apiKeyAuth = definePolicy<ApiKeyAuthConfig>({
 
       // Forward key identity as a header if configured
       if (config.forwardKeyIdentity) {
-        const identity = await config.forwardKeyIdentity.identityFn(key);
-        const sanitized = identity.replace(/[\r\n\0]/g, "");
+        const fwd = config.forwardKeyIdentity;
+        const identity = await fwd.identityFn(key);
         debug(
           `forwarded key identity as ${config.forwardKeyIdentity.headerName}`
         );
@@ -161,8 +162,8 @@ export const apiKeyAuth = definePolicy<ApiKeyAuthConfig>({
             {
               type: "header",
               op: "set",
-              name: config.forwardKeyIdentity.headerName,
-              value: sanitized,
+              name: fwd.headerName,
+              value: sanitizeHeaderValue(identity),
             },
           ],
         };

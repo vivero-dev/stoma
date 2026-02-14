@@ -5,6 +5,7 @@
  */
 
 import type { Mutation } from "../../core/protocol";
+import { withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
@@ -57,34 +58,34 @@ export const requestTransform = definePolicy<RequestTransformConfig>({
   priority: Priority.REQUEST_TRANSFORM,
   phases: ["request-headers"],
   handler: async (c, next, { config }) => {
-    // Workers runtime has immutable Request.headers — clone into a mutable copy
-    const headers = new Headers(c.req.raw.headers);
+    const setHeaders = config.setHeaders;
+    const removeHeaders = config.removeHeaders;
+    const renameHeaders = config.renameHeaders;
 
-    // Rename before set/remove so renames don't collide
-    if (config.renameHeaders) {
-      for (const [oldName, newName] of Object.entries(config.renameHeaders)) {
-        const value = headers.get(oldName);
-        if (value !== null) {
-          headers.set(newName, value);
-          headers.delete(oldName);
+    withModifiedHeaders(c, (headers) => {
+      // Rename before set/remove so renames don't collide
+      if (renameHeaders) {
+        for (const [oldName, newName] of Object.entries(renameHeaders)) {
+          const value = headers.get(oldName);
+          if (value !== null) {
+            headers.set(newName, value);
+            headers.delete(oldName);
+          }
         }
       }
-    }
 
-    if (config.setHeaders) {
-      for (const [name, value] of Object.entries(config.setHeaders)) {
-        headers.set(name, value);
+      if (setHeaders) {
+        for (const [name, value] of Object.entries(setHeaders)) {
+          headers.set(name, value);
+        }
       }
-    }
 
-    if (config.removeHeaders) {
-      for (const name of config.removeHeaders) {
-        headers.delete(name);
+      if (removeHeaders) {
+        for (const name of removeHeaders) {
+          headers.delete(name);
+        }
       }
-    }
-
-    // Replace the raw request with a clone carrying the modified headers
-    c.req.raw = new Request(c.req.raw, { headers });
+    });
 
     await next();
   },

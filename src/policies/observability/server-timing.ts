@@ -14,6 +14,7 @@
  */
 import type { Context } from "hono";
 import { GatewayError } from "../../core/errors";
+import { escapeHeaderValue } from "../../utils/headers";
 import { toSelfTimes } from "../../utils/timing";
 import { definePolicy, isDebugRequested, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
@@ -56,9 +57,7 @@ function formatEntry(
   const dur = durationMs.toFixed(precision);
   const desc = descriptionFn?.(name);
   if (desc) {
-    // Escape double-quotes in the description per the spec
-    const escaped = desc.replace(/"/g, '\\"');
-    return `${sanitized};dur=${dur};desc="${escaped}"`;
+    return `${sanitized};dur=${dur};desc="${escapeHeaderValue(desc)}"`;
   }
   return `${sanitized};dur=${dur}`;
 }

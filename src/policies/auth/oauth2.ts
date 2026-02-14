@@ -9,6 +9,7 @@
 
 import { GatewayError } from "../../core/errors";
 import type { Mutation } from "../../core/protocol";
+import { sanitizeHeaderValue, withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
@@ -155,21 +156,15 @@ export const oauth2 = definePolicy<OAuth2Config>({
 
       // Forward token info as headers
       if (config.forwardTokenInfo) {
-        const headers = new Headers(c.req.raw.headers);
-        let modified = false;
-        for (const [field, headerKey] of Object.entries(
-          config.forwardTokenInfo
-        )) {
-          const value = introspectionResult[field];
-          if (value !== undefined && value !== null) {
-            const sanitized = String(value).replace(/[\r\n\0]/g, "");
-            headers.set(headerKey, sanitized);
-            modified = true;
+        const fwd = config.forwardTokenInfo;
+        withModifiedHeaders(c, (headers) => {
+          for (const [field, headerKey] of Object.entries(fwd)) {
+            const value = introspectionResult[field];
+            if (value !== undefined && value !== null) {
+              headers.set(headerKey, sanitizeHeaderValue(String(value)));
+            }
           }
-        }
-        if (modified) {
-          c.req.raw = new Request(c.req.raw, { headers });
-        }
+        });
       }
     }
 
@@ -258,18 +253,16 @@ export const oauth2 = definePolicy<OAuth2Config>({
 
         // Forward token info as headers via mutations
         if (config.forwardTokenInfo) {
+          const fwd = config.forwardTokenInfo;
           const mutations: Mutation[] = [];
-          for (const [field, headerKey] of Object.entries(
-            config.forwardTokenInfo
-          )) {
+          for (const [field, headerKey] of Object.entries(fwd)) {
             const value = introspectionResult[field];
             if (value !== undefined && value !== null) {
-              const sanitized = String(value).replace(/[\r\n\0]/g, "");
               mutations.push({
                 type: "header" as const,
                 op: "set" as const,
                 name: headerKey,
-                value: sanitized,
+                value: sanitizeHeaderValue(String(value)),
               });
             }
           }

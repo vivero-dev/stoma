@@ -4,6 +4,7 @@
  * @module jwt-auth
  */
 import { GatewayError } from "../../core/errors";
+import { sanitizeHeaderValue, withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 import {
@@ -196,7 +197,10 @@ export const jwtAuth = definePolicy<JwtAuthConfig>({
       );
     }
 
-    if (payload.exp !== undefined && payload.exp < now - config.clockSkewSeconds!) {
+    if (
+      payload.exp !== undefined &&
+      payload.exp < now - config.clockSkewSeconds!
+    ) {
       throw new GatewayError(401, "unauthorized", "JWT has expired");
     }
 
@@ -215,21 +219,15 @@ export const jwtAuth = definePolicy<JwtAuthConfig>({
     debug(`verified (sub=${payload.sub ?? "none"})`);
 
     if (config.forwardClaims) {
-      // Workers runtime has immutable Request.headers — clone into mutable copy
-      const headers = new Headers(c.req.raw.headers);
-      let modified = false;
-      for (const [claim, headerKey] of Object.entries(config.forwardClaims)) {
-        const value = payload[claim];
-        if (value !== undefined && value !== null) {
-          // Strip control characters (CR, LF, NUL) to prevent header injection
-          const sanitized = String(value).replace(/[\r\n\0]/g, "");
-          headers.set(headerKey, sanitized);
-          modified = true;
+      const forwardClaims = config.forwardClaims;
+      withModifiedHeaders(c, (headers) => {
+        for (const [claim, headerKey] of Object.entries(forwardClaims)) {
+          const value = payload[claim];
+          if (value !== undefined && value !== null) {
+            headers.set(headerKey, sanitizeHeaderValue(String(value)));
+          }
         }
-      }
-      if (modified) {
-        c.req.raw = new Request(c.req.raw, { headers });
-      }
+      });
     }
 
     await next();
@@ -340,7 +338,10 @@ export const jwtAuth = definePolicy<JwtAuthConfig>({
         };
       }
 
-      if (payload.exp !== undefined && payload.exp < now - config.clockSkewSeconds!) {
+      if (
+        payload.exp !== undefined &&
+        payload.exp < now - config.clockSkewSeconds!
+      ) {
         return {
           action: "reject",
           status: 401,
@@ -372,16 +373,16 @@ export const jwtAuth = definePolicy<JwtAuthConfig>({
 
       // Forward claims as headers via mutations
       if (config.forwardClaims) {
+        const forwardClaims = config.forwardClaims;
         const mutations = [];
-        for (const [claim, headerKey] of Object.entries(config.forwardClaims)) {
+        for (const [claim, headerKey] of Object.entries(forwardClaims)) {
           const value = payload[claim];
           if (value !== undefined && value !== null) {
-            const sanitized = String(value).replace(/[\r\n\0]/g, "");
             mutations.push({
               type: "header" as const,
               op: "set" as const,
               name: headerKey,
-              value: sanitized,
+              value: sanitizeHeaderValue(String(value)),
             });
           }
         }

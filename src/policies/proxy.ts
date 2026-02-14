@@ -4,6 +4,7 @@
  * @module proxy
  */
 
+import { withModifiedHeaders } from "../utils/headers";
 import { Priority, withSkip } from "./sdk";
 import type { Policy, PolicyConfig } from "./types";
 
@@ -63,21 +64,21 @@ export function proxy(config?: ProxyPolicyConfig): Policy {
 
     // Workers runtime has immutable Request.headers — clone into mutable copy
     if (config?.stripHeaders || config?.headers) {
-      const headers = new Headers(c.req.raw.headers);
-
-      if (config.stripHeaders) {
-        for (const header of config.stripHeaders) {
-          headers.delete(header);
+      const stripHeaders = config?.stripHeaders;
+      const headersToSet = config?.headers;
+      withModifiedHeaders(c, (headers) => {
+        if (stripHeaders) {
+          for (const header of stripHeaders) {
+            headers.delete(header);
+          }
         }
-      }
 
-      if (config.headers) {
-        for (const [key, value] of Object.entries(config.headers)) {
-          headers.set(key, value);
+        if (headersToSet) {
+          for (const [key, value] of Object.entries(headersToSet)) {
+            headers.set(key, value);
+          }
         }
-      }
-
-      c.req.raw = new Request(c.req.raw, { headers });
+      });
     }
 
     // Apply timeout via AbortSignal

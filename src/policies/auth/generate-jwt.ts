@@ -8,8 +8,10 @@
  */
 import type { Context } from "hono";
 import { GatewayError } from "../../core/errors";
+import { withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
+import { base64UrlEncodeBytes, base64UrlEncodeString } from "./crypto";
 
 export interface GenerateJwtConfig extends PolicyConfig {
   /** Signing algorithm */
@@ -34,21 +36,6 @@ export interface GenerateJwtConfig extends PolicyConfig {
   headerName?: string;
   /** Token prefix. Default: "Bearer" */
   tokenPrefix?: string;
-}
-
-function base64UrlEncode(data: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < data.length; i++) {
-    binary += String.fromCharCode(data[i]);
-  }
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-function base64UrlEncodeString(str: string): string {
-  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 function getHashAlgorithm(alg: GenerateJwtConfig["algorithm"]): string {
@@ -165,7 +152,7 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
       signature = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, data);
     }
 
-    const encodedSignature = base64UrlEncode(new Uint8Array(signature));
+    const encodedSignature = base64UrlEncodeBytes(new Uint8Array(signature));
     const token = `${signingInput}.${encodedSignature}`;
 
     debug(`generated JWT (alg=${config.algorithm})`);
@@ -175,9 +162,9 @@ export const generateJwt = definePolicy<GenerateJwtConfig>({
       ? `${config.tokenPrefix} ${token}`
       : token;
 
-    const headers = new Headers(c.req.raw.headers);
-    headers.set(config.headerName!, headerValue);
-    c.req.raw = new Request(c.req.raw, { headers });
+    withModifiedHeaders(c, (headers) => {
+      headers.set(config.headerName!, headerValue);
+    });
 
     await next();
   },

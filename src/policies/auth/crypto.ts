@@ -40,6 +40,11 @@ export function base64UrlEncodeBytes(data: Uint8Array): string {
     .replace(/=+$/, "");
 }
 
+/** Encode a string to a base64url string (no padding). */
+export function base64UrlEncodeString(str: string): string {
+  return btoa(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
 // --- Algorithm mapping ---
 
 /** Map a JWT/JWS HMAC algorithm string to a WebCrypto hash name. Returns `null` for unsupported algorithms. */

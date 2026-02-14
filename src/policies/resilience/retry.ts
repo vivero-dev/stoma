@@ -141,7 +141,15 @@ export function retry(config?: RetryConfig): Policy {
       await sleep(delay);
 
       // Clone the stored proxy request and re-issue via fetch directly
-      const retryResponse = await fetch(proxyRequest.clone());
+      let retryResponse: Response;
+      try {
+        retryResponse = await fetch(proxyRequest.clone());
+      } catch {
+        // Network error during retry — treat as a retryable 502 so
+        // the loop continues to the next attempt.
+        debug(`retry attempt ${attempt + 1} fetch error, synthesizing 502`);
+        retryResponse = new Response(null, { status: 502 });
+      }
       retryCount = attempt + 1;
 
       // Replace the response on the context

@@ -8,6 +8,7 @@
  */
 
 import { GatewayError } from "../../core/errors";
+import { withModifiedHeaders } from "../../utils/headers";
 import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 import {
@@ -115,14 +116,13 @@ export const generateHttpSignature = definePolicy<GenerateHttpSignatureConfig>({
 
     const signatureB64 = toBase64(signatureBytes);
 
-    // Set headers on the request
-    const headers = new Headers(c.req.raw.headers);
-    headers.set(
-      config.signatureInputHeaderName!,
-      `${label}=${signatureParamsStr}`
-    );
-    headers.set(config.signatureHeaderName!, `${label}=:${signatureB64}:`);
-    c.req.raw = new Request(c.req.raw, { headers });
+    withModifiedHeaders(c, (headers) => {
+      headers.set(
+        config.signatureInputHeaderName!,
+        `${label}=${signatureParamsStr}`
+      );
+      headers.set(config.signatureHeaderName!, `${label}=:${signatureB64}:`);
+    });
 
     debug("signature headers attached");
 

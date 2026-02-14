@@ -6,13 +6,15 @@
  * pluggable store interfaces (rate limiting, circuit breaker, cache) and each
  * runtime's native APIs.
  *
- * | Adapter              | Rate Limit Store         | Cache Store       | `waitUntil` | `dispatchBinding` |
- * |----------------------|--------------------------|-------------------|-------------|-------------------|
- * | `cloudflareAdapter`  | KV or Durable Objects    | Cache API         | Yes         | Yes               |
- * | `memoryAdapter`      | In-memory                | In-memory         | No          | No                |
- * | `denoAdapter`        | (use memoryAdapter)      | (use memoryAdapter)| No         | No                |
- * | `bunAdapter`         | (use memoryAdapter)      | (use memoryAdapter)| No         | No                |
- * | `nodeAdapter`        | (use memoryAdapter)      | (use memoryAdapter)| No         | No                |
+ * | Adapter              | Rate Limit Store         | Circuit Breaker Store | Cache Store       | `waitUntil` | `dispatchBinding` |
+ * |----------------------|--------------------------|-----------------------|-------------------|-------------|-------------------|
+ * | `cloudflareAdapter`  | KV or Durable Objects    | In-memory             | Cache API         | Yes         | Yes               |
+ * | `redisAdapter`       | Redis (Lua)              | Redis (JSON)          | Redis (JSON)      | Optional    | No                |
+ * | `postgresAdapter`    | PostgreSQL (upsert)      | PostgreSQL (upsert)   | PostgreSQL        | Optional    | No                |
+ * | `memoryAdapter`      | In-memory                | In-memory             | In-memory         | No          | No                |
+ * | `denoAdapter`        | (use memoryAdapter)      | (use memoryAdapter)   | (use memoryAdapter)| No         | No                |
+ * | `bunAdapter`         | (use memoryAdapter)      | (use memoryAdapter)   | (use memoryAdapter)| No         | No                |
+ * | `nodeAdapter`        | (use memoryAdapter)      | (use memoryAdapter)   | (use memoryAdapter)| No         | No                |
  *
  * For testing, use `createTestAdapter()` which collects `waitUntil` promises
  * so tests can `await adapter.waitAll()` before asserting.
@@ -23,13 +25,17 @@
  * import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
  * createGateway({ adapter: cloudflareAdapter({ rateLimitKv: env.RATE_LIMIT, executionCtx: ctx }), ... });
  *
+ * // Redis (Node.js / Bun / Deno)
+ * import { redisAdapter } from "@homegrower-club/stoma/adapters";
+ * createGateway({ adapter: redisAdapter({ client: redis }), ... });
+ *
+ * // PostgreSQL (Node.js / Bun / Deno)
+ * import { postgresAdapter } from "@homegrower-club/stoma/adapters";
+ * createGateway({ adapter: postgresAdapter({ client: pool }), ... });
+ *
  * // Development / testing
  * import { memoryAdapter } from "@homegrower-club/stoma/adapters";
  * createGateway({ adapter: memoryAdapter(), ... });
- *
- * // Deno
- * import { denoAdapter } from "@homegrower-club/stoma/adapters";
- * createGateway({ adapter: denoAdapter(), ... });
  * ```
  *
  * @module adapters
@@ -60,6 +66,32 @@ export { memoryAdapter } from "./memory";
 
 /** Create an adapter for Node.js (via `@hono/node-server`) — marker/extension point for Node-specific capabilities. */
 export { nodeAdapter } from "./node";
+/** Config accepted by `postgresAdapter()` — client, table prefix, store toggles. */
+export type { PostgresAdapterConfig, PostgresClient } from "./postgres";
+/** Create a PostgreSQL-backed adapter with upsert-based rate limiting, circuit breaker, and cache stores. */
+export {
+  /** Exported SQL to create the required stoma tables. Run once against your database. */
+  POSTGRES_SCHEMA_SQL,
+  /** Response cache backed by PostgreSQL with base64-encoded body. */
+  PostgresCacheStore,
+  /** Circuit breaker state store backed by PostgreSQL. */
+  PostgresCircuitBreakerStore,
+  /** Rate limit store backed by PostgreSQL using atomic upsert. */
+  PostgresRateLimitStore,
+  postgresAdapter,
+} from "./postgres";
+/** Config accepted by `redisAdapter()` — client, prefix, setWithTTL override, store toggles. */
+export type { RedisAdapterConfig, RedisClient } from "./redis";
+/** Create a Redis-backed adapter with Lua-based rate limiting, JSON circuit breaker, and JSON cache stores. */
+export {
+  /** Response cache backed by Redis with base64-encoded body. */
+  RedisCacheStore,
+  /** Circuit breaker state store backed by Redis JSON strings. */
+  RedisCircuitBreakerStore,
+  /** Rate limit store backed by Redis with atomic Lua script. */
+  RedisRateLimitStore,
+  redisAdapter,
+} from "./redis";
 /** Test adapter that collects `waitUntil` promises for assertion in unit tests. */
 export {
   /** Factory function to create a new TestAdapter instance. */

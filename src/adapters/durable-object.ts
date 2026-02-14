@@ -42,26 +42,32 @@ export class RateLimiterDO implements DurableObject {
     const url = new URL(request.url);
     const windowSeconds = Number(url.searchParams.get("window") ?? "60");
 
-    const now = Date.now();
-    const stored = (await this.state.storage.get("counter")) as {
-      count: number;
-      resetAt: number;
-    } | null;
+    // Use blockConcurrencyWhile to ensure atomic increments.
+    // This serializes all concurrent requests to this DO instance,
+    // preventing the race condition where two requests read the same count
+    // and both write count+1, losing one increment.
+    return this.state.blockConcurrencyWhile(async () => {
+      const now = Date.now();
+      const stored = (await this.state.storage.get("counter")) as {
+        count: number;
+        resetAt: number;
+      } | null;
 
-    if (stored && stored.resetAt > now) {
-      // Window still active — increment atomically
-      const updated = { count: stored.count + 1, resetAt: stored.resetAt };
-      await this.state.storage.put("counter", updated);
-      return Response.json(updated);
-    }
+      if (stored && stored.resetAt > now) {
+        // Window still active — increment atomically
+        const updated = { count: stored.count + 1, resetAt: stored.resetAt };
+        await this.state.storage.put("counter", updated);
+        return Response.json(updated);
+      }
 
-    // Start a new window
-    const resetAt = now + windowSeconds * 1000;
-    const entry = { count: 1, resetAt };
-    await this.state.storage.put("counter", entry);
-    // Schedule alarm to clean up expired counter
-    await this.state.storage.setAlarm(resetAt);
-    return Response.json(entry);
+      // Start a new window
+      const resetAt = now + windowSeconds * 1000;
+      const entry = { count: 1, resetAt };
+      await this.state.storage.put("counter", entry);
+      // Schedule alarm to clean up expired counter
+      await this.state.storage.setAlarm(resetAt);
+      return Response.json(entry);
+    });
   }
 
   async alarm(): Promise<void> {

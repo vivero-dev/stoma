@@ -32,7 +32,47 @@ function createMockStorage() {
 }
 
 function createMockState(storage: ReturnType<typeof createMockStorage>) {
-  return { storage } as unknown as DurableObjectState;
+  let inCriticalSection = false;
+  const queue: (() => void)[] = [];
+
+  const processQueue = () => {
+    if (queue.length > 0 && !inCriticalSection) {
+      const next = queue.shift();
+      if (next) next();
+    }
+  };
+
+  return {
+    storage,
+    blockConcurrencyWhile: async <T>(
+      callback: () => Promise<T>
+    ): Promise<T> => {
+      if (inCriticalSection) {
+        // Wait for the critical section to be available
+        return new Promise((resolve, reject) => {
+          queue.push(async () => {
+            try {
+              const result = await callback();
+              resolve(result);
+            } catch (e) {
+              reject(e);
+            } finally {
+              inCriticalSection = false;
+              processQueue();
+            }
+          });
+        });
+      }
+
+      inCriticalSection = true;
+      try {
+        return await callback();
+      } finally {
+        inCriticalSection = false;
+        processQueue();
+      }
+    },
+  } as unknown as DurableObjectState;
 }
 
 // ---------------------------------------------------------------------------
@@ -109,6 +149,62 @@ describe("RateLimiterDO", () => {
 
     expect(storage.delete).toHaveBeenCalledWith("counter");
     expect(storage._data.has("counter")).toBe(false);
+  });
+
+  // --- Security: Race Condition Vulnerability ---
+
+  it("SECURITY: should handle concurrent increments atomically", async () => {
+    /**
+     * This test demonstrates the race condition vulnerability in RateLimiterDO.
+     *
+     * The current implementation uses a read-then-write pattern:
+     * 1. Read current counter
+     * 2. Check if within window
+     * 3. Write updated counter
+     *
+     * Two concurrent requests can both read the same value (e.g., count=5),
+     * both see it's within the window, and both write count=6. This results
+     * in a lost increment, allowing attackers to bypass rate limits.
+     *
+     * EXPECTED: Use atomic operations or transactions to ensure atomicity.
+     * CURRENT BEHAVIOR: Race condition allows rate limit bypass.
+     */
+
+    // Seed an existing counter within the window
+    const resetAt = Date.now() + 60_000;
+    storage._data.set("counter", { count: 5, resetAt });
+
+    // Simulate two concurrent requests arriving at the same time
+    // Both will read count=5, then both will write count=6
+    const results = await Promise.all([
+      dobj.fetch(new Request("https://internal/increment?window=60")),
+      dobj.fetch(new Request("https://internal/increment?window=60")),
+    ]);
+
+    const body1 = (await results[0].json()) as {
+      count: number;
+      resetAt: number;
+    };
+    const body2 = (await results[1].json()) as {
+      count: number;
+      resetAt: number;
+    };
+
+    // With proper atomicity, we should get count=6 and count=7 (or at least one of each)
+    // With the race condition, both get count=6 (one increment is lost)
+
+    // The sum should be at least 7 if atomic (5 + 1 + 1 = 7)
+    // With race condition, sum is 6 + 6 = 12 but actual increments lost
+    // More accurately: one request overwrote the other's increment
+
+    // This test checks that at least ONE request got count=7
+    // (meaning both increments were counted)
+    const counts = [body1.count, body2.count];
+    const hasCount7 = counts.includes(7);
+
+    // SECURITY ISSUE: This assertion will fail because of the race condition
+    // Both requests get count=6 instead of one getting 6 and one getting 7
+    expect(hasCount7).toBe(true);
   });
 });
 

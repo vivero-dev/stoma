@@ -9,7 +9,9 @@ import configSplitting from "../config-splitting/gateway";
 import hmac from "../jwt-auth/hmac";
 import jwks from "../jwt-auth/jwks";
 import oauthSupabase from "../oauth-supabase/gateway";
+import postgresAdapterExample from "../postgres-adapter/gateway";
 import realWorld from "../real-world/gateway";
+import redisAdapterExample from "../redis-adapter/gateway";
 import routeScopes from "../route-scopes/gateway";
 import serviceBinding from "../service-binding/gateway";
 import shadowRelease from "../shadow-release/gateway";
@@ -29,6 +31,8 @@ const examples: Record<string, GatewayInstance> = {
   "config-splitting/gateway": configSplitting,
   "route-scopes/gateway": routeScopes,
   "service-binding/gateway": serviceBinding,
+  "redis-adapter/gateway": redisAdapterExample,
+  "postgres-adapter/gateway": postgresAdapterExample,
 };
 
 describe("examples", () => {

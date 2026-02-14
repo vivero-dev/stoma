@@ -7,7 +7,7 @@ title: "proxy"
 
 > **proxy**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/proxy.ts:57](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/proxy.ts#L57)
+Defined in: [src/policies/proxy.ts:57](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/proxy.ts#L57)
 
 Apply additional header manipulation and timeout control to the upstream call.
 

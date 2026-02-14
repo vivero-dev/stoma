@@ -5,7 +5,7 @@ prev: false
 title: "UrlUpstream"
 ---
 
-Defined in: [src/core/types.ts:183](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/core/types.ts#L183)
+Defined in: [src/core/types.ts:183](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/types.ts#L183)
 
 Proxy to a remote URL. The gateway clones the request, rewrites headers,
 and forwards it via `fetch()`. SSRF protection ensures the rewritten URL
@@ -17,7 +17,7 @@ stays on the same origin as the target.
 
 > `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [src/core/types.ts:190](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/core/types.ts#L190)
+Defined in: [src/core/types.ts:190](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/types.ts#L190)
 
 Headers to add/override on the forwarded request.
 
@@ -27,7 +27,7 @@ Headers to add/override on the forwarded request.
 
 > `optional` **rewritePath**: (`path`) => `string`
 
-Defined in: [src/core/types.ts:188](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/core/types.ts#L188)
+Defined in: [src/core/types.ts:188](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/types.ts#L188)
 
 Rewrite the path before forwarding. Must not change the origin.
 
@@ -47,7 +47,7 @@ Rewrite the path before forwarding. Must not change the origin.
 
 > **target**: `string`
 
-Defined in: [src/core/types.ts:186](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/core/types.ts#L186)
+Defined in: [src/core/types.ts:186](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/types.ts#L186)
 
 Target URL (e.g. `"https://api.example.com"`). Validated at config time.
 
@@ -57,4 +57,4 @@ Target URL (e.g. `"https://api.example.com"`). Validated at config time.
 
 > **type**: `"url"`
 
-Defined in: [src/core/types.ts:184](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/core/types.ts#L184)
+Defined in: [src/core/types.ts:184](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/core/types.ts#L184)

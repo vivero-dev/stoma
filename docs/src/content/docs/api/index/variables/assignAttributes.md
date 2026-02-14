@@ -7,7 +7,7 @@ title: "assignAttributes"
 
 > `const` **assignAttributes**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/transform/assign-attributes.ts:43](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/assign-attributes.ts#L43)
+Defined in: [src/policies/transform/assign-attributes.ts:43](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/assign-attributes.ts#L43)
 
 Set key-value attributes on the Hono request context.
 

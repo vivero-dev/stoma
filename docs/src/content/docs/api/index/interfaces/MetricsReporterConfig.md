@@ -5,7 +5,7 @@ prev: false
 title: "MetricsReporterConfig"
 ---
 
-Defined in: [src/policies/observability/metrics-reporter.ts:14](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/observability/metrics-reporter.ts#L14)
+Defined in: [src/policies/observability/metrics-reporter.ts:14](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/observability/metrics-reporter.ts#L14)
 
 Configuration for the [metricsReporter](/api/index/variables/metricsreporter/) policy.
 
@@ -19,7 +19,7 @@ Configuration for the [metricsReporter](/api/index/variables/metricsreporter/) p
 
 > **collector**: [`MetricsCollector`](/api/index/interfaces/metricscollector/)
 
-Defined in: [src/policies/observability/metrics-reporter.ts:16](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/observability/metrics-reporter.ts#L16)
+Defined in: [src/policies/observability/metrics-reporter.ts:16](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/observability/metrics-reporter.ts#L16)
 
 The metrics collector to record to.
 
@@ -29,7 +29,7 @@ The metrics collector to record to.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

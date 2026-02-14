@@ -5,7 +5,7 @@ prev: false
 title: "TracingConfig"
 ---
 
-Defined in: [src/observability/tracing.ts:55](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L55)
+Defined in: [src/observability/tracing.ts:55](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L55)
 
 Configuration for gateway-level tracing.
 
@@ -15,7 +15,7 @@ Configuration for gateway-level tracing.
 
 > **exporter**: [`SpanExporter`](/api/index/interfaces/spanexporter/)
 
-Defined in: [src/observability/tracing.ts:56](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L56)
+Defined in: [src/observability/tracing.ts:56](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L56)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/observability/tracing.ts:56](https://github.com/HomeGrower-club
 
 > `optional` **sampleRate**: `number`
 
-Defined in: [src/observability/tracing.ts:60](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L60)
+Defined in: [src/observability/tracing.ts:60](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L60)
 
 Head-based sampling rate [0.0, 1.0]. Default: 1.0
 
@@ -33,7 +33,7 @@ Head-based sampling rate [0.0, 1.0]. Default: 1.0
 
 > `optional` **serviceName**: `string`
 
-Defined in: [src/observability/tracing.ts:57](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L57)
+Defined in: [src/observability/tracing.ts:57](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L57)
 
 ***
 
@@ -41,4 +41,4 @@ Defined in: [src/observability/tracing.ts:57](https://github.com/HomeGrower-club
 
 > `optional` **serviceVersion**: `string`
 
-Defined in: [src/observability/tracing.ts:58](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L58)
+Defined in: [src/observability/tracing.ts:58](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L58)

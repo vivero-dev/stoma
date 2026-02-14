@@ -5,7 +5,7 @@ prev: false
 title: "ReadableSpan"
 ---
 
-Defined in: [src/observability/tracing.ts:22](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L22)
+Defined in: [src/observability/tracing.ts:22](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L22)
 
 An immutable representation of a completed span.
 
@@ -15,7 +15,7 @@ An immutable representation of a completed span.
 
 > **attributes**: `Record`\<`string`, `string` \| `number` \| `boolean`\>
 
-Defined in: [src/observability/tracing.ts:30](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L30)
+Defined in: [src/observability/tracing.ts:30](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L30)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/observability/tracing.ts:30](https://github.com/HomeGrower-club
 
 > **endTimeMs**: `number`
 
-Defined in: [src/observability/tracing.ts:29](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L29)
+Defined in: [src/observability/tracing.ts:29](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L29)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [src/observability/tracing.ts:29](https://github.com/HomeGrower-club
 
 > **events**: [`SpanEvent`](/api/index/interfaces/spanevent/)[]
 
-Defined in: [src/observability/tracing.ts:32](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L32)
+Defined in: [src/observability/tracing.ts:32](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L32)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [src/observability/tracing.ts:32](https://github.com/HomeGrower-club
 
 > **kind**: [`SpanKind`](/api/index/type-aliases/spankind/)
 
-Defined in: [src/observability/tracing.ts:27](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L27)
+Defined in: [src/observability/tracing.ts:27](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L27)
 
 ***
 
@@ -47,7 +47,7 @@ Defined in: [src/observability/tracing.ts:27](https://github.com/HomeGrower-club
 
 > **name**: `string`
 
-Defined in: [src/observability/tracing.ts:26](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L26)
+Defined in: [src/observability/tracing.ts:26](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L26)
 
 ***
 
@@ -55,7 +55,7 @@ Defined in: [src/observability/tracing.ts:26](https://github.com/HomeGrower-club
 
 > `optional` **parentSpanId**: `string`
 
-Defined in: [src/observability/tracing.ts:25](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L25)
+Defined in: [src/observability/tracing.ts:25](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L25)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [src/observability/tracing.ts:25](https://github.com/HomeGrower-club
 
 > **spanId**: `string`
 
-Defined in: [src/observability/tracing.ts:24](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L24)
+Defined in: [src/observability/tracing.ts:24](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L24)
 
 ***
 
@@ -71,7 +71,7 @@ Defined in: [src/observability/tracing.ts:24](https://github.com/HomeGrower-club
 
 > **startTimeMs**: `number`
 
-Defined in: [src/observability/tracing.ts:28](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L28)
+Defined in: [src/observability/tracing.ts:28](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L28)
 
 ***
 
@@ -79,7 +79,7 @@ Defined in: [src/observability/tracing.ts:28](https://github.com/HomeGrower-club
 
 > **status**: `object`
 
-Defined in: [src/observability/tracing.ts:31](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L31)
+Defined in: [src/observability/tracing.ts:31](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L31)
 
 #### code
 
@@ -95,4 +95,4 @@ Defined in: [src/observability/tracing.ts:31](https://github.com/HomeGrower-club
 
 > **traceId**: `string`
 
-Defined in: [src/observability/tracing.ts:23](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/observability/tracing.ts#L23)
+Defined in: [src/observability/tracing.ts:23](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/observability/tracing.ts#L23)

@@ -5,7 +5,7 @@ prev: false
 title: "RequestValidationConfig"
 ---
 
-Defined in: [src/policies/transform/request-validation.ts:21](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/request-validation.ts#L21)
+Defined in: [src/policies/transform/request-validation.ts:21](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/request-validation.ts#L21)
 
 Configuration for the requestValidation policy.
 
@@ -19,7 +19,7 @@ Configuration for the requestValidation policy.
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [src/policies/transform/request-validation.ts:37](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/request-validation.ts#L37)
+Defined in: [src/policies/transform/request-validation.ts:37](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/request-validation.ts#L37)
 
 Only validate these content types.
 Requests with other content types pass through without validation.
@@ -31,7 +31,7 @@ Default: `["application/json"]`.
 
 > `optional` **errorMessage**: `string`
 
-Defined in: [src/policies/transform/request-validation.ts:39](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/request-validation.ts#L39)
+Defined in: [src/policies/transform/request-validation.ts:39](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/request-validation.ts#L39)
 
 Custom error message prefix. Default: `"Request validation failed"`.
 
@@ -41,7 +41,7 @@ Custom error message prefix. Default: `"Request validation failed"`.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/types.ts#L90)
+Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -65,7 +65,7 @@ Skip this policy when condition returns true
 
 > `optional` **validate**: (`body`) => `boolean` \| `ValidationResult`
 
-Defined in: [src/policies/transform/request-validation.ts:26](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/request-validation.ts#L26)
+Defined in: [src/policies/transform/request-validation.ts:26](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/request-validation.ts#L26)
 
 Synchronous validation function.
 Return `true`/`false` or an object with optional error details.
@@ -86,7 +86,7 @@ Return `true`/`false` or an object with optional error details.
 
 > `optional` **validateAsync**: (`body`) => `Promise`\<`boolean` \| `ValidationResult`\>
 
-Defined in: [src/policies/transform/request-validation.ts:31](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/policies/transform/request-validation.ts#L31)
+Defined in: [src/policies/transform/request-validation.ts:31](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/policies/transform/request-validation.ts#L31)
 
 Async validation function (e.g., for remote schema validation).
 If both `validate` and `validateAsync` are provided, `validateAsync` takes precedence.

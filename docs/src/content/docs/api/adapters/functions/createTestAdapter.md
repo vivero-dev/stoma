@@ -7,7 +7,7 @@ title: "createTestAdapter"
 
 > **createTestAdapter**(): [`TestAdapter`](/api/adapters/classes/testadapter/)
 
-Defined in: [src/adapters/testing.ts:41](https://github.com/HomeGrower-club/stoma/blob/e2ba4756c0c0c2365bb2339af5afe73b25869018/src/adapters/testing.ts#L41)
+Defined in: [src/adapters/testing.ts:41](https://github.com/HomeGrower-club/stoma/blob/7a6bc5c6595d42b4d2edc385006b88a77065ce23/src/adapters/testing.ts#L41)
 
 Create a new [TestAdapter](/api/adapters/classes/testadapter/).
 

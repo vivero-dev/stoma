@@ -196,16 +196,38 @@ export function createGateway<TBindings = Record<string, unknown>>(
     // Use app.on() for safe method registration - avoids missing method issues
     // (Hono handles HEAD automatically when GET is registered)
     const methodNames = methods.map((m) => m.toUpperCase());
+
+    // Auto-inject an OPTIONS handler for CORS preflight when a cors policy
+    // is present but OPTIONS is not already in the route's method list.
+    // The preflight handler runs only the context injector + policy chain
+    // (no upstream) — the CORS middleware returns 204 and the terminal
+    // handler ensures the context is finalized if CORS doesn't short-circuit.
+    const hasCors = mergedPolicies.some((p) => p.name === "cors");
+    if (hasCors && !methodNames.includes("OPTIONS")) {
+      const preflightHandlers = [
+        contextInjector,
+        ...middlewareChain,
+        async (c: Context) => c.body(null, 204),
+      ];
+      // biome-ignore lint/suspicious/noExplicitAny: Hono's overloaded .on() types don't infer well with dynamic method arrays
+      (app as any).on("OPTIONS", fullPath, ...preflightHandlers);
+      routeCount += 1;
+    }
+
     // biome-ignore lint/suspicious/noExplicitAny: Hono's overloaded .on() types don't infer well with dynamic method arrays
     (app as any).on(methodNames, fullPath, ...allHandlers);
     routeCount += methods.length;
 
     const policyNames = mergedPolicies.map((p) => p.name);
 
-    // Track registry data
+    // Track registry data (include auto-injected OPTIONS in the method list)
+    const registeredMethods =
+      hasCors && !methodNames.includes("OPTIONS")
+        ? [...methodNames, "OPTIONS"]
+        : methodNames;
     registeredRoutes.push({
       path: fullPath,
-      methods: methodNames,
+      methods: registeredMethods,
       policyNames,
       upstreamType: route.pipeline.upstream.type,
     });

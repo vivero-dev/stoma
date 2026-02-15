@@ -113,7 +113,10 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
         c.get("_otelSpans") === undefined
       ) {
         try {
-          await originalHandler(c, next);
+          // Return the handler result so Hono's compose() can finalize the
+          // context when a policy short-circuits by returning a Response
+          // (e.g. Hono's CORS middleware returns a 204 for OPTIONS preflight).
+          return await originalHandler(c, next);
         } finally {
           const durationMs = Date.now() - start;
           const timings = (c.get("_policyTimings") ?? []) as Array<{
@@ -123,20 +126,20 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
           timings.push({ name: policy.name, durationMs });
           c.set("_policyTimings", timings);
         }
-        return;
       }
 
       // Slow path: tracing active (policy trace, OTel, or both) -
       // track calledNext, errors, and push entries.
       let calledNext = false;
       let errorMsg: string | null = null;
+      let handlerResult: Response | void;
 
       try {
         const tracedNext = async () => {
           calledNext = true;
           await next();
         };
-        await originalHandler(c, tracedNext);
+        handlerResult = await originalHandler(c, tracedNext);
       } catch (err) {
         errorMsg = err instanceof Error ? err.message : String(err);
         throw err;
@@ -186,6 +189,8 @@ export function policiesToMiddleware(policies: Policy[]): MiddlewareHandler[] {
           otelSpans.push(span.end());
         }
       }
+
+      return handlerResult;
     };
     return wrappedHandler;
   });

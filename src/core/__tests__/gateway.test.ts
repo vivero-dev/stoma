@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { cors } from "../../policies/transform/cors";
 import { proxy } from "../../policies/proxy";
 import type { Policy } from "../../policies/types";
 import { GatewayError } from "../errors";
@@ -586,6 +587,105 @@ describe("createGateway - security", () => {
     expect(requestId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
     );
+  });
+
+  it("should handle OPTIONS preflight when CORS policy is present and route restricts methods", async () => {
+    const gw = createGateway({
+      policies: [cors({ origins: "https://example.com", methods: ["GET"] })],
+      routes: [
+        {
+          path: "/projects",
+          methods: ["GET"],
+          pipeline: {
+            upstream: { type: "handler", handler: echoHandler },
+          },
+        },
+      ],
+    });
+
+    // OPTIONS preflight should be handled by CORS, not 404
+    const res = await gw.app.request("/projects", {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://example.com",
+        "access-control-request-method": "GET",
+      },
+    });
+
+    expect(res.status).not.toBe(404);
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-origin")).toBe(
+      "https://example.com"
+    );
+  });
+
+  it("should handle OPTIONS preflight with route-level CORS policy", async () => {
+    const gw = createGateway({
+      routes: [
+        {
+          path: "/data",
+          methods: ["POST"],
+          pipeline: {
+            policies: [cors({ origins: "*" })],
+            upstream: { type: "handler", handler: echoHandler },
+          },
+        },
+      ],
+    });
+
+    const res = await gw.app.request("/data", {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://example.com",
+        "access-control-request-method": "POST",
+      },
+    });
+
+    expect(res.status).toBe(204);
+  });
+
+  it("should not inject OPTIONS when no CORS policy is present", async () => {
+    const gw = createGateway({
+      routes: [
+        {
+          path: "/no-cors",
+          methods: ["GET"],
+          pipeline: {
+            upstream: { type: "handler", handler: echoHandler },
+          },
+        },
+      ],
+    });
+
+    const res = await gw.app.request("/no-cors", { method: "OPTIONS" });
+    expect(res.status).toBe(404);
+  });
+
+  it("should not duplicate OPTIONS when already in route methods", async () => {
+    const gw = createGateway({
+      policies: [cors({ origins: "*" })],
+      routes: [
+        {
+          path: "/explicit",
+          methods: ["GET", "OPTIONS"],
+          pipeline: {
+            upstream: { type: "handler", handler: echoHandler },
+          },
+        },
+      ],
+    });
+
+    const res = await gw.app.request("/explicit", {
+      method: "OPTIONS",
+      headers: {
+        origin: "https://example.com",
+        "access-control-request-method": "GET",
+      },
+    });
+
+    expect(res.status).toBe(204);
+    // routeCount should be 2 (GET + OPTIONS), not 3
+    expect(gw.routeCount).toBe(2);
   });
 
   it("should preserve inbound host header when proxy preserveHost is enabled", async () => {

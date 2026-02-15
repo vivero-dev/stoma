@@ -16,11 +16,11 @@ The pipeline:
 ```
 Gateway request
   → analyticsLog policy emits a JSON line via console.log
-  → Cloudflare Logpush (or stdout) captures the line
-  → Raw NDJSON lands in S3/R2 (or local filesystem)
-  → Scheduled worker: processor reads NDJSON, extracts metrics, writes Parquet fragments
-  → Scheduled worker: compactor merges fragments into partition-level Parquet files
-  → DuckDB queries Parquet directly from S3/R2
+  → Log aggregation service captures the line (Logpush, stdout, syslog, etc.)
+  → Raw NDJSON lands in S3-compatible object storage or local filesystem
+  → Scheduled job: processor reads NDJSON, extracts metrics, writes Parquet fragments
+  → Scheduled job: compactor merges fragments into partition-level Parquet files
+  → DuckDB queries Parquet directly from object storage
 ```
 
 Every stage runs on shared, serverless infrastructure. Nothing is always-on. When there are no logs to process, resource consumption is zero.
@@ -36,10 +36,10 @@ Traditional analytics pipelines run dedicated ingest servers, streaming processo
 stoma-analytics eliminates every always-on component:
 
 - **Emission**: `analyticsLog` runs inside the same edge Worker/container that handles the request. No sidecar, no agent, no collector.
-- **Capture**: Cloudflare Logpush (or other appropriate adapter) writes to S3/R2 as a platform service — no Kafka, no Fluentd, no log shipper.
-- **Processing**: A scheduled Worker runs on a cron trigger. Between triggers, it consumes nothing.
+- **Capture**: A log aggregation service (Cloudflare Logpush, Fluent Bit, Vector, stdout piping, etc.) writes to S3-compatible object storage as a platform service — no Kafka, no Fluentd, no log shipper.
+- **Processing**: A scheduled job runs on a cron trigger (Workers cron, node-cron, system crontab, etc.). Between triggers, it consumes nothing.
 - **Compaction**: Same — a scheduled job, not a daemon.
-- **Querying**: DuckDB reads Parquet directly from R2. No warehouse server to keep warm.
+- **Querying**: DuckDB reads Parquet directly from object storage. No warehouse server to keep warm.
 
 The entire pipeline exists only when there is work to do.
 
@@ -124,7 +124,7 @@ Every external dependency is behind an interface:
 This isn't abstraction for abstraction's sake. It serves three concrete purposes:
 
 1. **Testability**: All 58 tests run with mock implementations, no R2, no DuckDB, no filesystem. Tests complete in <1 second.
-2. **Runtime portability**: The same processor code runs on Cloudflare Workers (R2 storage, DuckDB WASM) and Node/Bun (local filesystem, optional DuckDB).
+2. **Runtime portability**: The same processor code runs on Cloudflare Workers (R2, DuckDB WASM) and Node/Bun (local filesystem, optional DuckDB).
 3. **Zero mandatory heavy dependencies**: DuckDB WASM is loaded via dynamic import — it's not in `dependencies` or `peerDependencies`. Users install it only if they want Parquet output. The package itself has zero runtime dependencies beyond its Stoma and Hono peer deps.
 
 ### 7. Fail silently, never break the request
@@ -155,13 +155,13 @@ src/
 ├── compactor/
 │   └── index.ts                # createCompactor() — fragment merging
 ├── storage/
-│   ├── r2.ts                   # Cloudflare R2 adapter
+│   ├── r2.ts                   # R2 adapter (S3-compatible, Workers binding)
 │   └── local.ts                # Node/Bun filesystem adapter
 ├── parquet/
 │   ├── duckdb-wasm.ts          # DuckDB WASM writer + merger
 │   └── ndjson-passthrough.ts   # Zero-dep NDJSON fallback
 └── worker/
-    ├── scheduled.ts            # Cloudflare scheduled handler factory
+    ├── scheduled.ts            # Scheduled handler (Workers cron)
     └── standalone.ts           # Node/Bun CLI runner
 ```
 
@@ -187,3 +187,17 @@ The analytics policy adds a single `Date.now()` call before and after `next()`, 
 The processor and compactor run as scheduled jobs. Their cost is proportional to the volume of logs — and when there are no logs, the cost is zero.
 
 There is no persistent connection, no background thread, no polling loop, no heartbeat. The entire analytics pipeline is event-driven and ephemeral.
+
+## Platform examples
+
+### Cloudflare Workers
+
+The `r2Storage` adapter uses the Workers R2Bucket binding. The `createAnalyticsHandler()` factory produces a scheduled event handler for Workers cron triggers. Logpush captures `console.log` output from Workers Trace Events and delivers raw NDJSON to R2 automatically.
+
+### Node.js / Bun
+
+The `localStorageAdapter` reads and writes to the local filesystem. Use `runStandalone()` from `@homegrower-club/stoma-analytics/worker` for a ready-made CLI runner, or build a custom scheduled job with `createProcessor()` and `createCompactor()` directly.
+
+### Custom runtime
+
+Implement the `StorageReader`, `StorageWriter`, and `CompactorStorage` interfaces for your storage backend. The processor and compactor accept any implementation — S3 via the AWS SDK, GCS, Azure Blob Storage, or a custom HTTP-based store.

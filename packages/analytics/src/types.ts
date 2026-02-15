@@ -36,15 +36,58 @@ export interface ParquetWriter {
   toParquet(entries: AnalyticsEntry[]): Promise<Uint8Array>;
 }
 
+// ── Processing Lock ────────────────────────────────────────────────────
+
+export interface ProcessingLock {
+  acquire(lockKey: string, owner: string, ttlMs: number): Promise<boolean>;
+  release(lockKey: string, owner: string): Promise<void>;
+  isLocked(lockKey: string): Promise<boolean>;
+}
+
+export interface ProcessedFileTracker {
+  isProcessed(key: string): Promise<boolean>;
+  markProcessed(key: string): Promise<void>;
+  unmark(key: string): Promise<void>;
+}
+
+// ── Processor ──────────────────────────────────────────────────────────
+
 export interface ProcessorConfig {
   source: StorageReader;
   destination: StorageWriter;
   parquetWriter: ParquetWriter;
-  format: "standard" | "cloudflare";
+  format: "standard" | "cloudflare" | "workers-trace-event";
   sourcePrefix?: string;
   destinationPrefix?: string;
   deleteProcessed?: boolean;
   maxEntriesPerFile?: number;
+  /** Filter keys returned by list(). Default: accept .ndjson, .json, .log files. */
+  fileFilter?: (key: string) => boolean;
+  /** Max parallel file reads. Default: 5. */
+  concurrency?: number;
+  /** Controls debug output. true = all, string = namespace pattern. */
+  debug?: boolean | string;
+  /** Processing lock to prevent overlapping runs. */
+  lock?: ProcessingLock;
+  /** Tracker to skip already-processed files. */
+  processedTracker?: ProcessedFileTracker;
+  /** Lock key for this processor instance. Default: "processor". */
+  lockKey?: string;
+  /** Lock TTL in milliseconds. Default: 300_000 (5 minutes). */
+  lockTtlMs?: number;
+}
+
+// ── Processor Metrics ──────────────────────────────────────────────────
+
+export interface ProcessorMetrics {
+  listDurationMs: number;
+  readDurationMs: number;
+  parseDurationMs: number;
+  writeDurationMs: number;
+  deleteDurationMs: number;
+  filesListed: number;
+  filesFiltered: number;
+  filesDeduped: number;
 }
 
 export interface ProcessorResult {
@@ -54,6 +97,7 @@ export interface ProcessorResult {
   filesDeleted: number;
   durationMs: number;
   errors: string[];
+  metrics?: ProcessorMetrics;
 }
 
 // ── Compactor ──────────────────────────────────────────────────────────
@@ -69,6 +113,17 @@ export interface ParquetMerger {
   merge(fragments: Uint8Array[]): Promise<Uint8Array>;
 }
 
+export interface StreamingParquetMerger extends ParquetMerger {
+  chunkSize: number;
+  mergeChunk(fragments: Uint8Array[]): Promise<Uint8Array>;
+}
+
+export function isStreamingMerger(
+  m: ParquetMerger
+): m is StreamingParquetMerger {
+  return "chunkSize" in m && "mergeChunk" in m;
+}
+
 export interface CompactorConfig {
   storage: CompactorStorage;
   merger: ParquetMerger;
@@ -76,6 +131,24 @@ export interface CompactorConfig {
   granularity?: "hour" | "day" | "month";
   before?: Date;
   deleteFragments?: boolean;
+  /** Controls debug output. true = all, string = namespace pattern. */
+  debug?: boolean | string;
+  /** Max parallel fragment reads. Default: 5. */
+  concurrency?: number;
+}
+
+// ── Compactor Metrics ──────────────────────────────────────────────────
+
+export interface CompactorMetrics {
+  listDurationMs: number;
+  readDurationMs: number;
+  mergeDurationMs: number;
+  writeDurationMs: number;
+  deleteDurationMs: number;
+  partitionsListed: number;
+  partitionsSkipped: number;
+  totalFragmentBytes: number;
+  compactedBytes: number;
 }
 
 export interface CompactorResult {
@@ -85,4 +158,5 @@ export interface CompactorResult {
   compactedFilesWritten: number;
   durationMs: number;
   errors: string[];
+  metrics?: CompactorMetrics;
 }

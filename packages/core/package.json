@@ -1,0 +1,71 @@
+{
+  "name": "@homegrower-club/stoma-core",
+  "version": "0.1.0-rc.0",
+  "description": "Shared utilities for Stoma packages — debug logging, timing helpers, and common type guards.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HomeGrower-club/stoma.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://stoma.opensource.homegrower.club",
+  "sideEffects": false,
+  "license": "MIT",
+  "author": {
+    "name": "Jonathan Bennett"
+  },
+  "bugs": {
+    "url": "https://github.com/HomeGrower-club/stoma/issues"
+  },
+  "keywords": [
+    "stoma",
+    "utilities",
+    "debug",
+    "edge-runtime"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./debug": {
+      "types": "./src/debug.ts",
+      "default": "./src/debug.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./debug": {
+        "types": "./dist/debug.d.ts",
+        "import": "./dist/debug.js",
+        "default": "./dist/debug.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

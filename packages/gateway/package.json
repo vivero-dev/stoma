@@ -169,6 +169,9 @@
     "test:watch": "vitest",
     "prepublishOnly": "yarn build"
   },
+  "dependencies": {
+    "@homegrower-club/stoma-core": "workspace:*"
+  },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.0",
     "@cloudflare/workers-types": "^4.20250214.0",

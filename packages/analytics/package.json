@@ -23,7 +23,7 @@
     "metrics",
     "parquet",
     "duckdb",
-    "cloudflare-workers",
+    "edge-runtime",
     "stoma"
   ],
   "main": "./src/index.ts",
@@ -66,6 +66,18 @@
     "./compactor": {
       "types": "./src/compactor/index.ts",
       "default": "./src/compactor/index.ts"
+    },
+    "./lock": {
+      "types": "./src/processor/lock.ts",
+      "default": "./src/processor/lock.ts"
+    },
+    "./lock/memory": {
+      "types": "./src/processor/lock-memory.ts",
+      "default": "./src/processor/lock-memory.ts"
+    },
+    "./lock/storage": {
+      "types": "./src/processor/lock-storage.ts",
+      "default": "./src/processor/lock-storage.ts"
     }
   },
   "publishConfig": {
@@ -114,6 +126,21 @@
         "types": "./dist/compactor/index.d.ts",
         "import": "./dist/compactor/index.js",
         "default": "./dist/compactor/index.js"
+      },
+      "./lock": {
+        "types": "./dist/processor/lock.d.ts",
+        "import": "./dist/processor/lock.js",
+        "default": "./dist/processor/lock.js"
+      },
+      "./lock/memory": {
+        "types": "./dist/processor/lock-memory.d.ts",
+        "import": "./dist/processor/lock-memory.js",
+        "default": "./dist/processor/lock-memory.js"
+      },
+      "./lock/storage": {
+        "types": "./dist/processor/lock-storage.d.ts",
+        "import": "./dist/processor/lock-storage.js",
+        "default": "./dist/processor/lock-storage.js"
       }
     }
   },
@@ -128,6 +155,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",
     "@homegrower-club/stoma": "workspace:*",
+    "@homegrower-club/stoma-core": "workspace:*",
     "@types/node": "^22.0.0",
     "hono": "^4.7.0",
     "tsup": "^8.5.1",

@@ -7,10 +7,16 @@ export {
   type ParquetWriter,
   type ProcessorConfig,
   type ProcessorResult,
+  type ProcessorMetrics,
   type CompactorStorage,
   type ParquetMerger,
+  type StreamingParquetMerger,
+  isStreamingMerger,
   type CompactorConfig,
   type CompactorResult,
+  type CompactorMetrics,
+  type ProcessingLock,
+  type ProcessedFileTracker,
 } from "./types.js";
 
 // Policy
@@ -20,6 +26,17 @@ export { analyticsLog, type AnalyticsLogConfig } from "./policy/analytics.js";
 export { createProcessor } from "./processor/index.js";
 export { parseStandardLine } from "./processor/formats/standard.js";
 export { parseCloudflareEvent } from "./processor/formats/cloudflare.js";
+export { parseWorkersTraceEvent } from "./processor/formats/workers-trace-event.js";
+
+// Lock & Deduplication
+export {
+  createInMemoryLock,
+  createInMemoryFileTracker,
+} from "./processor/lock-memory.js";
+export {
+  createStorageLock,
+  createStorageFileTracker,
+} from "./processor/lock-storage.js";
 
 // Compactor
 export { createCompactor } from "./compactor/index.js";
@@ -31,7 +48,18 @@ export { localStorageAdapter } from "./storage/local.js";
 // Parquet
 export { duckdbWasmParquetWriter } from "./parquet/duckdb-wasm.js";
 export { duckdbWasmParquetMerger } from "./parquet/duckdb-wasm.js";
+export {
+  duckdbWasmStreamingMerger,
+  destroyDuckDBPool,
+} from "./parquet/duckdb-wasm.js";
 export { ndjsonPassthroughWriter } from "./parquet/ndjson-passthrough.js";
 
 // Worker
 export { createAnalyticsHandler } from "./worker/scheduled.js";
+
+// Debug (re-exported from @homegrower-club/stoma-core)
+export {
+  createDebugger,
+  createDebugFactory,
+  type DebugLogger,
+} from "@homegrower-club/stoma-core";

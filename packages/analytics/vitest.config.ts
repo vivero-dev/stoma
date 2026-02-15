@@ -12,6 +12,10 @@ export default defineConfig({
         import.meta.dirname,
         "../gateway/src/index.ts"
       ),
+      "@homegrower-club/stoma-core": path.resolve(
+        import.meta.dirname,
+        "../core/src/index.ts"
+      ),
     },
   },
   test: {

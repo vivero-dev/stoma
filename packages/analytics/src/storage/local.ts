@@ -19,16 +19,18 @@ export function localStorageAdapter(
   return {
     async list(prefix: string): Promise<string[]> {
       const { readdir } = await import("node:fs/promises");
-      const { join } = await import("node:path");
+      const { join, relative } = await import("node:path");
 
       const dir = join(basePath, prefix);
       const keys: string[] = [];
 
       try {
-        const entries = await readdir(dir, { recursive: true });
+        const entries = await readdir(dir, { recursive: true, withFileTypes: true });
         for (const entry of entries) {
-          const key = prefix ? `${prefix}/${entry}` : entry;
-          keys.push(key);
+          if (!entry.isFile()) continue;
+          const fullPath = join(entry.parentPath, entry.name);
+          const relPath = relative(basePath, fullPath);
+          keys.push(relPath);
         }
       } catch (err) {
         if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];

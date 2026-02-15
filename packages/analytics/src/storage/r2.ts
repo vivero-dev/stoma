@@ -1,3 +1,4 @@
+/// <reference types="@cloudflare/workers-types" />
 import type { CompactorStorage, StorageReader, StorageWriter } from "../types.js";
 
 export interface R2StorageOptions {
@@ -5,7 +6,7 @@ export interface R2StorageOptions {
 }
 
 /**
- * Storage adapter backed by Cloudflare R2.
+ * Cloudflare R2 (S3-compatible) storage adapter using the Workers R2Bucket binding API.
  *
  * Implements both `StorageReader` and `StorageWriter` using an R2 bucket binding.
  */

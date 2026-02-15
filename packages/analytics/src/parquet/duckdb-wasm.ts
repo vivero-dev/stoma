@@ -1,4 +1,128 @@
-import type { AnalyticsEntry, ParquetWriter } from "../types.js";
+import type {
+  AnalyticsEntry,
+  ParquetWriter,
+  ParquetMerger,
+  StreamingParquetMerger,
+} from "../types.js";
+
+/** Minimal DuckDB WASM interface — only what we use */
+interface DuckDBInstance {
+  connect(): Promise<DuckDBConnection>;
+  registerFileBuffer(name: string, buffer: Uint8Array): Promise<void>;
+  copyFileToBuffer(path: string): Promise<ArrayBuffer>;
+  terminate(): Promise<void>;
+}
+
+interface DuckDBConnection {
+  query(sql: string): Promise<unknown>;
+  close(): Promise<void>;
+}
+
+type DuckDBModule = { Database: new () => DuckDBInstance };
+
+// ── DuckDB Instance Pool ───────────────────────────────────────────────
+
+interface DuckDBPool {
+  acquire(): Promise<DuckDBInstance>;
+  release(db: DuckDBInstance): void;
+  destroy(): Promise<void>;
+}
+
+function createDuckDBPool(maxSize = 1): DuckDBPool {
+  const available: DuckDBInstance[] = [];
+  const waiting: Array<(db: DuckDBInstance) => void> = [];
+  let currentSize = 0;
+  let destroyed = false;
+
+  async function createInstance(): Promise<DuckDBInstance> {
+    const duckdb = await loadDuckDB();
+    return new duckdb.Database();
+  }
+
+  return {
+    async acquire(): Promise<DuckDBInstance> {
+      if (destroyed) throw new Error("DuckDB pool is destroyed");
+
+      // Return an available instance
+      const idle = available.pop();
+      if (idle) return idle;
+
+      // Create a new one if under limit
+      if (currentSize < maxSize) {
+        currentSize++;
+        return createInstance();
+      }
+
+      // Wait for one to be released
+      return new Promise<DuckDBInstance>((resolve) => {
+        waiting.push(resolve);
+      });
+    },
+
+    release(db: DuckDBInstance): void {
+      if (destroyed) {
+        db.terminate();
+        return;
+      }
+
+      // If someone is waiting, hand it off directly
+      const waiter = waiting.shift();
+      if (waiter) {
+        waiter(db);
+      } else {
+        available.push(db);
+      }
+    },
+
+    async destroy(): Promise<void> {
+      destroyed = true;
+      for (const db of available) {
+        await db.terminate();
+      }
+      available.length = 0;
+      currentSize = 0;
+    },
+  };
+}
+
+let globalPool: DuckDBPool | null = null;
+
+function getPool(): DuckDBPool {
+  if (!globalPool) {
+    globalPool = createDuckDBPool(1);
+  }
+  return globalPool;
+}
+
+/**
+ * Destroy the shared DuckDB instance pool.
+ *
+ * Call this during test teardown or worker shutdown to release resources.
+ */
+export async function destroyDuckDBPool(): Promise<void> {
+  if (globalPool) {
+    await globalPool.destroy();
+    globalPool = null;
+  }
+}
+
+// ── DuckDB Loader ──────────────────────────────────────────────────────
+
+async function loadDuckDB(): Promise<DuckDBModule> {
+  try {
+    return await import("@duckdb/duckdb-wasm" as string);
+  } catch {
+    try {
+      return await import("@ducklings/workers" as string);
+    } catch {
+      throw new Error(
+        "DuckDB WASM not available. Install @duckdb/duckdb-wasm or a platform-specific build (e.g., @ducklings/workers for Cloudflare)."
+      );
+    }
+  }
+}
+
+// ── Parquet Writer ─────────────────────────────────────────────────────
 
 /**
  * ParquetWriter that uses DuckDB WASM to convert entries to Parquet format.
@@ -7,31 +131,17 @@ import type { AnalyticsEntry, ParquetWriter } from "../types.js";
  * inserts — this is ~100x faster for large batches because DuckDB processes
  * NDJSON in vectorized column batches internally.
  *
+ * DuckDB instances are acquired from a shared pool to avoid the ~50-200ms
+ * overhead of creating a new `Database` per call.
+ *
  * DuckDB WASM is loaded via dynamic import — users must install `@duckdb/duckdb-wasm`
- * or `@ducklings/workers` (for Cloudflare Workers) as a dependency themselves.
+ * or a platform-specific build (e.g., `@ducklings/workers` for Cloudflare) themselves.
  */
 export function duckdbWasmParquetWriter(): ParquetWriter {
   return {
     async toParquet(entries: AnalyticsEntry[]): Promise<Uint8Array> {
       if (entries.length === 0) {
         return new Uint8Array(0);
-      }
-
-      // Dynamic import — not a declared dependency
-      let duckdb: {
-        Database: new () => DuckDBInstance;
-      };
-
-      try {
-        duckdb = await import("@duckdb/duckdb-wasm" as string);
-      } catch {
-        try {
-          duckdb = await import("@ducklings/workers" as string);
-        } catch {
-          throw new Error(
-            "DuckDB WASM not available. Install @duckdb/duckdb-wasm or @ducklings/workers."
-          );
-        }
       }
 
       // Build NDJSON with dimensions pre-serialized to VARCHAR
@@ -46,7 +156,8 @@ export function duckdbWasmParquetWriter(): ParquetWriter {
         .join("\n");
 
       const inputBuffer = new TextEncoder().encode(ndjson);
-      const db = new duckdb.Database();
+      const pool = getPool();
+      const db = await pool.acquire();
 
       try {
         // Register NDJSON as a virtual file for bulk loading
@@ -86,11 +197,13 @@ export function duckdbWasmParquetWriter(): ParquetWriter {
         const bytes = await db.copyFileToBuffer("output.parquet");
         return new Uint8Array(bytes);
       } finally {
-        await db.terminate();
+        pool.release(db);
       }
     },
   };
 }
+
+// ── Parquet Merger ─────────────────────────────────────────────────────
 
 /**
  * ParquetMerger that uses DuckDB WASM to read multiple Parquet fragment
@@ -98,30 +211,15 @@ export function duckdbWasmParquetWriter(): ParquetWriter {
  *
  * Used by `createCompactor()` to reduce file count after ingest.
  */
-export function duckdbWasmParquetMerger(): import("../types.js").ParquetMerger {
+export function duckdbWasmParquetMerger(): ParquetMerger {
   return {
     async merge(fragments: Uint8Array[]): Promise<Uint8Array> {
       if (fragments.length === 0) {
         return new Uint8Array(0);
       }
 
-      let duckdb: {
-        Database: new () => DuckDBInstance;
-      };
-
-      try {
-        duckdb = await import("@duckdb/duckdb-wasm" as string);
-      } catch {
-        try {
-          duckdb = await import("@ducklings/workers" as string);
-        } catch {
-          throw new Error(
-            "DuckDB WASM not available. Install @duckdb/duckdb-wasm or @ducklings/workers."
-          );
-        }
-      }
-
-      const db = new duckdb.Database();
+      const pool = getPool();
+      const db = await pool.acquire();
 
       try {
         // Register each fragment as a virtual file
@@ -146,21 +244,39 @@ export function duckdbWasmParquetMerger(): import("../types.js").ParquetMerger {
         const bytes = await db.copyFileToBuffer("compacted.parquet");
         return new Uint8Array(bytes);
       } finally {
-        await db.terminate();
+        pool.release(db);
       }
     },
   };
 }
 
-/** Minimal DuckDB WASM interface — only what we use */
-interface DuckDBInstance {
-  connect(): Promise<DuckDBConnection>;
-  registerFileBuffer(name: string, buffer: Uint8Array): Promise<void>;
-  copyFileToBuffer(path: string): Promise<ArrayBuffer>;
-  terminate(): Promise<void>;
-}
+// ── Streaming Parquet Merger ───────────────────────────────────────────
 
-interface DuckDBConnection {
-  query(sql: string): Promise<unknown>;
-  close(): Promise<void>;
+/**
+ * StreamingParquetMerger that processes fragments in bounded chunks.
+ *
+ * Instead of loading all fragments into memory, processes `chunkSize`
+ * fragments at a time and feeds the output into the next pass. This
+ * bounds memory to approximately `chunkSize` fragment buffers.
+ *
+ * @param opts.chunkSize - Number of fragments per merge pass. Default: 50.
+ */
+export function duckdbWasmStreamingMerger(
+  opts?: { chunkSize?: number }
+): StreamingParquetMerger {
+  const chunkSize = opts?.chunkSize ?? 50;
+
+  const baseMerger = duckdbWasmParquetMerger();
+
+  return {
+    chunkSize,
+
+    async merge(fragments: Uint8Array[]): Promise<Uint8Array> {
+      return baseMerger.merge(fragments);
+    },
+
+    async mergeChunk(fragments: Uint8Array[]): Promise<Uint8Array> {
+      return baseMerger.merge(fragments);
+    },
+  };
 }

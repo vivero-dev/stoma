@@ -1467,6 +1467,7 @@ __metadata:
   dependencies:
     "@cloudflare/workers-types": "npm:^4.20250214.0"
     "@homegrower-club/stoma": "workspace:*"
+    "@homegrower-club/stoma-core": "workspace:*"
     "@types/node": "npm:^22.0.0"
     hono: "npm:^4.7.0"
     tsup: "npm:^8.5.1"
@@ -1475,6 +1476,15 @@ __metadata:
   peerDependencies:
     "@homegrower-club/stoma": ">=0.1.0"
     hono: ">=4.0.0"
+  languageName: unknown
+  linkType: soft
+
+"@homegrower-club/stoma-core@workspace:*, @homegrower-club/stoma-core@workspace:packages/core":
+  version: 0.0.0-use.local
+  resolution: "@homegrower-club/stoma-core@workspace:packages/core"
+  dependencies:
+    tsup: "npm:^8.5.1"
+    typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -1512,6 +1522,7 @@ __metadata:
   dependencies:
     "@cloudflare/vitest-pool-workers": "npm:^0.8.0"
     "@cloudflare/workers-types": "npm:^4.20250214.0"
+    "@homegrower-club/stoma-core": "workspace:*"
     "@vitest/coverage-istanbul": "npm:3.2.4"
     "@vitest/expect": "npm:3.2.4"
     "@vitest/mocker": "npm:3.2.4"

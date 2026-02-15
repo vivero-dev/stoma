@@ -1,4 +1,10 @@
-import type { CompactorConfig, CompactorResult } from "../types.js";
+import type {
+  CompactorConfig,
+  CompactorResult,
+  CompactorMetrics,
+} from "../types.js";
+import { isStreamingMerger } from "../types.js";
+import { createDebugger, type DebugLogger } from "@homegrower-club/stoma-core";
 
 /**
  * Create a compactor that merges small Parquet fragment files into larger
@@ -7,6 +13,10 @@ import type { CompactorConfig, CompactorResult } from "../types.js";
  * Runs after the ingest processor to reduce file count for efficient
  * DuckDB querying. Idempotent — re-running on already-compacted partitions
  * is a no-op.
+ *
+ * When the merger implements `StreamingParquetMerger`, fragments are merged
+ * in chunks of `chunkSize` to bound memory usage. Otherwise all fragments
+ * are merged in a single pass (backward compatible).
  */
 export function createCompactor(config: CompactorConfig) {
   const {
@@ -16,11 +26,29 @@ export function createCompactor(config: CompactorConfig) {
     granularity = "day",
     before = new Date(Date.now() - 24 * 60 * 60 * 1000),
     deleteFragments = true,
+    debug: debugConfig,
+    concurrency = 5,
   } = config;
+
+  const debug: DebugLogger = createDebugger(
+    "stoma-analytics:compactor",
+    debugConfig
+  );
 
   return {
     async run(): Promise<CompactorResult> {
       const startTime = Date.now();
+      const metrics: CompactorMetrics = {
+        listDurationMs: 0,
+        readDurationMs: 0,
+        mergeDurationMs: 0,
+        writeDurationMs: 0,
+        deleteDurationMs: 0,
+        partitionsListed: 0,
+        partitionsSkipped: 0,
+        totalFragmentBytes: 0,
+        compactedBytes: 0,
+      };
       const result: CompactorResult = {
         partitionsCompacted: 0,
         fragmentsRead: 0,
@@ -28,8 +56,10 @@ export function createCompactor(config: CompactorConfig) {
         compactedFilesWritten: 0,
         durationMs: 0,
         errors: [],
+        metrics,
       };
 
+      const listStart = Date.now();
       let allFiles: string[];
       try {
         allFiles = await storage.list(prefix);
@@ -40,9 +70,19 @@ export function createCompactor(config: CompactorConfig) {
         result.durationMs = Date.now() - startTime;
         return result;
       }
+      metrics.listDurationMs = Date.now() - listStart;
 
       const partitions = groupByPartition(allFiles, prefix, granularity);
       const eligible = filterBeforeCutoff(partitions, granularity, before);
+      metrics.partitionsListed = partitions.size;
+      metrics.partitionsSkipped = partitions.size - eligible.size;
+      debug(
+        "listed %d partitions, %d eligible",
+        partitions.size,
+        eligible.size
+      );
+
+      const streaming = isStreamingMerger(merger);
 
       for (const [partitionKey, allPartitionFiles] of eligible) {
         // Separate compacted file from fragment files
@@ -55,23 +95,58 @@ export function createCompactor(config: CompactorConfig) {
         if (fragments.length === 0) continue;
 
         try {
+          const readStart = Date.now();
+
           // Read all files in the partition (fragments + existing compacted)
-          const fileBuffers: Uint8Array[] = [];
-          for (const path of allPartitionFiles) {
-            const buffer = await storage.readBinary(path);
-            fileBuffers.push(buffer);
-            result.fragmentsRead++;
-          }
+          const fileBuffers: Uint8Array[] = await mapConcurrent(
+            allPartitionFiles,
+            concurrency,
+            async (path) => {
+              const buffer = await storage.readBinary(path);
+              result.fragmentsRead++;
+              metrics.totalFragmentBytes += buffer.byteLength;
+              return buffer;
+            }
+          );
+          metrics.readDurationMs += Date.now() - readStart;
 
           // Merge into a single compacted Parquet file
-          const compactedBytes = await merger.merge(fileBuffers);
+          const mergeStart = Date.now();
+          let compactedBytes: Uint8Array;
 
+          if (streaming && fileBuffers.length > merger.chunkSize) {
+            debug(
+              "streaming merge for partition %s (%d fragments, chunkSize=%d)",
+              partitionKey,
+              fileBuffers.length,
+              merger.chunkSize
+            );
+            compactedBytes = await streamingMerge(
+              fileBuffers,
+              merger,
+              merger.chunkSize
+            );
+          } else {
+            compactedBytes = await merger.merge(fileBuffers);
+          }
+          metrics.mergeDurationMs += Date.now() - mergeStart;
+          metrics.compactedBytes += compactedBytes.byteLength;
+
+          const writeStart = Date.now();
           await storage.write(compactedPath, compactedBytes);
+          metrics.writeDurationMs += Date.now() - writeStart;
           result.compactedFilesWritten++;
           result.partitionsCompacted++;
+          debug(
+            "compacted partition %s: %d fragments → %d bytes",
+            partitionKey,
+            allPartitionFiles.length,
+            compactedBytes.byteLength
+          );
 
           // Delete only the fragment files (compacted.parquet is overwritten)
           if (deleteFragments) {
+            const deleteStart = Date.now();
             for (const path of fragments) {
               try {
                 await storage.delete(path);
@@ -82,6 +157,7 @@ export function createCompactor(config: CompactorConfig) {
                 );
               }
             }
+            metrics.deleteDurationMs += Date.now() - deleteStart;
           }
         } catch (err) {
           result.errors.push(
@@ -91,9 +167,67 @@ export function createCompactor(config: CompactorConfig) {
       }
 
       result.durationMs = Date.now() - startTime;
+      debug(
+        "run complete: %d partitions compacted, %d fragments read, %d files written",
+        result.partitionsCompacted,
+        result.fragmentsRead,
+        result.compactedFilesWritten
+      );
       return result;
     },
   };
+}
+
+/**
+ * Streaming merge: process fragments in chunks, feeding the output of one
+ * pass as the first input of the next pass. Bounds memory to ~chunkSize
+ * fragments at a time.
+ */
+async function streamingMerge(
+  fragments: Uint8Array[],
+  merger: { mergeChunk(fragments: Uint8Array[]): Promise<Uint8Array> },
+  chunkSize: number
+): Promise<Uint8Array> {
+  let remaining = [...fragments];
+
+  while (remaining.length > 1) {
+    const nextRound: Uint8Array[] = [];
+    for (let i = 0; i < remaining.length; i += chunkSize) {
+      const chunk = remaining.slice(i, i + chunkSize);
+      if (chunk.length === 1) {
+        nextRound.push(chunk[0]);
+      } else {
+        const merged = await merger.mergeChunk(chunk);
+        nextRound.push(merged);
+      }
+    }
+    remaining = nextRound;
+  }
+
+  return remaining[0];
+}
+
+async function mapConcurrent<T, R>(
+  items: T[],
+  concurrency: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let index = 0;
+
+  async function worker() {
+    while (index < items.length) {
+      const i = index++;
+      results[i] = await fn(items[i]);
+    }
+  }
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    () => worker()
+  );
+  await Promise.all(workers);
+  return results;
 }
 
 /**

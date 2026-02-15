@@ -1,6 +1,13 @@
+/// <reference types="@cloudflare/workers-types" />
 import { duckdbWasmParquetWriter } from "../parquet/duckdb-wasm.js";
 import { createProcessor } from "../processor/index.js";
 import { r2Storage } from "../storage/r2.js";
+import type { ProcessorResult } from "../types.js";
+
+export interface AnalyticsHandlerOptions {
+  onResult?: (result: ProcessorResult) => void;
+  onError?: (error: unknown) => void;
+}
 
 export interface AnalyticsWorkerEnv {
   /** R2 bucket containing raw log files (source). */
@@ -29,7 +36,27 @@ export interface AnalyticsWorkerEnv {
  * };
  * ```
  */
-export function createAnalyticsHandler() {
+export function createAnalyticsHandler(opts?: AnalyticsHandlerOptions) {
+  const onResult =
+    opts?.onResult ??
+    ((result: ProcessorResult) => {
+      console.log(
+        JSON.stringify({ _type: "stoma_analytics_processor", ...result })
+      );
+    });
+
+  const onError =
+    opts?.onError ??
+    ((error: unknown) => {
+      console.error(
+        JSON.stringify({
+          _type: "stoma_analytics_processor_error",
+          error: error instanceof Error ? error.message : String(error),
+          timestamp: new Date().toISOString(),
+        })
+      );
+    });
+
   return async (
     _event: ScheduledEvent,
     env: AnalyticsWorkerEnv,
@@ -46,9 +73,7 @@ export function createAnalyticsHandler() {
     });
 
     ctx.waitUntil(
-      processor.run().then((result) => {
-        console.log(JSON.stringify({ _type: "stoma_analytics_processor", ...result }));
-      })
+      processor.run().then(onResult).catch(onError)
     );
   };
 }

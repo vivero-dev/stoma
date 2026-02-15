@@ -46,7 +46,7 @@ Every request now emits a JSON line to `console.log`:
 }
 ```
 
-On Cloudflare Workers with `observability.enabled: true` in your `wrangler.jsonc`, these lines are captured by Workers Trace Events and delivered to Logpush destinations (R2, S3, etc.) automatically.
+These lines are captured by your log aggregation service — Cloudflare Logpush (via Workers Trace Events), Fluent Bit, Vector, stdout piping, or any other log transport — and delivered to your storage destination (S3-compatible object storage, local filesystem, etc.).
 
 ## Installation
 
@@ -129,7 +129,7 @@ Computed per-request from headers, response status, or values set by upstream po
 ```typescript
 analyticsLog({
   extractDimensions: (c) => ({
-    country: c.req.header("cf-ipcountry") ?? "unknown",
+    country: c.req.header("x-geo-country") ?? "unknown",
     cacheTier: c.res.status === 304 ? "hit" : "miss",
   }),
 })
@@ -265,7 +265,7 @@ export default createGateway({
 });
 ```
 
-In production on Cloudflare Workers, both policies write to `console.log`. Workers Trace Events capture all log lines and deliver them via Logpush. The downstream [processor](/analytics/architecture/) separates them by `_type` — only lines with `_type: "stoma_analytics"` are extracted into Parquet.
+Both policies write to `console.log`. Your log aggregation service captures all log lines and delivers them to storage. The downstream [processor](/analytics/architecture/) separates them by `_type` — only lines with `_type: "stoma_analytics"` are extracted into Parquet.
 
 ## Downstream pipeline
 
@@ -273,7 +273,7 @@ The analytics entry emitted by this policy is the starting point of a broader pi
 
 ```
 analyticsLog (this policy)
-  → console.log → Logpush → raw NDJSON in S3/R2
+  → console.log → log aggregation → raw NDJSON in object storage
   → createProcessor() → Parquet fragment files
   → createCompactor() → compacted partition files
   → DuckDB queries Parquet directly

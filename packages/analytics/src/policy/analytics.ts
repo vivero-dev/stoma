@@ -49,7 +49,7 @@ export interface AnalyticsLogConfig extends PolicyConfig {
    *   extractDimensions: (c) => ({
    *     // Read a value set by jwtAuth or assignAttributes
    *     plan: String(c.get("plan") ?? "free"),
-   *     region: c.req.header("cf-ipcountry") ?? "unknown",
+   *     region: c.req.header("x-geo-country") ?? "unknown",
    *   }),
    * })
    * ```

@@ -35,7 +35,10 @@ jobs:
         id: cache-deps
         uses: actions/cache@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
+            packages/*/node_modules
+            docs/node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Install dependencies
@@ -84,15 +87,15 @@ jobs:
         id: cache-deps
         uses: actions/cache@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
+            packages/*/node_modules
+            docs/node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Install dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: yarn install --immutable
-
-      - name: Install docs dependencies
-        run: cd docs && yarn install --immutable
 
       - name: Build stoma
         run: yarn build

@@ -5,7 +5,7 @@ prev: false
 title: "TracingConfig"
 ---
 
-Defined in: [src/observability/tracing.ts:55](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L55)
+Defined in: [packages/gateway/src/observability/tracing.ts:55](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L55)
 
 Configuration for gateway-level tracing.
 
@@ -15,7 +15,7 @@ Configuration for gateway-level tracing.
 
 > **exporter**: [`SpanExporter`](/api/index/interfaces/spanexporter/)
 
-Defined in: [src/observability/tracing.ts:56](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L56)
+Defined in: [packages/gateway/src/observability/tracing.ts:56](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L56)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/observability/tracing.ts:56](https://github.com/HomeGrower-club
 
 > `optional` **sampleRate**: `number`
 
-Defined in: [src/observability/tracing.ts:60](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L60)
+Defined in: [packages/gateway/src/observability/tracing.ts:60](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L60)
 
 Head-based sampling rate [0.0, 1.0]. Default: 1.0
 
@@ -33,7 +33,7 @@ Head-based sampling rate [0.0, 1.0]. Default: 1.0
 
 > `optional` **serviceName**: `string`
 
-Defined in: [src/observability/tracing.ts:57](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L57)
+Defined in: [packages/gateway/src/observability/tracing.ts:57](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L57)
 
 ***
 
@@ -41,4 +41,4 @@ Defined in: [src/observability/tracing.ts:57](https://github.com/HomeGrower-club
 
 > `optional` **serviceVersion**: `string`
 
-Defined in: [src/observability/tracing.ts:58](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L58)
+Defined in: [packages/gateway/src/observability/tracing.ts:58](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L58)

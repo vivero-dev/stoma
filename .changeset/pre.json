@@ -2,7 +2,8 @@
   "mode": "pre",
   "tag": "rc",
   "initialVersions": {
-    "@homegrower-club/stoma": "0.0.1"
+    "@homegrower-club/stoma": "0.0.1",
+    "@homegrower-club/stoma-analytics": "0.1.0-rc.0"
   },
   "changesets": [
     "docs-og-deploy",

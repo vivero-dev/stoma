@@ -5,7 +5,7 @@ prev: false
 title: "LogEntry"
 ---
 
-Defined in: [src/policies/observability/request-log.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L29)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L29)
 
 Structured log entry emitted for each request/response pair.
 
@@ -15,7 +15,7 @@ Structured log entry emitted for each request/response pair.
 
 > **clientIp**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:43](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L43)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:43](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L43)
 
 Client IP from `CF-Connecting-IP` or `X-Forwarded-For`.
 
@@ -25,7 +25,7 @@ Client IP from `CF-Connecting-IP` or `X-Forwarded-For`.
 
 > **durationMs**: `number`
 
-Defined in: [src/policies/observability/request-log.ts:41](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L41)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:41](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L41)
 
 End-to-end request duration in milliseconds.
 
@@ -35,7 +35,7 @@ End-to-end request duration in milliseconds.
 
 > `optional` **extra**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/policies/observability/request-log.ts:61](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L61)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:61](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L61)
 
 Custom fields from `extractFields` callback.
 
@@ -45,7 +45,7 @@ Custom fields from `extractFields` callback.
 
 > **gatewayName**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:47](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L47)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:47](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L47)
 
 Gateway name from config.
 
@@ -55,7 +55,7 @@ Gateway name from config.
 
 > **method**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:35](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L35)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:35](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L35)
 
 HTTP method (e.g. `"GET"`, `"POST"`).
 
@@ -65,7 +65,7 @@ HTTP method (e.g. `"GET"`, `"POST"`).
 
 > **path**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:37](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L37)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:37](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L37)
 
 URL pathname (without query string).
 
@@ -75,7 +75,7 @@ URL pathname (without query string).
 
 > `optional` **requestBody**: `unknown`
 
-Defined in: [src/policies/observability/request-log.ts:57](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L57)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:57](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L57)
 
 Captured request body (when `logRequestBody` is enabled).
 
@@ -85,7 +85,7 @@ Captured request body (when `logRequestBody` is enabled).
 
 > **requestId**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:33](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L33)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:33](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L33)
 
 Unique request ID for distributed tracing.
 
@@ -95,7 +95,7 @@ Unique request ID for distributed tracing.
 
 > `optional` **responseBody**: `unknown`
 
-Defined in: [src/policies/observability/request-log.ts:59](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L59)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:59](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L59)
 
 Captured response body (when `logResponseBody` is enabled).
 
@@ -105,7 +105,7 @@ Captured response body (when `logResponseBody` is enabled).
 
 > **routePath**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:49](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L49)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:49](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L49)
 
 Matched route path pattern.
 
@@ -115,7 +115,7 @@ Matched route path pattern.
 
 > `optional` **spanId**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:55](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L55)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:55](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L55)
 
 W3C Trace Context - 16-hex span ID for this gateway request.
 
@@ -125,7 +125,7 @@ W3C Trace Context - 16-hex span ID for this gateway request.
 
 > **statusCode**: `number`
 
-Defined in: [src/policies/observability/request-log.ts:39](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L39)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:39](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L39)
 
 HTTP response status code.
 
@@ -135,7 +135,7 @@ HTTP response status code.
 
 > **timestamp**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:31](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L31)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:31](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L31)
 
 ISO 8601 timestamp when the log was emitted.
 
@@ -145,7 +145,7 @@ ISO 8601 timestamp when the log was emitted.
 
 > `optional` **traceId**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:53](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L53)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:53](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L53)
 
 W3C Trace Context - 32-hex trace ID.
 
@@ -155,7 +155,7 @@ W3C Trace Context - 32-hex trace ID.
 
 > **upstream**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:51](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L51)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:51](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L51)
 
 Upstream identifier (reserved for future enrichment).
 
@@ -165,6 +165,6 @@ Upstream identifier (reserved for future enrichment).
 
 > **userAgent**: `string`
 
-Defined in: [src/policies/observability/request-log.ts:45](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L45)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:45](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L45)
 
 Client User-Agent header value.

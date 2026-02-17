@@ -5,7 +5,7 @@ prev: false
 title: "RedisClient"
 ---
 
-Defined in: [src/adapters/redis.ts:26](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/redis.ts#L26)
+Defined in: [packages/gateway/src/adapters/redis.ts:26](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L26)
 
 Minimal Redis client interface - satisfied by ioredis, node-redis v4, and most
 Redis libraries. Only the methods stoma actually calls are required.
@@ -16,7 +16,7 @@ Redis libraries. Only the methods stoma actually calls are required.
 
 > **del**(...`keys`): `Promise`\<`number`\>
 
-Defined in: [src/adapters/redis.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/redis.ts#L29)
+Defined in: [packages/gateway/src/adapters/redis.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L29)
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Defined in: [src/adapters/redis.ts:29](https://github.com/HomeGrower-club/stoma/
 
 > **eval**(`script`, `numkeys`, ...`args`): `Promise`\<`unknown`\>
 
-Defined in: [src/adapters/redis.ts:30](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/redis.ts#L30)
+Defined in: [packages/gateway/src/adapters/redis.ts:30](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L30)
 
 #### Parameters
 
@@ -60,7 +60,7 @@ Defined in: [src/adapters/redis.ts:30](https://github.com/HomeGrower-club/stoma/
 
 > **get**(`key`): `Promise`\<`string` \| `null`\>
 
-Defined in: [src/adapters/redis.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/redis.ts#L27)
+Defined in: [packages/gateway/src/adapters/redis.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L27)
 
 #### Parameters
 
@@ -78,7 +78,7 @@ Defined in: [src/adapters/redis.ts:27](https://github.com/HomeGrower-club/stoma/
 
 > **set**(`key`, `value`, ...`args`): `Promise`\<`unknown`\>
 
-Defined in: [src/adapters/redis.ts:28](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/redis.ts#L28)
+Defined in: [packages/gateway/src/adapters/redis.ts:28](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L28)
 
 #### Parameters
 

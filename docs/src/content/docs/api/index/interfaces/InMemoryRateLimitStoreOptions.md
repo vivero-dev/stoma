@@ -5,7 +5,7 @@ prev: false
 title: "InMemoryRateLimitStoreOptions"
 ---
 
-Defined in: [src/policies/traffic/rate-limit.ts:41](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L41)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:41](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L41)
 
 Default in-memory rate limit store
 
@@ -15,7 +15,7 @@ Default in-memory rate limit store
 
 > `optional` **cleanupIntervalMs**: `number`
 
-Defined in: [src/policies/traffic/rate-limit.ts:45](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L45)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:45](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L45)
 
 Cleanup interval in ms for expired entries. Default: 60000.
 
@@ -25,6 +25,6 @@ Cleanup interval in ms for expired entries. Default: 60000.
 
 > `optional` **maxKeys**: `number`
 
-Defined in: [src/policies/traffic/rate-limit.ts:43](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L43)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:43](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L43)
 
 Maximum number of unique keys to prevent memory exhaustion. Default: 100000.

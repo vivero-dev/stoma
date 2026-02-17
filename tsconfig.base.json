@@ -12,12 +12,6 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-pool-workers"],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "baseUrl": "./"
-  },
-  "include": ["src"]
+    "noFallthroughCasesInSwitch": true
+  }
 }

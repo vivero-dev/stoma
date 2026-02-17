@@ -5,7 +5,7 @@ prev: false
 title: "RegexThreatProtectionConfig"
 ---
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:25](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/regex-threat-protection.ts#L25)
+Defined in: [packages/gateway/src/policies/traffic/regex-threat-protection.ts:25](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/regex-threat-protection.ts#L25)
 
 Configuration for the regexThreatProtection policy.
 
@@ -19,7 +19,7 @@ Configuration for the regexThreatProtection policy.
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:31](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/regex-threat-protection.ts#L31)
+Defined in: [packages/gateway/src/policies/traffic/regex-threat-protection.ts:31](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/regex-threat-protection.ts#L31)
 
 Only inspect body for these content types. Default: `["application/json", "text/plain"]`.
 
@@ -29,7 +29,7 @@ Only inspect body for these content types. Default: `["application/json", "text/
 
 > `optional` **flags**: `string`
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/regex-threat-protection.ts#L29)
+Defined in: [packages/gateway/src/policies/traffic/regex-threat-protection.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/regex-threat-protection.ts#L29)
 
 Regex flags applied to all patterns. Default: `"i"` (case-insensitive).
 
@@ -39,7 +39,7 @@ Regex flags applied to all patterns. Default: `"i"` (case-insensitive).
 
 > `optional` **maxBodyScanLength**: `number`
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:33](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/regex-threat-protection.ts#L33)
+Defined in: [packages/gateway/src/policies/traffic/regex-threat-protection.ts:33](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/regex-threat-protection.ts#L33)
 
 Maximum body bytes to scan. Default: `65536` (64KB).
 
@@ -49,7 +49,7 @@ Maximum body bytes to scan. Default: `65536` (64KB).
 
 > **patterns**: `RegexPatternRule`[]
 
-Defined in: [src/policies/traffic/regex-threat-protection.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/regex-threat-protection.ts#L27)
+Defined in: [packages/gateway/src/policies/traffic/regex-threat-protection.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/regex-threat-protection.ts#L27)
 
 Pattern rules to evaluate against request data.
 
@@ -59,7 +59,7 @@ Pattern rules to evaluate against request data.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

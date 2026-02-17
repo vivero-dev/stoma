@@ -5,7 +5,7 @@ prev: false
 title: "InMemoryRateLimitStore"
 ---
 
-Defined in: [src/policies/traffic/rate-limit.ts:61](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L61)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:61](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L61)
 
 Default in-memory rate limit store backed by a `Map`.
 
@@ -29,7 +29,7 @@ Note the distinction between store-level and policy-level failure modes:
 
 > **new InMemoryRateLimitStore**(`options?`): `InMemoryRateLimitStore`
 
-Defined in: [src/policies/traffic/rate-limit.ts:68](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L68)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:68](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L68)
 
 #### Parameters
 
@@ -47,7 +47,7 @@ Defined in: [src/policies/traffic/rate-limit.ts:68](https://github.com/HomeGrowe
 
 > **destroy**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:137](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L137)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:137](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L137)
 
 Stop the cleanup interval (for testing)
 
@@ -65,7 +65,7 @@ Stop the cleanup interval (for testing)
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [src/policies/traffic/rate-limit.ts:97](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L97)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:97](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L97)
 
 Increment the counter for a key within the given time window.
 
@@ -99,7 +99,7 @@ security trade-off where memory safety takes priority over availability.
 
 > **reset**(): `void`
 
-Defined in: [src/policies/traffic/rate-limit.ts:145](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/rate-limit.ts#L145)
+Defined in: [packages/gateway/src/policies/traffic/rate-limit.ts:145](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/rate-limit.ts#L145)
 
 Reset all counters (for testing)
 

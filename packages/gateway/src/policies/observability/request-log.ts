@@ -74,6 +74,43 @@ const DEFAULT_MAX_BODY_LENGTH = 8192;
  * custom `sink` to route logs to an external service (e.g., Logflare,
  * Datadog, or a Durable Object buffer).
  *
+ * ## Data boundary: request logs vs analytics
+ *
+ * Request logs and analytics (`@homegrower-club/stoma-analytics`) serve
+ * different purposes and deliberately carry different fields.
+ *
+ * **Request logs** (this policy) are for **debugging and operational triage**.
+ * Fields are high-cardinality — grep-friendly, not GROUP BY-friendly:
+ *
+ * | Field        | Why it's here                                          |
+ * |--------------|--------------------------------------------------------|
+ * | requestId    | Unique per request — grep to find a single transaction |
+ * | path         | Actual URL e.g. /users/42 (high cardinality)           |
+ * | clientIp     | PII, high cardinality — abuse investigation only       |
+ * | userAgent    | High cardinality — debug specific client issues         |
+ * | spanId       | Distributed tracing span correlation                   |
+ * | requestBody  | Deep debugging (opt-in, redactable)                    |
+ * | responseBody | Deep debugging (opt-in, redactable)                    |
+ *
+ * **Overlapping fields** (appear in both logs and analytics):
+ *
+ * | Field       | Why both need it                                       |
+ * |-------------|--------------------------------------------------------|
+ * | timestamp   | Time-series bucketing (analytics) / grep by time (logs)|
+ * | gatewayName | GROUP BY gateway (analytics) / filter logs by gateway  |
+ * | routePath   | GROUP BY route pattern (analytics) / filter by route   |
+ * | method      | GROUP BY method (analytics) / filter logs by method    |
+ * | statusCode  | Error rate dashboards (analytics) / grep errors (logs) |
+ * | durationMs  | AVG/P99 latency (analytics) / slow request triage      |
+ * | traceId     | Dashboard anomaly drill-down → find matching log lines |
+ *
+ * **Analytics-only fields** (NOT in request logs):
+ *
+ * | Field        | Why only analytics                                    |
+ * |--------------|-------------------------------------------------------|
+ * | responseSize | SUM bandwidth, detect payload bloat — aggregate only   |
+ * | dimensions   | Extensible low-cardinality facets for GROUP BY         |
+ *
  * @param config - Custom field extraction, body logging, and sink. All fields optional.
  * @returns A {@link Policy} at priority 0 (runs first, wraps everything).
  *

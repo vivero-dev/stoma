@@ -48,9 +48,9 @@ export default defineConfig({
       // Resolve Stoma imports to sibling package source (no build step needed)
       "@homegrower-club/stoma/adapters/cloudflare": resolve(
         __dirname,
-        "../src/adapters/cloudflare.ts",
+        "../packages/gateway/src/adapters/cloudflare.ts",
       ),
-      "@homegrower-club/stoma": resolve(__dirname, "../src/index.ts"),
+      "@homegrower-club/stoma": resolve(__dirname, "../packages/gateway/src/index.ts"),
     },
   },
 });

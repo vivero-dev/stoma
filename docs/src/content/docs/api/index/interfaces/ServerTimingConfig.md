@@ -5,7 +5,7 @@ prev: false
 title: "ServerTimingConfig"
 ---
 
-Defined in: [src/policies/observability/server-timing.ts:25](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L25)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:25](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L25)
 
 Configuration for the [serverTiming](/api/index/variables/servertiming/) policy.
 
@@ -19,7 +19,7 @@ Configuration for the [serverTiming](/api/index/variables/servertiming/) policy.
 
 > `optional` **descriptionFn**: (`name`) => `string`
 
-Defined in: [src/policies/observability/server-timing.ts:35](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L35)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:35](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L35)
 
 Optional function to generate a description for each timing entry.
 
@@ -39,7 +39,7 @@ Optional function to generate a description for each timing entry.
 
 > `optional` **includeTotal**: `boolean`
 
-Defined in: [src/policies/observability/server-timing.ts:33](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L33)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:33](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L33)
 
 Add a `total` entry to `Server-Timing`. Default: `true`.
 
@@ -49,7 +49,7 @@ Add a `total` entry to `Server-Timing`. Default: `true`.
 
 > `optional` **precision**: `number`
 
-Defined in: [src/policies/observability/server-timing.ts:31](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L31)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:31](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L31)
 
 Number of decimal places for duration values. Default: `1`.
 
@@ -59,7 +59,7 @@ Number of decimal places for duration values. Default: `1`.
 
 > `optional` **responseTimeHeader**: `boolean`
 
-Defined in: [src/policies/observability/server-timing.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L29)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L29)
 
 Emit the `X-Response-Time` header with total gateway time. Default: `true`.
 
@@ -69,7 +69,7 @@ Emit the `X-Response-Time` header with total gateway time. Default: `true`.
 
 > `optional` **serverTimingHeader**: `boolean`
 
-Defined in: [src/policies/observability/server-timing.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L27)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L27)
 
 Emit the `Server-Timing` header with per-policy breakdown. Default: `true`.
 
@@ -79,7 +79,7 @@ Emit the `Server-Timing` header with per-policy breakdown. Default: `true`.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -103,7 +103,7 @@ Skip this policy when condition returns true
 
 > `optional` **visibility**: [`ServerTimingVisibility`](/api/index/type-aliases/servertimingvisibility/)
 
-Defined in: [src/policies/observability/server-timing.ts:37](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L37)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:37](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L37)
 
 Controls when timing headers are emitted. Default: `"debug-only"`.
 
@@ -113,7 +113,7 @@ Controls when timing headers are emitted. Default: `"debug-only"`.
 
 > `optional` **visibilityFn**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/observability/server-timing.ts:39](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/server-timing.ts#L39)
+Defined in: [packages/gateway/src/policies/observability/server-timing.ts:39](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/server-timing.ts#L39)
 
 Required when `visibility` is `"conditional"`. Called per-request to decide.
 

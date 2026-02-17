@@ -5,7 +5,7 @@ prev: false
 title: "PolicyEvaluator"
 ---
 
-Defined in: [src/core/protocol.ts:317](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L317)
+Defined in: [packages/gateway/src/core/protocol.ts:317](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L317)
 
 Current `evaluate` coverage across policy categories:
 - auth: 6/9 (jwt-auth, api-key-auth, basic-auth, oauth2, rbac, jws)
@@ -24,7 +24,7 @@ are built out. See PLAN.md Phase 5 for the ext_proc roadmap.
 
 > `optional` **onRequest**: (`input`, `ctx`) => `Promise`\<[`PolicyResult`](/api/index/type-aliases/policyresult/)\>
 
-Defined in: [src/core/protocol.ts:323](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L323)
+Defined in: [packages/gateway/src/core/protocol.ts:323](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L323)
 
 Evaluate during request processing phases.
 
@@ -50,7 +50,7 @@ Called for: `request-headers`, `request-body`, `request-trailers`.
 
 > `optional` **onResponse**: (`input`, `ctx`) => `Promise`\<[`PolicyResult`](/api/index/type-aliases/policyresult/)\>
 
-Defined in: [src/core/protocol.ts:333](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L333)
+Defined in: [packages/gateway/src/core/protocol.ts:333](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L333)
 
 Evaluate during response processing phases.
 

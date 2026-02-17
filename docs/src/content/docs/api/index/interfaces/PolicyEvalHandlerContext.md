@@ -5,7 +5,7 @@ prev: false
 title: "PolicyEvalHandlerContext"
 ---
 
-Defined in: [src/policies/sdk/define-policy.ts:52](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/define-policy.ts#L52)
+Defined in: [packages/gateway/src/policies/sdk/define-policy.ts:52](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/define-policy.ts#L52)
 
 Context injected into `definePolicy` evaluate handlers.
 
@@ -29,7 +29,7 @@ with the fully-merged, typed config.
 
 > `optional` **adapter**: [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [src/core/protocol.ts:277](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L277)
+Defined in: [packages/gateway/src/core/protocol.ts:277](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L277)
 
 Runtime adapter (stores, waitUntil, etc.).
 
@@ -43,7 +43,7 @@ Runtime adapter (stores, waitUntil, etc.).
 
 > **config**: `TConfig`
 
-Defined in: [src/policies/sdk/define-policy.ts:54](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/define-policy.ts#L54)
+Defined in: [packages/gateway/src/policies/sdk/define-policy.ts:54](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/define-policy.ts#L54)
 
 Fully merged config (defaults + user overrides).
 
@@ -53,7 +53,7 @@ Fully merged config (defaults + user overrides).
 
 > **debug**: [`DebugLogger`](/api/index/type-aliases/debuglogger/)
 
-Defined in: [src/core/protocol.ts:269](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L269)
+Defined in: [packages/gateway/src/core/protocol.ts:269](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L269)
 
 Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable.
 
@@ -67,7 +67,7 @@ Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable.
 
 > **requestId**: `string`
 
-Defined in: [src/core/protocol.ts:273](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L273)
+Defined in: [packages/gateway/src/core/protocol.ts:273](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L273)
 
 Unique request ID for correlation.
 
@@ -81,7 +81,7 @@ Unique request ID for correlation.
 
 > **trace**: [`TraceReporter`](/api/index/type-aliases/tracereporter/)
 
-Defined in: [src/core/protocol.ts:271](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L271)
+Defined in: [packages/gateway/src/core/protocol.ts:271](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L271)
 
 Trace reporter - always callable, no-op when tracing is not active.
 
@@ -95,7 +95,7 @@ Trace reporter - always callable, no-op when tracing is not active.
 
 > **traceId**: `string`
 
-Defined in: [src/core/protocol.ts:275](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/protocol.ts#L275)
+Defined in: [packages/gateway/src/core/protocol.ts:275](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L275)
 
 W3C trace ID (32-hex).
 

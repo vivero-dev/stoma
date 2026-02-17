@@ -5,7 +5,7 @@ prev: false
 title: "RequestLogConfig"
 ---
 
-Defined in: [src/policies/observability/request-log.ts:11](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L11)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:11](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L11)
 
 Configuration for the requestLog policy.
 
@@ -19,7 +19,7 @@ Configuration for the requestLog policy.
 
 > `optional` **extractFields**: (`c`) => `Record`\<`string`, `unknown`\>
 
-Defined in: [src/policies/observability/request-log.ts:13](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L13)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:13](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L13)
 
 Additional fields to extract from the request
 
@@ -39,7 +39,7 @@ Additional fields to extract from the request
 
 > `optional` **ipHeaders**: `string`[]
 
-Defined in: [src/policies/observability/request-log.ts:17](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L17)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:17](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L17)
 
 Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-ip", "x-forwarded-for"]`.
 
@@ -49,7 +49,7 @@ Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-
 
 > `optional` **logRequestBody**: `boolean`
 
-Defined in: [src/policies/observability/request-log.ts:19](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L19)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:19](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L19)
 
 Log request body (opt-in). Default: `false`.
 
@@ -59,7 +59,7 @@ Log request body (opt-in). Default: `false`.
 
 > `optional` **logResponseBody**: `boolean`
 
-Defined in: [src/policies/observability/request-log.ts:21](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L21)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:21](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L21)
 
 Log response body (opt-in). Default: `false`.
 
@@ -69,7 +69,7 @@ Log response body (opt-in). Default: `false`.
 
 > `optional` **maxBodyLength**: `number`
 
-Defined in: [src/policies/observability/request-log.ts:23](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L23)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:23](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L23)
 
 Maximum body size in bytes to capture. Default: `8192`.
 
@@ -79,7 +79,7 @@ Maximum body size in bytes to capture. Default: `8192`.
 
 > `optional` **redactPaths**: `string`[]
 
-Defined in: [src/policies/observability/request-log.ts:25](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L25)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:25](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L25)
 
 JSON field paths to redact from logged bodies (e.g., `["password", "*.secret"]`).
 
@@ -89,7 +89,7 @@ JSON field paths to redact from logged bodies (e.g., `["password", "*.secret"]`)
 
 > `optional` **sink**: (`entry`) => `void` \| `Promise`\<`void`\>
 
-Defined in: [src/policies/observability/request-log.ts:15](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/observability/request-log.ts#L15)
+Defined in: [packages/gateway/src/policies/observability/request-log.ts:15](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/observability/request-log.ts#L15)
 
 Custom log sink - defaults to console.log with structured JSON
 
@@ -109,7 +109,7 @@ Custom log sink - defaults to console.log with structured JSON
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

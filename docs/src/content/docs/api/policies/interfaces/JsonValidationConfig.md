@@ -5,7 +5,7 @@ prev: false
 title: "JsonValidationConfig"
 ---
 
-Defined in: [src/policies/transform/json-validation.ts:21](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L21)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:21](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L21)
 
 Configuration for the jsonValidation policy.
 
@@ -19,7 +19,7 @@ Configuration for the jsonValidation policy.
 
 > `optional` **contentTypes**: `string`[]
 
-Defined in: [src/policies/transform/json-validation.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L27)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L27)
 
 Content types to validate. Default: ["application/json"]
 
@@ -29,7 +29,7 @@ Content types to validate. Default: ["application/json"]
 
 > `optional` **errorDetail**: `boolean`
 
-Defined in: [src/policies/transform/json-validation.ts:31](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L31)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:31](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L31)
 
 Include validation errors in response. Default: true
 
@@ -39,7 +39,7 @@ Include validation errors in response. Default: true
 
 > `optional` **rejectStatus**: `number`
 
-Defined in: [src/policies/transform/json-validation.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L29)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L29)
 
 HTTP status code on validation failure. Default: 422
 
@@ -49,7 +49,7 @@ HTTP status code on validation failure. Default: 422
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -73,7 +73,7 @@ Skip this policy when condition returns true
 
 > `optional` **validate**: (`body`) => [`JsonValidationResult`](/api/policies/interfaces/jsonvalidationresult/) \| `Promise`\<[`JsonValidationResult`](/api/policies/interfaces/jsonvalidationresult/)\>
 
-Defined in: [src/policies/transform/json-validation.ts:23](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L23)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:23](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L23)
 
 Custom validation function. Takes parsed body, returns validation result.
 

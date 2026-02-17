@@ -5,7 +5,7 @@ prev: false
 title: "GeoIpFilterConfig"
 ---
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:14](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L14)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:14](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L14)
 
 Configuration for the geoIpFilter policy.
 
@@ -19,7 +19,7 @@ Configuration for the geoIpFilter policy.
 
 > `optional` **allow**: `string`[]
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:16](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L16)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:16](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L16)
 
 Country codes to allow (e.g. `["US", "CA", "GB"]`). Used in "allow" mode.
 
@@ -29,7 +29,7 @@ Country codes to allow (e.g. `["US", "CA", "GB"]`). Used in "allow" mode.
 
 > `optional` **countryHeader**: `string`
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:22](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L22)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:22](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L22)
 
 Header name to read the country code from. Default: `"cf-ipcountry"`.
 
@@ -39,7 +39,7 @@ Header name to read the country code from. Default: `"cf-ipcountry"`.
 
 > `optional` **deny**: `string`[]
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:18](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L18)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:18](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L18)
 
 Country codes to deny. Used in "deny" mode.
 
@@ -49,7 +49,7 @@ Country codes to deny. Used in "deny" mode.
 
 > `optional` **mode**: `"allow"` \| `"deny"`
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:20](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L20)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:20](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L20)
 
 Filter mode. Default: `"deny"`.
 
@@ -59,7 +59,7 @@ Filter mode. Default: `"deny"`.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

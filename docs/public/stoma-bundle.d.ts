@@ -3717,24 +3717,24 @@ export interface PolicyTrace {
 	entries: PolicyTraceEntry[];
 }
 /**
- * A trace reporter function. Always callable — no-op when tracing is inactive.
+ * A trace reporter function. Always callable - no-op when tracing is inactive.
  *
  * @param action - Human-readable action string (e.g. `"HIT"`, `"allowed"`).
  * @param data   - Optional structured context data.
  */
 export type TraceReporter = (action: string, data?: Record<string, unknown>) => void;
-/** Shared no-op reporter instance — zero overhead when tracing is off. */
+/** Shared no-op reporter instance - zero overhead when tracing is off. */
 export declare const noopTraceReporter: TraceReporter;
 /**
  * Get a trace reporter for a specific policy.
  *
  * When tracing is active (`_stomaTraceRequested` is truthy), returns a
  * function that stores the detail on the context. When inactive, returns
- * {@link noopTraceReporter} — a no-op with zero overhead.
+ * {@link noopTraceReporter} - a no-op with zero overhead.
  *
  * @param c          - Hono request context.
  * @param policyName - Policy name used as the Map key.
- * @returns A {@link TraceReporter} — always callable.
+ * @returns A {@link TraceReporter} - always callable.
  */
 export declare function policyTrace(c: Context, policyName: string): TraceReporter;
 /**
@@ -3765,10 +3765,10 @@ export declare function isTraceRequested(c: Context): boolean;
  * // Output: [stoma:policy:cache] HIT GET:/api/users
  * ```
  */
-/** A debug logging function — call with a message and optional structured data. */
+/** A debug logging function - call with a message and optional structured data. */
 export type DebugLogger = (message: string, ...args: unknown[]) => void;
 /**
- * Policy type system — the building blocks of gateway pipelines.
+ * Policy type system - the building blocks of gateway pipelines.
  *
  * A {@link Policy} is a named middleware with priority ordering and
  * optional protocol-agnostic evaluation. Policies are composed into
@@ -3787,21 +3787,21 @@ export type DebugLogger = (message: string, ...args: unknown[]) => void;
  * A Policy is a named middleware with priority ordering and optional
  * protocol-agnostic evaluation.
  *
- * - {@link handler} — HTTP runtime entry point (Hono middleware).
+ * - {@link handler} - HTTP runtime entry point (Hono middleware).
  *   Used by {@link createGateway}.
- * - {@link evaluate} — Protocol-agnostic entry point. Used by non-HTTP
+ * - {@link evaluate} - Protocol-agnostic entry point. Used by non-HTTP
  *   runtimes (ext_proc, WebSocket) to invoke the policy without Hono.
- * - {@link phases} — Which processing phases this policy participates in.
+ * - {@link phases} - Which processing phases this policy participates in.
  *   Used by phase-based runtimes to skip irrelevant policies.
- * - {@link httpOnly} — Set to `true` for policies that can ONLY work with
+ * - {@link httpOnly} - Set to `true` for policies that can ONLY work with
  *   the HTTP protocol and don't make sense for ext_proc or WebSocket.
  */
 export interface Policy {
 	/** Unique policy name (e.g. "jwt-auth", "rate-limit") */
 	name: string;
-	/** The Hono middleware handler — HTTP runtime entry point. */
+	/** The Hono middleware handler - HTTP runtime entry point. */
 	handler: MiddlewareHandler;
-	/** Policy priority — lower numbers execute first. Default: 100. */
+	/** Policy priority - lower numbers execute first. Default: 100. */
 	priority?: number;
 	/**
 	 * Protocol-agnostic evaluation entry point.
@@ -3833,10 +3833,10 @@ export interface Policy {
 	 * evaluated in other protocols like ext_proc or WebSocket.
 	 *
 	 * Examples:
-	 * - `cors` — uses HTTP-specific `Access-Control-*` headers
-	 * - `ssl-enforce` — HTTP-only protocol concept
-	 * - `proxy` — HTTP-to-HTTP forwarding
-	 * - `mock` — returns HTTP Response objects
+	 * - `cors` - uses HTTP-specific `Access-Control-*` headers
+	 * - `ssl-enforce` - HTTP-only protocol concept
+	 * - `proxy` - HTTP-to-HTTP forwarding
+	 * - `mock` - returns HTTP Response objects
 	 *
 	 * Tooling can use this flag to:
 	 * - Skip these policies when generating docs for non-HTTP runtimes
@@ -3859,9 +3859,9 @@ export interface PolicyContext {
 	gatewayName: string;
 	/** Matched route path pattern */
 	routePath: string;
-	/** W3C Trace Context — 32-hex trace ID (propagated or generated). */
+	/** W3C Trace Context - 32-hex trace ID (propagated or generated). */
 	traceId: string;
-	/** W3C Trace Context — 16-hex span ID for this gateway request. */
+	/** W3C Trace Context - 16-hex span ID for this gateway request. */
 	spanId: string;
 	/**
 	 * Get a debug logger for the given namespace.
@@ -3879,7 +3879,7 @@ export interface PolicyContext {
 	adapter?: GatewayAdapter;
 }
 /**
- * Circuit breaker policy — protect upstream services from cascading failures.
+ * Circuit breaker policy - protect upstream services from cascading failures.
  *
  * Implements the three-state circuit breaker pattern (closed / open / half-open)
  * with pluggable state storage via {@link CircuitBreakerStore}.
@@ -3918,7 +3918,7 @@ export interface CircuitBreakerStore {
 	transition(key: string, to: CircuitState): Promise<CircuitBreakerSnapshot>;
 	/** Fully reset a circuit, removing all state. */
 	reset(key: string): Promise<void>;
-	/** Optional cleanup — release timers, close connections, etc. */
+	/** Optional cleanup - release timers, close connections, etc. */
 	destroy?(): void;
 }
 export declare class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
@@ -3952,7 +3952,7 @@ export interface CircuitBreakerConfig extends PolicyConfig {
 	/**
 	 * Callback invoked on every state transition.
 	 *
-	 * Called via `safeCall` so errors are swallowed — a failing callback
+	 * Called via `safeCall` so errors are swallowed - a failing callback
 	 * never blocks traffic. Useful for metrics, logging, or alerting.
 	 *
 	 * @param key - The circuit key that transitioned.
@@ -3965,9 +3965,9 @@ export interface CircuitBreakerConfig extends PolicyConfig {
  * Protect upstream services by breaking the circuit on repeated failures.
  *
  * Implements the three-state circuit breaker pattern:
- * - **Closed** — requests flow normally; failures are counted.
- * - **Open** — requests are immediately rejected with 503; a `Retry-After` header is set.
- * - **Half-open** — a limited number of probe requests are allowed through to test recovery.
+ * - **Closed** - requests flow normally; failures are counted.
+ * - **Open** - requests are immediately rejected with 503; a `Retry-After` header is set.
+ * - **Half-open** - a limited number of probe requests are allowed through to test recovery.
  *
  * State transitions: `closed → open` when failures reach the threshold,
  * `open → half-open` after the reset timeout, `half-open → closed` on
@@ -4012,7 +4012,7 @@ export interface CacheStore {
 	put(key: string, response: Response, ttlSeconds: number): Promise<void>;
 	/** Delete a cached entry. Returns true if something was removed. */
 	delete(key: string): Promise<boolean>;
-	/** Optional cleanup — clear expired entries, release resources. */
+	/** Optional cleanup - clear expired entries, release resources. */
 	destroy?(): void;
 }
 /** Options for the in-memory cache store. */
@@ -4058,13 +4058,13 @@ export interface CacheConfig extends PolicyConfig {
  * Cache upstream responses to reduce latency and load.
  *
  * Sets a cache status header on **every** response:
- * - `HIT` — served from cache
- * - `MISS` — fetched from upstream, now cached
- * - `BYPASS` — upstream Cache-Control directive prevented caching
- * - `SKIP` — not eligible for caching (wrong method or server error status)
+ * - `HIT` - served from cache
+ * - `MISS` - fetched from upstream, now cached
+ * - `BYPASS` - upstream Cache-Control directive prevented caching
+ * - `SKIP` - not eligible for caching (wrong method or server error status)
  *
  * Server error responses (5xx) are never cached. Store failures degrade
- * gracefully via {@link safeCall} — a broken cache store never crashes the
+ * gracefully via {@link safeCall} - a broken cache store never crashes the
  * request.
  *
  * For methods with a request body (POST, PUT, PATCH), the default cache key
@@ -4093,7 +4093,7 @@ export interface RateLimitConfig extends PolicyConfig {
 	max: number;
 	/** Time window in seconds. Default: 60. */
 	windowSeconds?: number;
-	/** Key extractor — determines the rate limit bucket. Default: client IP. */
+	/** Key extractor - determines the rate limit bucket. Default: client IP. */
 	keyBy?: (c: Context) => string | Promise<string>;
 	/** Storage backend for counters */
 	store?: RateLimitStore;
@@ -4181,7 +4181,7 @@ export interface GatewayAdapter {
  * ```
  *
  * Hono powers the HTTP runtime. Other runtimes (ext_proc via gRPC,
- * WebSocket) are peer implementations — same policy definitions,
+ * WebSocket) are peer implementations - same policy definitions,
  * different wire protocols.
  *
  * @module protocol
@@ -4192,7 +4192,7 @@ export interface GatewayAdapter {
  * Maps to:
  * - **HTTP**: `request-headers` → `request-body` → `response-headers` → `response-body`
  *   (trailers are N/A for HTTP/1.1; available in HTTP/2)
- * - **ext_proc**: All 6 phases — Envoy sends each as a `ProcessingRequest`
+ * - **ext_proc**: All 6 phases - Envoy sends each as a `ProcessingRequest`
  * - **WebSocket**: `request-headers` (upgrade) → `request-body` (per-message)
  */
 export type ProcessingPhase = "request-headers" | "request-body" | "request-trailers" | "response-headers" | "response-body" | "response-trailers";
@@ -4226,7 +4226,7 @@ export interface PolicyInput {
 	/**
 	 * Headers (HTTP) or metadata (gRPC).
 	 *
-	 * Treat as read-only — express modifications via
+	 * Treat as read-only - express modifications via
 	 * {@link PolicyResult} mutations, not by mutating this object.
 	 */
 	headers: Headers;
@@ -4264,9 +4264,9 @@ export interface PolicyInput {
 /**
  * The outcome of a policy evaluation. Discriminated on `action`.
  *
- * - `"continue"` — Allow processing to continue, optionally with mutations.
- * - `"reject"` — Reject with a structured error response.
- * - `"immediate-response"` — Short-circuit with a complete non-error response.
+ * - `"continue"` - Allow processing to continue, optionally with mutations.
+ * - `"reject"` - Reject with a structured error response.
+ * - `"immediate-response"` - Short-circuit with a complete non-error response.
  */
 export type PolicyResult = PolicyContinue | PolicyReject | PolicyImmediateResponse;
 /**
@@ -4300,7 +4300,7 @@ export interface PolicyReject {
 /**
  * Short-circuit with a complete non-error response.
  *
- * Used for cache hits, mock responses, redirects — cases where the
+ * Used for cache hits, mock responses, redirects - cases where the
  * policy provides the full response and upstream should not be called.
  *
  * Equivalent to returning a `Response` without calling `next()` in
@@ -4368,7 +4368,7 @@ export interface AttributeMutation {
 /**
  * Runtime-facing evaluation context provided to policy evaluators.
  *
- * This is the base context without typed config — runtimes construct
+ * This is the base context without typed config - runtimes construct
  * this from their native request representation. The policy SDK
  * ({@link definePolicy}) extends this with a typed `config` field
  * via `PolicyEvalHandlerContext`.
@@ -4376,7 +4376,7 @@ export interface AttributeMutation {
 export interface PolicyEvalContext {
 	/** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
 	debug: DebugLogger;
-	/** Trace reporter — always callable, no-op when tracing is not active. */
+	/** Trace reporter - always callable, no-op when tracing is not active. */
 	trace: TraceReporter;
 	/** Unique request ID for correlation. */
 	requestId: string;
@@ -4390,7 +4390,7 @@ export interface PolicyEvalContext {
  *
  * Implement this on a {@link Policy} to make it work across all runtimes
  * (HTTP, ext_proc, WebSocket). The HTTP runtime uses {@link Policy.handler}
- * directly — `evaluate` is consumed by non-HTTP runtimes.
+ * directly - `evaluate` is consumed by non-HTTP runtimes.
  *
  * Runtimes call `onRequest` for request-phase processing and `onResponse`
  * for response-phase processing. A policy can implement one or both.
@@ -4549,7 +4549,7 @@ export interface MetricsCollector {
  * In-memory metrics collector for testing, development, and admin API.
  *
  * Accumulates counters, histograms, and gauges in plain arrays/maps.
- * Not intended for high-throughput production use — prefer shipping
+ * Not intended for high-throughput production use - prefer shipping
  * metrics to a dedicated backend for production workloads.
  */
 export declare class InMemoryMetricsCollector implements MetricsCollector {
@@ -4580,7 +4580,7 @@ export declare function toPrometheusText(snapshot: MetricsSnapshot): string;
  * Lightweight OpenTelemetry-compatible tracing for edge runtimes.
  *
  * Provides span creation, OTLP/HTTP JSON export via `fetch()`, and
- * head-based sampling — all without any runtime dependencies beyond
+ * head-based sampling - all without any runtime dependencies beyond
  * the Web Platform APIs available in Cloudflare Workers.
  *
  * Follows the OTel data model but uses own lightweight types to avoid
@@ -4645,7 +4645,7 @@ export declare const SemConv: {
 	readonly SERVER_ADDRESS: "server.address";
 };
 /**
- * Mutable span builder — accumulates attributes, events, and status
+ * Mutable span builder - accumulates attributes, events, and status
  * during a request lifecycle. Call {@link end} to produce an immutable
  * {@link ReadableSpan}.
  */
@@ -4680,7 +4680,7 @@ export declare class SpanBuilder {
  *
  * Ships spans to an OpenTelemetry Collector (or compatible endpoint)
  * using `fetch()` with the OTLP JSON encoding. Designed for edge
- * runtimes — no gRPC, no protobuf, no Node.js dependencies.
+ * runtimes - no gRPC, no protobuf, no Node.js dependencies.
  *
  * Export calls should be dispatched via `waitUntil()` so they do not
  * block the response path.
@@ -4741,9 +4741,9 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	/**
 	 * Enable internal debug logging for gateway operators.
 	 *
-	 * - `true` — log all namespaces
-	 * - `false` / `undefined` — disabled (default, zero overhead)
-	 * - `string` — comma-separated glob patterns to filter namespaces
+	 * - `true` - log all namespaces
+	 * - `false` / `undefined` - disabled (default, zero overhead)
+	 * - `string` - comma-separated glob patterns to filter namespaces
 	 *
 	 * Namespaces: `stoma:gateway`, `stoma:pipeline`, `stoma:upstream`,
 	 * `stoma:policy:*` (e.g. `stoma:policy:cache`, `stoma:policy:jwt-auth`)
@@ -4779,9 +4779,9 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	/**
 	 * Admin introspection API. Exposes `___gateway/*` routes for operational visibility.
 	 *
-	 * - `true` — enable with defaults (no auth)
-	 * - `AdminConfig` object — full customization
-	 * - `false` / `undefined` — disabled (default)
+	 * - `true` - enable with defaults (no auth)
+	 * - `AdminConfig` object - full customization
+	 * - `false` / `undefined` - disabled (default)
 	 */
 	admin?: boolean | AdminConfig;
 	/**
@@ -4789,12 +4789,12 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	 *
 	 * When enabled, clients can send an `x-stoma-debug` request header listing
 	 * the debug values they want returned as response headers. Policies contribute
-	 * debug data via {@link setDebugHeader} from the SDK — only requested values
+	 * debug data via {@link setDebugHeader} from the SDK - only requested values
 	 * are included in the response.
 	 *
-	 * - `true` — enable with defaults
-	 * - `DebugHeadersConfig` — full customization (request header name, allowlist)
-	 * - `false` / `undefined` — disabled (default, zero overhead)
+	 * - `true` - enable with defaults
+	 * - `DebugHeadersConfig` - full customization (request header name, allowlist)
+	 * - `false` / `undefined` - disabled (default, zero overhead)
 	 *
 	 * @example
 	 * ```
@@ -4815,7 +4815,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	 * INTERNAL child spans per policy, and CLIENT child spans for upstream
 	 * calls. Spans are exported asynchronously via `adapter.waitUntil()`.
 	 *
-	 * Zero overhead when not configured — no span objects are allocated.
+	 * Zero overhead when not configured - no span objects are allocated.
 	 *
 	 * @example
 	 * ```ts
@@ -4867,7 +4867,7 @@ export interface PipelineConfig<TBindings = Record<string, unknown>> {
 	upstream: UpstreamConfig<TBindings>;
 }
 /**
- * Upstream target — where the request is forwarded.
+ * Upstream target - where the request is forwarded.
  *
  * @typeParam TBindings - Worker bindings type, constrains {@link ServiceBindingUpstream.service}.
  */
@@ -4917,7 +4917,7 @@ export interface AdminConfig {
 	enabled: boolean;
 	/** Path prefix for admin routes. Default: `"___gateway"`. */
 	prefix?: string;
-	/** Optional auth check — return `false` to deny access. */
+	/** Optional auth check - return `false` to deny access. */
 	auth?: (c: Context) => boolean | Promise<boolean>;
 	/** MetricsCollector instance for the `/metrics` endpoint. */
 	metrics?: MetricsCollector;
@@ -4940,7 +4940,7 @@ export interface GatewayRegistry {
 	policies: RegisteredPolicy[];
 	gatewayName: string;
 }
-/** The instantiated gateway — a configured Hono app */
+/** The instantiated gateway - a configured Hono app */
 export interface GatewayInstance {
 	/** The underlying Hono app, ready to be exported as a Worker */
 	app: Hono$1;
@@ -4996,13 +4996,13 @@ export declare function createGateway<TBindings = Record<string, unknown>>(confi
  */
 export declare function getGatewayContext(c: Context): PolicyContext | undefined;
 /**
- * Route scoping — group routes under a shared path prefix with shared policies.
+ * Route scoping - group routes under a shared path prefix with shared policies.
  *
  * `scope()` transforms an array of {@link RouteConfig} by prepending a path
  * prefix, prepending shared policies, and merging metadata. The output is a
  * flat `RouteConfig[]` that can be spread directly into `GatewayConfig.routes`.
  *
- * Nesting works naturally — pass the output of an inner `scope()` as the
+ * Nesting works naturally - pass the output of an inner `scope()` as the
  * `routes` of an outer `scope()`.
  *
  * @module scope
@@ -5067,7 +5067,7 @@ export interface MockConfig extends PolicyConfig {
  * Return a static mock response, bypassing the upstream entirely.
  *
  * Useful for development stubs, testing, and placeholder routes. Runs at
- * priority 999 (always last) and short-circuits — `next()` is never called,
+ * priority 999 (always last) and short-circuits - `next()` is never called,
  * so no upstream request is made. Object bodies are automatically
  * JSON-serialized with `content-type: application/json`.
  *
@@ -5105,7 +5105,7 @@ export interface MockConfig extends PolicyConfig {
  */
 export declare const mock: (config?: MockConfig | undefined) => Policy;
 /**
- * Proxy policy — per-route header manipulation and timeout control.
+ * Proxy policy - per-route header manipulation and timeout control.
  *
  * @module proxy
  */
@@ -5128,7 +5128,7 @@ export interface ProxyPolicyConfig extends PolicyConfig {
  * Use this when you need per-route header injection, header stripping, or
  * a custom timeout that wraps the upstream dispatch. The core proxy
  * forwarding (URL, Service Binding, Handler) is handled by the gateway's
- * upstream handler — this policy layers on top of it.
+ * upstream handler - this policy layers on top of it.
  *
  * `preserveHost` applies to URL upstreams, instructing the upstream handler
  * not to rewrite the Host header to the target host.
@@ -5160,7 +5160,7 @@ export interface ApiKeyAuthConfig extends PolicyConfig {
 	headerName?: string;
 	/** Query parameter name as fallback. Default: undefined (disabled) */
 	queryParam?: string;
-	/** Validator function — return true if the key is valid */
+	/** Validator function - return true if the key is valid */
 	validate: (key: string) => boolean | Promise<boolean>;
 	/**
 	 * After successful validation, derive an identity string from the key
@@ -5219,7 +5219,7 @@ export interface BasicAuthConfig extends PolicyConfig {
 	realm?: string;
 }
 /**
- * Basic Authentication policy — validate base64-encoded credentials.
+ * Basic Authentication policy - validate base64-encoded credentials.
  *
  * Sends a `WWW-Authenticate` header on failure to prompt browser credential dialogs.
  * The realm is sanitized to prevent header injection.
@@ -5323,7 +5323,7 @@ export interface JwsConfig extends PolicyConfig {
  *
  * The `none` algorithm is always rejected to prevent signature bypass attacks.
  * Config validation (`secret` or `jwksUrl` required) is performed at construction
- * time — a missing config throws immediately, not on first request.
+ * time - a missing config throws immediately, not on first request.
  *
  * @example
  * ```ts
@@ -5332,7 +5332,7 @@ export interface JwsConfig extends PolicyConfig {
  * // HMAC verification with embedded payload
  * jws({ secret: env.JWS_SECRET });
  *
- * // Detached JWS — payload comes from the request body
+ * // Detached JWS - payload comes from the request body
  * jws({ secret: env.JWS_SECRET, payloadSource: "body" });
  * ```
  */
@@ -5416,7 +5416,7 @@ export interface OAuth2Config extends PolicyConfig {
 	cacheTtlSeconds?: number;
 	/** Maximum number of tokens to cache. Default: 100. */
 	cacheMaxEntries?: number;
-	/** Required scopes — token must have ALL of these (space-separated scope string). */
+	/** Required scopes - token must have ALL of these (space-separated scope string). */
 	requiredScopes?: string[];
 	/** Introspection endpoint fetch timeout in milliseconds. Default: 5000. */
 	introspectionTimeoutMs?: number;
@@ -5425,9 +5425,9 @@ export declare const oauth2: (config?: OAuth2Config | undefined) => Policy;
 export interface RbacConfig extends PolicyConfig {
 	/** Header name containing the user's role(s). Default: "x-user-role". */
 	roleHeader?: string;
-	/** Allowed roles — pass if user has ANY of these. */
+	/** Allowed roles - pass if user has ANY of these. */
 	roles?: string[];
-	/** Required permissions — pass if user has ALL of these. */
+	/** Required permissions - pass if user has ALL of these. */
 	permissions?: string[];
 	/** Header containing permissions. Default: "x-user-permissions". */
 	permissionHeader?: string;
@@ -5546,13 +5546,13 @@ export interface GeoIpFilterConfig extends PolicyConfig {
  */
 export declare function geoIpFilter(config?: GeoIpFilterConfig): Policy;
 export interface HttpCalloutConfig extends PolicyConfig {
-	/** Target URL — static string or dynamic function. Required. */
+	/** Target URL - static string or dynamic function. Required. */
 	url: string | ((c: Context) => string | Promise<string>);
 	/** HTTP method. Default: "GET". */
 	method?: string;
-	/** Request headers — static values or dynamic functions. */
+	/** Request headers - static values or dynamic functions. */
 	headers?: Record<string, string | ((c: Context) => string | Promise<string>)>;
-	/** Request body — static or dynamic. JSON-serialized if object. */
+	/** Request body - static or dynamic. JSON-serialized if object. */
 	body?: unknown | ((c: Context) => unknown | Promise<unknown>);
 	/** Timeout in ms. Default: 5000. */
 	timeout?: number;
@@ -5611,12 +5611,12 @@ export interface InterruptConfig extends PolicyConfig {
  * Conditionally short-circuit the pipeline and return a static response.
  *
  * Evaluates a predicate against the incoming request context. When the
- * condition returns `true`, the pipeline is interrupted — a response is
+ * condition returns `true`, the pipeline is interrupted - a response is
  * returned immediately and `next()` is never called (upstream is skipped).
  * When the condition returns `false`, the pipeline continues normally.
  *
  * @param config - Condition predicate, status code, body, and headers.
- * @returns A {@link Policy} at priority 100 (default — users typically set a custom priority).
+ * @returns A {@link Policy} at priority 100 (default - users typically set a custom priority).
  *
  * @example
  * ```ts
@@ -5899,16 +5899,16 @@ export interface LatencyInjectionConfig extends PolicyConfig {
  */
 export declare const latencyInjection: (config: LatencyInjectionConfig) => Policy;
 /**
- * Retry policy — automatic retry with configurable backoff for failed upstream calls.
+ * Retry policy - automatic retry with configurable backoff for failed upstream calls.
  *
  * Retries work by inspecting the response status after `next()` completes.
  * When a retryable status code is detected and a `_proxyRequest` exists on
  * the Hono context (set by the URL upstream handler in `gateway.ts`), the
- * policy clones the stored request and re-issues it via `fetch()` directly —
+ * policy clones the stored request and re-issues it via `fetch()` directly -
  * no `globalThis.fetch` patching, fully concurrency-safe.
  *
  * For handler-based or service-binding upstreams there is no `_proxyRequest`,
- * so the retry policy is effectively a no-op — which is the correct behavior
+ * so the retry policy is effectively a no-op - which is the correct behavior
  * since those upstream types would require calling `next()` multiple times
  * (disallowed by Hono's compose model).
  *
@@ -5936,7 +5936,7 @@ export interface RetryConfig extends PolicyConfig {
  * After `next()` completes, checks the response status against `retryOn`
  * codes. If a retry is warranted and a `_proxyRequest` is available on the
  * context (set by `createUrlUpstream()` in `gateway.ts`), the policy clones
- * the stored request and calls `fetch()` directly — fully concurrency-safe
+ * the stored request and calls `fetch()` directly - fully concurrency-safe
  * with no `globalThis.fetch` patching.
  *
  * For handler-based or service-binding upstreams (no `_proxyRequest`), the
@@ -5996,7 +5996,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
 /**
  * Set key-value attributes on the Hono request context.
  *
- * @param config - Must include `attributes` — a record of keys to values or resolver functions.
+ * @param config - Must include `attributes` - a record of keys to values or resolver functions.
  * @returns A {@link Policy} at priority 50 (REQUEST_TRANSFORM).
  *
  * @example
@@ -6012,7 +6012,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
  * ```
  */
 export declare const assignAttributes: (config: AssignAttributesConfig) => Policy;
-/** A field value — either a static value or a function resolving to one. */
+/** A field value - either a static value or a function resolving to one. */
 export type FieldValue = unknown | ((c: Context) => unknown | Promise<unknown>);
 export interface AssignContentConfig extends PolicyConfig {
 	/** Fields to set/override in the JSON request body. */
@@ -6147,7 +6147,7 @@ export interface OverrideMethodConfig extends PolicyConfig {
 /**
  * Override the HTTP method of a POST request via a header.
  *
- * Only applies to POST requests — the industry-standard approach for
+ * Only applies to POST requests - the industry-standard approach for
  * tunneling other methods through POST. Non-POST requests with the
  * override header are ignored.
  *
@@ -6306,13 +6306,13 @@ export interface HealthConfig {
 /**
  * Create a health check route for liveness and upstream probing.
  *
- * Returns a {@link RouteConfig} (not a Policy) — add it directly to the
+ * Returns a {@link RouteConfig} (not a Policy) - add it directly to the
  * gateway's `routes` array. Without upstream probes, returns a simple
  * `{ status: "healthy" }` response. With probes, performs concurrent HEAD
  * requests (5s timeout each) and reports aggregate status:
- * - `"healthy"` — all probes passed
- * - `"degraded"` — some probes failed
- * - `"unhealthy"` — all probes failed (returns 503)
+ * - `"healthy"` - all probes passed
+ * - `"degraded"` - some probes failed
+ * - `"unhealthy"` - all probes failed (returns 503)
  *
  * @security Enabling `includeUpstreamStatus: true` causes the response to
  * include the URLs and availability status of internal upstream services.
@@ -6365,7 +6365,7 @@ export interface AssignMetricsConfig extends PolicyConfig {
  * `c.get("_metricsTags")`. The {@link metricsReporter} policy (or any custom
  * observer) can read these tags to enrich collected metrics.
  *
- * @param config - Must include `tags` — a record of tag names to values or resolver functions.
+ * @param config - Must include `tags` - a record of tag names to values or resolver functions.
  * @returns A {@link Policy} at priority 0 (OBSERVABILITY).
  *
  * @example
@@ -6389,10 +6389,10 @@ export interface MetricsReporterConfig extends PolicyConfig {
  * Record standard gateway metrics for every request.
  *
  * Metrics recorded:
- * - `gateway_requests_total` (counter) — total requests, tagged by method/path/status/gateway
- * - `gateway_request_duration_ms` (histogram) — end-to-end request duration
- * - `gateway_request_errors_total` (counter) — requests with status >= 400
- * - `gateway_policy_duration_ms` (histogram) — per-policy timing when available
+ * - `gateway_requests_total` (counter) - total requests, tagged by method/path/status/gateway
+ * - `gateway_request_duration_ms` (histogram) - end-to-end request duration
+ * - `gateway_request_errors_total` (counter) - requests with status >= 400
+ * - `gateway_policy_duration_ms` (histogram) - per-policy timing when available
  *
  * @param config - Must include a {@link MetricsCollector} instance.
  * @returns A {@link Policy} at priority 1.
@@ -6401,7 +6401,7 @@ export declare const metricsReporter: (config: MetricsReporterConfig) => Policy;
 export interface RequestLogConfig extends PolicyConfig {
 	/** Additional fields to extract from the request */
 	extractFields?: (c: unknown) => Record<string, unknown>;
-	/** Custom log sink — defaults to console.log with structured JSON */
+	/** Custom log sink - defaults to console.log with structured JSON */
 	sink?: (entry: LogEntry) => void | Promise<void>;
 	/** Ordered list of headers to inspect for the client IP. Default: `["cf-connecting-ip", "x-forwarded-for"]`. */
 	ipHeaders?: string[];
@@ -6438,9 +6438,9 @@ export interface LogEntry {
 	routePath: string;
 	/** Upstream identifier (reserved for future enrichment). */
 	upstream: string;
-	/** W3C Trace Context — 32-hex trace ID. */
+	/** W3C Trace Context - 32-hex trace ID. */
 	traceId?: string;
-	/** W3C Trace Context — 16-hex span ID for this gateway request. */
+	/** W3C Trace Context - 16-hex span ID for this gateway request. */
 	spanId?: string;
 	/** Captured request body (when `logRequestBody` is enabled). */
 	requestBody?: unknown;
@@ -6459,6 +6459,43 @@ export interface LogEntry {
  * By default, logs are written to `console.log` as JSON lines. Provide a
  * custom `sink` to route logs to an external service (e.g., Logflare,
  * Datadog, or a Durable Object buffer).
+ *
+ * ## Data boundary: request logs vs analytics
+ *
+ * Request logs and analytics (`@homegrower-club/stoma-analytics`) serve
+ * different purposes and deliberately carry different fields.
+ *
+ * **Request logs** (this policy) are for **debugging and operational triage**.
+ * Fields are high-cardinality — grep-friendly, not GROUP BY-friendly:
+ *
+ * | Field        | Why it's here                                          |
+ * |--------------|--------------------------------------------------------|
+ * | requestId    | Unique per request — grep to find a single transaction |
+ * | path         | Actual URL e.g. /users/42 (high cardinality)           |
+ * | clientIp     | PII, high cardinality — abuse investigation only       |
+ * | userAgent    | High cardinality — debug specific client issues         |
+ * | spanId       | Distributed tracing span correlation                   |
+ * | requestBody  | Deep debugging (opt-in, redactable)                    |
+ * | responseBody | Deep debugging (opt-in, redactable)                    |
+ *
+ * **Overlapping fields** (appear in both logs and analytics):
+ *
+ * | Field       | Why both need it                                       |
+ * |-------------|--------------------------------------------------------|
+ * | timestamp   | Time-series bucketing (analytics) / grep by time (logs)|
+ * | gatewayName | GROUP BY gateway (analytics) / filter logs by gateway  |
+ * | routePath   | GROUP BY route pattern (analytics) / filter by route   |
+ * | method      | GROUP BY method (analytics) / filter logs by method    |
+ * | statusCode  | Error rate dashboards (analytics) / grep errors (logs) |
+ * | durationMs  | AVG/P99 latency (analytics) / slow request triage      |
+ * | traceId     | Dashboard anomaly drill-down → find matching log lines |
+ *
+ * **Analytics-only fields** (NOT in request logs):
+ *
+ * | Field        | Why only analytics                                    |
+ * |--------------|-------------------------------------------------------|
+ * | responseSize | SUM bandwidth, detect payload bloat — aggregate only   |
+ * | dimensions   | Extensible low-cardinality facets for GROUP BY         |
  *
  * @param config - Custom field extraction, body logging, and sink. All fields optional.
  * @returns A {@link Policy} at priority 0 (runs first, wraps everything).
@@ -6526,35 +6563,35 @@ export declare const serverTiming: (config?: ServerTimingConfig | undefined) => 
  * @module priority
  */
 export declare const Priority: {
-	/** Observability policies (e.g. requestLog) — wraps everything */
+	/** Observability policies (e.g. requestLog) - wraps everything */
 	readonly OBSERVABILITY: 0;
-	/** IP filtering — runs before all other logic */
+	/** IP filtering - runs before all other logic */
 	readonly IP_FILTER: 1;
-	/** Metrics collection — just after observability */
+	/** Metrics collection - just after observability */
 	readonly METRICS: 1;
-	/** Early pipeline (e.g. cors) — before auth */
+	/** Early pipeline (e.g. cors) - before auth */
 	readonly EARLY: 5;
 	/** Authentication (e.g. jwtAuth, apiKeyAuth, basicAuth) */
 	readonly AUTH: 10;
-	/** Rate limiting — after auth */
+	/** Rate limiting - after auth */
 	readonly RATE_LIMIT: 20;
-	/** Circuit breaker — protects upstream */
+	/** Circuit breaker - protects upstream */
 	readonly CIRCUIT_BREAKER: 30;
-	/** Caching — before upstream */
+	/** Caching - before upstream */
 	readonly CACHE: 40;
-	/** Request header transforms — mid-pipeline */
+	/** Request header transforms - mid-pipeline */
 	readonly REQUEST_TRANSFORM: 50;
-	/** Timeout — wraps upstream call */
+	/** Timeout - wraps upstream call */
 	readonly TIMEOUT: 85;
-	/** Retry — wraps upstream fetch */
+	/** Retry - wraps upstream fetch */
 	readonly RETRY: 90;
-	/** Response header transforms — after upstream */
+	/** Response header transforms - after upstream */
 	readonly RESPONSE_TRANSFORM: 92;
-	/** Proxy header manipulation — just before upstream */
+	/** Proxy header manipulation - just before upstream */
 	readonly PROXY: 95;
 	/** Default priority for unspecified policies */
 	readonly DEFAULT: 100;
-	/** Mock — terminal, replaces upstream */
+	/** Mock - terminal, replaces upstream */
 	readonly MOCK: 999;
 };
 /** Union of all named priority levels. */
@@ -6563,11 +6600,11 @@ export type PriorityLevel = (typeof Priority)[keyof typeof Priority];
  * Composable helpers for policy authors.
  *
  * Utilities that eliminate the most common boilerplate:
- * - {@link resolveConfig} — merge defaults with user config
- * - {@link policyDebug} — get a pre-namespaced debug logger
- * - {@link withSkip} — wrap a handler with `PolicyConfig.skip` logic
- * - {@link safeCall} — graceful store failure degradation
- * - {@link setDebugHeader} — contribute debug data for client-requested debug headers
+ * - {@link resolveConfig} - merge defaults with user config
+ * - {@link policyDebug} - get a pre-namespaced debug logger
+ * - {@link withSkip} - wrap a handler with `PolicyConfig.skip` logic
+ * - {@link safeCall} - graceful store failure degradation
+ * - {@link setDebugHeader} - contribute debug data for client-requested debug headers
  *
  * @module helpers
  */
@@ -6591,7 +6628,7 @@ export declare function resolveConfig<TConfig>(defaults: Partial<TConfig>, userC
  *
  * @param c - Hono request context.
  * @param policyName - Policy name used in the namespace.
- * @returns A {@link DebugLogger} — always callable, never undefined.
+ * @returns A {@link DebugLogger} - always callable, never undefined.
  */
 export declare function policyDebug(c: Context, policyName: string): DebugLogger;
 /**
@@ -6613,7 +6650,7 @@ export declare function withSkip(skipFn: ((c: unknown) => boolean | Promise<bool
  * Execute an async operation with graceful error handling.
  *
  * Designed for store-backed policies (cache, rate-limit, circuit-breaker)
- * where a store failure should degrade gracefully — not crash the request.
+ * where a store failure should degrade gracefully - not crash the request.
  * Returns the `fallback` value if `fn` throws.
  *
  * @param fn - The async operation to attempt.
@@ -6665,7 +6702,7 @@ declare function getCollectedDebugHeaders(c: Context): Map<string, string> | und
  */
 export declare function isDebugRequested(c: Context): boolean;
 /**
- * `definePolicy()` — full convenience wrapper for policy authors.
+ * `definePolicy()` - full convenience wrapper for policy authors.
  *
  * Combines {@link resolveConfig}, {@link policyDebug}, and {@link withSkip}
  * into a single declarative API. Takes a {@link PolicyDefinition} and returns
@@ -6687,7 +6724,7 @@ export interface PolicyHandlerContext<TConfig> {
 	config: TConfig;
 	/** Debug logger pre-namespaced to `stoma:policy:{name}`. Always callable. */
 	debug: DebugLogger;
-	/** Trace reporter — always callable, no-op when tracing is not active. */
+	/** Trace reporter - always callable, no-op when tracing is not active. */
 	trace: TraceReporter;
 	/** Gateway context, or `undefined` when running outside a gateway pipeline. */
 	gateway: PolicyContext | undefined;
@@ -6695,7 +6732,7 @@ export interface PolicyHandlerContext<TConfig> {
 /**
  * Context injected into `definePolicy` evaluate handlers.
  *
- * Parallel to {@link PolicyHandlerContext} but protocol-agnostic —
+ * Parallel to {@link PolicyHandlerContext} but protocol-agnostic -
  * no Hono types. Extends the runtime-facing {@link PolicyEvalContext}
  * with the fully-merged, typed config.
  */
@@ -6795,7 +6832,7 @@ export type RequiredKeys<T> = {
  * base `PolicyConfig`), config is optional.
  *
  * This closes the gap between "type-safe config" and the runtime
- * `validate` callback — the editor catches missing required fields
+ * `validate` callback - the editor catches missing required fields
  * at compile time.
  */
 export type PolicyFactory<TConfig extends PolicyConfig> = RequiredKeys<TConfig> extends never ? (config?: TConfig) => Policy : (config: TConfig) => Policy;
@@ -6895,7 +6932,7 @@ export declare function createPolicyTestHarness(policy: Policy, options?: Policy
  * Shared client IP extraction utility.
  *
  * Centralises the IP header lookup logic used by rate limiting, IP filtering,
- * and request logging. The header priority order is configurable — the first
+ * and request logging. The header priority order is configurable - the first
  * header that contains a value wins.
  *
  * @module ip

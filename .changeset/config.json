@@ -10,7 +10,7 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [],
+  "ignore": ["@homegrower-club/stoma-docs"],
   "privatePackages": { "version": true, "tag": false },
   "prettier": false
 }

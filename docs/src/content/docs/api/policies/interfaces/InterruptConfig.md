@@ -5,7 +5,7 @@ prev: false
 title: "InterruptConfig"
 ---
 
-Defined in: [src/policies/traffic/interrupt.ts:10](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/interrupt.ts#L10)
+Defined in: [packages/gateway/src/policies/traffic/interrupt.ts:10](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/interrupt.ts#L10)
 
 Configuration for the interrupt policy.
 
@@ -19,7 +19,7 @@ Configuration for the interrupt policy.
 
 > `optional` **body**: `unknown`
 
-Defined in: [src/policies/traffic/interrupt.ts:16](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/interrupt.ts#L16)
+Defined in: [packages/gateway/src/policies/traffic/interrupt.ts:16](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/interrupt.ts#L16)
 
 Response body. String → text/plain, object → application/json, undefined → empty.
 
@@ -29,7 +29,7 @@ Response body. String → text/plain, object → application/json, undefined →
 
 > **condition**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/traffic/interrupt.ts:12](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/interrupt.ts#L12)
+Defined in: [packages/gateway/src/policies/traffic/interrupt.ts:12](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/interrupt.ts#L12)
 
 Predicate that determines whether to short-circuit. Required.
 
@@ -49,7 +49,7 @@ Predicate that determines whether to short-circuit. Required.
 
 > `optional` **headers**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/traffic/interrupt.ts:18](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/interrupt.ts#L18)
+Defined in: [packages/gateway/src/policies/traffic/interrupt.ts:18](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/interrupt.ts#L18)
 
 Additional response headers.
 
@@ -59,7 +59,7 @@ Additional response headers.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -83,6 +83,6 @@ Skip this policy when condition returns true
 
 > `optional` **statusCode**: `number`
 
-Defined in: [src/policies/traffic/interrupt.ts:14](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/interrupt.ts#L14)
+Defined in: [packages/gateway/src/policies/traffic/interrupt.ts:14](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/interrupt.ts#L14)
 
 HTTP status code for the interrupt response. Default: 200.

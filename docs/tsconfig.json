@@ -4,10 +4,10 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable", "ES2016"],
     "types": ["@cloudflare/workers-types"],
     "paths": {
-      "@homegrower-club/stoma": ["../dist/index.d.ts"],
-      "@homegrower-club/stoma/adapters/cloudflare": ["../dist/adapters/cloudflare.d.ts"],
-      "@homegrower-club/stoma/adapters/memory": ["../dist/adapters/memory.d.ts"],
-      "@homegrower-club/stoma/sdk": ["../dist/policies/sdk/index.d.ts"]
+      "@homegrower-club/stoma": ["../packages/gateway/dist/index.d.ts"],
+      "@homegrower-club/stoma/adapters/cloudflare": ["../packages/gateway/dist/adapters/cloudflare.d.ts"],
+      "@homegrower-club/stoma/adapters/memory": ["../packages/gateway/dist/adapters/memory.d.ts"],
+      "@homegrower-club/stoma/sdk": ["../packages/gateway/dist/policies/sdk/index.d.ts"]
     }
   }
 }

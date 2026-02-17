@@ -5,7 +5,7 @@ prev: false
 title: "RouteConfig"
 ---
 
-Defined in: [src/core/types.ts:145](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L145)
+Defined in: [packages/gateway/src/core/types.ts:145](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L145)
 
 Individual route configuration.
 
@@ -23,7 +23,7 @@ Worker bindings type, propagated from [GatewayConfig](/api/index/interfaces/gate
 
 > `optional` **metadata**: `Record`\<`string`, `unknown`\>
 
-Defined in: [src/core/types.ts:153](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L153)
+Defined in: [packages/gateway/src/core/types.ts:153](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L153)
 
 Route-level metadata for logging/observability
 
@@ -33,7 +33,7 @@ Route-level metadata for logging/observability
 
 > `optional` **methods**: [`HttpMethod`](/api/index/type-aliases/httpmethod/)[]
 
-Defined in: [src/core/types.ts:149](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L149)
+Defined in: [packages/gateway/src/core/types.ts:149](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L149)
 
 Allowed HTTP methods. Defaults to all.
 
@@ -43,7 +43,7 @@ Allowed HTTP methods. Defaults to all.
 
 > **path**: `string`
 
-Defined in: [src/core/types.ts:147](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L147)
+Defined in: [packages/gateway/src/core/types.ts:147](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L147)
 
 Route path pattern (Hono syntax, e.g. "/users/:id")
 
@@ -53,6 +53,6 @@ Route path pattern (Hono syntax, e.g. "/users/:id")
 
 > **pipeline**: [`PipelineConfig`](/api/index/interfaces/pipelineconfig/)\<`TBindings`\>
 
-Defined in: [src/core/types.ts:151](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L151)
+Defined in: [packages/gateway/src/core/types.ts:151](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L151)
 
 Pipeline to process this route

@@ -18,7 +18,7 @@ export default defineConfig({
       alias: {
         "@examples": path.resolve(
           new URL(".", import.meta.url).pathname,
-          "../examples",
+          "../packages/gateway/examples",
         ),
       },
     },
@@ -115,12 +115,12 @@ export default defineConfig({
         // llmTxt(),
         starlightTypeDoc({
           entryPoints: [
-            "../src/index.ts",
-            "../src/policies/index.ts",
-            "../src/config/index.ts",
-            "../src/adapters/index.ts",
+            "../packages/gateway/src/index.ts",
+            "../packages/gateway/src/policies/index.ts",
+            "../packages/gateway/src/config/index.ts",
+            "../packages/gateway/src/adapters/index.ts",
           ],
-          tsconfig: "../tsconfig.docs.json",
+          tsconfig: "../packages/gateway/tsconfig.docs.json",
           typeDoc: {
             entryPointStrategy: "expand",
             exclude: ["**/__tests__/**"],
@@ -162,6 +162,10 @@ export default defineConfig({
         {
           label: "Policies",
           autogenerate: { directory: "policies" },
+        },
+        {
+          label: "Analytics",
+          autogenerate: { directory: "analytics" },
         },
         {
           label: "Cloudflare",

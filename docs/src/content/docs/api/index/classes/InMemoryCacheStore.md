@@ -5,7 +5,7 @@ prev: false
 title: "InMemoryCacheStore"
 ---
 
-Defined in: [src/policies/traffic/cache.ts:58](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L58)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:58](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L58)
 
 Response caching with pluggable storage, TTL, and automatic cache-control headers (priority 40).
 
@@ -19,7 +19,7 @@ Response caching with pluggable storage, TTL, and automatic cache-control header
 
 > **new InMemoryCacheStore**(`options?`): `InMemoryCacheStore`
 
-Defined in: [src/policies/traffic/cache.ts:62](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L62)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:62](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L62)
 
 #### Parameters
 
@@ -39,7 +39,7 @@ Defined in: [src/policies/traffic/cache.ts:62](https://github.com/HomeGrower-clu
 
 > **get** **size**(): `number`
 
-Defined in: [src/policies/traffic/cache.ts:123](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L123)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:123](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L123)
 
 Current number of entries (for testing/inspection)
 
@@ -53,7 +53,7 @@ Current number of entries (for testing/inspection)
 
 > **clear**(): `void`
 
-Defined in: [src/policies/traffic/cache.ts:118](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L118)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:118](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L118)
 
 Remove all entries (for testing)
 
@@ -67,7 +67,7 @@ Remove all entries (for testing)
 
 > **delete**(`key`): `Promise`\<`boolean`\>
 
-Defined in: [src/policies/traffic/cache.ts:113](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L113)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:113](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L113)
 
 Delete a cached entry. Returns true if something was removed.
 
@@ -91,7 +91,7 @@ Delete a cached entry. Returns true if something was removed.
 
 > **destroy**(): `void`
 
-Defined in: [src/policies/traffic/cache.ts:128](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L128)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:128](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L128)
 
 Release all cached entries.
 
@@ -109,7 +109,7 @@ Release all cached entries.
 
 > **get**(`key`): `Promise`\<`Response` \| `null`\>
 
-Defined in: [src/policies/traffic/cache.ts:66](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L66)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:66](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L66)
 
 Retrieve a cached response by key. Returns null on miss.
 
@@ -133,7 +133,7 @@ Retrieve a cached response by key. Returns null on miss.
 
 > **put**(`key`, `response`, `ttlSeconds`): `Promise`\<`void`\>
 
-Defined in: [src/policies/traffic/cache.ts:82](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/cache.ts#L82)
+Defined in: [packages/gateway/src/policies/traffic/cache.ts:82](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/cache.ts#L82)
 
 Store a response under key with a TTL in seconds.
 

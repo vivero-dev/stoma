@@ -1,0 +1,199 @@
+{
+  "name": "@homegrower-club/stoma",
+  "version": "0.1.0-rc.4",
+  "description": "Declarative API gateway as a TypeScript library. Runs on Cloudflare Workers, Node.js, Deno, Bun, and any JavaScript runtime.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HomeGrower-club/stoma.git",
+    "directory": "packages/gateway"
+  },
+  "homepage": "https://stoma.opensource.homegrower.club",
+  "sideEffects": false,
+  "license": "MIT",
+  "author": {
+    "name": "Jonathan Bennett"
+  },
+  "bugs": {
+    "url": "https://github.com/HomeGrower-club/stoma/issues"
+  },
+  "keywords": [
+    "api-gateway",
+    "hono",
+    "cloudflare-workers",
+    "edge",
+    "middleware",
+    "proxy",
+    "rate-limit",
+    "auth",
+    "jwt",
+    "policy",
+    "declarative"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./policies": {
+      "types": "./src/policies/index.ts",
+      "default": "./src/policies/index.ts"
+    },
+    "./config": {
+      "types": "./src/config/index.ts",
+      "default": "./src/config/index.ts"
+    },
+    "./sdk": {
+      "types": "./src/policies/sdk/index.ts",
+      "default": "./src/policies/sdk/index.ts"
+    },
+    "./adapters": {
+      "types": "./src/adapters/index.ts",
+      "default": "./src/adapters/index.ts"
+    },
+    "./adapters/cloudflare": {
+      "types": "./src/adapters/cloudflare.ts",
+      "default": "./src/adapters/cloudflare.ts"
+    },
+    "./adapters/deno": {
+      "types": "./src/adapters/deno.ts",
+      "default": "./src/adapters/deno.ts"
+    },
+    "./adapters/bun": {
+      "types": "./src/adapters/bun.ts",
+      "default": "./src/adapters/bun.ts"
+    },
+    "./adapters/node": {
+      "types": "./src/adapters/node.ts",
+      "default": "./src/adapters/node.ts"
+    },
+    "./adapters/memory": {
+      "types": "./src/adapters/memory.ts",
+      "default": "./src/adapters/memory.ts"
+    },
+    "./adapters/redis": {
+      "types": "./src/adapters/redis.ts",
+      "default": "./src/adapters/redis.ts"
+    },
+    "./adapters/postgres": {
+      "types": "./src/adapters/postgres.ts",
+      "default": "./src/adapters/postgres.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./policies": {
+        "types": "./dist/policies/index.d.ts",
+        "import": "./dist/policies/index.js",
+        "default": "./dist/policies/index.js"
+      },
+      "./config": {
+        "types": "./dist/config/index.d.ts",
+        "import": "./dist/config/index.js",
+        "default": "./dist/config/index.js"
+      },
+      "./sdk": {
+        "types": "./dist/policies/sdk/index.d.ts",
+        "import": "./dist/policies/sdk/index.js",
+        "default": "./dist/policies/sdk/index.js"
+      },
+      "./adapters": {
+        "types": "./dist/adapters/index.d.ts",
+        "import": "./dist/adapters/index.js",
+        "default": "./dist/adapters/index.js"
+      },
+      "./adapters/cloudflare": {
+        "types": "./dist/adapters/cloudflare.d.ts",
+        "import": "./dist/adapters/cloudflare.js",
+        "default": "./dist/adapters/cloudflare.js"
+      },
+      "./adapters/deno": {
+        "types": "./dist/adapters/deno.d.ts",
+        "import": "./dist/adapters/deno.js",
+        "default": "./dist/adapters/deno.js"
+      },
+      "./adapters/bun": {
+        "types": "./dist/adapters/bun.d.ts",
+        "import": "./dist/adapters/bun.js",
+        "default": "./dist/adapters/bun.js"
+      },
+      "./adapters/node": {
+        "types": "./dist/adapters/node.d.ts",
+        "import": "./dist/adapters/node.js",
+        "default": "./dist/adapters/node.js"
+      },
+      "./adapters/memory": {
+        "types": "./dist/adapters/memory.d.ts",
+        "import": "./dist/adapters/memory.js",
+        "default": "./dist/adapters/memory.js"
+      },
+      "./adapters/redis": {
+        "types": "./dist/adapters/redis.d.ts",
+        "import": "./dist/adapters/redis.js",
+        "default": "./dist/adapters/redis.js"
+      },
+      "./adapters/postgres": {
+        "types": "./dist/adapters/postgres.d.ts",
+        "import": "./dist/adapters/postgres.js",
+        "default": "./dist/adapters/postgres.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && vitest run --config vitest.cloudflare.ts",
+    "test:unit": "vitest run",
+    "test:cloudflare": "vitest run --config vitest.cloudflare.ts",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "prepublishOnly": "yarn build"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.0",
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "@vitest/coverage-istanbul": "3.2.4",
+    "@vitest/expect": "3.2.4",
+    "@vitest/mocker": "3.2.4",
+    "@vitest/pretty-format": "3.2.4",
+    "@vitest/runner": "3.2.4",
+    "@vitest/snapshot": "3.2.4",
+    "@vitest/spy": "3.2.4",
+    "@vitest/utils": "3.2.4",
+    "hono": "^4.7.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "3.2.4",
+    "wrangler": "^4.65.0",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "hono": ">=4.0.0",
+    "zod": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    }
+  }
+}

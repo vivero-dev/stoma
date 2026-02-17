@@ -3,8 +3,8 @@
 // on the same origin (no CORS issues from the editor).
 
 import type { Context } from "hono";
-import { memoryAdapter } from "../../../src/adapters/memory";
-import { cors, createGateway, rateLimit, requestLog } from "../../../src/index";
+import { memoryAdapter } from "../../../packages/gateway/src/adapters/memory";
+import { cors, createGateway, rateLimit, requestLog } from "../../../packages/gateway/src/index";
 
 const adapter = memoryAdapter();
 

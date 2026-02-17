@@ -1,0 +1,141 @@
+{
+  "name": "@homegrower-club/stoma-analytics",
+  "version": "0.1.0-rc.0",
+  "description": "Opt-in analytics for Stoma API gateway — structured metric log lines, NDJSON-to-Parquet processing, and DuckDB querying.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HomeGrower-club/stoma.git",
+    "directory": "packages/analytics"
+  },
+  "homepage": "https://stoma.opensource.homegrower.club",
+  "sideEffects": false,
+  "license": "MIT",
+  "author": {
+    "name": "Jonathan Bennett"
+  },
+  "bugs": {
+    "url": "https://github.com/HomeGrower-club/stoma/issues"
+  },
+  "keywords": [
+    "api-gateway",
+    "analytics",
+    "metrics",
+    "parquet",
+    "duckdb",
+    "cloudflare-workers",
+    "stoma"
+  ],
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./policy": {
+      "types": "./src/policy/analytics.ts",
+      "default": "./src/policy/analytics.ts"
+    },
+    "./processor": {
+      "types": "./src/processor/index.ts",
+      "default": "./src/processor/index.ts"
+    },
+    "./storage/r2": {
+      "types": "./src/storage/r2.ts",
+      "default": "./src/storage/r2.ts"
+    },
+    "./storage/local": {
+      "types": "./src/storage/local.ts",
+      "default": "./src/storage/local.ts"
+    },
+    "./parquet/duckdb-wasm": {
+      "types": "./src/parquet/duckdb-wasm.ts",
+      "default": "./src/parquet/duckdb-wasm.ts"
+    },
+    "./worker": {
+      "types": "./src/worker/scheduled.ts",
+      "default": "./src/worker/scheduled.ts"
+    },
+    "./compactor": {
+      "types": "./src/compactor/index.ts",
+      "default": "./src/compactor/index.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "./policy": {
+        "types": "./dist/policy/analytics.d.ts",
+        "import": "./dist/policy/analytics.js",
+        "default": "./dist/policy/analytics.js"
+      },
+      "./processor": {
+        "types": "./dist/processor/index.d.ts",
+        "import": "./dist/processor/index.js",
+        "default": "./dist/processor/index.js"
+      },
+      "./storage/r2": {
+        "types": "./dist/storage/r2.d.ts",
+        "import": "./dist/storage/r2.js",
+        "default": "./dist/storage/r2.js"
+      },
+      "./storage/local": {
+        "types": "./dist/storage/local.d.ts",
+        "import": "./dist/storage/local.js",
+        "default": "./dist/storage/local.js"
+      },
+      "./parquet/duckdb-wasm": {
+        "types": "./dist/parquet/duckdb-wasm.d.ts",
+        "import": "./dist/parquet/duckdb-wasm.js",
+        "default": "./dist/parquet/duckdb-wasm.js"
+      },
+      "./worker": {
+        "types": "./dist/worker/scheduled.d.ts",
+        "import": "./dist/worker/scheduled.js",
+        "default": "./dist/worker/scheduled.js"
+      },
+      "./compactor": {
+        "types": "./dist/compactor/index.d.ts",
+        "import": "./dist/compactor/index.js",
+        "default": "./dist/compactor/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "yarn build"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "@homegrower-club/stoma": "workspace:*",
+    "@types/node": "^22.0.0",
+    "hono": "^4.7.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "3.2.4"
+  },
+  "peerDependencies": {
+    "@homegrower-club/stoma": ">=0.1.0",
+    "hono": ">=4.0.0"
+  }
+}

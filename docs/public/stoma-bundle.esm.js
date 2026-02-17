@@ -1,4 +1,4 @@
-class m extends Error {
+class f extends Error {
   statusCode;
   code;
   /** Optional headers to include in the error response (e.g. rate-limit headers) */
@@ -7,7 +7,7 @@ class m extends Error {
     super(s), this.name = "GatewayError", this.statusCode = t, this.code = r, this.headers = n;
   }
 }
-function tt(e, t) {
+function et(e, t) {
   const r = {
     error: e.code,
     message: e.message,
@@ -55,37 +55,37 @@ var Pe = (e, t, r) => (s, n) => {
       s.finalized === !1 && r && (c = await r(s));
     return c && (s.finalized === !1 || l) && (s.res = c), s;
   }
-}, Ct = /* @__PURE__ */ Symbol(), Pt = async (e, t = /* @__PURE__ */ Object.create(null)) => {
-  const { all: r = !1, dot: s = !1 } = t, a = (e instanceof it ? e.raw.headers : e.headers).get("Content-Type");
-  return a?.startsWith("multipart/form-data") || a?.startsWith("application/x-www-form-urlencoded") ? Nt(e, { all: r, dot: s }) : {};
+}, Mt = /* @__PURE__ */ Symbol(), Ct = async (e, t = /* @__PURE__ */ Object.create(null)) => {
+  const { all: r = !1, dot: s = !1 } = t, a = (e instanceof ot ? e.raw.headers : e.headers).get("Content-Type");
+  return a?.startsWith("multipart/form-data") || a?.startsWith("application/x-www-form-urlencoded") ? Pt(e, { all: r, dot: s }) : {};
 };
-async function Nt(e, t) {
+async function Pt(e, t) {
   const r = await e.formData();
-  return r ? Dt(r, t) : {};
+  return r ? Nt(r, t) : {};
 }
-function Dt(e, t) {
+function Nt(e, t) {
   const r = /* @__PURE__ */ Object.create(null);
   return e.forEach((s, n) => {
-    t.all || n.endsWith("[]") ? Ut(r, n, s) : r[n] = s;
+    t.all || n.endsWith("[]") ? Dt(r, n, s) : r[n] = s;
   }), t.dot && Object.entries(r).forEach(([s, n]) => {
-    s.includes(".") && (Lt(r, s, n), delete r[s]);
+    s.includes(".") && (Ut(r, s, n), delete r[s]);
   }), r;
 }
-var Ut = (e, t, r) => {
+var Dt = (e, t, r) => {
   e[t] !== void 0 ? Array.isArray(e[t]) ? e[t].push(r) : e[t] = [e[t], r] : t.endsWith("[]") ? e[t] = [r] : e[t] = r;
-}, Lt = (e, t, r) => {
+}, Ut = (e, t, r) => {
   let s = e;
   const n = t.split(".");
   n.forEach((a, o) => {
     o === n.length - 1 ? s[a] = r : ((!s[a] || typeof s[a] != "object" || Array.isArray(s[a]) || s[a] instanceof File) && (s[a] = /* @__PURE__ */ Object.create(null)), s = s[a]);
   });
-}, rt = (e) => {
+}, tt = (e) => {
   const t = e.split("/");
   return t[0] === "" && t.shift(), t;
-}, Bt = (e) => {
-  const { groups: t, path: r } = Jt(e), s = rt(r);
+}, Lt = (e) => {
+  const { groups: t, path: r } = Bt(e), s = tt(r);
   return Kt(s, t);
-}, Jt = (e) => {
+}, Bt = (e) => {
   const t = [];
   return e = e.replace(/\{[^}]+\}/g, (r, s) => {
     const n = `@${s}`;
@@ -101,7 +101,7 @@ var Ut = (e, t, r) => {
       }
   }
   return e;
-}, X = {}, Ft = (e, t) => {
+}, X = {}, Jt = (e, t) => {
   if (e === "*")
     return "*";
   const r = e.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
@@ -110,7 +110,7 @@ var Ut = (e, t, r) => {
     return X[s] || (r[2] ? X[s] = t && t[0] !== ":" && t[0] !== "*" ? [s, r[1], new RegExp(`^${r[2]}(?=/${t})`)] : [e, r[1], new RegExp(`^${r[2]}$`)] : X[s] = [e, r[1], !0]), X[s];
   }
   return null;
-}, ke = (e, t) => {
+}, je = (e, t) => {
   try {
     return t(e);
   } catch {
@@ -122,22 +122,22 @@ var Ut = (e, t, r) => {
       }
     });
   }
-}, zt = (e) => ke(e, decodeURI), st = (e) => {
+}, Ft = (e) => je(e, decodeURI), rt = (e) => {
   const t = e.url, r = t.indexOf("/", t.indexOf(":") + 4);
   let s = r;
   for (; s < t.length; s++) {
     const n = t.charCodeAt(s);
     if (n === 37) {
       const a = t.indexOf("?", s), o = t.indexOf("#", s), i = a === -1 ? o === -1 ? void 0 : o : o === -1 ? a : Math.min(a, o), c = t.slice(r, i);
-      return zt(c.includes("%25") ? c.replace(/%25/g, "%2525") : c);
+      return Ft(c.includes("%25") ? c.replace(/%25/g, "%2525") : c);
     } else if (n === 63 || n === 35)
       break;
   }
   return t.slice(r, s);
-}, Wt = (e) => {
-  const t = st(e);
+}, zt = (e) => {
+  const t = rt(e);
   return t.length > 1 && t.at(-1) === "/" ? t.slice(0, -1) : t;
-}, U = (e, t, ...r) => (r.length && (t = U(t, ...r)), `${e?.[0] === "/" ? "" : "/"}${e}${t === "/" ? "" : `${e?.at(-1) === "/" ? "" : "/"}${t?.[0] === "/" ? t.slice(1) : t}`}`), nt = (e) => {
+}, L = (e, t, ...r) => (r.length && (t = L(t, ...r)), `${e?.[0] === "/" ? "" : "/"}${e}${t === "/" ? "" : `${e?.at(-1) === "/" ? "" : "/"}${t?.[0] === "/" ? t.slice(1) : t}`}`), st = (e) => {
   if (e.charCodeAt(e.length - 1) !== 63 || !e.includes(":"))
     return null;
   const t = e.split("/"), r = [];
@@ -153,7 +153,7 @@ var Ut = (e, t, r) => {
       } else
         s += "/" + n;
   }), r.filter((n, a, o) => o.indexOf(n) === a);
-}, de = (e) => /[%+]/.test(e) ? (e.indexOf("+") !== -1 && (e = e.replace(/\+/g, " ")), e.indexOf("%") !== -1 ? ke(e, ot) : e) : e, at = (e, t, r) => {
+}, de = (e) => /[%+]/.test(e) ? (e.indexOf("+") !== -1 && (e = e.replace(/\+/g, " ")), e.indexOf("%") !== -1 ? je(e, at) : e) : e, nt = (e, t, r) => {
   let s;
   if (!r && t && !/[%+]/.test(t)) {
     let o = e.indexOf("?", 8);
@@ -188,7 +188,7 @@ var Ut = (e, t, r) => {
     i === -1 ? l = "" : (l = e.slice(i + 1, o === -1 ? void 0 : o), s && (l = de(l))), r ? (n[c] && Array.isArray(n[c]) || (n[c] = []), n[c].push(l)) : n[c] ??= l;
   }
   return t ? n[t] : n;
-}, Vt = at, Yt = (e, t) => at(e, t, !0), ot = decodeURIComponent, Ne = (e) => ke(e, ot), it = class {
+}, Wt = nt, Vt = (e, t) => nt(e, t, !0), at = decodeURIComponent, Ne = (e) => je(e, at), ot = class {
   /**
    * `.raw` can get the raw Request object.
    *
@@ -244,10 +244,10 @@ var Ut = (e, t, r) => {
     return this.#e[1] ? this.#e[1][e] : e;
   }
   query(e) {
-    return Vt(this.url, e);
+    return Wt(this.url, e);
   }
   queries(e) {
-    return Yt(this.url, e);
+    return Vt(this.url, e);
   }
   header(e) {
     if (e)
@@ -258,7 +258,7 @@ var Ut = (e, t, r) => {
     }), t;
   }
   async parseBody(e) {
-    return this.bodyCache.parsedBody ??= await Pt(this, e);
+    return this.bodyCache.parsedBody ??= await Ct(this, e);
   }
   #s = (e) => {
     const { bodyCache: t, raw: r } = this, s = t[e];
@@ -381,7 +381,7 @@ var Ut = (e, t, r) => {
   get method() {
     return this.raw.method;
   }
-  get [Ct]() {
+  get [Mt]() {
     return this.#e;
   }
   /**
@@ -433,20 +433,20 @@ var Ut = (e, t, r) => {
   get routePath() {
     return this.#e[0].map(([[, e]]) => e)[this.routeIndex].path;
   }
-}, Gt = {
+}, Yt = {
   Stringify: 1
-}, ct = async (e, t, r, s, n) => {
+}, it = async (e, t, r, s, n) => {
   typeof e == "object" && !(e instanceof String) && (e instanceof Promise || (e = e.toString()), e instanceof Promise && (e = await e));
   const a = e.callbacks;
   return a?.length ? (n ? n[0] += e : n = [e], Promise.all(a.map((i) => i({ phase: t, buffer: n, context: s }))).then(
     (i) => Promise.all(
-      i.filter(Boolean).map((c) => ct(c, t, !1, s, n))
+      i.filter(Boolean).map((c) => it(c, t, !1, s, n))
     ).then(() => n[0])
   )) : Promise.resolve(e);
-}, Xt = "text/plain; charset=UTF-8", he = (e, t) => ({
+}, Gt = "text/plain; charset=UTF-8", he = (e, t) => ({
   "Content-Type": e,
   ...t
-}), Qt = class {
+}), Xt = class {
   #t;
   #e;
   /**
@@ -503,7 +503,7 @@ var Ut = (e, t, r) => {
    * `.req` is the instance of {@link HonoRequest}.
    */
   get req() {
-    return this.#e ??= new it(this.#t, this.#h, this.#d), this.#e;
+    return this.#e ??= new ot(this.#t, this.#h, this.#d), this.#e;
   }
   /**
    * @see {@link https://hono.dev/docs/api/context#event}
@@ -731,7 +731,7 @@ var Ut = (e, t, r) => {
   text = (e, t, r) => !this.#i && !this.#a && !t && !r && !this.finalized ? new Response(e) : this.#o(
     e,
     t,
-    he(Xt, r)
+    he(Gt, r)
   );
   /**
    * `.json()` can render JSON as `Content-Type:application/json`.
@@ -752,7 +752,7 @@ var Ut = (e, t, r) => {
   );
   html = (e, t, r) => {
     const s = (n) => this.#o(n, t, he("text/html; charset=UTF-8", r));
-    return typeof e == "object" ? ct(e, Gt.Stringify, !1, {}).then(s) : s(e);
+    return typeof e == "object" ? it(e, Yt.Stringify, !1, {}).then(s) : s(e);
   };
   /**
    * `.redirect()` can Redirect, default status code is 302.
@@ -791,14 +791,14 @@ var Ut = (e, t, r) => {
    * ```
    */
   notFound = () => (this.#l ??= () => new Response(), this.#l(this));
-}, R = "ALL", Zt = "all", er = ["get", "post", "put", "delete", "options", "patch"], lt = "Can not add a route since the matcher is already built.", ut = class extends Error {
-}, tr = "__COMPOSED_HANDLER", rr = (e) => e.text("404 Not Found", 404), De = (e, t) => {
+}, A = "ALL", Qt = "all", Zt = ["get", "post", "put", "delete", "options", "patch"], ct = "Can not add a route since the matcher is already built.", lt = class extends Error {
+}, er = "__COMPOSED_HANDLER", tr = (e) => e.text("404 Not Found", 404), De = (e, t) => {
   if ("getResponse" in e) {
     const r = e.getResponse();
     return t.newResponse(r.body, r);
   }
   return console.error(e), t.text("Internal Server Error", 500);
-}, sr = class dt {
+}, rr = class ut {
   get;
   post;
   put;
@@ -819,7 +819,7 @@ var Ut = (e, t, r) => {
   #t = "/";
   routes = [];
   constructor(t = {}) {
-    [...er, Zt].forEach((a) => {
+    [...Zt, Qt].forEach((a) => {
       this[a] = (o, ...i) => (typeof o == "string" ? this.#t = o : this.#a(a, this.#t, o), i.forEach((c) => {
         this.#a(a, this.#t, c);
       }), this);
@@ -833,19 +833,19 @@ var Ut = (e, t, r) => {
       }
       return this;
     }, this.use = (a, ...o) => (typeof a == "string" ? this.#t = a : (this.#t = "*", o.unshift(a)), o.forEach((i) => {
-      this.#a(R, this.#t, i);
+      this.#a(A, this.#t, i);
     }), this);
     const { strict: s, ...n } = t;
-    Object.assign(this, n), this.getPath = s ?? !0 ? t.getPath ?? st : Wt;
+    Object.assign(this, n), this.getPath = s ?? !0 ? t.getPath ?? rt : zt;
   }
   #e() {
-    const t = new dt({
+    const t = new ut({
       router: this.router,
       getPath: this.getPath
     });
     return t.errorHandler = this.errorHandler, t.#r = this.#r, t.routes = this.routes, t;
   }
-  #r = rr;
+  #r = tr;
   // Cannot use `#` because it requires visibility at JavaScript runtime.
   errorHandler = De;
   /**
@@ -870,7 +870,7 @@ var Ut = (e, t, r) => {
     const s = this.basePath(t);
     return r.routes.map((n) => {
       let a;
-      r.errorHandler === De ? a = n.handler : (a = async (o, i) => (await Pe([], r.errorHandler)(o, () => n.handler(o, i))).res, a[tr] = n.handler), s.#a(n.method, n.path, a);
+      r.errorHandler === De ? a = n.handler : (a = async (o, i) => (await Pe([], r.errorHandler)(o, () => n.handler(o, i))).res, a[er] = n.handler), s.#a(n.method, n.path, a);
     }), this;
   }
   /**
@@ -888,7 +888,7 @@ var Ut = (e, t, r) => {
    */
   basePath(t) {
     const r = this.#e();
-    return r._basePath = U(this._basePath, t), r;
+    return r._basePath = L(this._basePath, t), r;
   }
   /**
    * `.onError()` handles an error and returns a customized Response.
@@ -970,7 +970,7 @@ var Ut = (e, t, r) => {
       return [c.env, l];
     };
     n ||= (() => {
-      const c = U(this._basePath, t), l = c === "/" ? 0 : c.length;
+      const c = L(this._basePath, t), l = c === "/" ? 0 : c.length;
       return (u) => {
         const d = new URL(u.url);
         return d.pathname = d.pathname.slice(l) || "/", new Request(d, u);
@@ -982,10 +982,10 @@ var Ut = (e, t, r) => {
         return u;
       await l();
     };
-    return this.#a(R, U(t, "*"), i), this;
+    return this.#a(A, L(t, "*"), i), this;
   }
   #a(t, r, s) {
-    t = t.toUpperCase(), r = U(this._basePath, r);
+    t = t.toUpperCase(), r = L(this._basePath, r);
     const n = { basePath: this._basePath, path: r, method: t, handler: s };
     this.router.add(t, r, [s, n]), this.routes.push(n);
   }
@@ -997,7 +997,7 @@ var Ut = (e, t, r) => {
   #s(t, r, s, n) {
     if (n === "HEAD")
       return (async () => new Response(null, await this.#s(t, r, s, "GET")))();
-    const a = this.getPath(t, { env: s }), o = this.router.match(n, a), i = new Qt(t, {
+    const a = this.getPath(t, { env: s }), o = this.router.match(n, a), i = new Xt(t, {
       path: a,
       matchResult: o,
       env: s,
@@ -1057,7 +1057,7 @@ var Ut = (e, t, r) => {
    */
   request = (t, r, s, n) => t instanceof Request ? this.fetch(r ? new Request(t, r) : t, s, n) : (t = t.toString(), this.fetch(
     new Request(
-      /^https?:\/\//.test(t) ? t : `http://localhost${U("/", t)}`,
+      /^https?:\/\//.test(t) ? t : `http://localhost${L("/", t)}`,
       r
     ),
     s,
@@ -1085,32 +1085,32 @@ var Ut = (e, t, r) => {
       t.respondWith(this.#s(t.request, t, void 0, t.request.method));
     });
   };
-}, ht = [];
-function nr(e, t) {
+}, dt = [];
+function sr(e, t) {
   const r = this.buildAllMatchers(), s = ((n, a) => {
-    const o = r[n] || r[R], i = o[2][a];
+    const o = r[n] || r[A], i = o[2][a];
     if (i)
       return i;
     const c = a.match(o[0]);
     if (!c)
-      return [[], ht];
+      return [[], dt];
     const l = c.indexOf("", 1);
     return [o[1][l], c];
   });
   return this.match = s, s(e, t);
 }
-var re = "[^/]+", Y = ".*", G = "(?:|/.*)", L = /* @__PURE__ */ Symbol(), ar = new Set(".\\+*[^]$()");
-function or(e, t) {
+var re = "[^/]+", Y = ".*", G = "(?:|/.*)", B = /* @__PURE__ */ Symbol(), nr = new Set(".\\+*[^]$()");
+function ar(e, t) {
   return e.length === 1 ? t.length === 1 ? e < t ? -1 : 1 : -1 : t.length === 1 || e === Y || e === G ? 1 : t === Y || t === G ? -1 : e === re ? 1 : t === re ? -1 : e.length === t.length ? e < t ? -1 : 1 : t.length - e.length;
 }
-var ir = class we {
+var or = class we {
   #t;
   #e;
   #r = /* @__PURE__ */ Object.create(null);
   insert(t, r, s, n, a) {
     if (t.length === 0) {
       if (this.#t !== void 0)
-        throw L;
+        throw B;
       if (a)
         return;
       this.#t = r;
@@ -1122,12 +1122,12 @@ var ir = class we {
       const u = c[1];
       let d = c[2] || re;
       if (u && c[2] && (d === ".*" || (d = d.replace(/^\((?!\?:)(?=[^)]+\)$)/, "(?:"), /\((?!\?:)/.test(d))))
-        throw L;
+        throw B;
       if (l = this.#r[d], !l) {
         if (Object.keys(this.#r).some(
           (h) => h !== Y && h !== G
         ))
-          throw L;
+          throw B;
         if (a)
           return;
         l = this.#r[d] = new we(), u !== "" && (l.#e = n.varIndex++);
@@ -1137,7 +1137,7 @@ var ir = class we {
       if (Object.keys(this.#r).some(
         (u) => u.length > 1 && u !== Y && u !== G
       ))
-        throw L;
+        throw B;
       if (a)
         return;
       l = this.#r[o] = new we();
@@ -1145,15 +1145,15 @@ var ir = class we {
     l.insert(i, r, s, n, a);
   }
   buildRegExpStr() {
-    const r = Object.keys(this.#r).sort(or).map((s) => {
+    const r = Object.keys(this.#r).sort(ar).map((s) => {
       const n = this.#r[s];
-      return (typeof n.#e == "number" ? `(${s})@${n.#e}` : ar.has(s) ? `\\${s}` : s) + n.buildRegExpStr();
+      return (typeof n.#e == "number" ? `(${s})@${n.#e}` : nr.has(s) ? `\\${s}` : s) + n.buildRegExpStr();
     });
     return typeof this.#t == "number" && r.unshift(`#${this.#t}`), r.length === 0 ? "" : r.length === 1 ? r[0] : "(?:" + r.join("|") + ")";
   }
-}, cr = class {
+}, ir = class {
   #t = { varIndex: 0 };
-  #e = new ir();
+  #e = new or();
   insert(e, t, r) {
     const s = [], n = [];
     for (let o = 0; ; ) {
@@ -1183,22 +1183,22 @@ var ir = class we {
     const r = [], s = [];
     return e = e.replace(/#(\d+)|@(\d+)|\.\*\$/g, (n, a, o) => a !== void 0 ? (r[++t] = Number(a), "$()") : (o !== void 0 && (s[Number(o)] = ++t), "")), [new RegExp(`^${e}`), r, s];
   }
-}, lr = [/^$/, [], /* @__PURE__ */ Object.create(null)], pt = /* @__PURE__ */ Object.create(null);
-function mt(e) {
-  return pt[e] ??= new RegExp(
+}, cr = [/^$/, [], /* @__PURE__ */ Object.create(null)], ht = /* @__PURE__ */ Object.create(null);
+function pt(e) {
+  return ht[e] ??= new RegExp(
     e === "*" ? "" : `^${e.replace(
       /\/\*$|([.\\+*[^\]$()])/g,
       (t, r) => r ? `\\${r}` : "(?:|/.*)"
     )}$`
   );
 }
-function ur() {
-  pt = /* @__PURE__ */ Object.create(null);
+function lr() {
+  ht = /* @__PURE__ */ Object.create(null);
 }
-function dr(e) {
-  const t = new cr(), r = [];
+function ur(e) {
+  const t = new ir(), r = [];
   if (e.length === 0)
-    return lr;
+    return cr;
   const s = e.map(
     (l) => [!/\*|\/:/.test(l[0]), ...l]
   ).sort(
@@ -1206,18 +1206,18 @@ function dr(e) {
   ), n = /* @__PURE__ */ Object.create(null);
   for (let l = 0, u = -1, d = s.length; l < d; l++) {
     const [h, p, y] = s[l];
-    h ? n[p] = [y.map(([g]) => [g, /* @__PURE__ */ Object.create(null)]), ht] : u++;
-    let f;
+    h ? n[p] = [y.map(([g]) => [g, /* @__PURE__ */ Object.create(null)]), dt] : u++;
+    let m;
     try {
-      f = t.insert(p, u, h);
+      m = t.insert(p, u, h);
     } catch (g) {
-      throw g === L ? new ut(p) : g;
+      throw g === B ? new lt(p) : g;
     }
     h || (r[u] = y.map(([g, w]) => {
       const b = /* @__PURE__ */ Object.create(null);
       for (w -= 1; w >= 0; w--) {
-        const [T, x] = f[w];
-        b[T] = x;
+        const [T, R] = m[w];
+        b[T] = R;
       }
       return [g, b];
     }));
@@ -1229,81 +1229,81 @@ function dr(e) {
       if (!p)
         continue;
       const y = Object.keys(p);
-      for (let f = 0, g = y.length; f < g; f++)
-        p[y[f]] = i[p[y[f]]];
+      for (let m = 0, g = y.length; m < g; m++)
+        p[y[m]] = i[p[y[m]]];
     }
   const c = [];
   for (const l in o)
     c[l] = r[o[l]];
   return [a, c, n];
 }
-function N(e, t) {
+function D(e, t) {
   if (e) {
     for (const r of Object.keys(e).sort((s, n) => n.length - s.length))
-      if (mt(r).test(t))
+      if (pt(r).test(t))
         return [...e[r]];
   }
 }
-var hr = class {
+var dr = class {
   name = "RegExpRouter";
   #t;
   #e;
   constructor() {
-    this.#t = { [R]: /* @__PURE__ */ Object.create(null) }, this.#e = { [R]: /* @__PURE__ */ Object.create(null) };
+    this.#t = { [A]: /* @__PURE__ */ Object.create(null) }, this.#e = { [A]: /* @__PURE__ */ Object.create(null) };
   }
   add(e, t, r) {
     const s = this.#t, n = this.#e;
     if (!s || !n)
-      throw new Error(lt);
+      throw new Error(ct);
     s[e] || [s, n].forEach((i) => {
-      i[e] = /* @__PURE__ */ Object.create(null), Object.keys(i[R]).forEach((c) => {
-        i[e][c] = [...i[R][c]];
+      i[e] = /* @__PURE__ */ Object.create(null), Object.keys(i[A]).forEach((c) => {
+        i[e][c] = [...i[A][c]];
       });
     }), t === "/*" && (t = "*");
     const a = (t.match(/\/:/g) || []).length;
     if (/\*$/.test(t)) {
-      const i = mt(t);
-      e === R ? Object.keys(s).forEach((c) => {
-        s[c][t] ||= N(s[c], t) || N(s[R], t) || [];
-      }) : s[e][t] ||= N(s[e], t) || N(s[R], t) || [], Object.keys(s).forEach((c) => {
-        (e === R || e === c) && Object.keys(s[c]).forEach((l) => {
+      const i = pt(t);
+      e === A ? Object.keys(s).forEach((c) => {
+        s[c][t] ||= D(s[c], t) || D(s[A], t) || [];
+      }) : s[e][t] ||= D(s[e], t) || D(s[A], t) || [], Object.keys(s).forEach((c) => {
+        (e === A || e === c) && Object.keys(s[c]).forEach((l) => {
           i.test(l) && s[c][l].push([r, a]);
         });
       }), Object.keys(n).forEach((c) => {
-        (e === R || e === c) && Object.keys(n[c]).forEach(
+        (e === A || e === c) && Object.keys(n[c]).forEach(
           (l) => i.test(l) && n[c][l].push([r, a])
         );
       });
       return;
     }
-    const o = nt(t) || [t];
+    const o = st(t) || [t];
     for (let i = 0, c = o.length; i < c; i++) {
       const l = o[i];
       Object.keys(n).forEach((u) => {
-        (e === R || e === u) && (n[u][l] ||= [
-          ...N(s[u], l) || N(s[R], l) || []
+        (e === A || e === u) && (n[u][l] ||= [
+          ...D(s[u], l) || D(s[A], l) || []
         ], n[u][l].push([r, a - c + i + 1]));
       });
     }
   }
-  match = nr;
+  match = sr;
   buildAllMatchers() {
     const e = /* @__PURE__ */ Object.create(null);
     return Object.keys(this.#e).concat(Object.keys(this.#t)).forEach((t) => {
       e[t] ||= this.#r(t);
-    }), this.#t = this.#e = void 0, ur(), e;
+    }), this.#t = this.#e = void 0, lr(), e;
   }
   #r(e) {
     const t = [];
-    let r = e === R;
+    let r = e === A;
     return [this.#t, this.#e].forEach((s) => {
       const n = s[e] ? Object.keys(s[e]).map((a) => [a, s[e][a]]) : [];
-      n.length !== 0 ? (r ||= !0, t.push(...n)) : e !== R && t.push(
-        ...Object.keys(s[R]).map((a) => [a, s[R][a]])
+      n.length !== 0 ? (r ||= !0, t.push(...n)) : e !== A && t.push(
+        ...Object.keys(s[A]).map((a) => [a, s[A][a]])
       );
-    }), r ? dr(t) : null;
+    }), r ? ur(t) : null;
   }
-}, pr = class {
+}, hr = class {
   name = "SmartRouter";
   #t = [];
   #e = [];
@@ -1312,7 +1312,7 @@ var hr = class {
   }
   add(e, t, r) {
     if (!this.#e)
-      throw new Error(lt);
+      throw new Error(ct);
     this.#e.push([e, t, r]);
   }
   match(e, t) {
@@ -1327,7 +1327,7 @@ var hr = class {
           i.add(...s[c]);
         o = i.match(e, t);
       } catch (c) {
-        if (c instanceof ut)
+        if (c instanceof lt)
           continue;
         throw c;
       }
@@ -1343,7 +1343,7 @@ var hr = class {
       throw new Error("No active router has been determined yet.");
     return this.#t[0];
   }
-}, V = /* @__PURE__ */ Object.create(null), mr = class ft {
+}, V = /* @__PURE__ */ Object.create(null), pr = class ft {
   #t;
   #e;
   #r;
@@ -1359,9 +1359,9 @@ var hr = class {
   insert(t, r, s) {
     this.#a = ++this.#a;
     let n = this;
-    const a = Bt(r), o = [];
+    const a = Lt(r), o = [];
     for (let i = 0, c = a.length; i < c; i++) {
-      const l = a[i], u = a[i + 1], d = Ft(l, u), h = Array.isArray(d) ? d[0] : l;
+      const l = a[i], u = a[i + 1], d = Jt(l, u), h = Array.isArray(d) ? d[0] : l;
       if (h in n.#e) {
         n = n.#e[h], d && o.push(d[1]);
         continue;
@@ -1379,7 +1379,7 @@ var hr = class {
   #s(t, r, s, n) {
     const a = [];
     for (let o = 0, i = t.#t.length; o < i; o++) {
-      const c = t.#t[o], l = c[r] || c[R], u = {};
+      const c = t.#t[o], l = c[r] || c[A], u = {};
       if (l !== void 0 && (l.params = /* @__PURE__ */ Object.create(null), a.push(l), s !== V || n && n !== V))
         for (let d = 0, h = l.possibleKeys.length; d < h; d++) {
           const p = l.possibleKeys[d], y = u[l.score];
@@ -1392,39 +1392,39 @@ var hr = class {
     const s = [];
     this.#n = V;
     let a = [this];
-    const o = rt(r), i = [];
+    const o = tt(r), i = [];
     for (let c = 0, l = o.length; c < l; c++) {
       const u = o[c], d = c === l - 1, h = [];
       for (let p = 0, y = a.length; p < y; p++) {
-        const f = a[p], g = f.#e[u];
-        g && (g.#n = f.#n, d ? (g.#e["*"] && s.push(
-          ...this.#s(g.#e["*"], t, f.#n)
-        ), s.push(...this.#s(g, t, f.#n))) : h.push(g));
-        for (let w = 0, b = f.#r.length; w < b; w++) {
-          const T = f.#r[w], x = f.#n === V ? {} : { ...f.#n };
+        const m = a[p], g = m.#e[u];
+        g && (g.#n = m.#n, d ? (g.#e["*"] && s.push(
+          ...this.#s(g.#e["*"], t, m.#n)
+        ), s.push(...this.#s(g, t, m.#n))) : h.push(g));
+        for (let w = 0, b = m.#r.length; w < b; w++) {
+          const T = m.#r[w], R = m.#n === V ? {} : { ...m.#n };
           if (T === "*") {
-            const q = f.#e["*"];
-            q && (s.push(...this.#s(q, t, f.#n)), q.#n = x, h.push(q));
+            const q = m.#e["*"];
+            q && (s.push(...this.#s(q, t, m.#n)), q.#n = R, h.push(q));
             continue;
           }
-          const [A, W, _] = T;
-          if (!u && !(_ instanceof RegExp))
+          const [O, C, x] = T;
+          if (!u && !(x instanceof RegExp))
             continue;
-          const O = f.#e[A], It = o.slice(c).join("/");
-          if (_ instanceof RegExp) {
-            const q = _.exec(It);
+          const _ = m.#e[O], It = o.slice(c).join("/");
+          if (x instanceof RegExp) {
+            const q = x.exec(It);
             if (q) {
-              if (x[W] = q[0], s.push(...this.#s(O, t, f.#n, x)), Object.keys(O.#e).length) {
-                O.#n = x;
-                const Mt = q[0].match(/\//)?.length ?? 0;
-                (i[Mt] ||= []).push(O);
+              if (R[C] = q[0], s.push(...this.#s(_, t, m.#n, R)), Object.keys(_.#e).length) {
+                _.#n = R;
+                const Ht = q[0].match(/\//)?.length ?? 0;
+                (i[Ht] ||= []).push(_);
               }
               continue;
             }
           }
-          (_ === !0 || _.test(u)) && (x[W] = u, d ? (s.push(...this.#s(O, t, x, f.#n)), O.#e["*"] && s.push(
-            ...this.#s(O.#e["*"], t, x, f.#n)
-          )) : (O.#n = x, h.push(O)));
+          (x === !0 || x.test(u)) && (R[C] = u, d ? (s.push(...this.#s(_, t, R, m.#n)), _.#e["*"] && s.push(
+            ...this.#s(_.#e["*"], t, R, m.#n)
+          )) : (_.#n = R, h.push(_)));
         }
       }
       a = h.concat(i.shift() ?? []);
@@ -1435,10 +1435,10 @@ var hr = class {
   name = "TrieRouter";
   #t;
   constructor() {
-    this.#t = new mr();
+    this.#t = new pr();
   }
   add(e, t, r) {
-    const s = nt(t);
+    const s = st(t);
     if (s) {
       for (let n = 0, a = s.length; n < a; n++)
         this.#t.insert(e, s[n], r);
@@ -1449,15 +1449,15 @@ var hr = class {
   match(e, t) {
     return this.#t.search(e, t);
   }
-}, yt = class extends sr {
+}, mt = class extends rr {
   /**
    * Creates an instance of the Hono class.
    *
    * @param options - Optional configuration options for the Hono instance.
    */
   constructor(e = {}) {
-    super(e), this.router = e.router ?? new pr({
-      routers: [new hr(), new fr()]
+    super(e), this.router = e.router ?? new hr({
+      routers: [new dr(), new fr()]
     });
   }
 };
@@ -1505,36 +1505,36 @@ class js {
     this.counters.clear(), this.histograms.clear(), this.gauges.clear();
   }
 }
-function yr(e) {
+function mr(e) {
   const t = [];
   for (const [r, s] of Object.entries(e.counters)) {
     t.push(`# TYPE ${r} counter`);
     for (const n of s)
-      t.push(`${r}${me(n.tags)} ${n.value}`);
+      t.push(`${r}${fe(n.tags)} ${n.value}`);
   }
   for (const [r, s] of Object.entries(e.histograms)) {
     t.push(`# TYPE ${r} histogram`);
     for (const n of s) {
-      const a = me(n.tags), o = n.values.reduce((c, l) => c + l, 0), i = n.values.length;
+      const a = fe(n.tags), o = n.values.reduce((c, l) => c + l, 0), i = n.values.length;
       t.push(`${r}_sum${a} ${o}`), t.push(`${r}_count${a} ${i}`);
     }
   }
   for (const [r, s] of Object.entries(e.gauges)) {
     t.push(`# TYPE ${r} gauge`);
     for (const n of s)
-      t.push(`${r}${me(n.tags)} ${n.value}`);
+      t.push(`${r}${fe(n.tags)} ${n.value}`);
   }
   return t.join(`
 `);
 }
-function wr(e) {
+function yr(e) {
   return e.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
 }
-function me(e) {
-  return !e || Object.keys(e).length === 0 ? "" : `{${Object.entries(e).sort(([r], [s]) => r.localeCompare(s)).map(([r, s]) => `${r}="${wr(s)}"`).join(",")}}`;
+function fe(e) {
+  return !e || Object.keys(e).length === 0 ? "" : `{${Object.entries(e).sort(([r], [s]) => r.localeCompare(s)).map(([r, s]) => `${r}="${yr(s)}"`).join(",")}}`;
 }
-const gr = ["secret", "key", "token", "password", "credential"];
-function Sr(e, t, r) {
+const wr = ["secret", "key", "token", "password", "credential"];
+function gr(e, t, r) {
   const s = `/${t.prefix ?? "___gateway"}`, n = async (a, o) => {
     if (t.auth && !await t.auth(a))
       return a.json(
@@ -1564,7 +1564,7 @@ function Sr(e, t, r) {
         },
         404
       );
-    const o = t.metrics.snapshot(), i = yr(o);
+    const o = t.metrics.snapshot(), i = mr(o);
     return a.text(i, 200, {
       "content-type": "text/plain; version=0.0.4; charset=utf-8"
     });
@@ -1581,10 +1581,10 @@ function ge(e) {
   if (Array.isArray(e)) return e.map(ge);
   const t = {};
   for (const [r, s] of Object.entries(e))
-    gr.some((n) => r.toLowerCase().includes(n)) ? t[r] = "[REDACTED]" : typeof s == "function" ? t[r] = "[Function]" : typeof s == "object" && s !== null ? t[r] = ge(s) : t[r] = s;
+    wr.some((n) => r.toLowerCase().includes(n)) ? t[r] = "[REDACTED]" : typeof s == "function" ? t[r] = "[Function]" : typeof s == "object" && s !== null ? t[r] = ge(s) : t[r] = s;
   return t;
 }
-const j = {
+const k = {
   HTTP_METHOD: "http.request.method",
   HTTP_ROUTE: "http.route",
   HTTP_STATUS_CODE: "http.response.status_code",
@@ -1634,14 +1634,14 @@ class ie {
     };
   }
 }
-const vr = {
+const Sr = {
   INTERNAL: 1,
   // SPAN_KIND_INTERNAL
   SERVER: 2,
   // SPAN_KIND_SERVER
   CLIENT: 3
   // SPAN_KIND_CLIENT
-}, Tr = {
+}, vr = {
   UNSET: 0,
   // STATUS_CODE_UNSET
   OK: 1,
@@ -1649,19 +1649,19 @@ const vr = {
   ERROR: 2
   // STATUS_CODE_ERROR
 };
-function br(e) {
+function Tr(e) {
   return typeof e == "string" ? { stringValue: e } : typeof e == "boolean" ? { boolValue: e } : Number.isInteger(e) ? { intValue: e } : { doubleValue: e };
 }
 function Ue(e) {
   return Object.entries(e).map(([t, r]) => ({
     key: t,
-    value: br(r)
+    value: Tr(r)
   }));
 }
-function fe(e) {
+function me(e) {
   return String(e * 1e6);
 }
-function xr(e, t, r) {
+function br(e, t, r) {
   const s = [{ key: "service.name", value: { stringValue: t } }];
   r && s.push({
     key: "service.version",
@@ -1672,17 +1672,17 @@ function xr(e, t, r) {
       traceId: a.traceId,
       spanId: a.spanId,
       name: a.name,
-      kind: vr[a.kind],
-      startTimeUnixNano: fe(a.startTimeMs),
-      endTimeUnixNano: fe(a.endTimeMs),
+      kind: Sr[a.kind],
+      startTimeUnixNano: me(a.startTimeMs),
+      endTimeUnixNano: me(a.endTimeMs),
       attributes: Ue(a.attributes),
       status: {
-        code: Tr[a.status.code],
+        code: vr[a.status.code],
         ...a.status.message ? { message: a.status.message } : {}
       },
       events: a.events.map((i) => ({
         name: i.name,
-        timeUnixNano: fe(i.timeMs),
+        timeUnixNano: me(i.timeMs),
         ...i.attributes ? { attributes: Ue(i.attributes) } : {}
       }))
     };
@@ -1702,7 +1702,7 @@ function xr(e, t, r) {
     ]
   };
 }
-class ks {
+class Is {
   endpoint;
   headers;
   timeoutMs;
@@ -1713,7 +1713,7 @@ class ks {
   }
   async export(t) {
     if (t.length === 0) return;
-    const r = xr(t, this.serviceName, this.serviceVersion);
+    const r = br(t, this.serviceName, this.serviceVersion);
     await fetch(this.endpoint, {
       method: "POST",
       headers: {
@@ -1733,17 +1733,17 @@ class Hs {
       );
   }
 }
-function Rr(e) {
+function xr(e) {
   return e >= 1 ? !0 : e <= 0 ? !1 : Math.random() < e;
 }
 function ce() {
   const e = new Uint8Array(8);
   return crypto.getRandomValues(e), Array.from(e, (t) => t.toString(16).padStart(2, "0")).join("");
 }
-const C = () => {
+const M = () => {
 };
-function Ar(e, t) {
-  return !t || typeof t == "string" && !Er(e, t) ? C : (r, ...s) => {
+function Rr(e, t) {
+  return !t || typeof t == "string" && !Ar(e, t) ? M : (r, ...s) => {
     const n = [`[${e}]`, r];
     for (const a of s)
       n.push(
@@ -1752,43 +1752,43 @@ function Ar(e, t) {
     console.debug(n.join(" "));
   };
 }
-function Er(e, t) {
+function Ar(e, t) {
   return t.split(",").map((s) => s.trim()).some((s) => {
     if (s === "*") return !0;
     const n = s.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
     return new RegExp(`^${n}$`).test(e);
   });
 }
-function _r(e) {
-  if (!e) return () => C;
+function Er(e) {
+  if (!e) return () => M;
   const t = /* @__PURE__ */ new Map();
   return (r) => {
     const s = t.get(r);
     if (s) return s;
-    const n = Ar(r, e);
+    const n = Rr(r, e);
     return t.set(r, n), n;
   };
 }
-function k(e) {
+function j(e) {
   return e.replace(/[\r\n\0]/g, "");
 }
 function Se(e) {
   return e.replace(/"/g, '\\"');
 }
-function He(e) {
+function Ie(e) {
   return new Headers(e.req.raw.headers);
 }
-function $r(e, t) {
+function _r(e, t) {
   e.req.raw = new Request(e.req.raw, { headers: t });
 }
 function I(e, t) {
-  const r = He(e);
-  t(r), $r(e, r);
+  const r = Ie(e);
+  t(r), _r(e, r);
 }
-const Or = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
-function jr(e) {
+const $r = /^([0-9a-f]{2})-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/;
+function Or(e) {
   if (!e) return null;
-  const t = e.trim().match(Or);
+  const t = e.trim().match($r);
   if (!t) return null;
   const [, r, s, n, a] = t;
   return r === "ff" || s === "00000000000000000000000000000000" || n === "0000000000000000" ? null : { version: r, traceId: s, parentId: n, flags: a };
@@ -1796,39 +1796,39 @@ function jr(e) {
 function kr() {
   return {
     version: "00",
-    traceId: wt(16),
+    traceId: yt(16),
     parentId: le(),
     flags: "01"
   };
 }
-function Ie(e) {
+function He(e) {
   return `${e.version}-${e.traceId}-${e.parentId}-${e.flags}`;
 }
 function le() {
-  return wt(8);
+  return yt(8);
 }
-function wt(e) {
+function yt(e) {
   const t = new Uint8Array(e);
   return crypto.getRandomValues(t), Array.from(t, (r) => r.toString(16).padStart(2, "0")).join("");
 }
-const B = "_stomaTraceRequested", ve = "_stomaTraceEntries", Te = "_stomaTraceDetails", gt = () => {
+const K = "_stomaTraceRequested", ve = "_stomaTraceEntries", Te = "_stomaTraceDetails", wt = () => {
 };
-function Me(e, t) {
-  return e.get(B) ? (r, s) => {
+function qe(e, t) {
+  return e.get(K) ? (r, s) => {
     const n = e.get(Te) ?? /* @__PURE__ */ new Map();
     n.set(t, { action: r, data: s }), e.set(Te, n);
-  } : gt;
+  } : wt;
 }
-function Hr(e) {
-  return e.get(B) === !0;
-}
-function K(e, t) {
-  return t ? { ...e, ...t } : { ...e };
+function jr(e) {
+  return e.get(K) === !0;
 }
 function F(e, t) {
-  return z(e)?.debug(`stoma:policy:${t}`) ?? C;
+  return t ? { ...e, ...t } : { ...e };
 }
-function M(e, t) {
+function z(e, t) {
+  return W(e)?.debug(`stoma:policy:${t}`) ?? M;
+}
+function H(e, t) {
   return e ? async (r, s) => {
     if (await e(r)) {
       await s();
@@ -1846,14 +1846,14 @@ async function E(e, t, r, s) {
     ), t;
   }
 }
-const be = "_stomaDebugHeaders", qe = "_stomaDebugRequested";
+const be = "_stomaDebugHeaders", Me = "_stomaDebugRequested";
 function $(e, t, r) {
-  const s = e.get(qe);
+  const s = e.get(Me);
   if (!s || !(s.has(t) || s.has("*"))) return;
   const n = e.get(be) ?? /* @__PURE__ */ new Map();
   n.set(t, String(r)), e.set(be, n);
 }
-function St(e, t, r) {
+function gt(e, t, r) {
   const s = e.req.header(t);
   if (!s) return;
   const n = s.split(",").map((i) => i.trim().toLowerCase()).filter(Boolean);
@@ -1866,24 +1866,24 @@ function St(e, t, r) {
       o.add("*");
   for (const i of n)
     i !== "*" && (!a || a.has(i)) && o.add(i);
-  o.size > 0 && e.set(qe, o), (o.has("trace") || o.has("*")) && e.set(B, !0);
+  o.size > 0 && e.set(Me, o), (o.has("trace") || o.has("*")) && e.set(K, !0);
 }
-function vt(e) {
+function St(e) {
   return e.get(be);
 }
-function Tt(e) {
-  const t = e.get(qe);
+function vt(e) {
+  const t = e.get(Me);
   return t !== void 0 && t.size > 0;
 }
-function bt(e) {
+function Tt(e) {
   const t = e.map((r, s) => ({
     ...r,
     durationMs: s === 0 ? r.durationMs : Math.max(0, r.durationMs - e[s - 1].durationMs)
   }));
   return t.reverse(), t;
 }
-const Ir = () => C, xt = "gateway";
-function Mr(e, t, r, s = 100) {
+const Ir = () => M, bt = "gateway";
+function Hr(e, t, r, s = 100) {
   const n = /* @__PURE__ */ new Map();
   for (const o of e)
     n.set(o.name, o);
@@ -1901,66 +1901,65 @@ function qr(e) {
     const r = t.handler, s = t.priority ?? 100;
     return async (a, o) => {
       const i = Date.now();
-      if (a.get(B) !== !0 && a.get("_otelSpans") === void 0) {
+      if (a.get(K) !== !0 && a.get("_otelSpans") === void 0)
         try {
-          await r(a, o);
+          return await r(a, o);
         } finally {
-          const u = Date.now() - i, d = a.get("_policyTimings") ?? [];
-          d.push({ name: t.name, durationMs: u }), a.set("_policyTimings", d);
+          const d = Date.now() - i, h = a.get("_policyTimings") ?? [];
+          h.push({ name: t.name, durationMs: d }), a.set("_policyTimings", h);
         }
-        return;
-      }
-      let c = !1, l = null;
+      let c = !1, l = null, u;
       try {
-        await r(a, async () => {
+        u = await r(a, async () => {
           c = !0, await o();
         });
-      } catch (u) {
-        throw l = u instanceof Error ? u.message : String(u), u;
+      } catch (d) {
+        throw l = d instanceof Error ? d.message : String(d), d;
       } finally {
-        const u = Date.now() - i, d = a.get("_policyTimings") ?? [];
-        if (d.push({ name: t.name, durationMs: u }), a.set("_policyTimings", d), a.get(B) === !0) {
-          const p = a.get(ve) ?? [];
-          p.push({
+        const d = Date.now() - i, h = a.get("_policyTimings") ?? [];
+        if (h.push({ name: t.name, durationMs: d }), a.set("_policyTimings", h), a.get(K) === !0) {
+          const y = a.get(ve) ?? [];
+          y.push({
             name: t.name,
             priority: s,
-            durationMs: u,
+            durationMs: d,
             calledNext: c,
             error: l
-          }), a.set(ve, p);
+          }), a.set(ve, y);
         }
-        const h = a.get("_otelSpans");
-        if (h !== void 0) {
-          const p = a.get("_otelRootSpan"), y = new ie(
+        const p = a.get("_otelSpans");
+        if (p !== void 0) {
+          const y = a.get("_otelRootSpan"), m = new ie(
             `policy:${t.name}`,
             "INTERNAL",
-            p.traceId,
+            y.traceId,
             ce(),
-            p.spanId,
+            y.spanId,
             i
           );
-          y.setAttribute("policy.name", t.name).setAttribute("policy.priority", s), l && y.setStatus("ERROR", l), h.push(y.end());
+          m.setAttribute("policy.name", t.name).setAttribute("policy.priority", s), l && m.setStatus("ERROR", l), p.push(m.end());
         }
       }
+      return u;
     };
   });
 }
-function Rt(e, t, r = Ir, s = "x-request-id", n, a, o) {
+function xt(e, t, r = Ir, s = "x-request-id", n, a, o) {
   const i = a === !0 ? {} : a || void 0, c = i?.requestHeader ?? "x-stoma-debug", l = i?.allow;
   return async (u, d) => {
-    const h = u.req.header("traceparent") ?? null, p = jr(h), y = p?.traceId ?? kr().traceId, f = le(), g = {
+    const h = u.req.header("traceparent") ?? null, p = Or(h), y = p?.traceId ?? kr().traceId, m = le(), g = {
       requestId: crypto.randomUUID(),
       startTime: Date.now(),
       gatewayName: e,
       routePath: t,
       traceId: y,
-      spanId: f,
+      spanId: m,
       debug: r,
       adapter: n
     };
-    u.set(xt, g);
+    u.set(bt, g);
     let w;
-    if (o && Rr(o.sampleRate ?? 1)) {
+    if (o && xr(o.sampleRate ?? 1)) {
       const b = ce();
       w = new ie(
         `${u.req.method} ${t}`,
@@ -1969,64 +1968,64 @@ function Rt(e, t, r = Ir, s = "x-request-id", n, a, o) {
         b,
         p?.parentId,
         g.startTime
-      ), w.setAttribute(j.HTTP_METHOD, u.req.method).setAttribute(j.HTTP_ROUTE, t).setAttribute(j.URL_PATH, new URL(u.req.url).pathname).setAttribute("gateway.name", e), u.set("_otelRootSpan", w), u.set("_otelSpans", []);
+      ), w.setAttribute(k.HTTP_METHOD, u.req.method).setAttribute(k.HTTP_ROUTE, t).setAttribute(k.URL_PATH, new URL(u.req.url).pathname).setAttribute("gateway.name", e), u.set("_otelRootSpan", w), u.set("_otelSpans", []);
     }
-    if (i && St(u, c, l), await d(), u.res.headers.set(s, g.requestId), u.res.headers.set(
+    if (i && gt(u, c, l), await d(), u.res.headers.set(s, g.requestId), u.res.headers.set(
       "traceparent",
-      Ie({
+      He({
         version: "00",
         traceId: g.traceId,
         parentId: g.spanId,
         flags: p?.flags ?? "01"
       })
     ), i) {
-      const b = vt(u);
+      const b = St(u);
       if (b)
-        for (const [T, x] of b)
-          u.res.headers.set(T, x);
+        for (const [T, R] of b)
+          u.res.headers.set(T, R);
     }
-    if (u.get(B) === !0) {
+    if (u.get(K) === !0) {
       const b = u.get(ve);
       if (b && b.length > 0) {
-        const T = u.get(Te), A = bt(b).map((_) => {
-          const O = T?.get(_.name);
-          return O ? { ..._, detail: O } : _;
-        }), W = {
+        const T = u.get(Te), O = Tt(b).map((x) => {
+          const _ = T?.get(x.name);
+          return _ ? { ...x, detail: _ } : x;
+        }), C = {
           requestId: g.requestId,
           traceId: g.traceId,
           route: t,
           totalMs: Date.now() - g.startTime,
-          entries: A
+          entries: O
         };
-        u.res.headers.set("x-stoma-trace", JSON.stringify(W));
+        u.res.headers.set("x-stoma-trace", JSON.stringify(C));
       }
     }
     if (w) {
-      w.setAttribute(j.HTTP_STATUS_CODE, u.res.status).setStatus(
+      w.setAttribute(k.HTTP_STATUS_CODE, u.res.status).setStatus(
         u.res.status >= 500 ? "ERROR" : u.res.status >= 400 ? "UNSET" : "OK"
       );
-      const b = w.end(), T = u.get("_otelSpans") ?? [], x = [b, ...T], A = o.exporter.export(x).catch(() => {
+      const b = w.end(), T = u.get("_otelSpans") ?? [], R = [b, ...T], O = o.exporter.export(R).catch(() => {
       });
-      n?.waitUntil && n.waitUntil(A);
+      n?.waitUntil && n.waitUntil(O);
     }
   };
 }
-function z(e) {
-  return e.get(xt);
+function W(e) {
+  return e.get(bt);
 }
-function Is(e) {
+function qs(e) {
   if (!e.routes || e.routes.length === 0)
-    throw new m(
+    throw new f(
       500,
       "config_error",
       "Gateway requires at least one route"
     );
-  const t = e.name ?? "edge-gateway", r = _r(e.debug), s = r("stoma:gateway"), n = r("stoma:pipeline"), a = r("stoma:upstream"), o = new yt();
+  const t = e.name ?? "edge-gateway", r = Er(e.debug), s = r("stoma:gateway"), n = r("stoma:pipeline"), a = r("stoma:upstream"), o = new mt();
   o.onError((d, h) => {
     if (e.onError)
       return e.onError(d, h);
-    const p = z(h);
-    return d instanceof m ? tt(d, p?.requestId) : (console.error(
+    const p = W(h);
+    return d instanceof f ? et(d, p?.requestId) : (console.error(
       `[${t}] Unhandled error on ${h.req.method} ${h.req.path}:`,
       d
     ), qt(p?.requestId, e.defaultErrorMessage));
@@ -2042,7 +2041,7 @@ function Is(e) {
   let i = 0;
   const c = [], l = /* @__PURE__ */ new Map();
   for (const d of e.routes) {
-    const h = Cr(e.basePath, d.path), p = Rt(
+    const h = Mr(e.basePath, d.path), p = xt(
       t,
       d.path,
       r,
@@ -2050,31 +2049,39 @@ function Is(e) {
       e.adapter,
       e.debugHeaders,
       e.tracing
-    ), y = Mr(
+    ), y = Hr(
       e.policies ?? [],
       d.pipeline.policies ?? [],
       n,
       e.defaultPolicyPriority
-    ), f = qr(y), g = Pr(
+    ), m = qr(y), g = Cr(
       d,
       a,
       e.adapter
-    ), w = [p, ...f, g], b = d.methods ?? e.defaultMethods ?? ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], T = b.map((A) => A.toUpperCase());
+    ), w = [p, ...m, g], b = d.methods ?? e.defaultMethods ?? ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], T = b.map((x) => x.toUpperCase()), R = y.some((x) => x.name === "cors");
+    if (R && !T.includes("OPTIONS")) {
+      const x = [
+        p,
+        ...m,
+        async (_) => _.body(null, 204)
+      ];
+      o.on("OPTIONS", h, ...x), i += 1;
+    }
     o.on(T, h, ...w), i += b.length;
-    const x = y.map((A) => A.name);
+    const O = y.map((x) => x.name), C = R && !T.includes("OPTIONS") ? [...T, "OPTIONS"] : T;
     c.push({
       path: h,
-      methods: T,
-      policyNames: x,
+      methods: C,
+      policyNames: O,
       upstreamType: d.pipeline.upstream.type
     });
-    for (const A of y)
-      l.has(A.name) || l.set(A.name, {
-        name: A.name,
-        priority: A.priority ?? e.defaultPolicyPriority ?? 100
+    for (const x of y)
+      l.has(x.name) || l.set(x.name, {
+        name: x.name,
+        priority: x.priority ?? e.defaultPolicyPriority ?? 100
       });
     s(
-      `route ${h} [${T.join(",")}]${x.length ? ` policies=[${x.join(", ")}]` : ""} upstream=${d.pipeline.upstream.type}`
+      `route ${h} [${T.join(",")}]${O.length ? ` policies=[${O.join(", ")}]` : ""} upstream=${d.pipeline.upstream.type}`
     );
   }
   const u = {
@@ -2088,35 +2095,35 @@ function Is(e) {
     const d = typeof e.admin == "boolean" ? { enabled: !0 } : e.admin;
     d.enabled && (d.auth || console.warn(
       `[stoma:${t}] admin routes enabled without authentication`
-    ), Sr(o, d, u), s(
+    ), gr(o, d, u), s(
       `admin routes registered at /${d.prefix ?? "___gateway"}/*`
     ));
   }
   return s(`"${t}" started with ${i} route handlers`), { app: o, routeCount: i, name: t, _registry: u };
 }
-function Cr(e, t) {
+function Mr(e, t) {
   if (!e) return t;
   const r = e.endsWith("/") ? e.slice(0, -1) : e, s = t.startsWith("/") ? t : `/${t}`;
   return `${r}${s}`;
 }
-function Pr(e, t = C, r) {
+function Cr(e, t = M, r) {
   const s = e.pipeline.upstream;
   switch (s.type) {
     case "handler":
-      return Nr(s);
+      return Pr(s);
     case "url":
-      return Ur(s, t);
+      return Dr(s, t);
     case "service-binding":
-      return Dr(s, t, r);
+      return Nr(s, t, r);
     default:
-      throw new m(
+      throw new f(
         500,
         "config_error",
         `Unknown upstream type: ${s.type}`
       );
   }
 }
-function Nr(e) {
+function Pr(e) {
   return async (t) => e.handler(t);
 }
 const se = [
@@ -2130,10 +2137,10 @@ const se = [
   "transfer-encoding",
   "upgrade"
 ];
-function Dr(e, t = C, r) {
+function Nr(e, t = M, r) {
   return async (s) => {
     if (!r?.dispatchBinding)
-      throw new m(
+      throw new f(
         502,
         "config_error",
         `Service binding "${e.service}" requires adapter.dispatchBinding - pass "env" to cloudflareAdapter() or provide a custom dispatchBinding`
@@ -2141,25 +2148,25 @@ function Dr(e, t = C, r) {
     const n = new URL(s.req.url);
     let a = n.pathname;
     if (e.rewritePath) {
-      const f = a;
-      a = e.rewritePath(a), t(`path rewrite: ${f} -> ${a}`);
+      const m = a;
+      a = e.rewritePath(a), t(`path rewrite: ${m} -> ${a}`);
     }
     const o = new URL(a + n.search, s.req.url);
     t(
       `service-binding "${e.service}": ${s.req.method} ${o.pathname}${o.search}`
     );
-    const i = He(s);
-    for (const f of se)
-      i.delete(f);
-    const c = z(s);
+    const i = Ie(s);
+    for (const m of se)
+      i.delete(m);
+    const c = W(s);
     if (c) {
-      const f = le();
+      const m = le();
       i.set(
         "traceparent",
-        Ie({
+        He({
           version: "00",
           traceId: c.traceId,
-          parentId: f,
+          parentId: m,
           flags: "01"
         })
       );
@@ -2173,14 +2180,14 @@ function Dr(e, t = C, r) {
     }), u = s.get("_otelSpans");
     let d;
     if (u !== void 0) {
-      const f = s.get("_otelRootSpan");
+      const m = s.get("_otelRootSpan");
       d = new ie(
         `upstream:service-binding:${e.service}`,
         "CLIENT",
-        f.traceId,
+        m.traceId,
         ce(),
-        f.spanId
-      ), d.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute("rpc.service", e.service);
+        m.spanId
+      ), d.setAttribute(k.HTTP_METHOD, s.req.method).setAttribute(k.URL_PATH, o.pathname).setAttribute("rpc.service", e.service);
     }
     const h = Date.now(), p = await r.dispatchBinding(
       e.service,
@@ -2188,10 +2195,10 @@ function Dr(e, t = C, r) {
     );
     t(
       `service-binding responded: ${p.status} (${Date.now() - h}ms)`
-    ), d && (d.setAttribute(j.HTTP_STATUS_CODE, p.status).setStatus(p.status >= 500 ? "ERROR" : "OK"), u.push(d.end()));
+    ), d && (d.setAttribute(k.HTTP_STATUS_CODE, p.status).setStatus(p.status >= 500 ? "ERROR" : "OK"), u.push(d.end()));
     const y = new Headers(p.headers);
-    for (const f of se)
-      y.delete(f);
+    for (const m of se)
+      y.delete(m);
     return new Response(p.body, {
       status: p.status,
       statusText: p.statusText,
@@ -2199,7 +2206,7 @@ function Dr(e, t = C, r) {
     });
   };
 }
-function Ur(e, t = C) {
+function Dr(e, t = M) {
   const r = new URL(e.target);
   return async (s) => {
     const n = new URL(s.req.url);
@@ -2212,24 +2219,24 @@ function Ur(e, t = C) {
     if (o.origin !== r.origin)
       throw t(
         `SSRF blocked: rewritten URL origin ${o.origin} != ${r.origin}`
-      ), new m(
+      ), new f(
         502,
         "upstream_error",
         "Rewritten URL must not change the upstream origin"
       );
     t(`proxying ${s.req.method} ${s.req.path} -> ${o.toString()}`);
-    const i = He(s);
+    const i = Ie(s);
     for (const w of se)
       i.delete(w);
     if (s.get("_preserveHost") === !0 || i.set("host", o.host), e.headers)
       for (const [w, b] of Object.entries(e.headers))
         i.set(w, b);
-    const l = z(s);
+    const l = W(s);
     if (l) {
       const w = le();
       i.set(
         "traceparent",
-        Ie({
+        He({
           version: "00",
           traceId: l.traceId,
           parentId: w,
@@ -2257,49 +2264,49 @@ function Ur(e, t = C) {
         w.traceId,
         ce(),
         w.spanId
-      ), p.setAttribute(j.HTTP_METHOD, s.req.method).setAttribute(j.URL_PATH, o.pathname).setAttribute(j.SERVER_ADDRESS, o.host);
+      ), p.setAttribute(k.HTTP_METHOD, s.req.method).setAttribute(k.URL_PATH, o.pathname).setAttribute(k.SERVER_ADDRESS, o.host);
     }
     const y = Date.now();
-    let f;
+    let m;
     try {
-      f = await fetch(
+      m = await fetch(
         u,
         d ? { signal: d } : void 0
       );
     } catch (w) {
       throw w instanceof DOMException && w.name === "AbortError" ? w : (t(
         `upstream fetch failed: ${w instanceof Error ? w.message : w}`
-      ), new m(
+      ), new f(
         502,
         "upstream_error",
         `Upstream request to ${o.host} failed: ${w instanceof Error ? w.message : String(w)}`
       ));
     }
     t(
-      `upstream responded: ${f.status} (${Date.now() - y}ms)`
-    ), p && (p.setAttribute(j.HTTP_STATUS_CODE, f.status).setStatus(f.status >= 500 ? "ERROR" : "OK"), h.push(p.end()));
-    const g = new Headers(f.headers);
+      `upstream responded: ${m.status} (${Date.now() - y}ms)`
+    ), p && (p.setAttribute(k.HTTP_STATUS_CODE, m.status).setStatus(m.status >= 500 ? "ERROR" : "OK"), h.push(p.end()));
+    const g = new Headers(m.headers);
     for (const w of se)
       g.delete(w);
-    return new Response(f.body, {
-      status: f.status,
-      statusText: f.statusText,
+    return new Response(m.body, {
+      status: m.status,
+      statusText: m.statusText,
       headers: g
     });
   };
 }
-function Lr(e) {
+function Ur(e) {
   let t = e;
   return t.startsWith("/") || (t = `/${t}`), t.length > 1 && t.endsWith("/") && (t = t.slice(0, -1)), t;
 }
-function Br(e, t) {
+function Lr(e, t) {
   const r = t.startsWith("/") ? t : `/${t}`;
   return e.endsWith("/") && r.startsWith("/") ? `${e}${r.slice(1)}` : `${e}${r}`;
 }
 function Ms(e) {
-  const t = Lr(e.prefix), r = e.policies ?? [], s = e.metadata ?? {};
+  const t = Ur(e.prefix), r = e.policies ?? [], s = e.metadata ?? {};
   return e.routes.map((n) => {
-    const a = Br(t, n.path), o = n.pipeline.policies ?? [], i = r.length > 0 || o.length > 0 ? [...r, ...o] : void 0, c = Object.keys(s).length > 0 || n.metadata ? { ...s, ...n.metadata } : void 0;
+    const a = Lr(t, n.path), o = n.pipeline.policies ?? [], i = r.length > 0 || o.length > 0 ? [...r, ...o] : void 0, c = Object.keys(s).length > 0 || n.metadata ? { ...s, ...n.metadata } : void 0;
     return {
       ...n,
       path: a,
@@ -2345,15 +2352,15 @@ const S = {
 };
 function v(e) {
   return ((t) => {
-    const r = K(
+    const r = F(
       e.defaults ?? {},
       t
     );
     e.validate && e.validate(r);
     const s = async (o, i) => {
-      const c = F(o, e.name), l = Me(o, e.name), u = z(o);
+      const c = z(o, e.name), l = qe(o, e.name), u = W(o);
       await e.handler(o, i, { config: r, debug: c, trace: l, gateway: u });
-    }, n = M(r.skip, s);
+    }, n = H(r.skip, s);
     let a;
     if (e.evaluate) {
       const o = e.evaluate;
@@ -2372,7 +2379,7 @@ function v(e) {
     };
   });
 }
-class Jr {
+class Br {
   promises = [];
   /**
    * Add a promise to the background work queue.
@@ -2397,16 +2404,16 @@ class Jr {
   }
 }
 function Kr(e, t) {
-  const r = t?.path ?? "/*", s = t?.gatewayName ?? "test-gateway", n = t?.adapter ?? new Jr(), a = new yt();
+  const r = t?.path ?? "/*", s = t?.gatewayName ?? "test-gateway", n = t?.adapter ?? new Br(), a = new mt();
   return a.use(
     r,
-    Rt(s, r, void 0, void 0, n)
+    xt(s, r, void 0, void 0, n)
   ), a.use(r, async (o, i) => {
     try {
       await e.handler(o, i);
     } catch (c) {
-      if (c instanceof m)
-        return tt(c);
+      if (c instanceof f)
+        return et(c);
       throw c;
     }
   }), t?.upstream ? a.all(r, t.upstream) : a.all(r, (o) => o.json({ ok: !0 })), {
@@ -2418,23 +2425,23 @@ function Kr(e, t) {
     request: (o, i) => a.request(o, i)
   };
 }
-const qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Cs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   Priority: S,
   createPolicyTestHarness: Kr,
   definePolicy: v,
-  getCollectedDebugHeaders: vt,
-  isDebugRequested: Tt,
-  isTraceRequested: Hr,
-  noopTraceReporter: gt,
-  parseDebugRequest: St,
-  policyDebug: F,
-  policyTrace: Me,
-  resolveConfig: K,
+  getCollectedDebugHeaders: St,
+  isDebugRequested: vt,
+  isTraceRequested: jr,
+  noopTraceReporter: wt,
+  parseDebugRequest: gt,
+  policyDebug: z,
+  policyTrace: qe,
+  resolveConfig: F,
   safeCall: E,
   setDebugHeader: $,
-  withSkip: M
-}, Symbol.toStringTag, { value: "Module" })), Cs = /* @__PURE__ */ v({
+  withSkip: H
+}, Symbol.toStringTag, { value: "Module" })), Ps = /* @__PURE__ */ v({
   name: "mock",
   priority: S.MOCK,
   httpOnly: !0,
@@ -2450,7 +2457,7 @@ const qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     typeof r.body == "object" && !n.has("content-type") && n.set("content-type", "application/json"), e.res = new Response(s, { status: r.status, headers: n });
   }
 });
-function Ps(e) {
+function Ns(e) {
   const t = e?.timeout ?? 3e4, r = async (s, n) => {
     if (e?.preserveHost && s.set("_preserveHost", !0), e?.stripHeaders || e?.headers) {
       const a = e?.stripHeaders, o = e?.headers;
@@ -2476,11 +2483,11 @@ function Ps(e) {
   return {
     name: "proxy",
     priority: S.PROXY,
-    handler: M(e?.skip, r),
+    handler: H(e?.skip, r),
     httpOnly: !0
   };
 }
-const Ns = /* @__PURE__ */ v({
+const Ds = /* @__PURE__ */ v({
   name: "api-key-auth",
   priority: S.AUTH,
   defaults: { headerName: "x-api-key" },
@@ -2488,13 +2495,13 @@ const Ns = /* @__PURE__ */ v({
   handler: async (e, t, { config: r, debug: s, trace: n }) => {
     let a = e.req.header(r.headerName), o = "header";
     if (!a && r.queryParam && (a = new URL(e.req.url).searchParams.get(r.queryParam) ?? void 0, o = "query"), !a)
-      throw n("rejected", { reason: "missing" }), new m(401, "unauthorized", "Missing API key");
+      throw n("rejected", { reason: "missing" }), new f(401, "unauthorized", "Missing API key");
     if (!await r.validate(a))
-      throw n("rejected", { reason: "invalid" }), new m(403, "forbidden", "Invalid API key");
+      throw n("rejected", { reason: "invalid" }), new f(403, "forbidden", "Invalid API key");
     if (n("authenticated", { source: o }), r.forwardKeyIdentity) {
       const c = r.forwardKeyIdentity, l = await c.identityFn(a);
       I(e, (u) => {
-        u.set(c.headerName, k(l));
+        u.set(c.headerName, j(l));
       }), s(
         `forwarded key identity as ${r.forwardKeyIdentity.headerName}`
       );
@@ -2529,7 +2536,7 @@ const Ns = /* @__PURE__ */ v({
               type: "header",
               op: "set",
               name: i.headerName,
-              value: k(c)
+              value: j(c)
             }
           ]
         };
@@ -2537,17 +2544,17 @@ const Ns = /* @__PURE__ */ v({
       return { action: "continue" };
     }
   }
-}), Ds = /* @__PURE__ */ v({
+}), Us = /* @__PURE__ */ v({
   name: "basic-auth",
   priority: S.AUTH,
   defaults: { realm: "Restricted" },
   phases: ["request-headers"],
   handler: async (e, t, { config: r }) => {
     const s = Se(
-      k(r.realm ?? "Restricted")
+      j(r.realm ?? "Restricted")
     ), n = e.req.header("authorization");
     if (!n || !n.startsWith("Basic "))
-      throw e.header("www-authenticate", `Basic realm="${s}"`), new m(
+      throw e.header("www-authenticate", `Basic realm="${s}"`), new f(
         401,
         "unauthorized",
         "Basic authentication required"
@@ -2559,20 +2566,20 @@ const Ns = /* @__PURE__ */ v({
         throw new Error("Invalid format");
       a = c.slice(0, l), o = c.slice(l + 1);
     } catch {
-      throw new m(
+      throw new f(
         401,
         "unauthorized",
         "Malformed Basic authentication header"
       );
     }
     if (!await r.validate(a, o, e))
-      throw e.header("www-authenticate", `Basic realm="${s}"`), new m(403, "forbidden", "Invalid credentials");
+      throw e.header("www-authenticate", `Basic realm="${s}"`), new f(403, "forbidden", "Invalid credentials");
     await t();
   },
   evaluate: {
     onRequest: async (e, { config: t }) => {
       const r = Se(
-        k(t.realm ?? "Restricted")
+        j(t.realm ?? "Restricted")
       ), s = e.headers.get("authorization");
       if (!s || !s.startsWith("Basic "))
         return {
@@ -2606,12 +2613,12 @@ const Ns = /* @__PURE__ */ v({
     }
   }
 });
-function H(e) {
+function P(e) {
   const t = e.replace(/-/g, "+").replace(/_/g, "/"), r = t + "=".repeat((4 - t.length % 4) % 4);
   return atob(r);
 }
 function ne(e) {
-  const t = H(e), r = new Uint8Array(t.length);
+  const t = P(e), r = new Uint8Array(t.length);
   for (let s = 0; s < t.length; s++)
     r[s] = t.charCodeAt(s);
   return r;
@@ -2649,39 +2656,39 @@ function Re(e) {
       return null;
   }
 }
-const Fr = 3e5, zr = 1e4, Ae = /* @__PURE__ */ new Map();
+const Jr = 3e5, Fr = 1e4, Ae = /* @__PURE__ */ new Map();
 async function Ee(e, t, r) {
   const s = Ae.get(e);
   if (s && s.expiresAt > Date.now())
     return s.keys;
-  const n = r ?? zr;
+  const n = r ?? Fr;
   let a;
   try {
     a = await fetch(e, { signal: AbortSignal.timeout(n) });
   } catch (c) {
-    throw c instanceof DOMException && c.name === "TimeoutError" ? new m(
+    throw c instanceof DOMException && c.name === "TimeoutError" ? new f(
       502,
       "jwks_error",
       `JWKS fetch timed out after ${n}ms: ${e}`
-    ) : new m(
+    ) : new f(
       502,
       "jwks_error",
       `Failed to fetch JWKS from ${e}: ${c instanceof Error ? c.message : String(c)}`
     );
   }
   if (!a.ok)
-    throw new m(
+    throw new f(
       502,
       "jwks_error",
       `Failed to fetch JWKS from ${e}: ${a.status}`
     );
-  const o = t ?? Fr, i = await a.json();
+  const o = t ?? Jr, i = await a.json();
   return Ae.set(e, { keys: i.keys, expiresAt: Date.now() + o }), i.keys;
 }
-function Us() {
+function Ls() {
   Ae.clear();
 }
-function Wr(e, t) {
+function zr(e, t) {
   const r = new URL(t.url);
   switch (e) {
     case "@method":
@@ -2698,23 +2705,23 @@ function Wr(e, t) {
       throw new Error(`Unknown derived component: ${e}`);
   }
 }
-function Vr(e, t) {
-  return e.startsWith("@") ? Wr(e, t) : t.headers.get(e) ?? "";
+function Wr(e, t) {
+  return e.startsWith("@") ? zr(e, t) : t.headers.get(e) ?? "";
 }
-function At(e, t, r) {
+function Rt(e, t, r) {
   const s = [];
   for (const n of e) {
-    const a = Vr(n, r);
+    const a = Wr(n, r);
     s.push(`"${n}": ${a}`);
   }
   return s.push(`"@signature-params": ${t}`), s.join(`
 `);
 }
-function Yr(e, t) {
+function Vr(e, t) {
   let s = `(${e.map((n) => `"${n}"`).join(" ")});created=${t.created};keyid="${t.keyId}"`;
   return t.algorithm && (s += `;alg="${t.algorithm}"`), t.expires !== void 0 && (s += `;expires=${t.expires}`), t.nonce !== void 0 && (s += `;nonce="${t.nonce}"`), s;
 }
-function Gr(e) {
+function Yr(e) {
   const t = e.match(/^\(([^)]*)\)/);
   if (!t)
     throw new Error("Invalid signature params: missing component list");
@@ -2745,7 +2752,7 @@ function ue(e) {
       throw new Error(`Unsupported signature algorithm: ${e}`);
   }
 }
-async function Xr(e, t, r) {
+async function Gr(e, t, r) {
   const { importAlg: s } = ue(e);
   if (e.startsWith("hmac")) {
     if (!t) throw new Error("HMAC algorithm requires secret");
@@ -2761,7 +2768,7 @@ async function Xr(e, t, r) {
   if (!r) throw new Error("RSA algorithm requires privateKey");
   return crypto.subtle.importKey("jwk", r, s, !1, ["sign"]);
 }
-async function Qr(e, t, r) {
+async function Xr(e, t, r) {
   const { importAlg: s } = ue(e);
   if (e.startsWith("hmac")) {
     if (!t) throw new Error("HMAC algorithm requires secret");
@@ -2779,16 +2786,16 @@ async function Qr(e, t, r) {
     "verify"
   ]);
 }
-function Zr(e) {
+function Qr(e) {
   return btoa(String.fromCharCode(...new Uint8Array(e)));
 }
-function es(e) {
+function Zr(e) {
   const t = atob(e), r = new Uint8Array(t.length);
   for (let s = 0; s < t.length; s++)
     r[s] = t.charCodeAt(s);
   return r;
 }
-const Ls = /* @__PURE__ */ v({
+const Bs = /* @__PURE__ */ v({
   name: "generate-http-signature",
   priority: S.PROXY,
   defaults: {
@@ -2800,7 +2807,7 @@ const Ls = /* @__PURE__ */ v({
   },
   handler: async (e, t, { config: r, debug: s }) => {
     if (!r.secret && !r.privateKey)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "generateHttpSignature requires either 'secret' or 'privateKey'"
@@ -2811,7 +2818,7 @@ const Ls = /* @__PURE__ */ v({
       algorithm: r.algorithm
     };
     r.expires !== void 0 && (i.expires = o + r.expires), r.nonce && (i.nonce = crypto.randomUUID().replace(/-/g, ""));
-    const c = Yr(n, i), l = At(
+    const c = Vr(n, i), l = Rt(
       n,
       c,
       e.req.raw
@@ -2819,7 +2826,7 @@ const Ls = /* @__PURE__ */ v({
     s(
       `signing with ${r.algorithm}, components: ${n.join(", ")}`
     );
-    const u = await Xr(
+    const u = await Gr(
       r.algorithm,
       r.secret,
       r.privateKey
@@ -2827,16 +2834,16 @@ const Ls = /* @__PURE__ */ v({
       d,
       u,
       h.encode(l)
-    ), y = Zr(p);
-    I(e, (f) => {
-      f.set(
+    ), y = Qr(p);
+    I(e, (m) => {
+      m.set(
         r.signatureInputHeaderName,
         `${a}=${c}`
-      ), f.set(r.signatureHeaderName, `${a}=:${y}:`);
+      ), m.set(r.signatureHeaderName, `${a}=:${y}:`);
     }), s("signature headers attached"), await t();
   }
 });
-function ts(e) {
+function es(e) {
   switch (e) {
     case "HS256":
     case "RS256":
@@ -2852,7 +2859,7 @@ function ts(e) {
 function Be(e) {
   return e.startsWith("HS");
 }
-const Bs = /* @__PURE__ */ v({
+const Ks = /* @__PURE__ */ v({
   name: "generate-jwt",
   priority: S.REQUEST_TRANSFORM,
   defaults: {
@@ -2863,13 +2870,13 @@ const Bs = /* @__PURE__ */ v({
   handler: async (e, t, { config: r, debug: s }) => {
     if (Be(r.algorithm)) {
       if (!r.secret)
-        throw new m(
+        throw new f(
           500,
           "config_error",
           "generateJwt with HMAC algorithm requires 'secret'"
         );
     } else if (!r.privateKey)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "generateJwt with RSA algorithm requires 'privateKey'"
@@ -2881,8 +2888,8 @@ const Bs = /* @__PURE__ */ v({
     r.issuer && (i.iss = r.issuer), r.audience && (i.aud = r.audience);
     let c = {};
     r.claims && (c = typeof r.claims == "function" ? await r.claims(e) : r.claims);
-    const l = { ...i, ...c }, u = Le(JSON.stringify(l)), d = `${a}.${u}`, h = new TextEncoder(), p = h.encode(d), y = ts(r.algorithm);
-    let f;
+    const l = { ...i, ...c }, u = Le(JSON.stringify(l)), d = `${a}.${u}`, h = new TextEncoder(), p = h.encode(d), y = es(r.algorithm);
+    let m;
     if (Be(r.algorithm)) {
       const T = await crypto.subtle.importKey(
         "raw",
@@ -2891,7 +2898,7 @@ const Bs = /* @__PURE__ */ v({
         !1,
         ["sign"]
       );
-      f = await crypto.subtle.sign("HMAC", T, p);
+      m = await crypto.subtle.sign("HMAC", T, p);
     } else {
       const T = await crypto.subtle.importKey(
         "jwk",
@@ -2900,9 +2907,9 @@ const Bs = /* @__PURE__ */ v({
         !1,
         ["sign"]
       );
-      f = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", T, p);
+      m = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", T, p);
     }
-    const g = ee(new Uint8Array(f)), w = `${d}.${g}`;
+    const g = ee(new Uint8Array(m)), w = `${d}.${g}`;
     s(`generated JWT (alg=${r.algorithm})`);
     const b = r.tokenPrefix ? `${r.tokenPrefix} ${w}` : w;
     I(e, (T) => {
@@ -2920,7 +2927,7 @@ const Bs = /* @__PURE__ */ v({
   },
   validate: (e) => {
     if (!e.secret && !e.jwksUrl)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "jws requires either 'secret' or 'jwksUrl'"
@@ -2929,14 +2936,14 @@ const Bs = /* @__PURE__ */ v({
   handler: async (e, t, { config: r, debug: s }) => {
     const n = e.req.header(r.headerName);
     if (!n)
-      throw new m(
+      throw new f(
         401,
         "jws_missing",
         `Missing JWS header: ${r.headerName}`
       );
     const a = n.split(".");
     if (a.length !== 3)
-      throw new m(
+      throw new f(
         401,
         "jws_invalid",
         "Malformed JWS: expected 3 parts"
@@ -2944,27 +2951,27 @@ const Bs = /* @__PURE__ */ v({
     const [o, i, c] = a;
     let l;
     try {
-      l = JSON.parse(H(o));
+      l = JSON.parse(P(o));
     } catch {
-      throw new m(
+      throw new f(
         401,
         "jws_invalid",
         "Malformed JWS: invalid header encoding"
       );
     }
     if (l.alg.toLowerCase() === "none")
-      throw new m(
+      throw new f(
         401,
         "jws_invalid",
         "JWS algorithm 'none' is not allowed"
       );
     let u;
     if (r.payloadSource === "body") {
-      const y = await e.req.raw.clone().text(), f = new TextEncoder();
-      u = ee(f.encode(y));
+      const y = await e.req.raw.clone().text(), m = new TextEncoder();
+      u = ee(m.encode(y));
     } else {
       if (!i)
-        throw new m(
+        throw new f(
           401,
           "jws_invalid",
           "JWS has empty payload but payloadSource is 'embedded'"
@@ -2975,13 +2982,13 @@ const Bs = /* @__PURE__ */ v({
     if (r.secret) {
       const y = xe(l.alg);
       if (!y)
-        throw new m(
+        throw new f(
           401,
           "jws_invalid",
           `Unsupported JWS algorithm: ${l.alg}`
         );
       s(`HMAC verification (alg=${l.alg})`);
-      const f = await crypto.subtle.importKey(
+      const m = await crypto.subtle.importKey(
         "raw",
         d.encode(r.secret),
         { name: "HMAC", hash: y },
@@ -2990,28 +2997,28 @@ const Bs = /* @__PURE__ */ v({
       );
       if (!await crypto.subtle.verify(
         "HMAC",
-        f,
+        m,
         p,
         h
       ))
-        throw new m(401, "jws_invalid", "Invalid JWS signature");
+        throw new f(401, "jws_invalid", "Invalid JWS signature");
     } else if (r.jwksUrl) {
       const y = Re(l.alg);
       if (!y)
-        throw new m(
+        throw new f(
           401,
           "jws_invalid",
           `Unsupported JWS algorithm: ${l.alg}`
         );
-      const f = await Ee(
+      const m = await Ee(
         r.jwksUrl,
         r.jwksCacheTtlMs,
         r.jwksTimeoutMs
-      ), g = l.kid ? f.find(
+      ), g = l.kid ? m.find(
         (T) => T.kid === l.kid
-      ) : f[0];
+      ) : m[0];
       if (!g)
-        throw new m(
+        throw new f(
           401,
           "jws_invalid",
           "No matching JWKS key found"
@@ -3032,15 +3039,15 @@ const Bs = /* @__PURE__ */ v({
         p,
         h
       ))
-        throw new m(401, "jws_invalid", "Invalid JWS signature");
+        throw new f(401, "jws_invalid", "Invalid JWS signature");
     }
     if (r.forwardPayload)
       try {
-        const y = H(u);
-        I(e, (f) => {
-          f.set(
+        const y = P(u);
+        I(e, (m) => {
+          m.set(
             r.forwardHeaderName,
-            k(y)
+            j(y)
           );
         });
       } catch {
@@ -3068,7 +3075,7 @@ const Bs = /* @__PURE__ */ v({
       const [a, o, i] = n;
       let c;
       try {
-        c = JSON.parse(H(a));
+        c = JSON.parse(P(a));
       } catch {
         return {
           action: "reject",
@@ -3136,7 +3143,7 @@ const Bs = /* @__PURE__ */ v({
             code: "jws_invalid",
             message: "No matching JWKS key found"
           };
-        const f = await crypto.subtle.importKey(
+        const m = await crypto.subtle.importKey(
           "jwk",
           y,
           h,
@@ -3145,7 +3152,7 @@ const Bs = /* @__PURE__ */ v({
         );
         if (!await crypto.subtle.verify(
           h,
-          f,
+          m,
           d,
           new TextEncoder().encode(u)
         ))
@@ -3158,7 +3165,7 @@ const Bs = /* @__PURE__ */ v({
       }
       if (t.forwardPayload)
         try {
-          const h = H(l);
+          const h = P(l);
           return {
             action: "continue",
             mutations: [
@@ -3166,7 +3173,7 @@ const Bs = /* @__PURE__ */ v({
                 type: "header",
                 op: "set",
                 name: t.forwardHeaderName,
-                value: k(h)
+                value: j(h)
               }
             ]
           };
@@ -3175,7 +3182,95 @@ const Bs = /* @__PURE__ */ v({
       return r("JWS verified"), { action: "continue" };
     }
   }
-}), Ks = /* @__PURE__ */ v({
+});
+async function Ke(e, t, r) {
+  if (!e)
+    return {
+      ok: !1,
+      status: 401,
+      code: "unauthorized",
+      message: "Missing authentication token"
+    };
+  let s;
+  if (t.tokenPrefix) {
+    if (!e.startsWith(`${t.tokenPrefix} `))
+      return {
+        ok: !1,
+        status: 401,
+        code: "unauthorized",
+        message: `Expected ${t.tokenPrefix} token`
+      };
+    s = e.slice(t.tokenPrefix.length + 1);
+  } else
+    s = e;
+  if (!s || !s.trim())
+    return {
+      ok: !1,
+      status: 401,
+      code: "unauthorized",
+      message: "Empty authentication token"
+    };
+  const n = s.split(".");
+  if (n.length !== 3)
+    return {
+      ok: !1,
+      status: 401,
+      code: "unauthorized",
+      message: "Malformed JWT: expected 3 parts"
+    };
+  let a, o;
+  try {
+    a = JSON.parse(P(n[0])), o = JSON.parse(P(n[1]));
+  } catch {
+    return {
+      ok: !1,
+      status: 401,
+      code: "unauthorized",
+      message: "Malformed JWT: invalid base64 encoding"
+    };
+  }
+  if (a.alg.toLowerCase() === "none")
+    return {
+      ok: !1,
+      status: 401,
+      code: "unauthorized",
+      message: "JWT algorithm 'none' is not allowed"
+    };
+  t.secret ? (r(`HMAC verification (alg=${a.alg})`), await ts(t.secret, n[0], n[1], n[2], a.alg)) : t.jwksUrl && (r(
+    `JWKS verification (alg=${a.alg}, kid=${a.kid ?? "none"})`
+  ), await rs(
+    t.jwksUrl,
+    n[0],
+    n[1],
+    n[2],
+    a,
+    t.jwksCacheTtlMs,
+    t.jwksTimeoutMs
+  ));
+  const i = Math.floor(Date.now() / 1e3);
+  return t.requireExp && o.exp === void 0 ? {
+    ok: !1,
+    status: 401,
+    code: "unauthorized",
+    message: "JWT must contain an 'exp' claim"
+  } : o.exp !== void 0 && o.exp < i - t.clockSkewSeconds ? {
+    ok: !1,
+    status: 401,
+    code: "unauthorized",
+    message: "JWT has expired"
+  } : t.issuer && o.iss !== t.issuer ? {
+    ok: !1,
+    status: 401,
+    code: "unauthorized",
+    message: "JWT issuer mismatch"
+  } : t.audience && !(Array.isArray(o.aud) ? o.aud : [o.aud]).includes(t.audience) ? {
+    ok: !1,
+    status: 401,
+    code: "unauthorized",
+    message: "JWT audience mismatch"
+  } : (r(`verified (sub=${o.sub ?? "none"})`), { ok: !0, payload: o });
+}
+const Fs = /* @__PURE__ */ v({
   name: "jwt-auth",
   priority: S.AUTH,
   phases: ["request-headers"],
@@ -3187,212 +3282,67 @@ const Bs = /* @__PURE__ */ v({
   },
   validate: (e) => {
     if (!e.secret && !e.jwksUrl)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "jwtAuth requires either 'secret' or 'jwksUrl'"
       );
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const n = e.req.header(r.headerName);
-    if (!n)
-      throw new m(
-        401,
-        "unauthorized",
-        "Missing authentication token"
-      );
-    let a;
-    if (r.tokenPrefix) {
-      if (!n.startsWith(`${r.tokenPrefix} `))
-        throw new m(
-          401,
-          "unauthorized",
-          `Expected ${r.tokenPrefix} token`
-        );
-      a = n.slice(r.tokenPrefix.length + 1);
-    } else
-      a = n;
-    if (!a || !a.trim())
-      throw new m(401, "unauthorized", "Empty authentication token");
-    const o = a.split(".");
-    if (o.length !== 3)
-      throw new m(
-        401,
-        "unauthorized",
-        "Malformed JWT: expected 3 parts"
-      );
-    let i, c;
-    try {
-      i = JSON.parse(H(o[0])), c = JSON.parse(H(o[1]));
-    } catch {
-      throw new m(
-        401,
-        "unauthorized",
-        "Malformed JWT: invalid base64 encoding"
-      );
-    }
-    if (i.alg.toLowerCase() === "none")
-      throw new m(
-        401,
-        "unauthorized",
-        "JWT algorithm 'none' is not allowed"
-      );
-    r.secret ? (s(`HMAC verification (alg=${i.alg})`), await Je(r.secret, o[0], o[1], o[2], i.alg)) : r.jwksUrl && (s(
-      `JWKS verification (alg=${i.alg}, kid=${i.kid ?? "none"})`
-    ), await Ke(
-      r.jwksUrl,
-      o[0],
-      o[1],
-      o[2],
-      i,
-      r.jwksCacheTtlMs,
-      r.jwksTimeoutMs
-    ));
-    const l = Math.floor(Date.now() / 1e3);
-    if (r.requireExp && c.exp === void 0)
-      throw new m(
-        401,
-        "unauthorized",
-        "JWT must contain an 'exp' claim"
-      );
-    if (c.exp !== void 0 && c.exp < l - r.clockSkewSeconds)
-      throw new m(401, "unauthorized", "JWT has expired");
-    if (r.issuer && c.iss !== r.issuer)
-      throw new m(401, "unauthorized", "JWT issuer mismatch");
-    if (r.audience && !(Array.isArray(c.aud) ? c.aud : [c.aud]).includes(r.audience))
-      throw new m(401, "unauthorized", "JWT audience mismatch");
-    if (s(`verified (sub=${c.sub ?? "none"})`), r.forwardClaims) {
-      const u = r.forwardClaims;
-      I(e, (d) => {
-        for (const [h, p] of Object.entries(u)) {
-          const y = c[h];
-          y != null && d.set(p, k(String(y)));
+    const n = await Ke(
+      e.req.header(r.headerName),
+      r,
+      s
+    );
+    if (!n.ok)
+      throw new f(n.status, n.code, n.message);
+    if (r.forwardClaims) {
+      const { payload: a } = n, o = r.forwardClaims;
+      I(e, (i) => {
+        for (const [c, l] of Object.entries(o)) {
+          const u = a[c];
+          u != null && i.set(l, j(String(u)));
         }
       });
     }
     await t();
   },
   evaluate: {
-    onRequest: async (e, { config: t }) => {
-      const r = e.headers.get(t.headerName);
-      if (!r)
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "Missing authentication token"
-        };
-      let s;
-      if (t.tokenPrefix) {
-        if (!r.startsWith(`${t.tokenPrefix} `))
-          return {
-            action: "reject",
-            status: 401,
-            code: "unauthorized",
-            message: `Expected ${t.tokenPrefix} token`
-          };
-        s = r.slice(t.tokenPrefix.length + 1);
-      } else
-        s = r;
-      if (!s || !s.trim())
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "Empty authentication token"
-        };
-      const n = s.split(".");
-      if (n.length !== 3)
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "Malformed JWT: expected 3 parts"
-        };
-      let a, o;
-      try {
-        a = JSON.parse(H(n[0])), o = JSON.parse(H(n[1]));
-      } catch {
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "Malformed JWT: invalid base64 encoding"
-        };
-      }
-      if (a.alg.toLowerCase() === "none")
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "JWT algorithm 'none' is not allowed"
-        };
-      t.secret ? await Je(
-        t.secret,
-        n[0],
-        n[1],
-        n[2],
-        a.alg
-      ) : t.jwksUrl && await Ke(
-        t.jwksUrl,
-        n[0],
-        n[1],
-        n[2],
-        a,
-        t.jwksCacheTtlMs,
-        t.jwksTimeoutMs
+    onRequest: async (e, { config: t, debug: r }) => {
+      const s = await Ke(
+        e.headers.get(t.headerName),
+        t,
+        r
       );
-      const i = Math.floor(Date.now() / 1e3);
-      if (t.requireExp && o.exp === void 0)
+      if (!s.ok)
         return {
           action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "JWT must contain an 'exp' claim"
-        };
-      if (o.exp !== void 0 && o.exp < i - t.clockSkewSeconds)
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "JWT has expired"
-        };
-      if (t.issuer && o.iss !== t.issuer)
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "JWT issuer mismatch"
-        };
-      if (t.audience && !(Array.isArray(o.aud) ? o.aud : [o.aud]).includes(t.audience))
-        return {
-          action: "reject",
-          status: 401,
-          code: "unauthorized",
-          message: "JWT audience mismatch"
+          status: s.status,
+          code: s.code,
+          message: s.message
         };
       if (t.forwardClaims) {
-        const c = t.forwardClaims, l = [];
-        for (const [u, d] of Object.entries(c)) {
-          const h = o[u];
-          h != null && l.push({
+        const { payload: n } = s, a = t.forwardClaims, o = [];
+        for (const [i, c] of Object.entries(a)) {
+          const l = n[i];
+          l != null && o.push({
             type: "header",
             op: "set",
-            name: d,
-            value: k(String(h))
+            name: c,
+            value: j(String(l))
           });
         }
-        if (l.length > 0)
-          return { action: "continue", mutations: l };
+        if (o.length > 0)
+          return { action: "continue", mutations: o };
       }
       return { action: "continue" };
     }
   }
 });
-async function Je(e, t, r, s, n) {
+async function ts(e, t, r, s, n) {
   const a = xe(n);
   if (!a)
-    throw new m(
+    throw new f(
       401,
       "unauthorized",
       `Unsupported JWT algorithm: ${n}`
@@ -3405,17 +3355,17 @@ async function Je(e, t, r, s, n) {
     ["verify"]
   ), c = o.encode(`${t}.${r}`), l = ne(s);
   if (!await crypto.subtle.verify("HMAC", i, l, c))
-    throw new m(401, "unauthorized", "Invalid JWT signature");
+    throw new f(401, "unauthorized", "Invalid JWT signature");
 }
-async function Ke(e, t, r, s, n, a, o) {
+async function rs(e, t, r, s, n, a, o) {
   const i = await Ee(e, a, o), c = n.kid ? i.find(
-    (f) => f.kid === n.kid
+    (m) => m.kid === n.kid
   ) : i[0];
   if (!c)
-    throw new m(401, "unauthorized", "No matching JWKS key found");
+    throw new f(401, "unauthorized", "No matching JWKS key found");
   const l = Re(n.alg);
   if (!l)
-    throw new m(
+    throw new f(
       401,
       "unauthorized",
       `Unsupported JWT algorithm: ${n.alg}`
@@ -3428,16 +3378,16 @@ async function Ke(e, t, r, s, n, a, o) {
     ["verify"]
   ), h = new TextEncoder().encode(`${t}.${r}`), p = ne(s);
   if (!await crypto.subtle.verify(l, u, p, h))
-    throw new m(401, "unauthorized", "Invalid JWT signature");
+    throw new f(401, "unauthorized", "Invalid JWT signature");
 }
-const rs = 100, P = /* @__PURE__ */ new Map();
-function ss(e) {
-  if (P.size >= e) {
-    const t = P.keys().next().value;
-    t && P.delete(t);
+const ss = 100, N = /* @__PURE__ */ new Map();
+function ns(e) {
+  if (N.size >= e) {
+    const t = N.keys().next().value;
+    t && N.delete(t);
   }
 }
-const Fs = /* @__PURE__ */ v({
+const zs = /* @__PURE__ */ v({
   name: "oauth2",
   priority: S.AUTH,
   phases: ["request-headers"],
@@ -3450,7 +3400,7 @@ const Fs = /* @__PURE__ */ v({
   },
   validate: (e) => {
     if (!e.introspectionUrl && !e.localValidate)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "oauth2 requires either introspectionUrl or localValidate"
@@ -3469,13 +3419,13 @@ const Fs = /* @__PURE__ */ v({
         n = a ?? void 0;
     }
     if (!n || !n.trim())
-      throw new m(401, "unauthorized", "Missing access token");
+      throw new f(401, "unauthorized", "Missing access token");
     if (r.localValidate) {
       if (s("local validation"), !await r.localValidate(n))
-        throw new m(401, "unauthorized", "Token validation failed");
+        throw new f(401, "unauthorized", "Token validation failed");
     } else if (r.introspectionUrl) {
       s("introspection validation");
-      const a = await Fe(
+      const a = await Je(
         n,
         r.introspectionUrl,
         r.clientId,
@@ -3485,20 +3435,20 @@ const Fs = /* @__PURE__ */ v({
         r.cacheMaxEntries
       );
       if (!a.active)
-        throw new m(401, "unauthorized", "Token is not active");
+        throw new f(401, "unauthorized", "Token is not active");
       if (r.requiredScopes && r.requiredScopes.length > 0) {
         const o = a.scope ? a.scope.split(" ") : [];
         if (r.requiredScopes.filter(
           (c) => !o.includes(c)
         ).length > 0)
-          throw new m(403, "forbidden", "Insufficient scope");
+          throw new f(403, "forbidden", "Insufficient scope");
       }
       if (r.forwardTokenInfo) {
         const o = r.forwardTokenInfo;
         I(e, (i) => {
           for (const [c, l] of Object.entries(o)) {
             const u = a[c];
-            u != null && i.set(l, k(String(u)));
+            u != null && i.set(l, j(String(u)));
           }
         });
       }
@@ -3534,7 +3484,7 @@ const Fs = /* @__PURE__ */ v({
         };
       if (t.introspectionUrl) {
         r("introspection validation");
-        const n = await Fe(
+        const n = await Je(
           s,
           t.introspectionUrl,
           t.clientId,
@@ -3570,7 +3520,7 @@ const Fs = /* @__PURE__ */ v({
               type: "header",
               op: "set",
               name: c,
-              value: k(String(l))
+              value: j(String(l))
             });
           }
           if (o.length > 0)
@@ -3581,18 +3531,18 @@ const Fs = /* @__PURE__ */ v({
       return { action: "continue" };
     }
   }
-}), ns = 5e3;
-async function Fe(e, t, r, s, n = 0, a, o = rs) {
+}), as = 5e3;
+async function Je(e, t, r, s, n = 0, a, o = ss) {
   if (n > 0) {
-    const d = P.get(e);
+    const d = N.get(e);
     if (d && d.expiresAt > Date.now())
-      return P.delete(e), P.set(e, d), d.result;
+      return N.delete(e), N.set(e, d), d.result;
   }
   const i = {
     "content-type": "application/x-www-form-urlencoded"
   };
   r && s && (i.authorization = `Basic ${btoa(`${r}:${s}`)}`);
-  const c = a ?? ns;
+  const c = a ?? as;
   let l;
   try {
     l = await fetch(t, {
@@ -3602,29 +3552,29 @@ async function Fe(e, t, r, s, n = 0, a, o = rs) {
       signal: AbortSignal.timeout(c)
     });
   } catch (d) {
-    throw d instanceof DOMException && d.name === "TimeoutError" ? new m(
+    throw d instanceof DOMException && d.name === "TimeoutError" ? new f(
       502,
       "introspection_error",
       `Introspection endpoint timed out after ${c}ms`
-    ) : new m(
+    ) : new f(
       502,
       "introspection_error",
       `Introspection endpoint error: ${d instanceof Error ? d.message : String(d)}`
     );
   }
   if (!l.ok)
-    throw new m(
+    throw new f(
       502,
       "introspection_error",
       `Introspection endpoint returned ${l.status}`
     );
   const u = await l.json();
-  return n > 0 && (ss(o), P.set(e, {
+  return n > 0 && (ns(o), N.set(e, {
     result: u,
     expiresAt: Date.now() + n * 1e3
   })), u;
 }
-const zs = /* @__PURE__ */ v({
+const Ws = /* @__PURE__ */ v({
   name: "rbac",
   priority: S.AUTH,
   defaults: {
@@ -3652,7 +3602,7 @@ const zs = /* @__PURE__ */ v({
       ), !r.roles.some(
         (l) => i.includes(l)
       ))
-        throw new m(403, "forbidden", r.denyMessage);
+        throw new f(403, "forbidden", r.denyMessage);
     }
     if (a) {
       const o = e.req.header(r.permissionHeader) ?? "", i = o ? o.split(r.permissionDelimiter).map((l) => l.trim()) : [];
@@ -3661,7 +3611,7 @@ const zs = /* @__PURE__ */ v({
       ), !r.permissions.every(
         (l) => i.includes(l)
       ))
-        throw new m(403, "forbidden", r.denyMessage);
+        throw new f(403, "forbidden", r.denyMessage);
     }
     await t();
   },
@@ -3701,7 +3651,7 @@ const zs = /* @__PURE__ */ v({
       return { action: "continue" };
     }
   }
-}), Ws = /* @__PURE__ */ v({
+}), Vs = /* @__PURE__ */ v({
   name: "verify-http-signature",
   priority: S.AUTH,
   defaults: {
@@ -3713,7 +3663,7 @@ const zs = /* @__PURE__ */ v({
   },
   handler: async (e, t, { config: r, debug: s }) => {
     if (!r.keys || Object.keys(r.keys).length === 0)
-      throw new m(
+      throw new f(
         500,
         "config_error",
         "verifyHttpSignature requires at least one key in 'keys'"
@@ -3722,95 +3672,95 @@ const zs = /* @__PURE__ */ v({
       r.signatureInputHeaderName
     );
     if (!a)
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Missing Signature-Input header"
       );
     const o = e.req.header(r.signatureHeaderName);
     if (!o)
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Missing Signature header"
       );
     const i = `${n}=`;
     if (!a.startsWith(i))
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         `Missing signature label "${n}" in Signature-Input header`
       );
-    const c = a.slice(i.length), { components: l, params: u } = Gr(c);
+    const c = a.slice(i.length), { components: l, params: u } = Yr(c);
     s(`verifying label=${n}, components=${l.join(",")}`);
     const d = `${n}=:`;
     if (!o.startsWith(d) || !o.endsWith(":"))
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         `Invalid Signature header format for label "${n}"`
       );
     const h = o.slice(d.length, -1), p = Math.floor(Date.now() / 1e3);
     if (u.created && Number.parseInt(u.created, 10) + r.maxAge < p)
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Signature has expired (maxAge exceeded)"
       );
     if (u.expires && Number.parseInt(u.expires, 10) < p)
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Signature has expired (expires parameter)"
       );
-    for (const _ of r.requiredComponents)
-      if (!l.includes(_))
-        throw new m(
+    for (const x of r.requiredComponents)
+      if (!l.includes(x))
+        throw new f(
           401,
           "signature_invalid",
-          `Required component "${_}" not found in signature`
+          `Required component "${x}" not found in signature`
         );
     const y = u.keyid;
     if (!y)
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Missing keyid in signature parameters"
       );
-    const f = r.keys[y];
-    if (!f)
-      throw new m(
+    const m = r.keys[y];
+    if (!m)
+      throw new f(
         401,
         "signature_invalid",
         "Unknown key identifier"
       );
-    const w = At(
+    const w = Rt(
       l,
       c,
       e.req.raw
-    ), b = await Qr(
-      f.algorithm,
-      f.secret,
-      f.publicKey
-    ), { signAlg: T } = ue(f.algorithm), x = new TextEncoder(), A = es(h);
+    ), b = await Xr(
+      m.algorithm,
+      m.secret,
+      m.publicKey
+    ), { signAlg: T } = ue(m.algorithm), R = new TextEncoder(), O = Zr(h);
     if (!await crypto.subtle.verify(
       T,
       b,
-      A,
-      x.encode(w)
+      O,
+      R.encode(w)
     ))
-      throw new m(
+      throw new f(
         401,
         "signature_invalid",
         "Signature verification failed"
       );
     s("signature verified successfully"), await t();
   }
-}), as = /* @__PURE__ */ new Set([204, 304]);
+}), os = /* @__PURE__ */ new Set([204, 304]);
 function _e(e, t) {
-  return as.has(t) ? null : e ?? null;
+  return os.has(t) ? null : e ?? null;
 }
-class Et {
+class At {
   entries = /* @__PURE__ */ new Map();
   maxEntries;
   constructor(t) {
@@ -3854,12 +3804,12 @@ class Et {
     this.entries.clear();
   }
 }
-const ye = "x-stoma-internal-expires-at", os = /* @__PURE__ */ new Set(["POST", "PUT", "PATCH"]);
-function is(e) {
+const ye = "x-stoma-internal-expires-at", is = /* @__PURE__ */ new Set(["POST", "PUT", "PATCH"]);
+function cs(e) {
   return e ? e.split(",").map((t) => t.trim().split("=")[0].trim().toLowerCase()) : [];
 }
-function Vs(e) {
-  const t = K(
+function Ys(e) {
+  const t = F(
     {
       ttlSeconds: 300,
       methods: ["GET"],
@@ -3870,12 +3820,12 @@ function Vs(e) {
     e
   ), r = t.methods.map((c) => c.toUpperCase());
   let s = e?.store;
-  s || (s = new Et());
+  s || (s = new At());
   const n = s, a = t.cacheStatusHeader;
   async function o(c) {
     if (e?.cacheKeyFn) return await e.cacheKeyFn(c);
     let l = `${c.req.method}:${c.req.url}`;
-    if (os.has(c.req.method.toUpperCase()))
+    if (is.has(c.req.method.toUpperCase()))
       try {
         const u = await c.req.raw.clone().text();
         if (u) {
@@ -3897,7 +3847,7 @@ function Vs(e) {
     return l;
   }
   const i = async (c, l) => {
-    const u = F(c, "cache"), d = Me(c, "cache");
+    const u = z(c, "cache"), d = qe(c, "cache");
     if (!r.includes(c.req.method.toUpperCase())) {
       d("SKIP", { method: c.req.method }), await l(), c.res.headers.set(a, "SKIP");
       return;
@@ -3914,11 +3864,11 @@ function Vs(e) {
       u(`HIT ${h}`), $(c, "x-stoma-cache-status", "HIT"), d("HIT", { key: h });
       const w = p.headers.get(ye);
       if (w) {
-        const x = Math.max(
+        const R = Math.max(
           0,
           Math.ceil((Number(w) - Date.now()) / 1e3)
         );
-        $(c, "x-stoma-cache-expires-in", x);
+        $(c, "x-stoma-cache-expires-in", R);
       }
       const b = await p.arrayBuffer(), T = new Response(_e(b, p.status), {
         status: p.status,
@@ -3936,7 +3886,7 @@ function Vs(e) {
       return;
     }
     if (t.respectCacheControl) {
-      const w = c.res.headers.get("cache-control") ?? "", b = is(w);
+      const w = c.res.headers.get("cache-control") ?? "", b = cs(w);
       if (t.bypassDirectives.some(
         (T) => b.includes(T.toLowerCase())
       )) {
@@ -3945,7 +3895,7 @@ function Vs(e) {
       }
     }
     u(`MISS ${h} (ttl=${t.ttlSeconds}s)`), $(c, "x-stoma-cache-status", "MISS"), d("MISS", { key: h, ttl: t.ttlSeconds });
-    const y = c.res.clone(), f = _e(
+    const y = c.res.clone(), m = _e(
       await y.arrayBuffer(),
       y.status
     ), g = new Headers(y.headers);
@@ -3955,7 +3905,7 @@ function Vs(e) {
     ), await E(
       () => n.put(
         h,
-        new Response(f, {
+        new Response(m, {
           status: y.status,
           headers: g
         }),
@@ -3969,10 +3919,10 @@ function Vs(e) {
   return {
     name: "cache",
     priority: S.CACHE,
-    handler: M(e?.skip, i)
+    handler: H(e?.skip, i)
   };
 }
-const Ys = /* @__PURE__ */ v({
+const Gs = /* @__PURE__ */ v({
   name: "dynamic-routing",
   priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
@@ -3986,12 +3936,12 @@ const Ys = /* @__PURE__ */ v({
         return;
       }
     if (!r.fallthrough)
-      throw new m(404, "no_route", "No routing rule matched");
+      throw new f(404, "no_route", "No routing rule matched");
     s("no rule matched, falling through"), await t();
   }
 });
-function Gs(e) {
-  const t = K(
+function Xs(e) {
+  const t = F(
     { mode: "deny", countryHeader: "cf-ipcountry" },
     e
   ), r = new Set(
@@ -3999,16 +3949,16 @@ function Gs(e) {
   ), s = new Set(
     (t.deny ?? []).map((a) => a.toUpperCase())
   ), n = async (a, o) => {
-    const i = F(a, "geo-ip-filter"), c = a.req.header(t.countryHeader)?.toUpperCase(), l = t.mode;
+    const i = z(a, "geo-ip-filter"), c = a.req.header(t.countryHeader)?.toUpperCase(), l = t.mode;
     if (i(`country=${c ?? "unknown"} mode=${l}`), l === "allow") {
       if (!c || !r.has(c))
-        throw new m(
+        throw new f(
           403,
           "geo_denied",
           "Access denied from this region"
         );
     } else if (c && s.has(c))
-      throw new m(
+      throw new f(
         403,
         "geo_denied",
         "Access denied from this region"
@@ -4018,7 +3968,7 @@ function Gs(e) {
   return {
     name: "geo-ip-filter",
     priority: S.IP_FILTER,
-    handler: M(e?.skip, n),
+    handler: H(e?.skip, n),
     phases: ["request-headers"],
     evaluate: {
       onRequest: async (a) => {
@@ -4043,7 +3993,7 @@ function Gs(e) {
     }
   };
 }
-const Xs = /* @__PURE__ */ v({
+const Qs = /* @__PURE__ */ v({
   name: "http-callout",
   priority: S.REQUEST_TRANSFORM,
   httpOnly: !0,
@@ -4072,7 +4022,7 @@ const Xs = /* @__PURE__ */ v({
         await r.onError(c, e), await t();
         return;
       }
-      throw new m(
+      throw new f(
         502,
         "callout_failed",
         `External callout failed: ${c instanceof Error ? c.message : String(c)}`
@@ -4086,7 +4036,7 @@ const Xs = /* @__PURE__ */ v({
         ), await t();
         return;
       }
-      throw new m(
+      throw new f(
         502,
         "callout_failed",
         `External callout returned ${i.status}`
@@ -4094,7 +4044,7 @@ const Xs = /* @__PURE__ */ v({
     }
     await r.onResponse(i, e), await t();
   }
-}), Qs = /* @__PURE__ */ v({
+}), Zs = /* @__PURE__ */ v({
   name: "interrupt",
   priority: S.DEFAULT,
   httpOnly: !0,
@@ -4124,14 +4074,14 @@ function Ce(e) {
   }
   return r >>> 0;
 }
-function cs(e, t) {
+function ls(e, t) {
   const r = Ce(e);
   if (r === -1 || t < 0 || t > 32) return null;
   const s = t === 0 ? 0 : -1 << 32 - t >>> 0;
   return { version: 4, network: (r & s) >>> 0, mask: s };
 }
-const ze = (1n << 128n) - 1n;
-function _t(e) {
+const Fe = (1n << 128n) - 1n;
+function Et(e) {
   let t = e;
   const r = t.indexOf("%");
   r !== -1 && (t = t.slice(0, r)), t = t.toLowerCase();
@@ -4144,12 +4094,12 @@ function _t(e) {
     const l = n.length + a.length;
     if (l > 8) return null;
     const u = 8 - l, d = [...n, ...Array(u).fill("0"), ...a];
-    return We(d);
+    return ze(d);
   }
   const o = t.split(":");
-  return o.length !== 8 ? null : We(o);
+  return o.length !== 8 ? null : ze(o);
 }
-function We(e) {
+function ze(e) {
   if (e.length !== 8) return null;
   let t = 0n;
   for (const r of e) {
@@ -4160,10 +4110,10 @@ function We(e) {
   }
   return t;
 }
-function Ve(e, t) {
-  const r = _t(e);
+function We(e, t) {
+  const r = Et(e);
   if (r === null || t < 0 || t > 128) return null;
-  const s = t === 0 ? 0n : ze << BigInt(128 - t) & ze;
+  const s = t === 0 ? 0n : Fe << BigInt(128 - t) & Fe;
   return { version: 6, network: r & s, mask: s };
 }
 function $e(e) {
@@ -4173,16 +4123,16 @@ function Oe(e) {
   const t = e.indexOf("/");
   if (t === -1) {
     if ($e(e))
-      return Ve(e, 128);
+      return We(e, 128);
     const n = Ce(e);
     return n === -1 ? null : { version: 4, network: n, mask: 4294967295 };
   }
   const r = e.slice(0, t), s = Number(e.slice(t + 1));
-  return Number.isNaN(s) ? null : $e(r) ? Ve(r, s) : cs(r, s);
+  return Number.isNaN(s) ? null : $e(r) ? We(r, s) : ls(r, s);
 }
-function je(e, t) {
+function ke(e, t) {
   if ($e(e)) {
-    const s = _t(e);
+    const s = Et(e);
     if (s === null) return !1;
     for (const n of t)
       if (n.version === 6 && (s & n.mask) === n.network)
@@ -4196,10 +4146,10 @@ function je(e, t) {
       return !0;
   return !1;
 }
-const ls = ["cf-connecting-ip", "x-forwarded-for"];
+const us = ["cf-connecting-ip", "x-forwarded-for"];
 function ae(e, t = {}) {
   const {
-    ipHeaders: r = ls,
+    ipHeaders: r = us,
     trustedProxies: s,
     useRightmostForwardedIp: n = !1
   } = t, a = s ? s.map((o) => Oe(o)).filter((o) => o !== null) : null;
@@ -4207,23 +4157,23 @@ function ae(e, t = {}) {
     const i = e.get(o);
     if (!i) continue;
     const c = i.split(",").map((u) => u.trim()), l = n ? c[c.length - 1] : c[0];
-    if (!(a && o.toLowerCase() === "x-forwarded-for" && !je(l, a)))
+    if (!(a && o.toLowerCase() === "x-forwarded-for" && !ke(l, a)))
       return l;
   }
   return "unknown";
 }
-function Zs(e) {
+function en(e) {
   const t = e.mode ?? "deny", r = e.ipHeaders ? { ipHeaders: e.ipHeaders } : {}, s = (e.allow ?? []).map(Oe).filter((i) => i !== null), n = (e.deny ?? []).map(Oe).filter((i) => i !== null);
   function a(i) {
     if (t === "allow") {
-      if (!je(i, s))
+      if (!ke(i, s))
         return {
           action: "reject",
           status: 403,
           code: "ip_denied",
           message: "Access denied"
         };
-    } else if (je(i, n))
+    } else if (ke(i, n))
       return {
         action: "reject",
         status: 403,
@@ -4235,13 +4185,13 @@ function Zs(e) {
   const o = async (i, c) => {
     const l = ae(i.req.raw.headers, r), u = a(l);
     if (u.action === "reject")
-      throw new m(u.status, u.code, u.message);
+      throw new f(u.status, u.code, u.message);
     await c();
   };
   return {
     name: "ip-filter",
     priority: S.IP_FILTER,
-    handler: M(e.skip, o),
+    handler: H(e.skip, o),
     phases: ["request-headers"],
     // ── Protocol-agnostic evaluator ────────────────────────────────
     evaluate: {
@@ -4254,29 +4204,29 @@ function Zs(e) {
 }
 function oe(e, t, r = 0) {
   if (r > t.maxDepth)
-    throw new m(400, "json_threat", "JSON exceeds maximum depth");
+    throw new f(400, "json_threat", "JSON exceeds maximum depth");
   if (typeof e == "string" && e.length > t.maxStringLength)
-    throw new m(
+    throw new f(
       400,
       "json_threat",
       "String value exceeds maximum length"
     );
   if (Array.isArray(e)) {
     if (e.length > t.maxArraySize)
-      throw new m(400, "json_threat", "Array exceeds maximum size");
+      throw new f(400, "json_threat", "Array exceeds maximum size");
     for (const s of e)
       oe(s, t, r + 1);
   } else if (e !== null && typeof e == "object") {
     const s = Object.keys(e);
     if (s.length > t.maxKeys)
-      throw new m(
+      throw new f(
         400,
         "json_threat",
         "Object exceeds maximum key count"
       );
     for (const n of s) {
       if (n.length > t.maxStringLength)
-        throw new m(
+        throw new f(
           400,
           "json_threat",
           "String value exceeds maximum length"
@@ -4289,7 +4239,7 @@ function oe(e, t, r = 0) {
     }
   }
 }
-const en = /* @__PURE__ */ v({
+const tn = /* @__PURE__ */ v({
   name: "json-threat-protection",
   priority: S.EARLY,
   phases: ["request-body"],
@@ -4313,7 +4263,7 @@ const en = /* @__PURE__ */ v({
     if (o !== void 0) {
       const u = Number.parseInt(o, 10);
       if (!Number.isNaN(u) && u > r.maxBodySize)
-        throw s("body size %d exceeds max %d", u, r.maxBodySize), new m(
+        throw s("body size %d exceeds max %d", u, r.maxBodySize), new f(
           413,
           "body_too_large",
           "Request body exceeds maximum size"
@@ -4328,7 +4278,7 @@ const en = /* @__PURE__ */ v({
     try {
       l = JSON.parse(c);
     } catch {
-      throw s("invalid JSON"), new m(
+      throw s("invalid JSON"), new f(
         400,
         "invalid_json",
         "Invalid JSON in request body"
@@ -4381,7 +4331,7 @@ const en = /* @__PURE__ */ v({
           maxArraySize: t.maxArraySize
         });
       } catch (i) {
-        if (i instanceof m)
+        if (i instanceof f)
           return {
             action: "reject",
             status: i.statusCode,
@@ -4394,7 +4344,7 @@ const en = /* @__PURE__ */ v({
     }
   }
 });
-class $t {
+class _t {
   counters = /* @__PURE__ */ new Map();
   cleanupInterval = null;
   /** Maximum number of unique keys to prevent memory exhaustion */
@@ -4445,13 +4395,13 @@ class $t {
     this.counters.clear();
   }
 }
-const Ye = /* @__PURE__ */ new WeakMap();
-function us(e) {
+const Ve = /* @__PURE__ */ new WeakMap();
+function ds(e) {
   if (e.store) return e.store;
-  let t = Ye.get(e);
-  return t || (t = new $t(), Ye.set(e, t)), t;
+  let t = Ve.get(e);
+  return t || (t = new _t(), Ve.set(e, t)), t;
 }
-const tn = /* @__PURE__ */ v({
+const rn = /* @__PURE__ */ v({
   name: "rate-limit",
   priority: S.RATE_LIMIT,
   defaults: {
@@ -4460,7 +4410,7 @@ const tn = /* @__PURE__ */ v({
     message: "Rate limit exceeded"
   },
   handler: async (e, t, { config: r, debug: s, trace: n }) => {
-    const a = us(r);
+    const a = ds(r);
     let o;
     r.keyBy ? o = await r.keyBy(e) : o = ae(e.req.raw.headers, { ipHeaders: r.ipHeaders });
     const i = await E(
@@ -4477,7 +4427,7 @@ const tn = /* @__PURE__ */ v({
     if ($(e, "x-stoma-ratelimit-key", o), $(e, "x-stoma-ratelimit-window", r.windowSeconds), c > r.max) {
       s(`limited (key=${o}, count=${c}, max=${r.max})`), n("rejected", { key: o, count: c, max: r.max });
       const h = String(d);
-      throw new m(
+      throw new f(
         r.statusCode,
         "rate_limited",
         r.message,
@@ -4491,9 +4441,9 @@ const tn = /* @__PURE__ */ v({
     }
     n("allowed", { key: o, count: c, max: r.max, remaining: u }), await t(), e.res.headers.set("x-ratelimit-limit", String(r.max)), e.res.headers.set("x-ratelimit-remaining", String(u)), e.res.headers.set("x-ratelimit-reset", String(d));
   }
-}), Ge = /* @__PURE__ */ new WeakMap();
-function ds(e, t) {
-  let r = Ge.get(e);
+}), Ye = /* @__PURE__ */ new WeakMap();
+function hs(e, t) {
+  let r = Ye.get(e);
   if (!r) {
     const s = t.replace(/g/g, "");
     s !== t && console.warn(
@@ -4502,11 +4452,11 @@ function ds(e, t) {
       regex: new RegExp(n.regex, s),
       targets: n.targets,
       message: n.message ?? "Request blocked by threat protection"
-    })), Ge.set(e, r);
+    })), Ye.set(e, r);
   }
   return r;
 }
-const rn = /* @__PURE__ */ v({
+const sn = /* @__PURE__ */ v({
   name: "regex-threat-protection",
   priority: S.EARLY,
   defaults: {
@@ -4516,7 +4466,7 @@ const rn = /* @__PURE__ */ v({
     maxBodyScanLength: 65536
   },
   handler: async (e, t, { config: r, debug: s }) => {
-    const n = ds(
+    const n = hs(
       r.patterns,
       r.flags ?? "i"
     );
@@ -4538,8 +4488,8 @@ const rn = /* @__PURE__ */ v({
           let p = !1;
           const y = new TextDecoder();
           for (; !p && d.length < h; ) {
-            const f = await u.read();
-            f.done ? p = !0 : d += y.decode(f.value, { stream: !0 });
+            const m = await u.read();
+            m.done ? p = !0 : d += y.decode(m.value, { stream: !0 });
           }
           u.cancel(), d.length > h && (d = d.slice(0, h)), o = d || null;
         }
@@ -4547,23 +4497,23 @@ const rn = /* @__PURE__ */ v({
     }
     for (const i of n) {
       if (i.targets.includes("path") && i.regex.test(e.req.path))
-        throw s("path matched pattern: %s", i.regex.source), new m(400, "threat_detected", i.message);
+        throw s("path matched pattern: %s", i.regex.source), new f(400, "threat_detected", i.message);
       if (i.targets.includes("query")) {
         const c = new URL(e.req.url), l = decodeURIComponent(c.search.slice(1));
         if (l && i.regex.test(l))
-          throw s("query matched pattern: %s", i.regex.source), new m(400, "threat_detected", i.message);
+          throw s("query matched pattern: %s", i.regex.source), new f(400, "threat_detected", i.message);
       }
       if (i.targets.includes("headers")) {
         for (const [, c] of e.req.raw.headers.entries())
           if (i.regex.test(c))
-            throw s("header matched pattern: %s", i.regex.source), new m(400, "threat_detected", i.message);
+            throw s("header matched pattern: %s", i.regex.source), new f(400, "threat_detected", i.message);
       }
       if (i.targets.includes("body") && o && i.regex.test(o))
-        throw s("body matched pattern: %s", i.regex.source), new m(400, "threat_detected", i.message);
+        throw s("body matched pattern: %s", i.regex.source), new f(400, "threat_detected", i.message);
     }
     s("all patterns passed"), await t();
   }
-}), sn = /* @__PURE__ */ v({
+}), nn = /* @__PURE__ */ v({
   name: "request-limit",
   priority: S.EARLY,
   phases: ["request-headers"],
@@ -4575,7 +4525,7 @@ const rn = /* @__PURE__ */ v({
     if (s !== void 0) {
       const n = Number.parseInt(s, 10);
       if (!Number.isNaN(n) && n > r.maxBytes)
-        throw new m(413, "request_too_large", r.message);
+        throw new f(413, "request_too_large", r.message);
     }
     await t();
   },
@@ -4596,7 +4546,7 @@ const rn = /* @__PURE__ */ v({
     }
   }
 });
-function hs(e, t) {
+function ps(e, t) {
   const r = t.split(".");
   let s = e;
   for (let n = 0; n < r.length - 1; n++) {
@@ -4605,7 +4555,7 @@ function hs(e, t) {
   }
   s != null && typeof s == "object" && delete s[r[r.length - 1]];
 }
-function ps(e, t) {
+function fs(e, t) {
   const r = {};
   for (const s of t) {
     const n = s.split(".");
@@ -4617,13 +4567,13 @@ function ps(e, t) {
 }
 function Q(e, t, r) {
   if (t === "allow")
-    return ps(e, r);
+    return fs(e, r);
   const s = structuredClone(e);
   for (const n of r)
-    hs(s, n);
+    ps(s, n);
   return s;
 }
-const nn = /* @__PURE__ */ v({
+const an = /* @__PURE__ */ v({
   name: "resource-filter",
   priority: S.RESPONSE_TRANSFORM,
   phases: ["response-body"],
@@ -4724,7 +4674,7 @@ const nn = /* @__PURE__ */ v({
       };
     }
   }
-}), an = /* @__PURE__ */ v({
+}), on = /* @__PURE__ */ v({
   name: "ssl-enforce",
   priority: S.EARLY,
   httpOnly: !0,
@@ -4744,7 +4694,7 @@ const nn = /* @__PURE__ */ v({
         });
         return;
       }
-      throw new m(403, "ssl_required", "HTTPS is required");
+      throw new f(403, "ssl_required", "HTTPS is required");
     }
     await t();
     let a = `max-age=${r.hstsMaxAge}`;
@@ -4759,7 +4709,7 @@ const nn = /* @__PURE__ */ v({
   "trailer",
   "transfer-encoding",
   "upgrade"
-]), on = /* @__PURE__ */ v({
+]), cn = /* @__PURE__ */ v({
   name: "traffic-shadow",
   priority: S.RESPONSE_TRANSFORM,
   httpOnly: !0,
@@ -4808,11 +4758,11 @@ const nn = /* @__PURE__ */ v({
       s("shadow request failed: %s", String(g)), r.onError?.(g);
     }).finally(() => {
       clearTimeout(p);
-    }), f = z(e);
-    f?.adapter?.waitUntil && f.adapter.waitUntil(y);
+    }), m = W(e);
+    m?.adapter?.waitUntil && m.adapter.waitUntil(y);
   }
 });
-function Ot() {
+function $t() {
   return {
     state: "closed",
     failureCount: 0,
@@ -4821,11 +4771,11 @@ function Ot() {
     lastStateChange: Date.now()
   };
 }
-class jt {
+class Ot {
   circuits = /* @__PURE__ */ new Map();
   getOrCreate(t) {
     let r = this.circuits.get(t);
-    return r || (r = Ot(), this.circuits.set(t, r)), r;
+    return r || (r = $t(), this.circuits.set(t, r)), r;
   }
   async getState(t) {
     return { ...this.getOrCreate(t) };
@@ -4854,7 +4804,7 @@ class jt {
     this.circuits.clear();
   }
 }
-async function D(e, t, r, s, n, a) {
+async function U(e, t, r, s, n, a) {
   await E(
     () => e.transition(t, s),
     void 0,
@@ -4867,8 +4817,8 @@ async function D(e, t, r, s, n, a) {
     "onStateChange()"
   );
 }
-function cn(e) {
-  const t = K(
+function ln(e) {
+  const t = F(
     {
       failureThreshold: 5,
       resetTimeoutMs: 3e4,
@@ -4879,17 +4829,17 @@ function cn(e) {
     e
   );
   let r = e?.store;
-  r || (r = new jt());
+  r || (r = new Ot());
   const s = r, n = e?.onStateChange, a = /* @__PURE__ */ new Map(), o = async (i, c) => {
-    const l = F(i, "circuit-breaker"), u = e?.key ? e.key(i) : new URL(i.req.url).pathname, d = await E(
+    const l = z(i, "circuit-breaker"), u = e?.key ? e.key(i) : new URL(i.req.url).pathname, d = await E(
       () => s.getState(u),
-      Ot(),
+      $t(),
       l,
       "store.getState()"
     ), h = Date.now();
     if ($(i, "x-stoma-circuit-key", u), $(i, "x-stoma-circuit-state", d.state), $(i, "x-stoma-circuit-failures", d.failureCount), d.state === "open")
       if (h - d.lastStateChange >= t.resetTimeoutMs)
-        l(`open -> half-open (key=${u})`), await D(
+        l(`open -> half-open (key=${u})`), await U(
           s,
           u,
           "open",
@@ -4901,7 +4851,7 @@ function cn(e) {
         const p = Math.ceil(
           (t.resetTimeoutMs - (h - d.lastStateChange)) / 1e3
         );
-        throw new m(
+        throw new f(
           t.openStatusCode,
           "circuit_open",
           "Service temporarily unavailable",
@@ -4911,7 +4861,7 @@ function cn(e) {
     if (d.state === "half-open" || d.state === "open" && h - d.lastStateChange >= t.resetTimeoutMs) {
       const p = a.get(u) ?? 0;
       if (p >= t.halfOpenMax)
-        throw new m(
+        throw new f(
           t.openStatusCode,
           "circuit_open",
           "Service temporarily unavailable",
@@ -4926,7 +4876,7 @@ function cn(e) {
           void 0,
           l,
           "store.recordFailure()"
-        ), await D(
+        ), await U(
           s,
           u,
           "half-open",
@@ -4938,7 +4888,7 @@ function cn(e) {
           void 0,
           l,
           "store.recordSuccess()"
-        ), await D(
+        ), await U(
           s,
           u,
           "half-open",
@@ -4952,7 +4902,7 @@ function cn(e) {
           void 0,
           l,
           "store.recordFailure()"
-        ), await D(
+        ), await U(
           s,
           u,
           "half-open",
@@ -4977,7 +4927,7 @@ function cn(e) {
       );
       throw y && y.failureCount >= t.failureThreshold && (l(
         `closed -> open (key=${u}, failures=${y.failureCount}/${t.failureThreshold})`
-      ), await D(
+      ), await U(
         s,
         u,
         "closed",
@@ -4995,7 +4945,7 @@ function cn(e) {
       );
       p && p.failureCount >= t.failureThreshold && (l(
         `closed -> open (key=${u}, failures=${p.failureCount}/${t.failureThreshold})`
-      ), await D(
+      ), await U(
         s,
         u,
         "closed",
@@ -5014,11 +4964,11 @@ function cn(e) {
   return {
     name: "circuit-breaker",
     priority: S.CIRCUIT_BREAKER,
-    handler: M(e?.skip, o),
+    handler: H(e?.skip, o),
     httpOnly: !0
   };
 }
-const ln = /* @__PURE__ */ v({
+const un = /* @__PURE__ */ v({
   name: "latency-injection",
   priority: S.EARLY,
   httpOnly: !0,
@@ -5031,28 +4981,28 @@ const ln = /* @__PURE__ */ v({
     let n = r.delayMs;
     r.jitter > 0 && (n += (Math.random() * 2 - 1) * r.jitter * r.delayMs), n = Math.max(0, n), s(`injecting ${n.toFixed(0)}ms latency`), await new Promise((a) => setTimeout(a, n)), await t();
   }
-}), fs = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
-function ys(e) {
+}), ys = ["GET", "HEAD", "OPTIONS", "PUT", "DELETE"];
+function ws(e) {
   return new Promise((t) => setTimeout(t, e));
 }
-function ws(e, t, r, s) {
+function gs(e, t, r, s) {
   const n = Math.random() * r;
   return t === "fixed" ? r + n : Math.min(r * 2 ** e + n, s);
 }
-function un(e) {
-  const t = K(
+function dn(e) {
+  const t = F(
     {
       maxRetries: 3,
       retryOn: [502, 503, 504],
       backoff: "exponential",
       baseDelayMs: 200,
       maxDelayMs: 5e3,
-      retryMethods: fs,
+      retryMethods: ys,
       retryCountHeader: "x-retry-count"
     },
     e
   ), r = async (s, n) => {
-    const a = F(s, "retry"), o = s.req.method.toUpperCase();
+    const a = z(s, "retry"), o = s.req.method.toUpperCase();
     if (!t.retryMethods.includes(o)) {
       await n();
       return;
@@ -5063,7 +5013,7 @@ function un(e) {
       return;
     let c = 0;
     for (let l = 0; l < t.maxRetries && t.retryOn.includes(s.res.status); l++) {
-      const u = ws(
+      const u = gs(
         l,
         t.backoff,
         t.baseDelayMs,
@@ -5071,7 +5021,7 @@ function un(e) {
       );
       a(
         `attempt ${l + 1}/${t.maxRetries} failed (status=${s.res.status}), retrying in ${Math.round(u)}ms`
-      ), await s.res.body?.cancel(), await ys(u);
+      ), await s.res.body?.cancel(), await ws(u);
       let d;
       try {
         d = await fetch(i.clone());
@@ -5089,11 +5039,11 @@ function un(e) {
   return {
     name: "retry",
     priority: S.RETRY,
-    handler: M(e?.skip, r),
+    handler: H(e?.skip, r),
     httpOnly: !0
   };
 }
-const dn = /* @__PURE__ */ v({
+const hn = /* @__PURE__ */ v({
   name: "timeout",
   priority: S.TIMEOUT,
   httpOnly: !0,
@@ -5109,7 +5059,7 @@ const dn = /* @__PURE__ */ v({
           n.signal.addEventListener(
             "abort",
             () => c(
-              new m(
+              new f(
                 r.statusCode,
                 "gateway_timeout",
                 r.message
@@ -5122,12 +5072,12 @@ const dn = /* @__PURE__ */ v({
         elapsed: Date.now() - o
       });
     } catch (o) {
-      throw o instanceof m && o.code === "gateway_timeout" && s("fired", { budgetMs: r.timeoutMs }), o;
+      throw o instanceof f && o.code === "gateway_timeout" && s("fired", { budgetMs: r.timeoutMs }), o;
     } finally {
       clearTimeout(a);
     }
   }
-}), hn = /* @__PURE__ */ v({
+}), pn = /* @__PURE__ */ v({
   name: "assign-attributes",
   priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
@@ -5155,7 +5105,7 @@ const dn = /* @__PURE__ */ v({
     }
   }
 });
-async function Xe(e, t) {
+async function Ge(e, t) {
   const r = {};
   for (const [s, n] of Object.entries(t))
     typeof n == "function" ? r[s] = await n(e) : r[s] = n;
@@ -5164,7 +5114,7 @@ async function Xe(e, t) {
 function Z(e, t) {
   return e ? t.some((r) => e.includes(r)) : !1;
 }
-const pn = /* @__PURE__ */ v({
+const fn = /* @__PURE__ */ v({
   name: "assign-content",
   priority: S.REQUEST_TRANSFORM,
   defaults: {
@@ -5180,7 +5130,7 @@ const pn = /* @__PURE__ */ v({
           l && (a = JSON.parse(l));
         } catch {
         }
-        const o = await Xe(e, r.request);
+        const o = await Ge(e, r.request);
         Object.assign(a, o), s(
           "assigned %d fields to request body",
           Object.keys(o).length
@@ -5211,7 +5161,7 @@ const pn = /* @__PURE__ */ v({
           c && (a = JSON.parse(c));
         } catch {
         }
-        const o = await Xe(e, r.response);
+        const o = await Ge(e, r.response);
         Object.assign(a, o), s(
           "assigned %d fields to response body",
           Object.keys(o).length
@@ -5297,7 +5247,7 @@ const pn = /* @__PURE__ */ v({
     }
   }
 });
-var gs = (e) => {
+var Ss = (e) => {
   const r = {
     ...{
       origin: "*",
@@ -5331,7 +5281,7 @@ var gs = (e) => {
   };
 };
 function mn(e) {
-  const t = e?.origins ?? "*", r = gs({
+  const t = e?.origins ?? "*", r = Ss({
     origin: typeof t == "function" ? (s) => t(s) ? s : "" : t,
     allowMethods: e?.methods,
     allowHeaders: e?.allowHeaders,
@@ -5342,11 +5292,11 @@ function mn(e) {
   return {
     name: "cors",
     priority: S.EARLY,
-    handler: M(e?.skip, r),
+    handler: H(e?.skip, r),
     httpOnly: !0
   };
 }
-const fn = /* @__PURE__ */ v({
+const yn = /* @__PURE__ */ v({
   name: "json-validation",
   priority: S.AUTH,
   phases: ["request-body"],
@@ -5371,14 +5321,14 @@ const fn = /* @__PURE__ */ v({
     try {
       const l = await e.req.raw.clone().text();
       if (!l)
-        throw s("empty body with JSON content type"), new m(
+        throw s("empty body with JSON content type"), new f(
           r.rejectStatus,
           "validation_failed",
           "Request body is empty"
         );
       o = JSON.parse(l);
     } catch (c) {
-      throw c instanceof m ? c : (s("body parse failed"), new m(
+      throw c instanceof f ? c : (s("body parse failed"), new f(
         r.rejectStatus,
         "validation_failed",
         "Request body is not valid JSON"
@@ -5391,7 +5341,7 @@ const fn = /* @__PURE__ */ v({
     const i = await r.validate(o);
     if (!i.valid) {
       const c = r.errorDetail && i.errors && i.errors.length > 0 ? `Validation failed: ${i.errors.join("; ")}` : "Validation failed";
-      throw s("validation failed: %s", c), new m(
+      throw s("validation failed: %s", c), new f(
         r.rejectStatus,
         "validation_failed",
         c
@@ -5444,7 +5394,7 @@ const fn = /* @__PURE__ */ v({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), yn = /* @__PURE__ */ v({
+}), wn = /* @__PURE__ */ v({
   name: "override-method",
   priority: S.EARLY,
   phases: ["request-headers"],
@@ -5466,7 +5416,7 @@ const fn = /* @__PURE__ */ v({
     if (!new Set(
       (r.allowedMethods ?? []).map((c) => c.toUpperCase())
     ).has(a))
-      throw new m(
+      throw new f(
         400,
         "invalid_method_override",
         `Method override not allowed: ${a}`
@@ -5482,10 +5432,10 @@ const fn = /* @__PURE__ */ v({
     Object.defineProperty(e.req, "raw", { value: i, configurable: !0 }), await t();
   }
 });
-function Qe(e) {
+function Xe(e) {
   return typeof e == "boolean" ? { valid: e } : e;
 }
-const wn = /* @__PURE__ */ v({
+const gn = /* @__PURE__ */ v({
   name: "request-validation",
   priority: S.AUTH,
   phases: ["request-body"],
@@ -5510,7 +5460,7 @@ const wn = /* @__PURE__ */ v({
       const d = await e.req.raw.clone().text();
       o = JSON.parse(d);
     } catch {
-      throw s("body parse failed"), new m(
+      throw s("body parse failed"), new f(
         400,
         "validation_failed",
         `${r.errorMessage}: invalid JSON`
@@ -5521,10 +5471,10 @@ const wn = /* @__PURE__ */ v({
       s("no validator configured - passing through"), await t();
       return;
     }
-    const c = await i(o), l = Qe(c);
+    const c = await i(o), l = Xe(c);
     if (!l.valid) {
       const u = l.errors && l.errors.length > 0 ? `${r.errorMessage}: ${l.errors.join("; ")}` : r.errorMessage;
-      throw s("validation failed: %s", u), new m(400, "validation_failed", u);
+      throw s("validation failed: %s", u), new f(400, "validation_failed", u);
     }
     s("validation passed"), await t();
   },
@@ -5561,7 +5511,7 @@ const wn = /* @__PURE__ */ v({
       const o = t.validateAsync ?? t.validate;
       if (!o)
         return r("no validator configured - passing through"), { action: "continue" };
-      const i = await o(a), c = Qe(i);
+      const i = await o(a), c = Xe(i);
       if (!c.valid) {
         const l = c.errors && c.errors.length > 0 ? `${t.errorMessage}: ${c.errors.join("; ")}` : t.errorMessage;
         return r("validation failed: %s", l), {
@@ -5574,7 +5524,7 @@ const wn = /* @__PURE__ */ v({
       return r("validation passed"), { action: "continue" };
     }
   }
-}), gn = /* @__PURE__ */ v({
+}), Sn = /* @__PURE__ */ v({
   name: "request-transform",
   priority: S.REQUEST_TRANSFORM,
   phases: ["request-headers"],
@@ -5615,7 +5565,7 @@ const wn = /* @__PURE__ */ v({
       return r.length > 0 ? { action: "continue", mutations: r } : { action: "continue" };
     }
   }
-}), Sn = /* @__PURE__ */ v({
+}), vn = /* @__PURE__ */ v({
   name: "response-transform",
   priority: S.RESPONSE_TRANSFORM,
   phases: ["response-headers"],
@@ -5654,7 +5604,7 @@ const wn = /* @__PURE__ */ v({
     }
   }
 });
-function vn(e) {
+function Tn(e) {
   const t = e?.path ?? "/health", r = e?.upstreamProbes ?? [], s = e?.includeUpstreamStatus ?? !1, n = e?.probeTimeoutMs ?? 5e3, a = e?.probeMethod ?? "HEAD", o = e?.unhealthyStatusCode ?? 503;
   return {
     path: t,
@@ -5672,13 +5622,13 @@ function vn(e) {
             r.map(async (p) => {
               const y = Date.now();
               try {
-                const f = await fetch(p, {
+                const m = await fetch(p, {
                   method: a,
                   signal: AbortSignal.timeout(n)
                 });
                 return {
                   url: p,
-                  status: f.ok ? "healthy" : "unhealthy",
+                  status: m.ok ? "healthy" : "unhealthy",
                   latencyMs: Date.now() - y
                 };
               } catch {
@@ -5702,7 +5652,7 @@ function vn(e) {
     }
   };
 }
-const Tn = /* @__PURE__ */ v({
+const bn = /* @__PURE__ */ v({
   name: "assign-metrics",
   priority: S.OBSERVABILITY,
   httpOnly: !0,
@@ -5717,7 +5667,7 @@ const Tn = /* @__PURE__ */ v({
       ), s("tag %s = %s (dynamic)", a, n[a])) : (n[a] = o, s("tag %s = %s (static)", a, o));
     e.set("_metricsTags", n), await t();
   }
-}), bn = /* @__PURE__ */ v({
+}), xn = /* @__PURE__ */ v({
   name: "metrics-reporter",
   priority: S.METRICS,
   httpOnly: !0,
@@ -5763,7 +5713,7 @@ const Tn = /* @__PURE__ */ v({
   }
 });
 function kt(e, t) {
-  if (!Ht(e) && !Array.isArray(e))
+  if (!jt(e) && !Array.isArray(e))
     return e;
   const r = t.replacement ?? "[REDACTED]", s = structuredClone(e);
   for (const n of t.paths)
@@ -5778,7 +5728,7 @@ function te(e, t, r, s) {
       te(o, t, r, s);
     return;
   }
-  if (Ht(e))
+  if (jt(e))
     if (n === "*")
       for (const o of Object.keys(e))
         a ? e[o] = s : te(
@@ -5793,17 +5743,17 @@ function te(e, t, r, s) {
       a ? o[n] = s : te(o[n], t, r + 1, s);
     }
 }
-function Ht(e) {
+function jt(e) {
   return typeof e == "object" && e !== null && !Array.isArray(e);
 }
-const Ss = 8192, xn = /* @__PURE__ */ v({
+const vs = 8192, Rn = /* @__PURE__ */ v({
   name: "request-log",
   priority: S.OBSERVABILITY,
   httpOnly: !0,
   handler: async (e, t, { config: r, debug: s, gateway: n }) => {
-    const a = r.sink ?? bs, o = r.maxBodyLength ?? Ss, i = Date.now();
+    const a = r.sink ?? xs, o = r.maxBodyLength ?? vs, i = Date.now();
     let c;
-    r.logRequestBody && (c = await vs(
+    r.logRequestBody && (c = await Ts(
       e.req.raw,
       o,
       r.redactPaths
@@ -5827,7 +5777,7 @@ const Ss = 8192, xn = /* @__PURE__ */ v({
       spanId: n?.spanId
     };
     if (c !== void 0 && (u.requestBody = c), r.logResponseBody) {
-      const d = await Ts(
+      const d = await bs(
         e,
         o,
         r.redactPaths
@@ -5847,7 +5797,7 @@ const Ss = 8192, xn = /* @__PURE__ */ v({
     );
   }
 });
-async function vs(e, t, r) {
+async function Ts(e, t, r) {
   try {
     const n = await e.clone().text();
     if (!n) return;
@@ -5866,7 +5816,7 @@ async function vs(e, t, r) {
     return;
   }
 }
-async function Ts(e, t, r) {
+async function bs(e, t, r) {
   try {
     const n = await e.res.clone().text();
     if (!n) return;
@@ -5885,17 +5835,17 @@ async function Ts(e, t, r) {
     return;
   }
 }
-function bs(e) {
+function xs(e) {
   console.log(JSON.stringify(e));
 }
-function xs(e) {
+function Rs(e) {
   return e.replace(/[^a-zA-Z0-9_-]/g, "_");
 }
-function Ze(e, t, r, s) {
-  const n = xs(e), a = t.toFixed(r), o = s?.(e);
+function Qe(e, t, r, s) {
+  const n = Rs(e), a = t.toFixed(r), o = s?.(e);
   return o ? `${n};dur=${a};desc="${Se(o)}"` : `${n};dur=${a}`;
 }
-const Rn = /* @__PURE__ */ v({
+const An = /* @__PURE__ */ v({
   name: "server-timing",
   priority: S.METRICS,
   httpOnly: !0,
@@ -5908,7 +5858,7 @@ const Rn = /* @__PURE__ */ v({
   },
   validate: (e) => {
     if (e.visibility === "conditional" && typeof e.visibilityFn != "function")
-      throw new m(
+      throw new f(
         500,
         "config-error",
         'serverTiming: visibility "conditional" requires a visibilityFn'
@@ -5926,22 +5876,22 @@ const Rn = /* @__PURE__ */ v({
         a = await r.visibilityFn(e);
         break;
       default:
-        a = Tt(e);
+        a = vt(e);
         break;
     }
     if (!a) {
       s("skipping - visibility check failed");
       return;
     }
-    const o = Date.now() - n, i = r.precision, c = e.get("_policyTimings"), l = c ? bt(c) : void 0;
+    const o = Date.now() - n, i = r.precision, c = e.get("_policyTimings"), l = c ? Tt(c) : void 0;
     if (r.serverTimingHeader) {
       const u = [];
       if (r.includeTotal && u.push(
-        Ze("total", o, i, r.descriptionFn)
+        Qe("total", o, i, r.descriptionFn)
       ), l)
         for (const d of l)
           u.push(
-            Ze(d.name, d.durationMs, i, r.descriptionFn)
+            Qe(d.name, d.durationMs, i, r.descriptionFn)
           );
       u.length > 0 && (e.res.headers.set("server-timing", u.join(", ")), s("Server-Timing: %s", u.join(", ")));
     }
@@ -5951,7 +5901,7 @@ const Rn = /* @__PURE__ */ v({
     }
   }
 });
-function An(e, t) {
+function En(e, t) {
   const r = new TextEncoder(), s = r.encode(e), n = r.encode(t), a = Math.max(s.length, n.length);
   let o = s.length !== n.length ? 1 : 0;
   for (let i = 0; i < a; i++) {
@@ -5960,8 +5910,8 @@ function An(e, t) {
   }
   return o === 0;
 }
-const Rs = "https://stoma.internal";
-class En {
+const As = "https://stoma.internal";
+class _n {
   cache;
   origin;
   /**
@@ -5969,7 +5919,7 @@ class En {
    * @param origin - Synthetic origin used to construct cache keys. Default: `"https://edge-gateway.internal"`.
    */
   constructor(t, r) {
-    this.cache = t ?? caches.default, this.origin = r ?? Rs;
+    this.cache = t ?? caches.default, this.origin = r ?? As;
   }
   async get(t) {
     const r = new Request(`${this.origin}/${encodeURIComponent(t)}`);
@@ -5989,52 +5939,52 @@ class En {
     return this.cache.delete(r);
   }
 }
-function _n() {
+function $n() {
   return {
-    rateLimitStore: new $t(),
-    circuitBreakerStore: new jt(),
-    cacheStore: new Et()
+    rateLimitStore: new _t(),
+    circuitBreakerStore: new Ot(),
+    cacheStore: new At()
   };
 }
-const As = "stoma-playground", J = "rate-limits", Es = 1;
-function _s() {
+const Es = "stoma-playground", J = "rate-limits", _s = 1;
+function $s() {
   return new Promise((e, t) => {
-    const r = indexedDB.open(As, Es);
+    const r = indexedDB.open(Es, _s);
     r.onupgradeneeded = () => {
       const s = r.result;
       s.objectStoreNames.contains(J) || s.createObjectStore(J);
     }, r.onsuccess = () => e(r.result), r.onerror = () => t(r.error);
   });
 }
-function $s(e, t) {
+function Os(e, t) {
   return new Promise((r, s) => {
     const o = e.transaction(J, "readonly").objectStore(J).get(t);
     o.onsuccess = () => r(o.result), o.onerror = () => s(o.error);
   });
 }
-function et(e, t, r) {
+function Ze(e, t, r) {
   return new Promise((s, n) => {
     const i = e.transaction(J, "readwrite").objectStore(J).put(r, t);
     i.onsuccess = () => s(), i.onerror = () => n(i.error);
   });
 }
-class $n {
+class On {
   db = null;
   async increment(t, r) {
-    this.db || (this.db = await _s());
-    const s = Date.now(), n = await $s(this.db, t);
+    this.db || (this.db = await $s());
+    const s = Date.now(), n = await Os(this.db, t);
     if (n && n.resetAt > s) {
       const o = {
         count: n.count + 1,
         resetAt: n.resetAt
       };
-      return await et(this.db, t, o), o;
+      return await Ze(this.db, t, o), o;
     }
     const a = {
       count: 1,
       resetAt: s + r * 1e3
     };
-    return await et(this.db, t, a), a;
+    return await Ze(this.db, t, a), a;
   }
   /** Close the database connection. */
   destroy() {
@@ -6042,79 +5992,79 @@ class $n {
   }
 }
 export {
-  En as CacheApiCacheStore,
+  _n as CacheApiCacheStore,
   Hs as ConsoleSpanExporter,
-  ls as DEFAULT_IP_HEADERS,
-  m as GatewayError,
-  $n as IDBRateLimitStore,
-  Et as InMemoryCacheStore,
-  jt as InMemoryCircuitBreakerStore,
+  us as DEFAULT_IP_HEADERS,
+  f as GatewayError,
+  On as IDBRateLimitStore,
+  At as InMemoryCacheStore,
+  Ot as InMemoryCircuitBreakerStore,
   js as InMemoryMetricsCollector,
-  ks as OTLPSpanExporter,
+  Is as OTLPSpanExporter,
   S as Priority,
-  j as SemConv,
+  k as SemConv,
   ie as SpanBuilder,
-  Ns as apiKeyAuth,
-  hn as assignAttributes,
-  pn as assignContent,
-  Tn as assignMetrics,
-  Ds as basicAuth,
-  Vs as cache,
-  cn as circuitBreaker,
-  Us as clearJwksCache,
+  Ds as apiKeyAuth,
+  pn as assignAttributes,
+  fn as assignContent,
+  bn as assignMetrics,
+  Us as basicAuth,
+  Ys as cache,
+  ln as circuitBreaker,
+  Ls as clearJwksCache,
   mn as cors,
-  Is as createGateway,
+  qs as createGateway,
   Kr as createPolicyTestHarness,
   qt as defaultErrorResponse,
   v as definePolicy,
-  Ys as dynamicRouting,
-  tt as errorToResponse,
+  Gs as dynamicRouting,
+  et as errorToResponse,
   ae as extractClientIp,
-  Ls as generateHttpSignature,
-  Bs as generateJwt,
-  Gs as geoIpFilter,
-  z as getGatewayContext,
-  vn as health,
-  Xs as httpCallout,
-  Qs as interrupt,
-  Zs as ipFilter,
-  Tt as isDebugRequested,
-  Hr as isTraceRequested,
-  en as jsonThreatProtection,
-  fn as jsonValidation,
+  Bs as generateHttpSignature,
+  Ks as generateJwt,
+  Xs as geoIpFilter,
+  W as getGatewayContext,
+  Tn as health,
+  Qs as httpCallout,
+  Zs as interrupt,
+  en as ipFilter,
+  vt as isDebugRequested,
+  jr as isTraceRequested,
+  tn as jsonThreatProtection,
+  yn as jsonValidation,
   Js as jws,
-  Ks as jwtAuth,
-  ln as latencyInjection,
-  _n as memoryAdapter,
-  bn as metricsReporter,
-  Cs as mock,
-  gt as noopTraceReporter,
-  Fs as oauth2,
-  yn as overrideMethod,
-  F as policyDebug,
-  Me as policyTrace,
-  Ps as proxy,
-  tn as rateLimit,
-  zs as rbac,
-  rn as regexThreatProtection,
-  sn as requestLimit,
-  xn as requestLog,
-  gn as requestTransform,
-  wn as requestValidation,
-  K as resolveConfig,
-  nn as resourceFilter,
-  Sn as responseTransform,
-  un as retry,
+  Fs as jwtAuth,
+  un as latencyInjection,
+  $n as memoryAdapter,
+  xn as metricsReporter,
+  Ps as mock,
+  wt as noopTraceReporter,
+  zs as oauth2,
+  wn as overrideMethod,
+  z as policyDebug,
+  qe as policyTrace,
+  Ns as proxy,
+  rn as rateLimit,
+  Ws as rbac,
+  sn as regexThreatProtection,
+  nn as requestLimit,
+  Rn as requestLog,
+  Sn as requestTransform,
+  gn as requestValidation,
+  F as resolveConfig,
+  an as resourceFilter,
+  vn as responseTransform,
+  dn as retry,
   E as safeCall,
   Ms as scope,
-  qs as sdk,
-  Rn as serverTiming,
+  Cs as sdk,
+  An as serverTiming,
   $ as setDebugHeader,
-  an as sslEnforce,
-  dn as timeout,
-  An as timingSafeEqual,
-  yr as toPrometheusText,
-  on as trafficShadow,
-  Ws as verifyHttpSignature,
-  M as withSkip
+  on as sslEnforce,
+  hn as timeout,
+  En as timingSafeEqual,
+  mr as toPrometheusText,
+  cn as trafficShadow,
+  Vs as verifyHttpSignature,
+  H as withSkip
 };

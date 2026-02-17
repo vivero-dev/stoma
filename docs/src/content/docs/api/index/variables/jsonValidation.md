@@ -7,7 +7,7 @@ title: "jsonValidation"
 
 > `const` **jsonValidation**: (`config?`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/transform/json-validation.ts:61](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/json-validation.ts#L61)
+Defined in: [packages/gateway/src/policies/transform/json-validation.ts:61](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/json-validation.ts#L61)
 
 Pluggable JSON body validation policy.
 

@@ -5,7 +5,7 @@ prev: false
 title: "GenerateHttpSignatureConfig"
 ---
 
-Defined in: [src/policies/auth/generate-http-signature.ts:22](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L22)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:22](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L22)
 
 Configuration for the generateHttpSignature policy.
 
@@ -19,7 +19,7 @@ Configuration for the generateHttpSignature policy.
 
 > **algorithm**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:30](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L30)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:30](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L30)
 
 Signing algorithm identifier (e.g. "hmac-sha256", "rsa-pss-sha512", "rsa-v1_5-sha256").
 
@@ -29,7 +29,7 @@ Signing algorithm identifier (e.g. "hmac-sha256", "rsa-pss-sha512", "rsa-v1_5-sh
 
 > `optional` **components**: `string`[]
 
-Defined in: [src/policies/auth/generate-http-signature.ts:32](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L32)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:32](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L32)
 
 Components to include in signature. Default: ["@method", "@path", "@authority"].
 
@@ -39,7 +39,7 @@ Components to include in signature. Default: ["@method", "@path", "@authority"].
 
 > `optional` **expires**: `number`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:40](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L40)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:40](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L40)
 
 Signature expiry in seconds from creation. Optional.
 
@@ -49,7 +49,7 @@ Signature expiry in seconds from creation. Optional.
 
 > **keyId**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:24](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L24)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:24](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L24)
 
 Key identifier included in signature parameters.
 
@@ -59,7 +59,7 @@ Key identifier included in signature parameters.
 
 > `optional` **label**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:38](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L38)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:38](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L38)
 
 Signature label. Default: "sig1".
 
@@ -69,7 +69,7 @@ Signature label. Default: "sig1".
 
 > `optional` **nonce**: `boolean`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:42](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L42)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:42](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L42)
 
 Include a nonce parameter. Default: false.
 
@@ -79,7 +79,7 @@ Include a nonce parameter. Default: false.
 
 > `optional` **privateKey**: `JsonWebKey`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:28](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L28)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:28](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L28)
 
 RSA private key as JWK.
 
@@ -89,7 +89,7 @@ RSA private key as JWK.
 
 > `optional` **secret**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:26](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L26)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:26](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L26)
 
 HMAC secret for signing.
 
@@ -99,7 +99,7 @@ HMAC secret for signing.
 
 > `optional` **signatureHeaderName**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:34](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L34)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:34](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L34)
 
 Signature header name. Default: "Signature".
 
@@ -109,7 +109,7 @@ Signature header name. Default: "Signature".
 
 > `optional` **signatureInputHeaderName**: `string`
 
-Defined in: [src/policies/auth/generate-http-signature.ts:36](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/generate-http-signature.ts#L36)
+Defined in: [packages/gateway/src/policies/auth/generate-http-signature.ts:36](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-http-signature.ts#L36)
 
 Signature-Input header name. Default: "Signature-Input".
 
@@ -119,7 +119,7 @@ Signature-Input header name. Default: "Signature-Input".
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

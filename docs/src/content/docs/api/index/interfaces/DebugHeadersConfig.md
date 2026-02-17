@@ -5,7 +5,7 @@ prev: false
 title: "DebugHeadersConfig"
 ---
 
-Defined in: [src/core/types.ts:133](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L133)
+Defined in: [packages/gateway/src/core/types.ts:133](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L133)
 
 Configuration for client-requested debug headers.
 
@@ -15,7 +15,7 @@ Configuration for client-requested debug headers.
 
 > `optional` **allow**: `string`[]
 
-Defined in: [src/core/types.ts:137](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L137)
+Defined in: [packages/gateway/src/core/types.ts:137](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L137)
 
 Allowlist of debug header names clients can request. When set, only these headers are emitted. Default: all.
 
@@ -25,6 +25,6 @@ Allowlist of debug header names clients can request. When set, only these header
 
 > `optional` **requestHeader**: `string`
 
-Defined in: [src/core/types.ts:135](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/core/types.ts#L135)
+Defined in: [packages/gateway/src/core/types.ts:135](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/types.ts#L135)
 
 Request header name clients use to request debug values. Default: `"x-stoma-debug"`.

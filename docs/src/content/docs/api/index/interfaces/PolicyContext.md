@@ -5,7 +5,7 @@ prev: false
 title: "PolicyContext"
 ---
 
-Defined in: [src/policies/types.ts:94](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L94)
+Defined in: [packages/gateway/src/policies/types.ts:94](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L94)
 
 Context available to policies during execution
 
@@ -15,7 +15,7 @@ Context available to policies during execution
 
 > `optional` **adapter**: [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [src/policies/types.ts:120](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L120)
+Defined in: [packages/gateway/src/policies/types.ts:120](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L120)
 
 Runtime adapter providing store implementations and runtime-specific capabilities.
 
@@ -25,7 +25,7 @@ Runtime adapter providing store implementations and runtime-specific capabilitie
 
 > **debug**: (`namespace`) => [`DebugLogger`](/api/index/type-aliases/debuglogger/)
 
-Defined in: [src/policies/types.ts:118](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L118)
+Defined in: [packages/gateway/src/policies/types.ts:118](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L118)
 
 Get a debug logger for the given namespace.
 Returns a no-op when debug is disabled (zero overhead).
@@ -54,7 +54,7 @@ debug?.("HIT", cacheKey);
 
 > **gatewayName**: `string`
 
-Defined in: [src/policies/types.ts:100](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L100)
+Defined in: [packages/gateway/src/policies/types.ts:100](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L100)
 
 Gateway name
 
@@ -64,7 +64,7 @@ Gateway name
 
 > **requestId**: `string`
 
-Defined in: [src/policies/types.ts:96](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L96)
+Defined in: [packages/gateway/src/policies/types.ts:96](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L96)
 
 Unique request ID for tracing
 
@@ -74,7 +74,7 @@ Unique request ID for tracing
 
 > **routePath**: `string`
 
-Defined in: [src/policies/types.ts:102](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L102)
+Defined in: [packages/gateway/src/policies/types.ts:102](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L102)
 
 Matched route path pattern
 
@@ -84,7 +84,7 @@ Matched route path pattern
 
 > **spanId**: `string`
 
-Defined in: [src/policies/types.ts:106](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L106)
+Defined in: [packages/gateway/src/policies/types.ts:106](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L106)
 
 W3C Trace Context - 16-hex span ID for this gateway request.
 
@@ -94,7 +94,7 @@ W3C Trace Context - 16-hex span ID for this gateway request.
 
 > **startTime**: `number`
 
-Defined in: [src/policies/types.ts:98](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L98)
+Defined in: [packages/gateway/src/policies/types.ts:98](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L98)
 
 Timestamp when the request entered the gateway
 
@@ -104,6 +104,6 @@ Timestamp when the request entered the gateway
 
 > **traceId**: `string`
 
-Defined in: [src/policies/types.ts:104](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L104)
+Defined in: [packages/gateway/src/policies/types.ts:104](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L104)
 
 W3C Trace Context - 32-hex trace ID (propagated or generated).

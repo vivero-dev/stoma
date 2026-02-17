@@ -5,7 +5,7 @@ prev: false
 title: "SpanBuilder"
 ---
 
-Defined in: [src/observability/tracing.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L90)
+Defined in: [packages/gateway/src/observability/tracing.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L90)
 
 Mutable span builder - accumulates attributes, events, and status
 during a request lifecycle. Call [end](/api/index/classes/spanbuilder/#end) to produce an immutable
@@ -17,7 +17,7 @@ during a request lifecycle. Call [end](/api/index/classes/spanbuilder/#end) to p
 
 > **new SpanBuilder**(`name`, `kind`, `traceId`, `spanId`, `parentSpanId?`, `startTimeMs?`): `SpanBuilder`
 
-Defined in: [src/observability/tracing.ts:98](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L98)
+Defined in: [packages/gateway/src/observability/tracing.ts:98](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L98)
 
 #### Parameters
 
@@ -55,7 +55,7 @@ Defined in: [src/observability/tracing.ts:98](https://github.com/HomeGrower-club
 
 > `readonly` **kind**: [`SpanKind`](/api/index/type-aliases/spankind/)
 
-Defined in: [src/observability/tracing.ts:100](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L100)
+Defined in: [packages/gateway/src/observability/tracing.ts:100](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L100)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [src/observability/tracing.ts:100](https://github.com/HomeGrower-clu
 
 > `readonly` **name**: `string`
 
-Defined in: [src/observability/tracing.ts:99](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L99)
+Defined in: [packages/gateway/src/observability/tracing.ts:99](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L99)
 
 ***
 
@@ -71,7 +71,7 @@ Defined in: [src/observability/tracing.ts:99](https://github.com/HomeGrower-club
 
 > `readonly` `optional` **parentSpanId**: `string`
 
-Defined in: [src/observability/tracing.ts:103](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L103)
+Defined in: [packages/gateway/src/observability/tracing.ts:103](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L103)
 
 ***
 
@@ -79,7 +79,7 @@ Defined in: [src/observability/tracing.ts:103](https://github.com/HomeGrower-clu
 
 > `readonly` **spanId**: `string`
 
-Defined in: [src/observability/tracing.ts:102](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L102)
+Defined in: [packages/gateway/src/observability/tracing.ts:102](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L102)
 
 ***
 
@@ -87,7 +87,7 @@ Defined in: [src/observability/tracing.ts:102](https://github.com/HomeGrower-clu
 
 > `readonly` **startTimeMs**: `number`
 
-Defined in: [src/observability/tracing.ts:104](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L104)
+Defined in: [packages/gateway/src/observability/tracing.ts:104](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L104)
 
 ***
 
@@ -95,7 +95,7 @@ Defined in: [src/observability/tracing.ts:104](https://github.com/HomeGrower-clu
 
 > `readonly` **traceId**: `string`
 
-Defined in: [src/observability/tracing.ts:101](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L101)
+Defined in: [packages/gateway/src/observability/tracing.ts:101](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L101)
 
 ## Methods
 
@@ -103,7 +103,7 @@ Defined in: [src/observability/tracing.ts:101](https://github.com/HomeGrower-clu
 
 > **addEvent**(`name`, `attributes?`): `this`
 
-Defined in: [src/observability/tracing.ts:114](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L114)
+Defined in: [packages/gateway/src/observability/tracing.ts:114](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L114)
 
 Record a timestamped event with optional attributes. Chainable.
 
@@ -127,7 +127,7 @@ Record a timestamped event with optional attributes. Chainable.
 
 > **end**(): [`ReadableSpan`](/api/index/interfaces/readablespan/)
 
-Defined in: [src/observability/tracing.ts:134](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L134)
+Defined in: [packages/gateway/src/observability/tracing.ts:134](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L134)
 
 Finalize the span and return an immutable [ReadableSpan](/api/index/interfaces/readablespan/).
 
@@ -144,7 +144,7 @@ snapshot with defensive copies of mutable fields.
 
 > **setAttribute**(`key`, `value`): `this`
 
-Defined in: [src/observability/tracing.ts:108](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L108)
+Defined in: [packages/gateway/src/observability/tracing.ts:108](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L108)
 
 Set a single attribute. Chainable.
 
@@ -168,7 +168,7 @@ Set a single attribute. Chainable.
 
 > **setStatus**(`code`, `message?`): `this`
 
-Defined in: [src/observability/tracing.ts:123](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/observability/tracing.ts#L123)
+Defined in: [packages/gateway/src/observability/tracing.ts:123](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/observability/tracing.ts#L123)
 
 Set the span status. Chainable.
 

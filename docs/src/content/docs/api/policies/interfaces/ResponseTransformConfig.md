@@ -5,7 +5,7 @@ prev: false
 title: "ResponseTransformConfig"
 ---
 
-Defined in: [src/policies/transform/transform.ts:21](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/transform.ts#L21)
+Defined in: [packages/gateway/src/policies/transform/transform.ts:21](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/transform.ts#L21)
 
 Configuration for requestTransform and responseTransform policies.
 
@@ -19,7 +19,7 @@ Configuration for requestTransform and responseTransform policies.
 
 > `optional` **removeHeaders**: `string`[]
 
-Defined in: [src/policies/transform/transform.ts:25](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/transform.ts#L25)
+Defined in: [packages/gateway/src/policies/transform/transform.ts:25](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/transform.ts#L25)
 
 Header names to remove from the response.
 
@@ -29,7 +29,7 @@ Header names to remove from the response.
 
 > `optional` **renameHeaders**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/transform/transform.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/transform.ts#L27)
+Defined in: [packages/gateway/src/policies/transform/transform.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/transform.ts#L27)
 
 Rename headers: keys are old names, values are new names.
 
@@ -39,7 +39,7 @@ Rename headers: keys are old names, values are new names.
 
 > `optional` **setHeaders**: `Record`\<`string`, `string`\>
 
-Defined in: [src/policies/transform/transform.ts:23](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/transform/transform.ts#L23)
+Defined in: [packages/gateway/src/policies/transform/transform.ts:23](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/transform/transform.ts#L23)
 
 Headers to add or overwrite on the response.
 
@@ -49,7 +49,7 @@ Headers to add or overwrite on the response.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

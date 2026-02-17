@@ -5,7 +5,7 @@ prev: false
 title: "TimeoutConfig"
 ---
 
-Defined in: [src/policies/resilience/timeout.ts:10](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/resilience/timeout.ts#L10)
+Defined in: [packages/gateway/src/policies/resilience/timeout.ts:10](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/resilience/timeout.ts#L10)
 
 Configuration for the timeout policy.
 
@@ -19,7 +19,7 @@ Configuration for the timeout policy.
 
 > `optional` **message**: `string`
 
-Defined in: [src/policies/resilience/timeout.ts:14](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/resilience/timeout.ts#L14)
+Defined in: [packages/gateway/src/policies/resilience/timeout.ts:14](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/resilience/timeout.ts#L14)
 
 Error message when timeout fires.
 
@@ -29,7 +29,7 @@ Error message when timeout fires.
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 
@@ -53,7 +53,7 @@ Skip this policy when condition returns true
 
 > `optional` **statusCode**: `number`
 
-Defined in: [src/policies/resilience/timeout.ts:16](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/resilience/timeout.ts#L16)
+Defined in: [packages/gateway/src/policies/resilience/timeout.ts:16](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/resilience/timeout.ts#L16)
 
 HTTP status code when timeout fires. Default: 504.
 
@@ -63,6 +63,6 @@ HTTP status code when timeout fires. Default: 504.
 
 > `optional` **timeoutMs**: `number`
 
-Defined in: [src/policies/resilience/timeout.ts:12](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/resilience/timeout.ts#L12)
+Defined in: [packages/gateway/src/policies/resilience/timeout.ts:12](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/resilience/timeout.ts#L12)
 
 Timeout in milliseconds. Default: 30000.

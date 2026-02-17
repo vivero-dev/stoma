@@ -5,7 +5,7 @@ prev: false
 title: "RateLimiterDO"
 ---
 
-Defined in: [src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/durable-object.ts#L34)
+Defined in: [packages/gateway/src/adapters/durable-object.ts:34](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/durable-object.ts#L34)
 
 Durable Object that maintains an atomic rate limit counter.
 
@@ -43,7 +43,7 @@ export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
 
 > **new RateLimiterDO**(`state`): `RateLimiterDO`
 
-Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/durable-object.ts#L37)
+Defined in: [packages/gateway/src/adapters/durable-object.ts:37](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/durable-object.ts#L37)
 
 #### Parameters
 
@@ -61,7 +61,7 @@ Defined in: [src/adapters/durable-object.ts:37](https://github.com/HomeGrower-cl
 
 > **alarm**(): `Promise`\<`void`\>
 
-Defined in: [src/adapters/durable-object.ts:73](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/durable-object.ts#L73)
+Defined in: [packages/gateway/src/adapters/durable-object.ts:73](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/durable-object.ts#L73)
 
 #### Returns
 
@@ -77,7 +77,7 @@ Defined in: [src/adapters/durable-object.ts:73](https://github.com/HomeGrower-cl
 
 > **fetch**(`request`): `Promise`\<`Response`\>
 
-Defined in: [src/adapters/durable-object.ts:41](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/adapters/durable-object.ts#L41)
+Defined in: [packages/gateway/src/adapters/durable-object.ts:41](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/durable-object.ts#L41)
 
 #### Parameters
 

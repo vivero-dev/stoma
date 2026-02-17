@@ -5,7 +5,7 @@ prev: false
 title: "PolicyTrace"
 ---
 
-Defined in: [src/policies/sdk/trace.ts:50](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L50)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:50](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L50)
 
 Full trace payload emitted as the `x-stoma-trace` response header.
 
@@ -15,7 +15,7 @@ Full trace payload emitted as the `x-stoma-trace` response header.
 
 > **entries**: [`PolicyTraceEntry`](/api/index/interfaces/policytraceentry/)[]
 
-Defined in: [src/policies/sdk/trace.ts:55](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L55)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:55](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L55)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [src/policies/sdk/trace.ts:55](https://github.com/HomeGrower-club/st
 
 > **requestId**: `string`
 
-Defined in: [src/policies/sdk/trace.ts:51](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L51)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:51](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L51)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [src/policies/sdk/trace.ts:51](https://github.com/HomeGrower-club/st
 
 > **route**: `string`
 
-Defined in: [src/policies/sdk/trace.ts:53](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L53)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:53](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L53)
 
 ***
 
@@ -39,7 +39,7 @@ Defined in: [src/policies/sdk/trace.ts:53](https://github.com/HomeGrower-club/st
 
 > **totalMs**: `number`
 
-Defined in: [src/policies/sdk/trace.ts:54](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L54)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:54](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L54)
 
 ***
 
@@ -47,4 +47,4 @@ Defined in: [src/policies/sdk/trace.ts:54](https://github.com/HomeGrower-club/st
 
 > **traceId**: `string`
 
-Defined in: [src/policies/sdk/trace.ts:52](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/sdk/trace.ts#L52)
+Defined in: [packages/gateway/src/policies/sdk/trace.ts:52](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/sdk/trace.ts#L52)

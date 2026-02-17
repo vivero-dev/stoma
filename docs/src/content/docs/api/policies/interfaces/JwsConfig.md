@@ -5,7 +5,7 @@ prev: false
 title: "JwsConfig"
 ---
 
-Defined in: [src/policies/auth/jws.ts:23](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L23)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:23](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L23)
 
 Configuration for the jws policy.
 
@@ -19,7 +19,7 @@ Configuration for the jws policy.
 
 > `optional` **forwardHeaderName**: `string`
 
-Defined in: [src/policies/auth/jws.ts:35](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L35)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:35](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L35)
 
 Header name for forwarded payload. Default: "X-JWS-Payload"
 
@@ -29,7 +29,7 @@ Header name for forwarded payload. Default: "X-JWS-Payload"
 
 > `optional` **forwardPayload**: `boolean`
 
-Defined in: [src/policies/auth/jws.ts:33](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L33)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:33](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L33)
 
 Whether to forward the verified payload as a header. Default: false
 
@@ -39,7 +39,7 @@ Whether to forward the verified payload as a header. Default: false
 
 > `optional` **headerName**: `string`
 
-Defined in: [src/policies/auth/jws.ts:29](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L29)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:29](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L29)
 
 Header containing the JWS. Default: "X-JWS-Signature"
 
@@ -49,7 +49,7 @@ Header containing the JWS. Default: "X-JWS-Signature"
 
 > `optional` **jwksCacheTtlMs**: `number`
 
-Defined in: [src/policies/auth/jws.ts:37](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L37)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:37](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L37)
 
 JWKS cache TTL in ms. Default: 300000
 
@@ -59,7 +59,7 @@ JWKS cache TTL in ms. Default: 300000
 
 > `optional` **jwksTimeoutMs**: `number`
 
-Defined in: [src/policies/auth/jws.ts:39](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L39)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:39](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L39)
 
 JWKS fetch timeout in milliseconds. Default: 10000 (10 seconds).
 
@@ -69,7 +69,7 @@ JWKS fetch timeout in milliseconds. Default: 10000 (10 seconds).
 
 > `optional` **jwksUrl**: `string`
 
-Defined in: [src/policies/auth/jws.ts:27](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L27)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:27](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L27)
 
 JWKS endpoint for RSA verification
 
@@ -79,7 +79,7 @@ JWKS endpoint for RSA verification
 
 > `optional` **payloadSource**: `"body"` \| `"embedded"`
 
-Defined in: [src/policies/auth/jws.ts:31](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L31)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:31](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L31)
 
 Where the payload comes from for detached JWS. Default: "embedded"
 
@@ -89,7 +89,7 @@ Where the payload comes from for detached JWS. Default: "embedded"
 
 > `optional` **secret**: `string`
 
-Defined in: [src/policies/auth/jws.ts:25](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/auth/jws.ts#L25)
+Defined in: [packages/gateway/src/policies/auth/jws.ts:25](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/jws.ts#L25)
 
 HMAC secret for verification
 
@@ -99,7 +99,7 @@ HMAC secret for verification
 
 > `optional` **skip**: (`c`) => `boolean` \| `Promise`\<`boolean`\>
 
-Defined in: [src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/types.ts#L90)
+Defined in: [packages/gateway/src/policies/types.ts:90](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/types.ts#L90)
 
 Skip this policy when condition returns true
 

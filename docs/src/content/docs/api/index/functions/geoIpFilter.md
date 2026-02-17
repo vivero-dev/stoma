@@ -7,7 +7,7 @@ title: "geoIpFilter"
 
 > **geoIpFilter**(`config?`): [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [src/policies/traffic/geo-ip-filter.ts:44](https://github.com/HomeGrower-club/stoma/blob/162619492d6688db22e8617fe051bccc1c9cffc5/src/policies/traffic/geo-ip-filter.ts#L44)
+Defined in: [packages/gateway/src/policies/traffic/geo-ip-filter.ts:44](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/traffic/geo-ip-filter.ts#L44)
 
 Block or allow requests based on geographic country code.
 

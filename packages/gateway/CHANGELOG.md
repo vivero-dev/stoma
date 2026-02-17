@@ -5,6 +5,18 @@
 
 
 
+- [`363341d`](https://github.com/HomeGrower-club/stoma/commit/363341dbc92a9f58a4b7df1ca0c66db2407cfe43) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - Accept trailing slashes on route paths
+  
+  ### Fixes
+  
+  - **Trailing-slash route aliases**: The gateway now registers both `/path` and `/path/` for every non-wildcard route, so requests with a trailing slash no longer 404. This also covers CORS preflight — if a `cors` policy is present, the OPTIONS handler is registered on both variants.
+  - **Scope path normalisation**: `scope()` and the internal `joinPaths` helper now strip trailing slashes from prefixes and handle root-path (`"/"`) children correctly, avoiding double-slash joins or unintended `/path/` suffixes.
+
+## 0.1.0-rc.5
+### Patch Changes
+
+
+
 - [`277d1a2`](https://github.com/HomeGrower-club/stoma/commit/277d1a2d27d98b444f074e4ecf0ae8095ef6f133) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - Fix policy middleware swallowing handler return values, breaking context finalization
   
   ### Fixes

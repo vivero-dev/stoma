@@ -3,7 +3,9 @@
   "tag": "rc",
   "initialVersions": {
     "@homegrower-club/stoma": "0.0.1",
-    "@homegrower-club/stoma-analytics": "0.1.0-rc.0"
+    "@homegrower-club/stoma-analytics": "0.1.0-rc.0",
+    "@homegrower-club/stoma-docs": "0.0.1",
+    "@homegrower-club/stoma-core": "0.1.0-rc.0"
   },
   "changesets": [
     "docs-og-deploy",
@@ -12,6 +14,7 @@
     "stoma-rc-030",
     "stoma-rc-040",
     "stoma-rc-050",
+    "stoma-rc-060",
     "tree-shaking"
   ]
 }

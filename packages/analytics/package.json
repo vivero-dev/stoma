@@ -1,5 +1,6 @@
 {
   "name": "@homegrower-club/stoma-analytics",
+  "private": true,
   "version": "0.1.0-rc.0",
   "description": "Opt-in analytics for Stoma API gateway — structured metric log lines, NDJSON-to-Parquet processing, and DuckDB querying.",
   "type": "module",

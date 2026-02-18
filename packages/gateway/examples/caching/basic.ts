@@ -1,7 +1,7 @@
 // Basic response caching with an in-memory store.
 // The cache policy stores upstream responses and serves them
 // directly on subsequent requests, reducing upstream load.
-// Demo API: https://stoma.opensource.homegrower.club/demo-api
+// Demo API: https://stoma.vivero.dev/demo-api
 
 import { createGateway, cache, cors, InMemoryCacheStore } from "@vivero/stoma";
 
@@ -28,7 +28,7 @@ const gateway = createGateway({
         ],
         upstream: {
           type: "url",
-          target: "https://stoma.opensource.homegrower.club/demo-api",
+          target: "https://stoma.vivero.dev/demo-api",
         },
       },
     },

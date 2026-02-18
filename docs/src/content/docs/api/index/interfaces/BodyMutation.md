@@ -5,7 +5,7 @@ prev: false
 title: "BodyMutation"
 ---
 
-Defined in: [packages/gateway/src/core/protocol.ts:223](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L223)
+Defined in: [packages/gateway/src/core/protocol.ts:223](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L223)
 
 Replace or clear the message body.
 
@@ -15,7 +15,7 @@ Replace or clear the message body.
 
 > `optional` **content**: `string` \| `ArrayBuffer`
 
-Defined in: [packages/gateway/src/core/protocol.ts:228](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L228)
+Defined in: [packages/gateway/src/core/protocol.ts:228](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L228)
 
 New body content. Required for `"replace"`, ignored for `"clear"`.
 
@@ -25,7 +25,7 @@ New body content. Required for `"replace"`, ignored for `"clear"`.
 
 > **op**: `"replace"` \| `"clear"`
 
-Defined in: [packages/gateway/src/core/protocol.ts:226](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L226)
+Defined in: [packages/gateway/src/core/protocol.ts:226](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L226)
 
 `"replace"` substitutes the body, `"clear"` removes it entirely.
 
@@ -35,4 +35,4 @@ Defined in: [packages/gateway/src/core/protocol.ts:226](https://github.com/HomeG
 
 > **type**: `"body"`
 
-Defined in: [packages/gateway/src/core/protocol.ts:224](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L224)
+Defined in: [packages/gateway/src/core/protocol.ts:224](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L224)

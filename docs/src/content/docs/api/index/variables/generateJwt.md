@@ -7,7 +7,7 @@ title: "generateJwt"
 
 > `const` **generateJwt**: (`config`) => [`Policy`](/api/index/interfaces/policy/)
 
-Defined in: [packages/gateway/src/policies/auth/generate-jwt.ts:75](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/policies/auth/generate-jwt.ts#L75)
+Defined in: [packages/gateway/src/policies/auth/generate-jwt.ts:75](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/policies/auth/generate-jwt.ts#L75)
 
 Mint JWTs and attach them to the request for upstream consumption.
 

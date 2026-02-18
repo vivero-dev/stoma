@@ -28,7 +28,8 @@
     "starlight-llms-txt": "^0.7.0",
     "starlight-typedoc": "^0.21.5",
     "typedoc": "^0.28.0",
-    "typedoc-plugin-markdown": "^4.6.0"
+    "typedoc-plugin-markdown": "^4.6.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260213.0",

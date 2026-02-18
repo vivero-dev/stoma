@@ -5,7 +5,7 @@ prev: false
 title: "RedisRateLimitStore"
 ---
 
-Defined in: [packages/gateway/src/adapters/redis.ts:139](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L139)
+Defined in: [packages/gateway/src/adapters/redis.ts:139](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/redis.ts#L139)
 
 Rate limit store backed by Redis with atomic Lua script.
 
@@ -19,7 +19,7 @@ Rate limit store backed by Redis with atomic Lua script.
 
 > **new RedisRateLimitStore**(`client`, `prefix`): `RedisRateLimitStore`
 
-Defined in: [packages/gateway/src/adapters/redis.ts:140](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L140)
+Defined in: [packages/gateway/src/adapters/redis.ts:140](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/redis.ts#L140)
 
 #### Parameters
 
@@ -41,7 +41,7 @@ Defined in: [packages/gateway/src/adapters/redis.ts:140](https://github.com/Home
 
 > **increment**(`key`, `windowSeconds`): `Promise`\<\{ `count`: `number`; `resetAt`: `number`; \}\>
 
-Defined in: [packages/gateway/src/adapters/redis.ts:145](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/redis.ts#L145)
+Defined in: [packages/gateway/src/adapters/redis.ts:145](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/redis.ts#L145)
 
 Increment the counter for a key, returning the new count and TTL
 

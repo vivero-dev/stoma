@@ -5,7 +5,7 @@ prev: false
 title: "GatewayAdapter"
 ---
 
-Defined in: [packages/gateway/src/adapters/types.ts:6](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L6)
+Defined in: [packages/gateway/src/adapters/types.ts:6](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L6)
 
 Bag of optional store implementations and runtime capabilities for a given runtime.
 
@@ -15,7 +15,7 @@ Bag of optional store implementations and runtime capabilities for a given runti
 
 > `optional` **cacheStore**: [`CacheStore`](/api/index/interfaces/cachestore/)
 
-Defined in: [packages/gateway/src/adapters/types.ts:9](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L9)
+Defined in: [packages/gateway/src/adapters/types.ts:9](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L9)
 
 ***
 
@@ -23,7 +23,7 @@ Defined in: [packages/gateway/src/adapters/types.ts:9](https://github.com/HomeGr
 
 > `optional` **circuitBreakerStore**: [`CircuitBreakerStore`](/api/index/interfaces/circuitbreakerstore/)
 
-Defined in: [packages/gateway/src/adapters/types.ts:8](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L8)
+Defined in: [packages/gateway/src/adapters/types.ts:8](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L8)
 
 ***
 
@@ -31,7 +31,7 @@ Defined in: [packages/gateway/src/adapters/types.ts:8](https://github.com/HomeGr
 
 > `optional` **dispatchBinding**: (`service`, `request`) => `Promise`\<`Response`\>
 
-Defined in: [packages/gateway/src/adapters/types.ts:14](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L14)
+Defined in: [packages/gateway/src/adapters/types.ts:14](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L14)
 
 Dispatch a request to a named service binding or sidecar.
 
@@ -55,7 +55,7 @@ Dispatch a request to a named service binding or sidecar.
 
 > `optional` **rateLimitStore**: [`RateLimitStore`](/api/index/interfaces/ratelimitstore/)
 
-Defined in: [packages/gateway/src/adapters/types.ts:7](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L7)
+Defined in: [packages/gateway/src/adapters/types.ts:7](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L7)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [packages/gateway/src/adapters/types.ts:7](https://github.com/HomeGr
 
 > `optional` **waitUntil**: (`promise`) => `void`
 
-Defined in: [packages/gateway/src/adapters/types.ts:12](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/types.ts#L12)
+Defined in: [packages/gateway/src/adapters/types.ts:12](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/types.ts#L12)
 
 Schedule background work that outlives the response (e.g. Cloudflare `executionCtx.waitUntil`).
 

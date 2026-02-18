@@ -1,7 +1,7 @@
 // Minimal gateway example — the simplest possible Stoma configuration.
 // Creates a gateway that proxies requests to an upstream API with
 // request logging and CORS enabled globally.
-// Demo API: https://stoma.opensource.homegrower.club/demo-api
+// Demo API: https://stoma.vivero.dev/demo-api
 
 import { createGateway, cors, requestLog } from "@vivero/stoma";
 
@@ -29,7 +29,7 @@ const gateway = createGateway({
         // Upstream: where to send the request after policies pass
         upstream: {
           type: "url",
-          target: "https://stoma.opensource.homegrower.club/demo-api",
+          target: "https://stoma.vivero.dev/demo-api",
           rewritePath: (path) => path.replace("/api", ""),
         },
       },

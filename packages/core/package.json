@@ -5,17 +5,17 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HomeGrower-club/stoma.git",
+    "url": "git+https://github.com/vivero-dev/stoma.git",
     "directory": "packages/core"
   },
-  "homepage": "https://stoma.opensource.homegrower.club",
+  "homepage": "https://stoma.vivero.dev",
   "sideEffects": false,
   "license": "MIT",
   "author": {
     "name": "Jonathan Bennett"
   },
   "bugs": {
-    "url": "https://github.com/HomeGrower-club/stoma/issues"
+    "url": "https://github.com/vivero-dev/stoma/issues"
   },
   "keywords": [
     "stoma",

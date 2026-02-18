@@ -3749,20 +3749,25 @@ export declare function isTraceRequested(c: Context): boolean;
  *
  * Provides `debug`-style namespace-based logging without the `debug` npm
  * package (which relies on `process.env` / `localStorage` and doesn't work
- * reliably in Cloudflare Workers). Output goes to `console.debug()`, which
- * is captured by `wrangler tail` and Cloudflare Workers Logs.
+ * reliably in edge runtimes). Output goes to `console.debug()`.
+ *
+ * Shared between `@vivero/stoma` (gateway) and
+ * `@vivero/stoma-analytics` (analytics pipeline).
  *
  * @module debug
  *
  * @example
  * ```ts
- * // In gateway config
+ * // Gateway usage
  * createGateway({ debug: "stoma:policy:*", ... });
  *
- * // In a policy
- * const debug = getGatewayContext(c)?.debug("stoma:policy:cache");
- * debug?.("HIT", cacheKey);
- * // Output: [stoma:policy:cache] HIT GET:/api/users
+ * // Analytics usage
+ * createProcessor({ debug: "stoma-analytics:processor", ... });
+ *
+ * // Direct usage
+ * const debug = createDebugger("stoma:gateway", true);
+ * debug("route registered", { path: "/api/users", methods: ["GET"] });
+ * // Output: [stoma:gateway] route registered {"path":"/api/users","methods":["GET"]}
  * ```
  */
 /** A debug logging function - call with a message and optional structured data. */

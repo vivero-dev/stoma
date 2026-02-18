@@ -4,11 +4,10 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
 import mermaid from 'astro-mermaid';
-import llmTxt from 'starlight-llms-txt'
 import demoApiPlugin from './vite-plugin-demo-api';
 
 export default defineConfig({
-  site: "https://stoma.opensource.homegrower.club/",
+  site: "https://stoma.vivero.dev/",
   markdown: {
     syntaxHighlight: "shiki",
   },
@@ -165,6 +164,10 @@ export default defineConfig({
         },
         {
           label: "Analytics",
+          badge: { 
+            text: "Preview",
+            // variant: "note",
+          },
           autogenerate: { directory: "analytics" },
         },
         {

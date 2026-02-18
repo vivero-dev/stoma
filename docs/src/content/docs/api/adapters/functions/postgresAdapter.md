@@ -7,7 +7,7 @@ title: "postgresAdapter"
 
 > **postgresAdapter**(`config`): [`GatewayAdapter`](/api/index/interfaces/gatewayadapter/)
 
-Defined in: [packages/gateway/src/adapters/postgres.ts:387](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/adapters/postgres.ts#L387)
+Defined in: [packages/gateway/src/adapters/postgres.ts:387](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/adapters/postgres.ts#L387)
 
 Create a [GatewayAdapter](/api/index/interfaces/gatewayadapter/) using PostgreSQL-backed stores.
 

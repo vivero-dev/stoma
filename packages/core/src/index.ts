@@ -4,4 +4,4 @@ export {
   createDebugger,
   matchNamespace,
   createDebugFactory,
-} from "debug";
+} from "./debug";

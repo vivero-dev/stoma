@@ -1,7 +1,7 @@
 // JWT authentication using an HMAC shared secret.
 // Use this approach when you control both token signing and validation
 // (e.g., internal services sharing a secret).
-// Demo API: https://stoma.opensource.homegrower.club/demo-api
+// Demo API: https://stoma.vivero.dev/demo-api
 
 import { createGateway, jwtAuth, cors, requestLog } from "@vivero/stoma";
 
@@ -30,7 +30,7 @@ const gateway = createGateway({
         ],
         upstream: {
           type: "url",
-          target: "https://stoma.opensource.homegrower.club/demo-api",
+          target: "https://stoma.vivero.dev/demo-api",
         },
       },
     },

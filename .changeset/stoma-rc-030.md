@@ -19,5 +19,5 @@ Live demo API, interactive editor links across docs, release workflow fixes
 
 ### Docs
 
-- All concept examples updated to use the live demo API (`https://stoma.opensource.homegrower.club/demo-api`) as upstream target, so editor demos produce real responses instead of 502 errors.
+- All concept examples updated to use the live demo API (`https://stoma.vivero.dev/demo-api`) as upstream target, so editor demos produce real responses instead of 502 errors.
 - Docs Cloudflare Worker updated with `main` entry point and `ASSETS` binding to serve both the demo API and static assets.

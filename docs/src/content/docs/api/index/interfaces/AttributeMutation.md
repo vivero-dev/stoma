@@ -5,7 +5,7 @@ prev: false
 title: "AttributeMutation"
 ---
 
-Defined in: [packages/gateway/src/core/protocol.ts:249](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L249)
+Defined in: [packages/gateway/src/core/protocol.ts:249](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L249)
 
 Set a cross-policy attribute.
 
@@ -18,7 +18,7 @@ In ext_proc, this maps to Envoy dynamic metadata.
 
 > **key**: `string`
 
-Defined in: [packages/gateway/src/core/protocol.ts:252](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L252)
+Defined in: [packages/gateway/src/core/protocol.ts:252](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L252)
 
 Attribute key. Use namespaced keys (e.g. `"auth.user_id"`) to avoid collisions.
 
@@ -28,7 +28,7 @@ Attribute key. Use namespaced keys (e.g. `"auth.user_id"`) to avoid collisions.
 
 > **type**: `"attribute"`
 
-Defined in: [packages/gateway/src/core/protocol.ts:250](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L250)
+Defined in: [packages/gateway/src/core/protocol.ts:250](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L250)
 
 ***
 
@@ -36,6 +36,6 @@ Defined in: [packages/gateway/src/core/protocol.ts:250](https://github.com/HomeG
 
 > **value**: `unknown`
 
-Defined in: [packages/gateway/src/core/protocol.ts:254](https://github.com/HomeGrower-club/stoma/blob/277d1a2d27d98b444f074e4ecf0ae8095ef6f133/packages/gateway/src/core/protocol.ts#L254)
+Defined in: [packages/gateway/src/core/protocol.ts:254](https://github.com/HomeGrower-club/stoma/blob/b366835e3781c3a030f80027e784272dddf630da/packages/gateway/src/core/protocol.ts#L254)
 
 Attribute value.

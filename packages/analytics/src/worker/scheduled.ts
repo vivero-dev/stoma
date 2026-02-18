@@ -29,7 +29,7 @@ export interface AnalyticsWorkerEnv {
  *
  * @example
  * ```ts
- * import { createAnalyticsHandler } from "@homegrower-club/stoma-analytics/worker";
+ * import { createAnalyticsHandler } from "@vivero/stoma-analytics/worker";
  *
  * export default {
  *   scheduled: createAnalyticsHandler(),

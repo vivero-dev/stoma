@@ -30,7 +30,7 @@ When `TBindings` is provided, the `service` field on `ServiceBindingUpstream` is
 Define an `Env` interface that matches your `wrangler.jsonc` bindings, then pass it to `createGateway`:
 
 ```typescript
-import { createGateway, jwtAuth } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth } from "@vivero/stoma";
 
 // Your Worker's Env interface (matches wrangler.jsonc bindings)
 interface Env {
@@ -107,8 +107,8 @@ const gateway = createGateway({
 Both `scope()` and `mergeConfigs()` accept the same `TBindings` generic parameter, so type safety propagates through route composition and config splitting:
 
 ```typescript
-import { createGateway, scope, jwtAuth, cors } from "@homegrower-club/stoma";
-import { mergeConfigs } from "@homegrower-club/stoma/config";
+import { createGateway, scope, jwtAuth, cors } from "@vivero/stoma";
+import { mergeConfigs } from "@vivero/stoma/config";
 
 interface Env {
   AUTH_SERVICE: Fetcher;

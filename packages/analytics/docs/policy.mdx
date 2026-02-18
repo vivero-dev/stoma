@@ -10,7 +10,7 @@ import { Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 The `analyticsLog` policy emits one structured JSON entry per request, designed for aggregation in DuckDB, ClickHouse, or any columnar analytics engine. It runs at priority `0` (alongside `requestLog`) and wraps the entire policy pipeline to measure end-to-end latency.
 
 ```typescript
-import { analyticsLog } from "@homegrower-club/stoma-analytics/policy";
+import { analyticsLog } from "@vivero/stoma-analytics/policy";
 ```
 
 ## Quick start
@@ -18,8 +18,8 @@ import { analyticsLog } from "@homegrower-club/stoma-analytics/policy";
 Add the policy to your gateway — zero configuration required:
 
 ```typescript
-import { createGateway } from "@homegrower-club/stoma";
-import { analyticsLog } from "@homegrower-club/stoma-analytics/policy";
+import { createGateway } from "@vivero/stoma";
+import { analyticsLog } from "@vivero/stoma-analytics/policy";
 
 export default createGateway({
   name: "my-api",
@@ -51,12 +51,12 @@ These lines are captured by your log aggregation service — Cloudflare Logpush 
 ## Installation
 
 ```bash
-npm install @homegrower-club/stoma-analytics
+npm install @vivero/stoma-analytics
 # or
-yarn add @homegrower-club/stoma-analytics
+yarn add @vivero/stoma-analytics
 ```
 
-Peer dependencies: `@homegrower-club/stoma` (>=0.1.0) and `hono` (>=4.0.0).
+Peer dependencies: `@vivero/stoma` (>=0.1.0) and `hono` (>=4.0.0).
 
 ## Configuration
 
@@ -250,8 +250,8 @@ The `traceId` is the bridge between the two systems. When an analytics dashboard
 Both policies run at priority `0` and can coexist in the same pipeline:
 
 ```typescript
-import { createGateway, requestLog } from "@homegrower-club/stoma";
-import { analyticsLog } from "@homegrower-club/stoma-analytics/policy";
+import { createGateway, requestLog } from "@vivero/stoma";
+import { analyticsLog } from "@vivero/stoma-analytics/policy";
 
 export default createGateway({
   name: "my-api",
@@ -327,7 +327,7 @@ GROUP BY plan;
 For TypeScript consumers who need to work with the entry type directly:
 
 ```typescript
-import { ANALYTICS_TYPE, type AnalyticsEntry } from "@homegrower-club/stoma-analytics";
+import { ANALYTICS_TYPE, type AnalyticsEntry } from "@vivero/stoma-analytics";
 
 // ANALYTICS_TYPE = "stoma_analytics"
 ```

@@ -343,7 +343,7 @@ export class RedisCacheStore implements CacheStore {
  * @example
  * ```ts
  * import Redis from "ioredis";
- * import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+ * import { redisAdapter } from "@vivero/stoma/adapters/redis";
  *
  * const redis = new Redis();
  * const adapter = redisAdapter({ client: redis });
@@ -355,7 +355,7 @@ export class RedisCacheStore implements CacheStore {
  * ```ts
  * // node-redis v4 (different SET signature)
  * import { createClient } from "redis";
- * import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+ * import { redisAdapter } from "@vivero/stoma/adapters/redis";
  *
  * const client = await createClient().connect();
  * const adapter = redisAdapter({

@@ -8,11 +8,11 @@ import {
   createGateway,
   rateLimit,
   requestLog,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 import {
   type PostgresClient,
   postgresAdapter,
-} from "@homegrower-club/stoma/adapters/postgres";
+} from "@vivero/stoma/adapters/postgres";
 
 // In production: import { Pool } from "pg"; const pool = new Pool({ connectionString: "..." });
 const mockPg: PostgresClient = {

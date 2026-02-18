@@ -8,8 +8,8 @@ import EditorLink from "../../../components/EditorLink.astro";
 
 Copy-paste recipes for common gateway scenarios. Each recipe is a self-contained policy with usage example. Click "Open in Editor" to try it live.
 
-export const RECIPE1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface ApiVersionConfig extends PolicyConfig {
   required: string;
@@ -51,8 +51,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE2_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE2_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface MaintenanceConfig extends PolicyConfig {
   enabled?: boolean;
@@ -106,7 +106,7 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE3_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+export const RECIPE3_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
 
 const requestIdPassthrough = definePolicy({
   name: "request-id-passthrough",
@@ -144,7 +144,7 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE4_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+export const RECIPE4_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
 
 const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -185,8 +185,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface IpAllowlistConfig extends PolicyConfig {
   allowed: string[];
@@ -227,8 +227,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE6_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE6_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface HmacConfig extends PolicyConfig {
   secret: string;
@@ -285,8 +285,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE7_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE7_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface SizeLimitConfig extends PolicyConfig {
   maxBytes?: number;
@@ -328,8 +328,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE8_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE8_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface HeaderCacheConfig extends PolicyConfig {
   headerName: string;
@@ -373,8 +373,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE9_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE9_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface FeatureFlagConfig extends PolicyConfig {
   flag: string;
@@ -429,8 +429,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const RECIPE10_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const RECIPE10_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface LatencyBudgetConfig extends PolicyConfig {
   budgetMs?: number;
@@ -494,8 +494,8 @@ export async function createPlaygroundGateway() {
 Require a specific API version header. Requests without the correct version receive a structured 400 error.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface ApiVersionConfig extends PolicyConfig {
   required: string;
@@ -532,8 +532,8 @@ apiVersionGate({ required: "2024" })
 Return 503 with a `Retry-After` header when enabled. Requests to the route are short-circuited before reaching the upstream.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface MaintenanceConfig extends PolicyConfig {
   enabled?: boolean;
@@ -571,7 +571,7 @@ maintenanceMode({ enabled: true })
 Forward an incoming `x-request-id` header or generate a new UUID. The same value is set on both the request (for downstream policies and the upstream) and the response (for client correlation).
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 export const requestIdPassthrough = definePolicy({
   name: "request-id-passthrough",
@@ -601,7 +601,7 @@ requestIdPassthrough()
 Wrap all JSON responses in a `{ data, meta }` structure. Non-JSON responses pass through untouched.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 export const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -634,8 +634,8 @@ jsonEnvelope()
 Allow only requests whose `x-forwarded-for` IP is in a configured allowlist. All other requests receive a 403.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface IpAllowlistConfig extends PolicyConfig {
   allowed: string[];
@@ -671,8 +671,8 @@ ipAllowlist({ allowed: ["10.0.0.1", "10.0.0.2"] })
 Verify webhook payloads using HMAC-SHA256. The policy reads the raw request body, computes the expected signature, and compares it to the value in the signature header.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface HmacConfig extends PolicyConfig {
   secret: string;
@@ -724,8 +724,8 @@ hmacVerify({ secret: env.WEBHOOK_SECRET })
 Reject requests whose `Content-Length` exceeds a configured byte limit. Returns 413 Payload Too Large.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface SizeLimitConfig extends PolicyConfig {
   maxBytes?: number;
@@ -762,8 +762,8 @@ bodySizeLimit({ maxBytes: 512_000 })
 Generate a cache key based on the request path and a specific header value. Useful for multi-tenant APIs where each tenant gets isolated cache entries.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface HeaderCacheConfig extends PolicyConfig {
   headerName: string;
@@ -799,8 +799,8 @@ headerCache({ headerName: "x-tenant-id", ttlSeconds: 120 })
 Block access to a route when a feature flag is disabled. Returns 404 so the endpoint appears nonexistent to clients without the feature.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface FeatureFlagConfig extends PolicyConfig {
   flag: string;
@@ -837,8 +837,8 @@ featureFlag({ flag: "v2-api", flags: { "v2-api": true, "beta": false } })
 Measure total request processing time and flag responses that exceed a time budget. Adds `x-latency-ms` to every response and `x-latency-budget-exceeded: true` when the budget is blown.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface LatencyBudgetConfig extends PolicyConfig {
   budgetMs?: number;

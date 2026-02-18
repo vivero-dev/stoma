@@ -30,7 +30,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { assignAttributes } from "@homegrower-club/stoma";
+ * import { assignAttributes } from "@vivero/stoma";
  *
  * assignAttributes({
  *   attributes: {

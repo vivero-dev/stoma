@@ -128,7 +128,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 Need to accept tokens from multiple providers? Create a custom policy:
 
 ```typescript
-import { definePolicy, GatewayError, jwtAuth } from "@homegrower-club/stoma";
+import { definePolicy, GatewayError, jwtAuth } from "@vivero/stoma";
 
 const multiAuth = definePolicy({
   name: "multi-jwt",

@@ -4,7 +4,7 @@ import type {
   CompactorMetrics,
 } from "../types.js";
 import { isStreamingMerger } from "../types.js";
-import { createDebugger, type DebugLogger } from "@homegrower-club/stoma-core";
+import { createDebugger, type DebugLogger } from "@vivero/stoma-core";
 
 /**
  * Create a compactor that merges small Parquet fragment files into larger

@@ -30,7 +30,7 @@ reference it in `wrangler.jsonc`:
 
 ```ts
 // worker entry
-export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
+export { RateLimiterDO } from "@vivero/stoma/adapters";
 ```
 
 ## Implements

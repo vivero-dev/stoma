@@ -33,8 +33,8 @@ A [Policy](/api/index/interfaces/policy/) at priority 999 (replaces the upstream
 ## Example
 
 ```ts
-import { createGateway } from "@homegrower-club/stoma";
-import { mock } from "@homegrower-club/stoma/policies";
+import { createGateway } from "@vivero/stoma";
+import { mock } from "@vivero/stoma/policies";
 
 createGateway({
   routes: [{

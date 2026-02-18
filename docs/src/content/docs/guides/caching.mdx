@@ -48,8 +48,8 @@ In-memory caching works great for development and testing. For production on Clo
 For production deployments, use Cloudflare's built-in cache:
 
 ```typescript
-import { createGateway, cache, cors } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, cache, cors } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 const adapter = cloudflareAdapter({
   cache: caches.default,  // Cloudflare's Cache API
@@ -114,8 +114,8 @@ cache({
 Stoma's cache policy respects upstream `Cache-Control` headers, but sometimes you need manual invalidation:
 
 ```typescript
-import { createGateway, cache, cors } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, cache, cors } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 const adapter = cloudflareAdapter({ cache: caches.default });
 

@@ -10,7 +10,7 @@
  *
  * @example
  * ```ts
- * import { createGateway, jwtAuth, rateLimit, cors } from "@homegrower-club/stoma";
+ * import { createGateway, jwtAuth, rateLimit, cors } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   name: "my-api",
@@ -78,7 +78,7 @@ import type {
  *
  * @example
  * ```ts
- * import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+ * import { createGateway, jwtAuth, rateLimit } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   name: "my-api",

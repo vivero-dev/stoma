@@ -23,8 +23,8 @@ import {
   trafficShadow,
   health,
   InMemoryMetricsCollector,
-} from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+} from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const adapter = memoryAdapter();
 const metrics = new InMemoryMetricsCollector();

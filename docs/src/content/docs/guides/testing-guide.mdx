@@ -41,8 +41,8 @@ sets up a minimal Hono app with gateway context injection, error handling, and
 a configurable upstream.
 
 ```typescript
-import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
-import { rateLimit, InMemoryRateLimitStore } from "@homegrower-club/stoma/policies";
+import { createPolicyTestHarness } from "@vivero/stoma/policies";
+import { rateLimit, InMemoryRateLimitStore } from "@vivero/stoma/policies";
 
 const store = new InMemoryRateLimitStore({ maxKeys: 100, cleanupIntervalMs: 1000 });
 const { request, adapter } = createPolicyTestHarness(
@@ -132,9 +132,9 @@ Test the full gateway by creating it and making requests directly to the Hono
 app. No HTTP server is required.
 
 ```typescript
-import { createGateway } from "@homegrower-club/stoma";
-import { cors, rateLimit } from "@homegrower-club/stoma";
-import { InMemoryRateLimitStore } from "@homegrower-club/stoma";
+import { createGateway } from "@vivero/stoma";
+import { cors, rateLimit } from "@vivero/stoma";
+import { InMemoryRateLimitStore } from "@vivero/stoma";
 
 const store = new InMemoryRateLimitStore();
 afterEach(() => store.destroy());
@@ -233,8 +233,8 @@ harness or a direct Hono app approach.
 ### Using the Harness
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma/sdk";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+import { definePolicy, Priority } from "@vivero/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/policies";
 
 interface Config {
   headerName?: string;
@@ -274,9 +274,9 @@ For more control, create a Hono app directly:
 
 ```typescript
 import { Hono } from "hono";
-import { createContextInjector } from "@homegrower-club/stoma/core/pipeline";
-import { errorToResponse, GatewayError } from "@homegrower-club/stoma/core/errors";
-import { TestAdapter } from "@homegrower-club/stoma/adapters";
+import { createContextInjector } from "@vivero/stoma/core/pipeline";
+import { errorToResponse, GatewayError } from "@vivero/stoma/core/errors";
+import { TestAdapter } from "@vivero/stoma/adapters";
 
 const policy = myPolicy({ requiredValue: "secret" });
 const adapter = new TestAdapter();
@@ -312,7 +312,7 @@ const res = await app.request("/test");
 promises. Call `await adapter.waitAll()` to flush them before assertions.
 
 ```typescript
-import { TestAdapter } from "@homegrower-club/stoma/adapters";
+import { TestAdapter } from "@vivero/stoma/adapters";
 
 const adapter = new TestAdapter();
 
@@ -328,9 +328,9 @@ await adapter.waitAll(); // Await any async work
 For policies requiring stores, use in-memory implementations in tests:
 
 ```typescript
-import { InMemoryRateLimitStore } from "@homegrower-club/stoma";
-import { InMemoryCacheStore } from "@homegrower-club/stoma";
-import { InMemoryCircuitBreakerStore } from "@homegrower-club/stoma";
+import { InMemoryRateLimitStore } from "@vivero/stoma";
+import { InMemoryCacheStore } from "@vivero/stoma";
+import { InMemoryCircuitBreakerStore } from "@vivero/stoma";
 
 // Clean up after each test to prevent interval leaks
 afterEach(() => {
@@ -384,7 +384,7 @@ const res = await request("/test", { headers: { Authorization: `Bearer ${token}`
 JWT policies cache JWKS responses. Clear the cache between tests:
 
 ```typescript
-import { clearJwksCache } from "@homegrower-club/stoma";
+import { clearJwksCache } from "@vivero/stoma";
 
 afterEach(() => {
   clearJwksCache();

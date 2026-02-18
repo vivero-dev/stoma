@@ -1,5 +1,5 @@
 ---
-"@homegrower-club/stoma": patch
+"@vivero/stoma": patch
 ---
 
 Accept trailing slashes on route paths

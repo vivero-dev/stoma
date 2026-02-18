@@ -948,34 +948,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@homegrower-club/stoma-docs@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@homegrower-club/stoma-docs@workspace:."
-  dependencies:
-    "@astrojs/react": "npm:^4.4.2"
-    "@astrojs/starlight": "npm:^0.37.0"
-    "@cloudflare/workers-types": "npm:^4.20260213.0"
-    "@monaco-editor/react": "npm:^4.7.0"
-    "@types/react": "npm:^19.2.14"
-    "@types/react-dom": "npm:^19.2.3"
-    astro: "npm:^5.17.0"
-    astro-mermaid: "npm:^1.3.1"
-    dts-bundle-generator: "npm:^9.0.0"
-    esbuild-wasm: "npm:^0.24.2"
-    hono: "npm:^4.7.0"
-    mermaid: "npm:^11.12.2"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
-    react-json-pretty: "npm:^2.2.0"
-    starlight-llms-txt: "npm:^0.7.0"
-    starlight-typedoc: "npm:^0.21.5"
-    typedoc: "npm:^0.28.0"
-    typedoc-plugin-markdown: "npm:^4.6.0"
-    vite: "npm:^6.0.0"
-    wrangler: "npm:^4.65.0"
-  languageName: unknown
-  linkType: soft
-
 "@iconify/types@npm:^2.0.0":
   version: 2.0.0
   resolution: "@iconify/types@npm:2.0.0"
@@ -2235,6 +2207,34 @@ __metadata:
   checksum: 10c0/692f23960972879485d647713663ec299c478222c96567d60285acf7c7dc5c178e71abfe9d2eefddef1eeb01514dacbc2ed68aad84628debf9c7116134734253
   languageName: node
   linkType: hard
+
+"@vivero/stoma-docs@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@vivero/stoma-docs@workspace:."
+  dependencies:
+    "@astrojs/react": "npm:^4.4.2"
+    "@astrojs/starlight": "npm:^0.37.0"
+    "@cloudflare/workers-types": "npm:^4.20260213.0"
+    "@monaco-editor/react": "npm:^4.7.0"
+    "@types/react": "npm:^19.2.14"
+    "@types/react-dom": "npm:^19.2.3"
+    astro: "npm:^5.17.0"
+    astro-mermaid: "npm:^1.3.1"
+    dts-bundle-generator: "npm:^9.0.0"
+    esbuild-wasm: "npm:^0.24.2"
+    hono: "npm:^4.7.0"
+    mermaid: "npm:^11.12.2"
+    react: "npm:^19.2.4"
+    react-dom: "npm:^19.2.4"
+    react-json-pretty: "npm:^2.2.0"
+    starlight-llms-txt: "npm:^0.7.0"
+    starlight-typedoc: "npm:^0.21.5"
+    typedoc: "npm:^0.28.0"
+    typedoc-plugin-markdown: "npm:^4.6.0"
+    vite: "npm:^6.0.0"
+    wrangler: "npm:^4.65.0"
+  languageName: unknown
+  linkType: soft
 
 "abbrev@npm:^4.0.0":
   version: 4.0.0

@@ -59,8 +59,8 @@ The Cloudflare adapter uses platform-native primitives for each store:
 - **Circuit breaker**: In-memory (per-isolate - acceptable since Workers are short-lived)
 
 ```typescript
-import { createGateway } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+import { createGateway } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
@@ -98,8 +98,8 @@ Zero runtime dependencies - you provide any Redis client that satisfies the `Red
 <TabItem label="ioredis">
 ```typescript
 import Redis from "ioredis";
-import { createGateway } from "@homegrower-club/stoma";
-import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+import { createGateway } from "@vivero/stoma";
+import { redisAdapter } from "@vivero/stoma/adapters/redis";
 
 const redis = new Redis(process.env.REDIS_URL);
 
@@ -112,8 +112,8 @@ const gateway = createGateway({
 <TabItem label="node-redis v4">
 ```typescript
 import { createClient } from "redis";
-import { createGateway } from "@homegrower-club/stoma";
-import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+import { createGateway } from "@vivero/stoma";
+import { redisAdapter } from "@vivero/stoma/adapters/redis";
 
 const client = await createClient({ url: process.env.REDIS_URL }).connect();
 
@@ -153,7 +153,7 @@ Same pattern as Redis - provide any Postgres client that implements `query(text,
 1. **Create the schema tables** (one-time setup):
 
     ```typescript
-    import { POSTGRES_SCHEMA_SQL } from "@homegrower-club/stoma/adapters/postgres";
+    import { POSTGRES_SCHEMA_SQL } from "@vivero/stoma/adapters/postgres";
 
     await pool.query(POSTGRES_SCHEMA_SQL);
     ```
@@ -164,8 +164,8 @@ Same pattern as Redis - provide any Postgres client that implements `query(text,
 
     ```typescript
     import { Pool } from "pg";
-    import { createGateway } from "@homegrower-club/stoma";
-    import { postgresAdapter } from "@homegrower-club/stoma/adapters/postgres";
+    import { createGateway } from "@vivero/stoma";
+    import { postgresAdapter } from "@vivero/stoma/adapters/postgres";
 
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -190,13 +190,13 @@ Same pattern as Redis - provide any Postgres client that implements `query(text,
 Both the rate limit and cache stores accumulate expired rows. Call `cleanup()` periodically:
 
 ```typescript
-import { postgresAdapter } from "@homegrower-club/stoma/adapters/postgres";
+import { postgresAdapter } from "@vivero/stoma/adapters/postgres";
 
 const adapter = postgresAdapter({ client: pool });
 
 // In a cron job or scheduled handler
-const rlStore = adapter.rateLimitStore as import("@homegrower-club/stoma/adapters/postgres").PostgresRateLimitStore;
-const cacheStore = adapter.cacheStore as import("@homegrower-club/stoma/adapters/postgres").PostgresCacheStore;
+const rlStore = adapter.rateLimitStore as import("@vivero/stoma/adapters/postgres").PostgresRateLimitStore;
+const cacheStore = adapter.cacheStore as import("@vivero/stoma/adapters/postgres").PostgresCacheStore;
 
 await rlStore.cleanup();
 await cacheStore.cleanup();
@@ -207,8 +207,8 @@ await cacheStore.cleanup();
 In-memory stores are perfect for development, testing, and single-instance deployments. All data lives in the process and is lost on restart.
 
 ```typescript
-import { createGateway } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters/memory";
+import { createGateway } from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters/memory";
 
 const gateway = createGateway({
   adapter: memoryAdapter(),
@@ -225,7 +225,7 @@ In-memory stores are **not shared** across Worker isolates or server instances. 
 For tests, the SDK provides `TestAdapter` which extends `memoryAdapter()` with a `waitAll()` method to flush background promises:
 
 ```typescript
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
 
 const { request, adapter } = createPolicyTestHarness(myPolicy());
 const res = await request("/test");
@@ -237,7 +237,7 @@ await adapter.waitAll(); // flush waitUntil promises
 The `GatewayAdapter` interface is intentionally minimal - implement only what your policies need:
 
 ```typescript
-import type { GatewayAdapter } from "@homegrower-club/stoma";
+import type { GatewayAdapter } from "@vivero/stoma";
 
 function myAdapter(): GatewayAdapter {
   return {

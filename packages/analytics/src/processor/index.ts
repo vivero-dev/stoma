@@ -4,7 +4,7 @@ import type {
   ProcessorResult,
   ProcessorMetrics,
 } from "../types.js";
-import { createDebugger, type DebugLogger } from "@homegrower-club/stoma-core";
+import { createDebugger, type DebugLogger } from "@vivero/stoma-core";
 import { parseCloudflareEvent } from "./formats/cloudflare.js";
 import { parseStandardLine } from "./formats/standard.js";
 

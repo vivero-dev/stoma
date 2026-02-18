@@ -4,15 +4,15 @@ import path from "node:path";
 export default defineConfig({
   resolve: {
     alias: {
-      "@homegrower-club/stoma/sdk": path.resolve(
+      "@vivero/stoma/sdk": path.resolve(
         import.meta.dirname,
         "../gateway/src/policies/sdk/index.ts"
       ),
-      "@homegrower-club/stoma": path.resolve(
+      "@vivero/stoma": path.resolve(
         import.meta.dirname,
         "../gateway/src/index.ts"
       ),
-      "@homegrower-club/stoma-core": path.resolve(
+      "@vivero/stoma-core": path.resolve(
         import.meta.dirname,
         "../core/src/index.ts"
       ),

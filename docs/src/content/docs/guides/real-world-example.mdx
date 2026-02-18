@@ -31,7 +31,7 @@ This example deploys on Cloudflare Workers to leverage Service Bindings and KV s
 ### Config validation
 
 ```typescript
-import { validateConfig } from "@homegrower-club/stoma/config";
+import { validateConfig } from "@vivero/stoma/config";
 
 const config = validateConfig({ ... });
 ```
@@ -289,7 +289,7 @@ The `cloudflareAdapter` factory creates Cloudflare-native stores for rate
 limiting, circuit breaking, and caching from your Worker's `env` bindings:
 
 ```typescript
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 const adapter = cloudflareAdapter({
   rateLimitDo: env.RATE_LIMITER,   // Durable Objects (preferred)

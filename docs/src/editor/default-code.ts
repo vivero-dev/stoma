@@ -16,10 +16,10 @@ export const DEFAULT_CODE = `import {
   timeout,
   serverTiming,
   InMemoryCircuitBreakerStore,
-} from "@homegrower-club/stoma";
-import type { GatewayAdapter } from "@homegrower-club/stoma";
-import { IDBRateLimitStore } from "@homegrower-club/stoma";
-import { CacheApiCacheStore } from "@homegrower-club/stoma";
+} from "@vivero/stoma";
+import type { GatewayAdapter } from "@vivero/stoma";
+import { IDBRateLimitStore } from "@vivero/stoma";
+import { CacheApiCacheStore } from "@vivero/stoma";
 
 const PLAYGROUND_CACHE_NAME = "stoma-editor";
 

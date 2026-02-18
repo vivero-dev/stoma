@@ -29,7 +29,7 @@ payloads before they reach business logic.
 ## Example
 
 ```ts
-import { jsonThreatProtection } from "@homegrower-club/stoma";
+import { jsonThreatProtection } from "@vivero/stoma";
 
 // Default limits (20 depth, 100 keys, 10K string, 100 array, 1MB body)
 jsonThreatProtection();

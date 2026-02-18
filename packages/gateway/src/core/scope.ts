@@ -12,7 +12,7 @@
  *
  * @example
  * ```ts
- * import { createGateway, scope, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+ * import { createGateway, scope, jwtAuth, rateLimit } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   routes: [

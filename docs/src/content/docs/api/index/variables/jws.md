@@ -28,7 +28,7 @@ time - a missing config throws immediately, not on first request.
 ## Example
 
 ```ts
-import { jws } from "@homegrower-club/stoma";
+import { jws } from "@vivero/stoma";
 
 // HMAC verification with embedded payload
 jws({ secret: env.JWS_SECRET });

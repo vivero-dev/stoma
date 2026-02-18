@@ -3,7 +3,7 @@
 // request logging and CORS enabled globally.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, cors, requestLog } from "@homegrower-club/stoma";
+import { createGateway, cors, requestLog } from "@vivero/stoma";
 
 const gateway = createGateway({
   // Friendly identifier shown in logs, admin UI, and metrics

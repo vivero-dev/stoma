@@ -3,7 +3,7 @@
 // Auth0, Supabase, Firebase, or Okta.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, jwtAuth, cors, requestLog } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth, cors, requestLog } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "secure-api",

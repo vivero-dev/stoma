@@ -7,8 +7,8 @@
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { bunAdapter } from "@homegrower-club/stoma/adapters/bun";
+ * import { createGateway } from "@vivero/stoma";
+ * import { bunAdapter } from "@vivero/stoma/adapters/bun";
  *
  * const gateway = createGateway({
  *   adapter: bunAdapter(),

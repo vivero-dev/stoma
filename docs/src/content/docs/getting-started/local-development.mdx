@@ -28,8 +28,8 @@ Create a simple entry point that starts a local server:
 ```typescript
 // runner.ts
 import { serve } from "@hono/node-server";
-import { createGateway, rateLimit, health } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, rateLimit, health } from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const adapter = memoryAdapter();
 
@@ -103,7 +103,7 @@ npm install -D wrangler
 
 ```typescript
 // src/index.ts
-import { createGateway, rateLimit, health, cors } from "@homegrower-club/stoma";
+import { createGateway, rateLimit, health, cors } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "my-gateway",
@@ -230,8 +230,8 @@ Both Node.js and wrangler approaches support environment variables:
 For projects that target both Node.js and Cloudflare, you can conditionally use different adapters:
 
 ```typescript
-import { createGateway, rateLimit, health, cors } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, rateLimit, health, cors } from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const isCloudflare = process.env.WORKER_RUNTIME === "cloudflare";
 

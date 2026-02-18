@@ -5,8 +5,8 @@
  * package (which relies on `process.env` / `localStorage` and doesn't work
  * reliably in edge runtimes). Output goes to `console.debug()`.
  *
- * Shared between `@homegrower-club/stoma` (gateway) and
- * `@homegrower-club/stoma-analytics` (analytics pipeline).
+ * Shared between `@vivero/stoma` (gateway) and
+ * `@vivero/stoma-analytics` (analytics pipeline).
  *
  * @module debug
  *

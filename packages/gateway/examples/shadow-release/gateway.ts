@@ -3,7 +3,7 @@
 // fire-and-forget — failures never impact the primary response.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, trafficShadow } from "@homegrower-club/stoma";
+import { createGateway, trafficShadow } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "shadow-release",

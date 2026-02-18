@@ -1,4 +1,4 @@
-import type { GatewayInstance } from "@homegrower-club/stoma";
+import type { GatewayInstance } from "@vivero/stoma";
 import { describe, expect, it } from "vitest";
 
 import basic from "../basic/gateway";

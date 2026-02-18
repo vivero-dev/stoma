@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
 import { analyticsLog } from "../analytics.js";
 import { ANALYTICS_TYPE, type AnalyticsEntry } from "../../types.js";
 

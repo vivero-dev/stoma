@@ -181,7 +181,7 @@ export type PolicyFactory<TConfig extends PolicyConfig> =
  *
  * @example
  * ```ts
- * import { definePolicy, Priority } from "@homegrower-club/stoma";
+ * import { definePolicy, Priority } from "@vivero/stoma";
  *
  * const myPolicy = definePolicy<MyConfig>({
  *   name: "my-policy",

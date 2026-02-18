@@ -7,6 +7,6 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ["hono", "@homegrower-club/stoma"],
+  external: ["hono", "@vivero/stoma"],
   outDir: "dist",
 });

@@ -2,7 +2,7 @@
  * API key authentication policy.
  *
  * **Security note:** When implementing `validate`, use
- * {@link timingSafeEqual} from `@homegrower-club/stoma` for constant-time
+ * {@link timingSafeEqual} from `@vivero/stoma` for constant-time
  * key comparison to prevent timing side-channel attacks.
  *
  * @module api-key-auth

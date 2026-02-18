@@ -52,8 +52,8 @@ with an authentication policy.
 ## Example
 
 ```ts
-import { createGateway } from "@homegrower-club/stoma";
-import { health } from "@homegrower-club/stoma/policies";
+import { createGateway } from "@vivero/stoma";
+import { health } from "@vivero/stoma/policies";
 
 createGateway({
   routes: [

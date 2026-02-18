@@ -8,7 +8,7 @@
  *
  * @example
  * ```ts
- * import { mergeConfigs, createGateway } from "@homegrower-club/stoma";
+ * import { mergeConfigs, createGateway } from "@vivero/stoma";
  *
  * const base = { name: "my-gw", policies: [cors(), rateLimit({ max: 100 })] };
  * const authRoutes = { routes: [{ path: "/auth/*", ... }] };

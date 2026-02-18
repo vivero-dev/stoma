@@ -1,5 +1,5 @@
 ---
-"@homegrower-club/stoma": minor
+"@vivero/stoma": minor
 ---
 
 Initial release candidate for v0.1.0

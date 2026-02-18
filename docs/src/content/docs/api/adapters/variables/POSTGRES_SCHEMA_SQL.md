@@ -16,6 +16,6 @@ they're safe to re-run.
 ## Example
 
 ```ts
-import { POSTGRES_SCHEMA_SQL } from "@homegrower-club/stoma/adapters/postgres";
+import { POSTGRES_SCHEMA_SQL } from "@vivero/stoma/adapters/postgres";
 await pool.query(POSTGRES_SCHEMA_SQL);
 ```

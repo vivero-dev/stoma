@@ -25,7 +25,7 @@ Resilience policies protect upstreams and test failure behavior.
 Enforce a time budget by racing `next()` with a timer.
 
 ```typescript
-import { timeout } from "@homegrower-club/stoma";
+import { timeout } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -50,7 +50,7 @@ On timeout: throws `GatewayError(statusCode, "gateway_timeout", message)`.
 Wraps `globalThis.fetch` for the current request and retries matching responses.
 
 ```typescript
-import { retry } from "@homegrower-club/stoma";
+import { retry } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -79,7 +79,7 @@ Notes:
 Three-state breaker with pluggable persistence.
 
 ```typescript
-import { circuitBreaker } from "@homegrower-club/stoma";
+import { circuitBreaker } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -124,7 +124,7 @@ Open rejections include `retry-after`.
 Inject fixed/probabilistic latency for chaos testing.
 
 ```typescript
-import { latencyInjection } from "@homegrower-club/stoma";
+import { latencyInjection } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -144,7 +144,7 @@ interface LatencyInjectionConfig {
 ## Example
 
 ```typescript
-import { latencyInjection, circuitBreaker, timeout, retry } from "@homegrower-club/stoma";
+import { latencyInjection, circuitBreaker, timeout, retry } from "@vivero/stoma";
 
 [
   latencyInjection({ delayMs: 100, probability: 0.2 }),

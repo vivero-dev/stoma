@@ -34,8 +34,8 @@ export interface CorsConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { cors } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { cors } from "@vivero/stoma/policies";
  *
  * // Allow any origin (default)
  * createGateway({

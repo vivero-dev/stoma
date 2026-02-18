@@ -39,7 +39,7 @@ export interface ResponseTransformConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { requestTransform } from "@homegrower-club/stoma/policies";
+ * import { requestTransform } from "@vivero/stoma/policies";
  *
  * // Add API version header and strip cookies
  * requestTransform({
@@ -136,7 +136,7 @@ export const requestTransform =
  *
  * @example
  * ```ts
- * import { responseTransform } from "@homegrower-club/stoma/policies";
+ * import { responseTransform } from "@vivero/stoma/policies";
  *
  * // Add security headers and strip server info
  * responseTransform({

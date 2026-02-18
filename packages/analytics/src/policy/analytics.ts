@@ -28,8 +28,8 @@
  *
  * @module analytics-log
  */
-import { definePolicy, Priority } from "@homegrower-club/stoma/sdk";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma/sdk";
+import type { PolicyConfig } from "@vivero/stoma";
 import { ANALYTICS_TYPE, type AnalyticsEntry } from "../types.js";
 
 export interface AnalyticsLogConfig extends PolicyConfig {

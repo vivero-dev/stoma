@@ -24,7 +24,7 @@ Mint JWTs and attach them to the request for upstream consumption.
 ## Example
 
 ```ts
-import { generateJwt } from "@homegrower-club/stoma";
+import { generateJwt } from "@vivero/stoma";
 
 generateJwt({
   algorithm: "HS256",

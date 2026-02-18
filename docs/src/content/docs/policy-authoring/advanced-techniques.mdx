@@ -7,7 +7,7 @@ sidebar:
 import { Aside } from "@astrojs/starlight/components";
 import EditorLink from "../../../components/EditorLink.astro";
 
-export const RESPONSE_TRANSFORM_CODE = `import { createGateway, definePolicy, Priority, cors } from "@homegrower-club/stoma";
+export const RESPONSE_TRANSFORM_CODE = `import { createGateway, definePolicy, Priority, cors } from "@vivero/stoma";
 
 const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -51,8 +51,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const WAITUNTIL_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
-import { getGatewayContext } from "@homegrower-club/stoma";
+export const WAITUNTIL_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
+import { getGatewayContext } from "@vivero/stoma";
 
 const backgroundLogger = definePolicy({
   name: "background-logger",
@@ -117,8 +117,8 @@ function is called -- at gateway construction time, before any requests are
 processed. Use it to catch configuration errors as early as possible.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface RateLimitByHeaderConfig extends PolicyConfig {
   headerName: string;
@@ -174,7 +174,7 @@ redacting fields, or injecting metadata. The pattern requires care because
 create a new `Response`.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -228,8 +228,8 @@ factory that returns `Policy[]`. This keeps gateway configs clean and ensures
 related policies are never accidentally separated.
 
 ```typescript
-import { definePolicy, Priority, cors } from "@homegrower-club/stoma";
-import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, cors } from "@vivero/stoma";
+import type { Policy, PolicyConfig } from "@vivero/stoma";
 
 interface SecurityPackConfig {
   allowedOrigins?: string[];
@@ -353,8 +353,8 @@ loading a blocklist, fetching a remote config, or warming a cache. Since
 `createGateway()` is synchronous, the async work must happen in the factory.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { Policy } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { Policy } from "@vivero/stoma";
 
 async function blocklist(url: string): Promise<Policy> {
   // Fetch blocklist at construction time (once, not per-request)
@@ -408,8 +408,8 @@ response is sent. To perform fire-and-forget work (webhooks, analytics,
 logging) that outlives the response, use the adapter's `waitUntil()` method.
 
 ```typescript
-import { definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, getGatewayContext } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 const webhookNotifier = definePolicy<{ webhookUrl: string } & PolicyConfig>({
   name: "webhook-notifier",

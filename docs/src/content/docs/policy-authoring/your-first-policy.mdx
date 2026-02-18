@@ -13,8 +13,8 @@ In this tutorial you will build a policy that adds an `x-request-time` header
 to every response, showing how long the gateway took to process the request.
 Each step builds on the last, progressively introducing more of the SDK.
 
-export const STEP1_CODE = `import { createGateway } from "@homegrower-club/stoma";
-import type { Policy } from "@homegrower-club/stoma";
+export const STEP1_CODE = `import { createGateway } from "@vivero/stoma";
+import type { Policy } from "@vivero/stoma";
 
 function requestTime(): Policy {
   return {
@@ -48,7 +48,7 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const STEP2_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+export const STEP2_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
 
 const requestTime = definePolicy({
   name: "request-time",
@@ -83,8 +83,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const STEP3_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const STEP3_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface RequestTimeConfig extends PolicyConfig {
   headerName?: string;
@@ -140,8 +140,8 @@ export const STEP4_CODE = `import {
   definePolicy,
   Priority,
   GatewayError,
-} from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+} from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface RequestTimeConfig extends PolicyConfig {
   headerName?: string;
@@ -211,8 +211,8 @@ export async function createPlaygroundGateway() {
     That is the entire interface. Here is a policy written from scratch, with no SDK:
 
     ```typescript
-    import { createGateway } from "@homegrower-club/stoma";
-    import type { Policy } from "@homegrower-club/stoma";
+    import { createGateway } from "@vivero/stoma";
+    import type { Policy } from "@vivero/stoma";
 
     function requestTime(): Policy {
       return {
@@ -267,7 +267,7 @@ export async function createPlaygroundGateway() {
     **factory function** -- call it with optional config to get a `Policy`.
 
     ```typescript
-    import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+    import { createGateway, definePolicy, Priority } from "@vivero/stoma";
 
     const requestTime = definePolicy({
       name: "request-time",
@@ -327,8 +327,8 @@ export async function createPlaygroundGateway() {
     `PolicyConfig`, set `defaults`, and the SDK merges user overrides automatically.
 
     ```typescript
-    import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
-    import type { PolicyConfig } from "@homegrower-club/stoma";
+    import { createGateway, definePolicy, Priority } from "@vivero/stoma";
+    import type { PolicyConfig } from "@vivero/stoma";
 
     interface RequestTimeConfig extends PolicyConfig {
       headerName?: string;
@@ -409,8 +409,8 @@ export async function createPlaygroundGateway() {
       definePolicy,
       Priority,
       GatewayError,
-    } from "@homegrower-club/stoma";
-    import type { PolicyConfig } from "@homegrower-club/stoma";
+    } from "@vivero/stoma";
+    import type { PolicyConfig } from "@vivero/stoma";
 
     interface RequestTimeConfig extends PolicyConfig {
       headerName?: string;

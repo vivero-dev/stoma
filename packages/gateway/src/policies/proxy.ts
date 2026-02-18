@@ -41,7 +41,7 @@ export interface ProxyPolicyConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { proxy } from "@homegrower-club/stoma/policies";
+ * import { proxy } from "@vivero/stoma/policies";
  *
  * // Add an internal auth header and strip cookies for the upstream
  * proxy({

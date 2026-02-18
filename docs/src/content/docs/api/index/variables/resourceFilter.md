@@ -24,7 +24,7 @@ Strip or allow fields from JSON responses.
 ## Example
 
 ```ts
-import { resourceFilter } from "@homegrower-club/stoma";
+import { resourceFilter } from "@vivero/stoma";
 
 // Remove sensitive fields
 resourceFilter({

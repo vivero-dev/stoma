@@ -18,8 +18,8 @@ Stoma ships a `KVRateLimitStore` class in the adapters package. It implements
 the `RateLimitStore` interface backed by a KV namespace:
 
 ```typescript
-import { rateLimit } from "@homegrower-club/stoma";
-import { KVRateLimitStore } from "@homegrower-club/stoma/adapters";
+import { rateLimit } from "@vivero/stoma";
+import { KVRateLimitStore } from "@vivero/stoma/adapters";
 
 const gateway = createGateway({
   routes: [
@@ -98,7 +98,7 @@ If you need custom behavior (different key format, logging, metrics), you can
 implement `RateLimitStore` directly against a KV namespace:
 
 ```typescript
-import type { RateLimitStore } from "@homegrower-club/stoma";
+import type { RateLimitStore } from "@vivero/stoma";
 
 function customKvStore(kv: KVNamespace): RateLimitStore {
   return {
@@ -134,8 +134,8 @@ once. It selects the best available rate limit backend (Durable Objects if
 bound, otherwise KV):
 
 ```typescript
-import { createGateway, rateLimit } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, rateLimit } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 const adapter = cloudflareAdapter({
   rateLimitKv: env.RATE_LIMIT_KV,

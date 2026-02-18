@@ -29,7 +29,7 @@ without validation.
 ## Example
 
 ```ts
-import { jsonValidation } from "@homegrower-club/stoma";
+import { jsonValidation } from "@vivero/stoma";
 
 // With Zod
 jsonValidation({

@@ -16,7 +16,7 @@ across isolates.
 ## Example
 
 ```ts
-import { DurableObjectRateLimitStore } from "@homegrower-club/stoma/adapters";
+import { DurableObjectRateLimitStore } from "@vivero/stoma/adapters";
 
 const store = new DurableObjectRateLimitStore(env.RATE_LIMITER);
 rateLimit({ max: 100, store });

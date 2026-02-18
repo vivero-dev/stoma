@@ -38,7 +38,7 @@ Second string to compare.
 ## Example
 
 ```ts
-import { timingSafeEqual } from "@homegrower-club/stoma";
+import { timingSafeEqual } from "@vivero/stoma";
 
 // Use in API key validators to prevent timing attacks
 const isValid = timingSafeEqual(providedKey, storedKey);

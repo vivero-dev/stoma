@@ -10,7 +10,7 @@ import {
   jsonThreatProtection,
   regexThreatProtection,
   rateLimit,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "webhook-firewall",

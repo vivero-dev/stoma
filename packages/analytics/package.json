@@ -1,5 +1,5 @@
 {
-  "name": "@homegrower-club/stoma-analytics",
+  "name": "@vivero/stoma-analytics",
   "private": true,
   "version": "0.1.0-rc.0",
   "description": "Opt-in analytics for Stoma API gateway — structured metric log lines, NDJSON-to-Parquet processing, and DuckDB querying.",
@@ -155,16 +155,16 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",
-    "@homegrower-club/stoma": "workspace:*",
-    "@homegrower-club/stoma-core": "workspace:*",
     "@types/node": "^22.0.0",
+    "@vivero/stoma": "workspace:*",
+    "@vivero/stoma-core": "workspace:*",
     "hono": "^4.7.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "3.2.4"
   },
   "peerDependencies": {
-    "@homegrower-club/stoma": ">=0.1.0",
+    "@vivero/stoma": ">=0.1.0",
     "hono": ">=4.0.0"
   }
 }

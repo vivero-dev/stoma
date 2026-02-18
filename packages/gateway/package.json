@@ -1,5 +1,5 @@
 {
-  "name": "@homegrower-club/stoma",
+  "name": "@vivero/stoma",
   "version": "0.1.0-rc.5",
   "description": "Declarative API gateway as a TypeScript library. Runs on Cloudflare Workers, Node.js, Deno, Bun, and any JavaScript runtime.",
   "type": "module",
@@ -170,7 +170,7 @@
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
-    "@homegrower-club/stoma-core": "workspace:*"
+    "@vivero/stoma-core": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.0",

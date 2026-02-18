@@ -2,12 +2,12 @@
 // Uses a mock RedisClient for validation; in production, pass an ioredis or
 // node-redis client instance.
 
-import { createGateway, rateLimit, requestLog } from "@homegrower-club/stoma";
+import { createGateway, rateLimit, requestLog } from "@vivero/stoma";
 import {
   type RedisClient,
   RedisRateLimitStore,
   redisAdapter,
-} from "@homegrower-club/stoma/adapters/redis";
+} from "@vivero/stoma/adapters/redis";
 
 // In production: import Redis from "ioredis"; const redis = new Redis();
 const mockRedis: RedisClient = {

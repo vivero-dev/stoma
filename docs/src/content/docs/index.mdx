@@ -112,14 +112,14 @@ Stoma is built by developers, for developers. We believe your gateway should be 
 
 1.  **Install the library**
     ```bash
-    npm install @homegrower-club/stoma hono
+    npm install @vivero/stoma hono
     ```
 
 2.  **Define your configuration**
     Create a `GatewayConfig` that describes your routes, policies, and upstreams.
 
     ```typescript
-    import { createGateway, jwtAuth, rateLimit, requestLog, cors, health } from "@homegrower-club/stoma";
+    import { createGateway, jwtAuth, rateLimit, requestLog, cors, health } from "@vivero/stoma";
 
     const gateway = createGateway({
       name: "my-api",

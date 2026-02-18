@@ -28,7 +28,7 @@ fields that should be transparently added by the gateway.
 ## Example
 
 ```ts
-import { assignContent } from "@homegrower-club/stoma";
+import { assignContent } from "@vivero/stoma";
 
 assignContent({
   request: {

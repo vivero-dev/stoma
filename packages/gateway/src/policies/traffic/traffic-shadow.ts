@@ -46,7 +46,7 @@ export interface TrafficShadowConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { trafficShadow } from "@homegrower-club/stoma";
+ * import { trafficShadow } from "@vivero/stoma";
  *
  * trafficShadow({
  *   target: "https://shadow.internal",

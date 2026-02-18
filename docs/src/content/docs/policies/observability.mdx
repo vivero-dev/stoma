@@ -23,7 +23,7 @@ Observability policies provide request logging, metrics collection, and health e
 Structured JSON logs for each request.
 
 ```typescript
-import { requestLog } from "@homegrower-club/stoma";
+import { requestLog } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -54,7 +54,7 @@ interface RequestLogConfig {
 Resolve static/dynamic metric tags and store them as `c.get("_metricsTags")`.
 
 ```typescript
-import { assignMetrics } from "@homegrower-club/stoma";
+import { assignMetrics } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -71,7 +71,7 @@ interface AssignMetricsConfig {
 Record request-level metrics through a `MetricsCollector`.
 
 ```typescript
-import { metricsReporter } from "@homegrower-club/stoma";
+import { metricsReporter } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -111,7 +111,7 @@ interface MetricsCollector {
 `health()` returns a `RouteConfig`, not a policy. Add it directly to `routes`.
 
 ```typescript
-import { createGateway, health } from "@homegrower-club/stoma";
+import { createGateway, health } from "@vivero/stoma";
 
 createGateway({
   routes: [

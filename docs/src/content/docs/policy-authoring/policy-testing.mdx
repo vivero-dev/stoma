@@ -10,7 +10,7 @@ Policies are middleware -- they modify requests, reject bad actors, transform re
 
 ## The test harness
 
-`createPolicyTestHarness()` from `@homegrower-club/stoma/sdk` creates a minimal Hono app with everything a policy needs to run:
+`createPolicyTestHarness()` from `@vivero/stoma/sdk` creates a minimal Hono app with everything a policy needs to run:
 
 1. **Gateway context injection** -- sets `requestId`, `startTime`, `gatewayName`, `routePath`, `traceId`, and `spanId` on the Hono context, just like a real gateway would.
 2. **GatewayError handling** -- catches `GatewayError` throws and converts them to structured JSON responses.
@@ -47,8 +47,8 @@ Here is a custom policy that rejects requests without a valid `x-tenant-id` head
 
 ```typescript
 // tenant-filter.ts
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface TenantFilterConfig extends PolicyConfig {
   allowedTenants: string[];
@@ -74,7 +74,7 @@ And the test file:
 ```typescript
 // tenant-filter.test.ts
 import { describe, it, expect } from "vitest";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
 import { tenantFilter } from "./tenant-filter";
 
 describe("tenantFilter", () => {
@@ -113,7 +113,7 @@ The default upstream returns `{ ok: true }`, but you often need to verify what t
 
 ```typescript
 import { describe, it, expect } from "vitest";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
 import { correlationId } from "./correlation-id";
 
 describe("correlationId", () => {
@@ -159,9 +159,9 @@ Policies that use stores -- rate limiting, caching, circuit breaking -- need a `
 
 ```typescript
 import { describe, it, expect, afterEach } from "vitest";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
-import { TestAdapter } from "@homegrower-club/stoma/adapters";
-import { InMemoryRateLimitStore, rateLimit } from "@homegrower-club/stoma";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
+import { TestAdapter } from "@vivero/stoma/adapters";
+import { InMemoryRateLimitStore, rateLimit } from "@vivero/stoma";
 
 describe("rate limit integration", () => {
   const store = new InMemoryRateLimitStore();
@@ -251,7 +251,7 @@ The debug logger in `definePolicy` uses `console.debug()` under the hood. In tes
 
 ```typescript
 import { describe, it, expect, vi } from "vitest";
-import { createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { createPolicyTestHarness } from "@vivero/stoma/sdk";
 import { tenantFilter } from "./tenant-filter";
 
 it("logs debug messages", async () => {

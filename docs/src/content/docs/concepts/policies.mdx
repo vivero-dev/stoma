@@ -31,7 +31,7 @@ The `handler` field is used by the HTTP runtime (`createGateway`). The optional 
 A policy factory function accepts a configuration object and returns a `Policy`. The factory validates config at construction time (before any requests arrive) and closes over the config in the returned middleware handler.
 
 ```typescript
-import { jwtAuth } from "@homegrower-club/stoma";
+import { jwtAuth } from "@vivero/stoma";
 
 // Factory returns a Policy object
 const authPolicy = jwtAuth({
@@ -78,7 +78,7 @@ When writing custom policies, choose a priority that places your middleware at t
 The `Priority` object exports named constants for all tiers, eliminating magic numbers in policy definitions:
 
 ```typescript
-import { Priority } from "@homegrower-club/stoma";
+import { Priority } from "@vivero/stoma";
 
 Priority.OBSERVABILITY    // 0
 Priority.IP_FILTER        // 1
@@ -122,7 +122,7 @@ rateLimit({
 The gateway injects a `PolicyContext` onto every request via the context injector middleware. Policies access it through `getGatewayContext(c)`:
 
 ```typescript
-import { getGatewayContext } from "@homegrower-club/stoma";
+import { getGatewayContext } from "@vivero/stoma";
 
 const ctx = getGatewayContext(c);
 // ctx.requestId   -- crypto.randomUUID()
@@ -225,8 +225,8 @@ The `policies/sdk/` module provides a layered toolkit for authoring custom polic
 The primary convenience wrapper. Takes a `PolicyDefinition` and returns a factory function `(config?) => Policy`. It handles config merging, skip logic, and debug logger injection automatically:
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface TenantFilterConfig extends PolicyConfig {
   allowedTenants: string[];
@@ -270,7 +270,7 @@ For cases where `definePolicy()` is too opinionated, the individual helpers are 
 `createPolicyTestHarness(policy, options?)` creates a minimal Hono app with context injection, `GatewayError` handling, and a configurable upstream. This eliminates the 15+ lines of boilerplate typically needed to test a policy in isolation:
 
 ```typescript
-import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+import { createPolicyTestHarness } from "@vivero/stoma/policies";
 import { tenantFilter } from "./tenant-filter";
 
 const { request } = createPolicyTestHarness(
@@ -297,8 +297,8 @@ it("rejects unknown tenants", async () => {
 If you prefer not to use `definePolicy()`, you can write a policy factory manually. The result is the same `Policy` object:
 
 ```typescript
-import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
-import { getGatewayContext, GatewayError } from "@homegrower-club/stoma";
+import type { Policy, PolicyConfig } from "@vivero/stoma";
+import { getGatewayContext, GatewayError } from "@vivero/stoma";
 
 interface MyPolicyConfig extends PolicyConfig {
   allowedTenants: string[];

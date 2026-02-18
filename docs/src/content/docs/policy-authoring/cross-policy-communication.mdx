@@ -47,7 +47,7 @@ available and contains the `PolicyContext` with request metadata, the debug
 logger factory, and the adapter. Access it via `getGatewayContext()`:
 
 ```typescript
-import { getGatewayContext } from "@homegrower-club/stoma";
+import { getGatewayContext } from "@vivero/stoma";
 
 const ctx = getGatewayContext(c);
 // ctx.requestId  -- unique ID for this request
@@ -86,8 +86,8 @@ export const AUTH_DOWNSTREAM_CODE = `import {
   definePolicy,
   Priority,
   GatewayError,
-} from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+} from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface SimpleAuthConfig extends PolicyConfig {
   tokens: Record<string, { userId: string; plan: string }>;
@@ -163,8 +163,8 @@ import {
   definePolicy,
   Priority,
   GatewayError,
-} from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+} from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 // Auth policy -- validates token and sets user context
 interface SimpleAuthConfig extends PolicyConfig {
@@ -232,12 +232,12 @@ Two SDK functions power this:
 - **`isDebugRequested(c)`** -- Returns `true` when the client sent a valid
   `x-stoma-debug` request header. Useful for conditional debug logic.
 
-Both are available from `@homegrower-club/stoma/sdk`. `setDebugHeader` is
-also re-exported from the main `@homegrower-club/stoma` entry point.
+Both are available from `@vivero/stoma/sdk`. `setDebugHeader` is
+also re-exported from the main `@vivero/stoma` entry point.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
-import { setDebugHeader, isDebugRequested } from "@homegrower-club/stoma/sdk";
+import { definePolicy, Priority } from "@vivero/stoma";
+import { setDebugHeader, isDebugRequested } from "@vivero/stoma/sdk";
 
 const debuggablePolicy = definePolicy({
   name: "debuggable",
@@ -267,7 +267,7 @@ export const DEBUG_HEADERS_CODE = `import {
   requestLog,
   cors,
   setDebugHeader,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 
 const timingPolicy = definePolicy({
   name: "timing",
@@ -318,7 +318,7 @@ import {
   requestLog,
   cors,
   setDebugHeader,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 
 const timingPolicy = definePolicy({
   name: "timing",
@@ -375,7 +375,7 @@ priority, duration, whether it called `next()`). Policies can opt in to
 richer tracing by calling the `trace` reporter provided by `definePolicy`:
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const myPolicy = definePolicy({
   name: "my-policy",

@@ -2,7 +2,7 @@
  * In-browser TypeScript compiler using esbuild-wasm.
  *
  * Compiles user-written gateway TypeScript into a self-contained JS bundle
- * by resolving `@homegrower-club/stoma` imports against the pre-bundled
+ * by resolving `@vivero/stoma` imports against the pre-bundled
  * `/stoma-bundle.esm.js` file.
  */
 import * as esbuild from "esbuild-wasm";
@@ -35,7 +35,7 @@ async function getStomaBundleText(): Promise<string> {
 }
 
 /**
- * esbuild plugin that intercepts `@homegrower-club/stoma` and `hono` imports,
+ * esbuild plugin that intercepts `@vivero/stoma` and `hono` imports,
  * resolving them against the pre-bundled ESM file so the compiled output is
  * entirely self-contained with zero external imports.
  */
@@ -44,7 +44,7 @@ function stomaResolverPlugin(): esbuild.Plugin {
     name: "stoma-resolver",
     setup(build) {
       // Intercept all stoma and hono imports
-      build.onResolve({ filter: /^@homegrower-club\/stoma|^hono/ }, (args) => ({
+      build.onResolve({ filter: /^@vivero\/stoma|^hono/ }, (args) => ({
         path: args.path,
         namespace: "stoma-bundle",
       }));

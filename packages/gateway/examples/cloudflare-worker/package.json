@@ -1,5 +1,5 @@
 {
-  "name": "@homegrower-club/stoma-demo",
+  "name": "@vivero/stoma-demo",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@cloudflare/puppeteer": "latest",
-    "@homegrower-club/stoma": "../../",
+    "@vivero/stoma": "../../",
     "hono": "^4.7.0"
   },
   "devDependencies": {

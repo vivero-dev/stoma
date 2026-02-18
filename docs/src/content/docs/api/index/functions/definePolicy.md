@@ -41,7 +41,7 @@ A factory function whose config parameter is required or optional based on TConf
 ## Example
 
 ```ts
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const myPolicy = definePolicy<MyConfig>({
   name: "my-policy",

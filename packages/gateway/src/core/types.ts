@@ -114,7 +114,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
    *
    * @example
    * ```ts
-   * import { createGateway, OTLPSpanExporter } from "@homegrower-club/stoma";
+   * import { createGateway, OTLPSpanExporter } from "@vivero/stoma";
    *
    * createGateway({
    *   tracing: {

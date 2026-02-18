@@ -1,8 +1,8 @@
 // Auth routes module — owned by the auth team.
 // Defines login and token refresh endpoints.
 
-import { jwtAuth } from "@homegrower-club/stoma";
-import type { GatewayConfig } from "@homegrower-club/stoma";
+import { jwtAuth } from "@vivero/stoma";
+import type { GatewayConfig } from "@vivero/stoma";
 
 export const authRoutes: Partial<GatewayConfig> = {
   routes: [

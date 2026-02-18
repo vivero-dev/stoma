@@ -7,7 +7,7 @@
  * This file lives in docs/ only. It is NOT part of the Stoma library.
  */
 
-import type { GatewayAdapter, GatewayInstance } from "@homegrower-club/stoma";
+import type { GatewayAdapter, GatewayInstance } from "@vivero/stoma";
 import {
   apiKeyAuth,
   cache,
@@ -19,8 +19,8 @@ import {
   requestLog,
   serverTiming,
   timeout,
-} from "@homegrower-club/stoma";
-import { CacheApiCacheStore } from "@homegrower-club/stoma/adapters/cloudflare";
+} from "@vivero/stoma";
+import { CacheApiCacheStore } from "@vivero/stoma/adapters/cloudflare";
 
 import { IDBRateLimitStore } from "./stores/idb-rate-limit-store";
 

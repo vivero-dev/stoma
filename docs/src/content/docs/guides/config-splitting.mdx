@@ -19,7 +19,7 @@ patterns like per-domain route files, shared policy sets, and
 environment-specific overrides.
 
 ```typescript
-import { mergeConfigs } from "@homegrower-club/stoma";
+import { mergeConfigs } from "@vivero/stoma";
 ```
 
 ## Function signature
@@ -71,8 +71,8 @@ Layer environment-specific settings on top of a base configuration:
 
 ```typescript
 // gateway/base.ts
-import { cors, requestLog } from "@homegrower-club/stoma";
-import type { GatewayConfig } from "@homegrower-club/stoma";
+import { cors, requestLog } from "@vivero/stoma";
+import type { GatewayConfig } from "@vivero/stoma";
 
 export const baseConfig: Partial<GatewayConfig> = {
   name: "my-api",
@@ -92,8 +92,8 @@ export const baseConfig: Partial<GatewayConfig> = {
 
 ```typescript
 // gateway/production.ts
-import type { GatewayConfig } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import type { GatewayConfig } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 export const productionOverrides: Partial<GatewayConfig> = {
   debug: false,
@@ -110,7 +110,7 @@ export const productionOverrides: Partial<GatewayConfig> = {
 
 ```typescript
 // gateway/index.ts
-import { createGateway, mergeConfigs } from "@homegrower-club/stoma";
+import { createGateway, mergeConfigs } from "@vivero/stoma";
 import { baseConfig } from "./base";
 import { productionOverrides } from "./production";
 
@@ -138,7 +138,7 @@ import {
   health,
   cors,
   requestLog,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 
 // Team A owns user routes
 const userRoutes = scope({
@@ -233,8 +233,8 @@ calling `createGateway()`. See
 details.
 
 ```typescript
-import { mergeConfigs } from "@homegrower-club/stoma";
-import { validateConfig } from "@homegrower-club/stoma/config";
+import { mergeConfigs } from "@vivero/stoma";
+import { validateConfig } from "@vivero/stoma/config";
 
 const merged = mergeConfigs(baseConfig, routeConfig, overrides);
 const validated = validateConfig(merged);

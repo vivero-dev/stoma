@@ -63,7 +63,7 @@ function contentTypeMatches(
  *
  * @example
  * ```ts
- * import { assignContent } from "@homegrower-club/stoma";
+ * import { assignContent } from "@vivero/stoma";
  *
  * assignContent({
  *   request: {

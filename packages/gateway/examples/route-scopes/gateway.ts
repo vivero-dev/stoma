@@ -3,7 +3,7 @@
 // the same base path or middleware stack.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, scope, health, jwtAuth, cors } from "@homegrower-club/stoma";
+import { createGateway, scope, health, jwtAuth, cors } from "@vivero/stoma";
 
 // Scoped routes share a prefix and JWT auth policy
 const apiRoutes = scope({

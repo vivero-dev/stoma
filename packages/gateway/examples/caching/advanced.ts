@@ -3,7 +3,7 @@
 // rate limiting, and language-aware cache keys via varyHeaders.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, cache, rateLimit, cors, InMemoryCacheStore } from "@homegrower-club/stoma";
+import { createGateway, cache, rateLimit, cors, InMemoryCacheStore } from "@vivero/stoma";
 
 const cacheStore = new InMemoryCacheStore({ maxEntries: 500 });
 

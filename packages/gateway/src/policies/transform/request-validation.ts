@@ -58,7 +58,7 @@ function normalizeResult(result: boolean | ValidationResult): ValidationResult {
  *
  * @example
  * ```ts
- * import { requestValidation } from "@homegrower-club/stoma";
+ * import { requestValidation } from "@vivero/stoma";
  *
  * // Simple boolean validator
  * requestValidation({

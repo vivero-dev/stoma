@@ -1,8 +1,8 @@
 // Bun deployment example using Bun.serve().
 // Run with: bun run src/index.ts
 
-import { createGateway, cors, requestLog, health } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, cors, requestLog, health } from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const gateway = createGateway({
   name: "bun-gateway",

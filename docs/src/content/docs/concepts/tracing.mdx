@@ -15,8 +15,8 @@ Stoma includes a lightweight OpenTelemetry-compatible tracing system designed fo
 Add a `tracing` configuration to your `GatewayConfig`:
 
 ```typescript
-import { createGateway } from "@homegrower-club/stoma";
-import { OTLPSpanExporter } from "@homegrower-club/stoma";
+import { createGateway } from "@vivero/stoma";
+import { OTLPSpanExporter } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "my-api",
@@ -48,7 +48,7 @@ const gateway = createGateway({
 Ships spans to any OTLP-compatible collector (Jaeger, Grafana Tempo, Honeycomb, Datadog OTLP endpoint, etc.) using the OTLP/HTTP JSON encoding via `fetch()`.
 
 ```typescript
-import { OTLPSpanExporter } from "@homegrower-club/stoma";
+import { OTLPSpanExporter } from "@vivero/stoma";
 
 const exporter = new OTLPSpanExporter({
   endpoint: "https://otel-collector.internal:4318/v1/traces",
@@ -74,7 +74,7 @@ const exporter = new OTLPSpanExporter({
 Logs each span to `console.debug()` in a compact one-line format. Useful for local development and debugging.
 
 ```typescript
-import { ConsoleSpanExporter } from "@homegrower-club/stoma";
+import { ConsoleSpanExporter } from "@vivero/stoma";
 
 const gateway = createGateway({
   tracing: {
@@ -104,7 +104,7 @@ docker run -d --name jaeger \
 ```
 
 ```typescript
-import { createGateway, OTLPSpanExporter, cors, rateLimit } from "@homegrower-club/stoma";
+import { createGateway, OTLPSpanExporter, cors, rateLimit } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "my-api",
@@ -199,7 +199,7 @@ When a request is not sampled, no `SpanBuilder` instances are created and no exp
 Implement the `SpanExporter` interface to send spans to any backend:
 
 ```typescript
-import type { SpanExporter, ReadableSpan } from "@homegrower-club/stoma";
+import type { SpanExporter, ReadableSpan } from "@vivero/stoma";
 
 class DatadogSpanExporter implements SpanExporter {
   private readonly apiKey: string;
@@ -252,8 +252,8 @@ The `shutdown()` method is optional. If implemented, it is called when the gatew
 Span export happens asynchronously. On Cloudflare Workers, the exporter's `export()` call is dispatched via `adapter.waitUntil()` so it does not block the response. Configure a runtime adapter to enable this:
 
 ```typescript
-import { createGateway, OTLPSpanExporter } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+import { createGateway, OTLPSpanExporter } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {

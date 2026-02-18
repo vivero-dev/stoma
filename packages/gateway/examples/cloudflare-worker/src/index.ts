@@ -13,9 +13,9 @@ import {
   responseTransform,
   retry,
   timeout,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 import puppeteer from "@cloudflare/puppeteer";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const stores = memoryAdapter();
 const metrics = new InMemoryMetricsCollector();

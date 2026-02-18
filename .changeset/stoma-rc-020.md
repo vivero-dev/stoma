@@ -1,5 +1,5 @@
 ---
-"@homegrower-club/stoma": patch
+"@vivero/stoma": patch
 ---
 
 Production adapters, IPv6 support, security hardening, DX improvements

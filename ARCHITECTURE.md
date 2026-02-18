@@ -2,7 +2,7 @@
 
 ## Overview
 
-`@homegrower-club/stoma` is a declarative API gateway implemented as a TypeScript library on top of [Hono](https://hono.dev). A consumer provides a `GatewayConfig` object describing routes, policies, and upstreams; the library compiles that config into a composable Hono middleware pipeline where each policy is a named, prioritized middleware handler and every pipeline terminates at an upstream target. The result is a standard Hono `app` that runs on any runtime Hono supports: Cloudflare Workers, Node.js (via `@hono/node-server`), Deno, Bun, Fastly, Lambda@Edge, and Vercel Edge Functions.
+`@vivero/stoma` is a declarative API gateway implemented as a TypeScript library on top of [Hono](https://hono.dev). A consumer provides a `GatewayConfig` object describing routes, policies, and upstreams; the library compiles that config into a composable Hono middleware pipeline where each policy is a named, prioritized middleware handler and every pipeline terminates at an upstream target. The result is a standard Hono `app` that runs on any runtime Hono supports: Cloudflare Workers, Node.js (via `@hono/node-server`), Deno, Bun, Fastly, Lambda@Edge, and Vercel Edge Functions.
 
 The core gateway depends only on Hono and the Web `Request`/`Response` API. Runtime-specific capabilities (distributed stores, background tasks, service bindings) are injected through a pluggable adapter system.
 
@@ -221,7 +221,7 @@ Policies read this via `c.get("gateway")`.
 A policy is a factory function that returns a `Policy` object. The `handler` is a standard Hono `MiddlewareHandler`:
 
 ```typescript
-import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
+import type { Policy, PolicyConfig } from "@vivero/stoma";
 
 interface CorsConfig extends PolicyConfig {
   origins: string[];
@@ -252,7 +252,7 @@ There is no policy registration step. Policies are plain objects -- instantiate 
 For a structured approach with built-in skip handling and debug logging, use `definePolicy()` from the SDK:
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const cors = definePolicy({
   name: "cors",
@@ -356,7 +356,7 @@ The richest adapter. Provides:
 Implement the `GatewayAdapter` interface and return it from a factory function. Only implement the slots relevant to your runtime:
 
 ```typescript
-import type { GatewayAdapter } from "@homegrower-club/stoma";
+import type { GatewayAdapter } from "@vivero/stoma";
 
 export function myRuntimeAdapter(): GatewayAdapter {
   return {

@@ -1,5 +1,5 @@
 /**
- * Re-exports from `@homegrower-club/stoma-core`.
+ * Re-exports from `@vivero/stoma-core`.
  *
  * The debug module lives in `packages/core` and is shared across all Stoma
  * packages. This file exists so that gateway-internal imports
@@ -13,4 +13,4 @@ export {
   createDebugger,
   matchNamespace,
   createDebugFactory,
-} from "@homegrower-club/stoma-core";
+} from "@vivero/stoma-core";

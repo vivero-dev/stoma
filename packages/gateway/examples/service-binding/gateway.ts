@@ -36,7 +36,7 @@
  *
  * @module service-binding
  */
-import { cors, createGateway, jwtAuth } from "@homegrower-club/stoma";
+import { cors, createGateway, jwtAuth } from "@vivero/stoma";
 
 /**
  * Your Cloudflare Workers bindings type.

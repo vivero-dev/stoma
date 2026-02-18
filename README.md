@@ -18,7 +18,7 @@ API gateways in the JavaScript ecosystem are stuck between two bad options:
 
 There is a third option: **a declarative gateway library that lives in your codebase and deploys with your standard workflow.**
 
-`@homegrower-club/stoma` fills this gap. It is a TypeScript library you import -- not a Go binary or YAML config you deploy. Define your routes, policies, and upstreams as typed objects. The library compiles them into an HTTP application you can export directly.
+`@vivero/stoma` fills this gap. It is a TypeScript library you import -- not a Go binary or YAML config you deploy. Define your routes, policies, and upstreams as typed objects. The library compiles them into an HTTP application you can export directly.
 
 - Configured with **TypeScript**, not YAML
 - Lives in **your codebase** -- deploy as part of your app or as a standalone service
@@ -40,7 +40,7 @@ Think KrakenD's declarative route-to-pipeline model, but as a TypeScript library
 ## Installation
 
 ```sh
-npm install @homegrower-club/stoma hono
+npm install @vivero/stoma hono
 ```
 
 ## Quick Start
@@ -48,7 +48,7 @@ npm install @homegrower-club/stoma hono
 ### Basic gateway (runs on any runtime)
 
 ```typescript
-import { createGateway, jwtAuth, rateLimit, requestLog, cors } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth, rateLimit, requestLog, cors } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "my-api-gateway",
@@ -95,8 +95,8 @@ This gateway works out of the box on Cloudflare Workers (`export default gateway
 When deploying to Cloudflare Workers, use the Cloudflare adapter to unlock Service Bindings, KV-backed rate limiting, and Durable Objects:
 
 ```typescript
-import { createGateway, jwtAuth, rateLimit, requestLog } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+import { createGateway, jwtAuth, rateLimit, requestLog } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
 
 type Env = {
   JWT_SECRET: string;
@@ -192,11 +192,11 @@ Three upstream types cover the common deployment patterns:
 Adapters provide runtime-specific store implementations and platform capabilities. The gateway core is runtime-agnostic; adapters plug in distributed rate limiting, caching, background tasks, and service binding dispatch.
 
 ```typescript
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
-import { nodeAdapter } from "@homegrower-club/stoma/adapters/node";
-import { denoAdapter } from "@homegrower-club/stoma/adapters/deno";
-import { bunAdapter } from "@homegrower-club/stoma/adapters/bun";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters/memory";
+import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
+import { nodeAdapter } from "@vivero/stoma/adapters/node";
+import { denoAdapter } from "@vivero/stoma/adapters/deno";
+import { bunAdapter } from "@vivero/stoma/adapters/bun";
+import { memoryAdapter } from "@vivero/stoma/adapters/memory";
 ```
 
 | Adapter | Stores | `waitUntil` | Service Bindings | Use case |
@@ -238,7 +238,7 @@ rateLimit({
 A policy is any object conforming to the `Policy` interface:
 
 ```typescript
-import type { Policy } from "@homegrower-club/stoma";
+import type { Policy } from "@vivero/stoma";
 
 function requestTimer(): Policy {
   return {
@@ -256,7 +256,7 @@ function requestTimer(): Policy {
 For a more structured approach, use the SDK:
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const requestTimer = definePolicy({
   name: "request-timer",
@@ -299,16 +299,16 @@ Policies execute in **priority order** (lowest number first), then in **declarat
 
 | Import path | Contents |
 |-------------|----------|
-| `@homegrower-club/stoma` | `createGateway`, all policies, metrics, core types |
-| `@homegrower-club/stoma/policies` | Policies only |
-| `@homegrower-club/stoma/sdk` | `definePolicy`, `Priority`, test harness |
-| `@homegrower-club/stoma/config` | Config types + optional Zod validation (requires `zod` peer dep) |
-| `@homegrower-club/stoma/adapters` | All adapter factories |
-| `@homegrower-club/stoma/adapters/cloudflare` | Cloudflare adapter only |
-| `@homegrower-club/stoma/adapters/node` | Node.js adapter only |
-| `@homegrower-club/stoma/adapters/deno` | Deno adapter only |
-| `@homegrower-club/stoma/adapters/bun` | Bun adapter only |
-| `@homegrower-club/stoma/adapters/memory` | In-memory adapter (dev/test) |
+| `@vivero/stoma` | `createGateway`, all policies, metrics, core types |
+| `@vivero/stoma/policies` | Policies only |
+| `@vivero/stoma/sdk` | `definePolicy`, `Priority`, test harness |
+| `@vivero/stoma/config` | Config types + optional Zod validation (requires `zod` peer dep) |
+| `@vivero/stoma/adapters` | All adapter factories |
+| `@vivero/stoma/adapters/cloudflare` | Cloudflare adapter only |
+| `@vivero/stoma/adapters/node` | Node.js adapter only |
+| `@vivero/stoma/adapters/deno` | Deno adapter only |
+| `@vivero/stoma/adapters/bun` | Bun adapter only |
+| `@vivero/stoma/adapters/memory` | In-memory adapter (dev/test) |
 
 ## Contributing
 

@@ -17,7 +17,7 @@ share the same base path or middleware stack. It returns a flat `RouteConfig[]`
 that spreads directly into `GatewayConfig.routes`.
 
 ```typescript
-import { scope } from "@homegrower-club/stoma";
+import { scope } from "@vivero/stoma";
 ```
 
 ## ScopeConfig
@@ -40,7 +40,7 @@ scope<MyEnv>({ prefix: "/api", routes: [...] })
 Group versioned API routes under a shared prefix with JWT authentication:
 
 ```typescript
-import { createGateway, scope, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+import { createGateway, scope, jwtAuth, rateLimit } from "@vivero/stoma";
 
 const gateway = createGateway({
   routes: [

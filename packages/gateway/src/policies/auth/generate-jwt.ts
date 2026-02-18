@@ -61,7 +61,7 @@ function isHmac(alg: string): boolean {
  *
  * @example
  * ```ts
- * import { generateJwt } from "@homegrower-club/stoma";
+ * import { generateJwt } from "@vivero/stoma";
  *
  * generateJwt({
  *   algorithm: "HS256",

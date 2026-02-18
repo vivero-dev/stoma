@@ -28,7 +28,7 @@ A [Policy](/api/index/interfaces/policy/) at priority 50 (REQUEST_TRANSFORM).
 ## Example
 
 ```ts
-import { assignAttributes } from "@homegrower-club/stoma";
+import { assignAttributes } from "@vivero/stoma";
 
 assignAttributes({
   attributes: {

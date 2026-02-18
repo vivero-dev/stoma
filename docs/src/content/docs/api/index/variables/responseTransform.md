@@ -32,7 +32,7 @@ A [Policy](/api/index/interfaces/policy/) at priority 92 (runs late, after upstr
 ## Example
 
 ```ts
-import { responseTransform } from "@homegrower-club/stoma/policies";
+import { responseTransform } from "@vivero/stoma/policies";
 
 // Add security headers and strip server info
 responseTransform({

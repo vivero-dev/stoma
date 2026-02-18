@@ -25,7 +25,7 @@ export interface StandaloneOptions {
  *
  * @example
  * ```ts
- * import { runStandalone } from "@homegrower-club/stoma-analytics/worker";
+ * import { runStandalone } from "@vivero/stoma-analytics/worker";
  *
  * await runStandalone({
  *   sourcePath: "./logs",

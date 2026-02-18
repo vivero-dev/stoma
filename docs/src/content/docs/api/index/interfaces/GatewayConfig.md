@@ -229,7 +229,7 @@ Zero overhead when not configured - no span objects are allocated.
 #### Example
 
 ```ts
-import { createGateway, OTLPSpanExporter } from "@homegrower-club/stoma";
+import { createGateway, OTLPSpanExporter } from "@vivero/stoma";
 
 createGateway({
   tracing: {

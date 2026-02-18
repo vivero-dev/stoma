@@ -6,7 +6,7 @@
  *
  * This file lives in docs/ only. It is NOT part of the Stoma library.
  */
-import type { RateLimitStore } from "@homegrower-club/stoma";
+import type { RateLimitStore } from "@vivero/stoma";
 
 /** Shape of each rate limit entry stored in IndexedDB. */
 interface RateLimitEntry {

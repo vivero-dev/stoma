@@ -1,15 +1,15 @@
 /**
  * Configuration types and optional Zod validation for stoma gateway configs.
  *
- * Import from `@homegrower-club/stoma/config` for gateway configuration types
+ * Import from `@vivero/stoma/config` for gateway configuration types
  * and runtime validation utilities. The Zod schemas are **optional** - they
  * require the `zod` peer dependency. Consumers who only use the TypeScript
  * types never need to install Zod.
  *
  * @example
  * ```ts
- * import type { GatewayConfig } from "@homegrower-club/stoma/config";
- * import { validateConfig, safeValidateConfig } from "@homegrower-club/stoma/config";
+ * import type { GatewayConfig } from "@vivero/stoma/config";
+ * import { validateConfig, safeValidateConfig } from "@vivero/stoma/config";
  *
  * // Type-only usage (no zod required)
  * const config: GatewayConfig = { ... };

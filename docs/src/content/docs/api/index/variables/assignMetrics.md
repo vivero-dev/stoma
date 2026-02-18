@@ -32,7 +32,7 @@ A [Policy](/api/index/interfaces/policy/) at priority 0 (OBSERVABILITY).
 ## Example
 
 ```ts
-import { assignMetrics } from "@homegrower-club/stoma";
+import { assignMetrics } from "@vivero/stoma";
 
 assignMetrics({
   tags: {

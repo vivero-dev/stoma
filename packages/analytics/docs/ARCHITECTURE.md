@@ -9,7 +9,7 @@ sidebar:
 
 ## Purpose
 
-`@homegrower-club/stoma-analytics` is the observability data pipeline for Stoma API gateways. It turns structured metric log lines emitted from the analytics policy into compressed, query-ready Parquet files — without requiring any always-on infrastructure.
+`@vivero/stoma-analytics` is the observability data pipeline for Stoma API gateways. It turns structured metric log lines emitted from the analytics policy into compressed, query-ready Parquet files — without requiring any always-on infrastructure.
 
 The pipeline:
 
@@ -135,7 +135,7 @@ This is the same principle as Stoma's `requestLog` policy: observability must ne
 
 ### 8. No build-time dependencies on the gateway
 
-The analytics package imports only from `@homegrower-club/stoma/sdk` (the policy authoring SDK) and the `PolicyConfig` type. It does not import gateway internals, pipeline implementation details, or specific policy implementations.
+The analytics package imports only from `@vivero/stoma/sdk` (the policy authoring SDK) and the `PolicyConfig` type. It does not import gateway internals, pipeline implementation details, or specific policy implementations.
 
 This means the gateway and analytics packages version independently. A gateway upgrade doesn't force an analytics upgrade, and vice versa. The coupling surface is the `definePolicy()` contract and the `PolicyContext` shape — both stable public API.
 
@@ -169,16 +169,16 @@ src/
 
 | Import | What you get |
 |--------|-------------|
-| `@homegrower-club/stoma-analytics` | Everything |
-| `@homegrower-club/stoma-analytics/policy` | `analyticsLog` policy only |
-| `@homegrower-club/stoma-analytics/processor` | Processor + format parsers |
-| `@homegrower-club/stoma-analytics/compactor` | Compactor |
-| `@homegrower-club/stoma-analytics/storage/r2` | R2 adapter |
-| `@homegrower-club/stoma-analytics/storage/local` | Local filesystem adapter |
-| `@homegrower-club/stoma-analytics/parquet/duckdb-wasm` | DuckDB WASM writer + merger |
-| `@homegrower-club/stoma-analytics/worker` | Worker templates |
+| `@vivero/stoma-analytics` | Everything |
+| `@vivero/stoma-analytics/policy` | `analyticsLog` policy only |
+| `@vivero/stoma-analytics/processor` | Processor + format parsers |
+| `@vivero/stoma-analytics/compactor` | Compactor |
+| `@vivero/stoma-analytics/storage/r2` | R2 adapter |
+| `@vivero/stoma-analytics/storage/local` | Local filesystem adapter |
+| `@vivero/stoma-analytics/parquet/duckdb-wasm` | DuckDB WASM writer + merger |
+| `@vivero/stoma-analytics/worker` | Worker templates |
 
-Every subpath is tree-shakeable. If you only need the policy (to emit analytics from your gateway), you import `@homegrower-club/stoma-analytics/policy` — no processor code, no DuckDB, no storage adapters are bundled.
+Every subpath is tree-shakeable. If you only need the policy (to emit analytics from your gateway), you import `@vivero/stoma-analytics/policy` — no processor code, no DuckDB, no storage adapters are bundled.
 
 ## Runtime cost
 
@@ -196,7 +196,7 @@ The `r2Storage` adapter uses the Workers R2Bucket binding. The `createAnalyticsH
 
 ### Node.js / Bun
 
-The `localStorageAdapter` reads and writes to the local filesystem. Use `runStandalone()` from `@homegrower-club/stoma-analytics/worker` for a ready-made CLI runner, or build a custom scheduled job with `createProcessor()` and `createCompactor()` directly.
+The `localStorageAdapter` reads and writes to the local filesystem. Use `runStandalone()` from `@vivero/stoma-analytics/worker` for a ready-made CLI runner, or build a custom scheduled job with `createProcessor()` and `createCompactor()` directly.
 
 ### Custom runtime
 

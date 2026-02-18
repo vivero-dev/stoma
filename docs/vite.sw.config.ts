@@ -46,11 +46,11 @@ export default defineConfig({
   resolve: {
     alias: {
       // Resolve Stoma imports to sibling package source (no build step needed)
-      "@homegrower-club/stoma/adapters/cloudflare": resolve(
+      "@vivero/stoma/adapters/cloudflare": resolve(
         __dirname,
         "../packages/gateway/src/adapters/cloudflare.ts",
       ),
-      "@homegrower-club/stoma": resolve(__dirname, "../packages/gateway/src/index.ts"),
+      "@vivero/stoma": resolve(__dirname, "../packages/gateway/src/index.ts"),
     },
   },
 });

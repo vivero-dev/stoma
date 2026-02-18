@@ -3,7 +3,7 @@
 // directly on subsequent requests, reducing upstream load.
 // Demo API: https://stoma.opensource.homegrower.club/demo-api
 
-import { createGateway, cache, cors, InMemoryCacheStore } from "@homegrower-club/stoma";
+import { createGateway, cache, cors, InMemoryCacheStore } from "@vivero/stoma";
 
 // Create a cache store — InMemoryCacheStore works on all runtimes
 const cacheStore = new InMemoryCacheStore({

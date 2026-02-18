@@ -7,8 +7,8 @@ sidebar:
 import { Aside } from "@astrojs/starlight/components";
 import EditorLink from "../../../components/EditorLink.astro";
 
-export const PATTERN1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const PATTERN1_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface ApiVersionConfig extends PolicyConfig {
   requiredVersion?: string;
@@ -51,7 +51,7 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const PATTERN2_CODE = `import { createGateway, definePolicy, Priority } from "@homegrower-club/stoma";
+export const PATTERN2_CODE = `import { createGateway, definePolicy, Priority } from "@vivero/stoma";
 
 const correlationId = definePolicy({
   name: "correlation-id",
@@ -90,7 +90,7 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const PATTERN3_CODE = `import { createGateway, definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
+export const PATTERN3_CODE = `import { createGateway, definePolicy, Priority, getGatewayContext } from "@vivero/stoma";
 
 const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -139,8 +139,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const PATTERN4_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const PATTERN4_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface MaintenanceConfig extends PolicyConfig {
   enabled?: boolean;
@@ -184,8 +184,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const PATTERN5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+export const PATTERN5_CODE = `import { createGateway, definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface TokenAuthConfig extends PolicyConfig {
   tokens: Record<string, { userId: string; role: string }>;
@@ -244,8 +244,8 @@ export async function createPlaygroundGateway() {
   });
 }`;
 
-export const PATTERN6_CODE = `import { createGateway } from "@homegrower-club/stoma";
-import type { Policy } from "@homegrower-club/stoma";
+export const PATTERN6_CODE = `import { createGateway } from "@vivero/stoma";
+import type { Policy } from "@vivero/stoma";
 
 function poweredByPolicy(): Policy {
   return {
@@ -301,8 +301,8 @@ The policy below requires an `x-api-version: 2024` header on every request.
 Requests without it receive a structured 400 error.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface ApiVersionConfig extends PolicyConfig {
   requiredVersion?: string;
@@ -347,7 +347,7 @@ client did not send one, a UUID is generated. The same value is echoed back on
 the response so clients can correlate requests with logs.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma";
 
 const correlationId = definePolicy({
   name: "correlation-id",
@@ -392,7 +392,7 @@ The policy below wraps every JSON response in a `{ data, meta }` envelope,
 injecting the gateway request ID into the metadata.
 
 ```typescript
-import { definePolicy, Priority, getGatewayContext } from "@homegrower-club/stoma";
+import { definePolicy, Priority, getGatewayContext } from "@vivero/stoma";
 
 const jsonEnvelope = definePolicy({
   name: "json-envelope",
@@ -445,8 +445,8 @@ The policy below returns a 503 with a `Retry-After` header when maintenance
 mode is enabled.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface MaintenanceConfig extends PolicyConfig {
   enabled?: boolean;
@@ -498,8 +498,8 @@ The policy below validates bearer tokens against a static lookup table and
 sets `x-user-id` and `x-user-role` headers for the upstream to consume.
 
 ```typescript
-import { definePolicy, Priority, GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority, GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface TokenAuthConfig extends PolicyConfig {
   tokens: Record<string, { userId: string; role: string }>;
@@ -546,7 +546,7 @@ Any existing Hono middleware can become a Stoma policy by wrapping it in an
 object with `name` and `priority`. This lets you reuse Hono's middleware ecosystem without rewriting anything.
 
 ```typescript
-import type { Policy } from "@homegrower-club/stoma";
+import type { Policy } from "@vivero/stoma";
 
 function poweredByPolicy(): Policy {
   return {

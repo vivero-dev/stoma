@@ -35,7 +35,7 @@ Traffic policies control admission, rate, payload safety, upstream shaping, and 
 Sliding-window limiting. Uses `InMemoryRateLimitStore` by default.
 
 ```typescript
-import { rateLimit } from "@homegrower-club/stoma";
+import { rateLimit } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -85,7 +85,7 @@ interface RateLimitStore {
 Allow/deny by IP or CIDR.
 
 ```typescript
-import { ipFilter } from "@homegrower-club/stoma";
+import { ipFilter } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -110,7 +110,7 @@ Error: `403` `ip_denied`.
 Allow/deny by country code from a request header.
 
 ```typescript
-import { geoIpFilter } from "@homegrower-club/stoma";
+import { geoIpFilter } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -132,7 +132,7 @@ Error: `403` `geo_denied`.
 Response cache with configurable TTL, method filter, key strategy, and store backend.
 
 ```typescript
-import { cache } from "@homegrower-club/stoma";
+import { cache } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -170,7 +170,7 @@ Responses get `x-cache: HIT|MISS|BYPASS` (or your configured header name).
 Enforce HTTPS and set HSTS on secure responses.
 
 ```typescript
-import { sslEnforce } from "@homegrower-club/stoma";
+import { sslEnforce } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -196,7 +196,7 @@ Behavior:
 Reject requests whose declared `content-length` exceeds `maxBytes`.
 
 ```typescript
-import { requestLimit } from "@homegrower-club/stoma";
+import { requestLimit } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -220,7 +220,7 @@ Error: `413` `request_too_large`.
 Validate JSON body structure and size limits before business logic.
 
 ```typescript
-import { jsonThreatProtection } from "@homegrower-club/stoma";
+import { jsonThreatProtection } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -248,7 +248,7 @@ Errors:
 Run regex threat rules against path/query/headers/body.
 
 ```typescript
-import { regexThreatProtection } from "@homegrower-club/stoma";
+import { regexThreatProtection } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -276,7 +276,7 @@ Error: `400` `threat_detected`.
 Conditionally short-circuit the pipeline and return a static response.
 
 ```typescript
-import { interrupt } from "@homegrower-club/stoma";
+import { interrupt } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -298,7 +298,7 @@ When condition is `true`, `next()` is not called.
 Evaluate routing rules and expose match results via context keys.
 
 ```typescript
-import { dynamicRouting } from "@homegrower-club/stoma";
+import { dynamicRouting } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -337,7 +337,7 @@ Error when `fallthrough: false` and no rule matches: `404` `no_route`.
 Make an external HTTP call during request processing.
 
 ```typescript
-import { httpCallout } from "@homegrower-club/stoma";
+import { httpCallout } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -365,7 +365,7 @@ Default error path throws `502` `callout_failed`.
 Mirror sampled requests to a secondary target after primary response flow.
 
 ```typescript
-import { trafficShadow } from "@homegrower-club/stoma";
+import { trafficShadow } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -392,7 +392,7 @@ Notes:
 Filter JSON response fields in allow or deny mode.
 
 ```typescript
-import { resourceFilter } from "@homegrower-club/stoma";
+import { resourceFilter } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -422,7 +422,7 @@ interface ResourceFilterConfig {
       jsonThreatProtection,
       regexThreatProtection,
       rateLimit,
-    } from "@homegrower-club/stoma";
+    } from "@vivero/stoma";
 
     [
       ipFilter({ deny: ["203.0.113.0/24"] }),
@@ -436,7 +436,7 @@ interface ResourceFilterConfig {
   </TabItem>
   <TabItem label="Cache + Shadow">
     ```typescript
-    import { cache, trafficShadow } from "@homegrower-club/stoma";
+    import { cache, trafficShadow } from "@vivero/stoma";
 
     [
       cache({ ttlSeconds: 120, varyHeaders: ["accept-language"] }),

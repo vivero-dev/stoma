@@ -1,5 +1,5 @@
 ---
-"@homegrower-club/stoma": patch
+"@vivero/stoma": patch
 ---
 
 Tree-shakeable builds — 57% smaller bundles for consumers

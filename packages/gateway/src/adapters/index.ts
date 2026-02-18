@@ -22,19 +22,19 @@
  * @example
  * ```ts
  * // Cloudflare Workers
- * import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+ * import { cloudflareAdapter } from "@vivero/stoma/adapters";
  * createGateway({ adapter: cloudflareAdapter({ rateLimitKv: env.RATE_LIMIT, executionCtx: ctx }), ... });
  *
  * // Redis (Node.js / Bun / Deno)
- * import { redisAdapter } from "@homegrower-club/stoma/adapters";
+ * import { redisAdapter } from "@vivero/stoma/adapters";
  * createGateway({ adapter: redisAdapter({ client: redis }), ... });
  *
  * // PostgreSQL (Node.js / Bun / Deno)
- * import { postgresAdapter } from "@homegrower-club/stoma/adapters";
+ * import { postgresAdapter } from "@vivero/stoma/adapters";
  * createGateway({ adapter: postgresAdapter({ client: pool }), ... });
  *
  * // Development / testing
- * import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+ * import { memoryAdapter } from "@vivero/stoma/adapters";
  * createGateway({ adapter: memoryAdapter(), ... });
  * ```
  *

@@ -41,7 +41,7 @@ export interface JsonValidationConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { jsonValidation } from "@homegrower-club/stoma";
+ * import { jsonValidation } from "@vivero/stoma";
  *
  * // With Zod
  * jsonValidation({

@@ -4,7 +4,7 @@
  * Produces a single self-contained ESM file at `public/stoma-bundle.esm.js`
  * containing Stoma + Hono + all policies + adapter stores. This bundle is
  * consumed by the editor's in-browser esbuild compiler via a custom resolver
- * plugin that inlines it for user code that imports from `@homegrower-club/stoma`.
+ * plugin that inlines it for user code that imports from `@vivero/stoma`.
  *
  * Usage:
  *   yarn build:stoma-bundle   — one-shot build
@@ -38,19 +38,19 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      "@homegrower-club/stoma/adapters/cloudflare": resolve(
+      "@vivero/stoma/adapters/cloudflare": resolve(
         __dirname,
         "../packages/gateway/src/adapters/cloudflare.ts",
       ),
-      "@homegrower-club/stoma/adapters/memory": resolve(
+      "@vivero/stoma/adapters/memory": resolve(
         __dirname,
         "../packages/gateway/src/adapters/memory.ts",
       ),
-      "@homegrower-club/stoma/sdk": resolve(
+      "@vivero/stoma/sdk": resolve(
         __dirname,
         "../packages/gateway/src/policies/sdk/index.ts",
       ),
-      "@homegrower-club/stoma": resolve(__dirname, "../packages/gateway/src/index.ts"),
+      "@vivero/stoma": resolve(__dirname, "../packages/gateway/src/index.ts"),
     },
   },
 });

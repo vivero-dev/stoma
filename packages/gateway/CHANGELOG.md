@@ -1,4 +1,4 @@
-# @homegrower-club/stoma
+# @vivero/stoma
 
 ## 0.1.0-rc.5
 ### Patch Changes
@@ -83,7 +83,7 @@
   
   - **EditorLink Unicode encoding**: Replaced `btoa()` with `Buffer.from().toString("base64")` to handle non-Latin1 characters in example code.
   - **Release workflow: npm auth**: Added `NODE_AUTH_TOKEN` env var — `setup-node` with `registry-url` generates an `.npmrc` referencing `NODE_AUTH_TOKEN`, not `NPM_TOKEN`. Without this, `changeset publish` would fail with 401.
-  - **Release workflow: docs deploy build**: Added `yarn build` (tsup) step before docs build — the demo API worker imports `@homegrower-club/stoma` which resolves to `dist/`, so stoma must be built first.
+  - **Release workflow: docs deploy build**: Added `yarn build` (tsup) step before docs build — the demo API worker imports `@vivero/stoma` which resolves to `dist/`, so stoma must be built first.
   - **Release workflow: docs build command**: Changed from `yarn docs:build` (`astro build` only) to `cd docs && yarn build` (`build:assets && astro build`) so the stoma bundle, editor worker, and service worker are built before Astro runs.
   - **Webhook firewall test**: Rewritten to test policy behavior (auth rejection for missing signature) instead of depending on upstream DNS resolution. Tests no longer make outbound network requests.
   

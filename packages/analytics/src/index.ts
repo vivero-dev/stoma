@@ -57,9 +57,9 @@ export { ndjsonPassthroughWriter } from "./parquet/ndjson-passthrough.js";
 // Worker
 export { createAnalyticsHandler } from "./worker/scheduled.js";
 
-// Debug (re-exported from @homegrower-club/stoma-core)
+// Debug (re-exported from @vivero/stoma-core)
 export {
   createDebugger,
   createDebugFactory,
   type DebugLogger,
-} from "@homegrower-club/stoma-core";
+} from "@vivero/stoma-core";

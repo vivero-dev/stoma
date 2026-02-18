@@ -41,7 +41,7 @@ export function MonacoEditor({ defaultValue, onChange }: MonacoEditorProps) {
 
       // Fetch and register Stoma + Hono type declarations (single self-contained bundle).
       // Registered at the main entry AND at each subpath so imports like
-      // `@homegrower-club/stoma/sdk` resolve in Monaco.
+      // `@vivero/stoma/sdk` resolve in Monaco.
       fetch("/stoma-bundle.d.ts")
         .then((res) => {
           if (!res.ok) throw new Error(`${res.status}`);
@@ -50,12 +50,12 @@ export function MonacoEditor({ defaultValue, onChange }: MonacoEditorProps) {
         .then((types) => {
           const ts = monaco.languages.typescript.typescriptDefaults;
           const paths = [
-            "file:///node_modules/@homegrower-club/stoma/index.d.ts",
-            "file:///node_modules/@homegrower-club/stoma/sdk/index.d.ts",
-            "file:///node_modules/@homegrower-club/stoma/config/index.d.ts",
-            "file:///node_modules/@homegrower-club/stoma/adapters/index.d.ts",
-            "file:///node_modules/@homegrower-club/stoma/adapters/cloudflare/index.d.ts",
-            "file:///node_modules/@homegrower-club/stoma/adapters/memory/index.d.ts",
+            "file:///node_modules/@vivero/stoma/index.d.ts",
+            "file:///node_modules/@vivero/stoma/sdk/index.d.ts",
+            "file:///node_modules/@vivero/stoma/config/index.d.ts",
+            "file:///node_modules/@vivero/stoma/adapters/index.d.ts",
+            "file:///node_modules/@vivero/stoma/adapters/cloudflare/index.d.ts",
+            "file:///node_modules/@vivero/stoma/adapters/memory/index.d.ts",
           ];
           for (const p of paths) {
             ts.addExtraLib(types, p);

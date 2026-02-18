@@ -1,5 +1,5 @@
 {
-  "name": "@homegrower-club/stoma-core",
+  "name": "@vivero/stoma-core",
   "version": "0.1.0-rc.0",
   "description": "Shared utilities for Stoma packages — debug logging, timing helpers, and common type guards.",
   "type": "module",

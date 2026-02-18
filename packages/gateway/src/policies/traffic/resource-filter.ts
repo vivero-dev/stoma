@@ -92,7 +92,7 @@ function filterObject(
  *
  * @example
  * ```ts
- * import { resourceFilter } from "@homegrower-club/stoma";
+ * import { resourceFilter } from "@vivero/stoma";
  *
  * // Remove sensitive fields
  * resourceFilter({

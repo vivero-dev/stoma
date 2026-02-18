@@ -28,7 +28,7 @@ import type { RateLimitStore } from "../policies/traffic/rate-limit";
  *
  * ```ts
  * // worker entry
- * export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
+ * export { RateLimiterDO } from "@vivero/stoma/adapters";
  * ```
  */
 export class RateLimiterDO implements DurableObject {
@@ -91,7 +91,7 @@ const DO_ORIGIN = "https://rate-limiter.internal";
  *
  * @example
  * ```ts
- * import { DurableObjectRateLimitStore } from "@homegrower-club/stoma/adapters";
+ * import { DurableObjectRateLimitStore } from "@vivero/stoma/adapters";
  *
  * const store = new DurableObjectRateLimitStore(env.RATE_LIMITER);
  * rateLimit({ max: 100, store });

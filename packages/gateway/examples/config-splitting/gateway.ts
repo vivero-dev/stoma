@@ -2,9 +2,9 @@
 // multiple files using mergeConfigs(). Each team owns their routes
 // in a separate module; the entrypoint composes them together.
 
-import { createGateway, health, cors, requestLog, rateLimit } from "@homegrower-club/stoma";
-import { mergeConfigs } from "@homegrower-club/stoma/config";
-import type { GatewayConfig } from "@homegrower-club/stoma";
+import { createGateway, health, cors, requestLog, rateLimit } from "@vivero/stoma";
+import { mergeConfigs } from "@vivero/stoma/config";
+import type { GatewayConfig } from "@vivero/stoma";
 import { authRoutes } from "./routes/auth";
 import { apiRoutes } from "./routes/api";
 

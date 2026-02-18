@@ -21,7 +21,7 @@ Datadog, or a Durable Object buffer).
 
 ## Data boundary: request logs vs analytics
 
-Request logs and analytics (`@homegrower-club/stoma-analytics`) serve
+Request logs and analytics (`@vivero/stoma-analytics`) serve
 different purposes and deliberately carry different fields.
 
 **Request logs** (this policy) are for **debugging and operational triage**.
@@ -73,8 +73,8 @@ A [Policy](/api/index/interfaces/policy/) at priority 0 (runs first, wraps every
 ## Example
 
 ```ts
-import { createGateway } from "@homegrower-club/stoma";
-import { requestLog } from "@homegrower-club/stoma/policies";
+import { createGateway } from "@vivero/stoma";
+import { requestLog } from "@vivero/stoma/policies";
 
 // Default structured JSON logging to console
 createGateway({

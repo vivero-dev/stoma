@@ -60,7 +60,7 @@ export { clearJwksCache as clearJwsJwksCache } from "./crypto";
  *
  * @example
  * ```ts
- * import { jws } from "@homegrower-club/stoma";
+ * import { jws } from "@vivero/stoma";
  *
  * // HMAC verification with embedded payload
  * jws({ secret: env.JWS_SECRET });

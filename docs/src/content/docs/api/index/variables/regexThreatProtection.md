@@ -38,7 +38,7 @@ with a ReDoS detection tool.
 ## Example
 
 ```ts
-import { regexThreatProtection } from "@homegrower-club/stoma";
+import { regexThreatProtection } from "@vivero/stoma";
 
 regexThreatProtection({
   patterns: [

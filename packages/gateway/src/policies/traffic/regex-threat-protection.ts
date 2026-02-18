@@ -83,7 +83,7 @@ function getCompiledPatterns(
  *
  * @example
  * ```ts
- * import { regexThreatProtection } from "@homegrower-club/stoma";
+ * import { regexThreatProtection } from "@vivero/stoma";
  *
  * regexThreatProtection({
  *   patterns: [

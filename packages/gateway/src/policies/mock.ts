@@ -33,8 +33,8 @@ export interface MockConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { mock } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { mock } from "@vivero/stoma/policies";
  *
  * createGateway({
  *   routes: [{

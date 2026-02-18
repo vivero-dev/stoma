@@ -1,5 +1,5 @@
 ---
-"@homegrower-club/stoma": patch
+"@vivero/stoma": patch
 ---
 
 Fix policy middleware swallowing handler return values, breaking context finalization

@@ -39,7 +39,7 @@ A [Policy](/api/index/interfaces/policy/) at priority 95 (runs late, just before
 ## Example
 
 ```ts
-import { proxy } from "@homegrower-club/stoma/policies";
+import { proxy } from "@vivero/stoma/policies";
 
 // Add an internal auth header and strip cookies for the upstream
 proxy({

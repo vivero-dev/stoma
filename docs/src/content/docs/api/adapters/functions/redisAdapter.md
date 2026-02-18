@@ -25,7 +25,7 @@ Create a [GatewayAdapter](/api/index/interfaces/gatewayadapter/) using Redis-bac
 
 ```ts
 import Redis from "ioredis";
-import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+import { redisAdapter } from "@vivero/stoma/adapters/redis";
 
 const redis = new Redis();
 const adapter = redisAdapter({ client: redis });
@@ -36,7 +36,7 @@ createGateway({ adapter, ... });
 ```ts
 // node-redis v4 (different SET signature)
 import { createClient } from "redis";
-import { redisAdapter } from "@homegrower-club/stoma/adapters/redis";
+import { redisAdapter } from "@vivero/stoma/adapters/redis";
 
 const client = await createClient().connect();
 const adapter = redisAdapter({

@@ -29,7 +29,7 @@ For high-volume rate limiting where approximate counts are acceptable, the
 
 ## Setup
 
-Stoma provides two exports from `@homegrower-club/stoma/adapters`:
+Stoma provides two exports from `@vivero/stoma/adapters`:
 
 - **`RateLimiterDO`** -- A Durable Object class that maintains an atomic
   rate limit counter with alarm-based expiry
@@ -43,11 +43,11 @@ Cloudflare runtime can instantiate it:
 
 ```typescript
 // worker.ts (your entry point)
-import { createGateway, rateLimit } from "@homegrower-club/stoma";
-import { DurableObjectRateLimitStore } from "@homegrower-club/stoma/adapters";
+import { createGateway, rateLimit } from "@vivero/stoma";
+import { DurableObjectRateLimitStore } from "@vivero/stoma/adapters";
 
 // Re-export the DO class for the runtime
-export { RateLimiterDO } from "@homegrower-club/stoma/adapters";
+export { RateLimiterDO } from "@vivero/stoma/adapters";
 
 export default {
   fetch(request: Request, env: Env) {
@@ -121,8 +121,8 @@ The `cloudflareAdapter` factory automatically selects Durable Objects when a
 DO namespace is provided (preferred over KV):
 
 ```typescript
-import { createGateway, rateLimit } from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, rateLimit } from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters";
 
 const adapter = cloudflareAdapter({
   rateLimitDo: env.RATE_LIMITER,

@@ -108,7 +108,7 @@ curl https://your-gateway.com/api/protected/users
 Want to restrict access based on user roles? Add the `rbac` policy after `oauth2`:
 
 ```typescript
-import { oauth2, rbac } from "@homegrower-club/stoma";
+import { oauth2, rbac } from "@vivero/stoma";
 
 policies: [
   oauth2({ /* ... */ }),
@@ -126,7 +126,7 @@ policies: [
 If you prefer validating JWTs directly (no introspection call), use `jwtAuth` instead:
 
 ```typescript
-import { jwtAuth } from "@homegrower-club/stoma";
+import { jwtAuth } from "@vivero/stoma";
 
 jwtAuth({
   jwksUrl: "https://xyzcompany.supabase.co/auth/v1/.well-known/jwks.json",

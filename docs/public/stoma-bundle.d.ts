@@ -4819,7 +4819,7 @@ export interface GatewayConfig<TBindings = Record<string, unknown>> {
 	 *
 	 * @example
 	 * ```ts
-	 * import { createGateway, OTLPSpanExporter } from "@homegrower-club/stoma";
+	 * import { createGateway, OTLPSpanExporter } from "@vivero/stoma";
 	 *
 	 * createGateway({
 	 *   tracing: {
@@ -4965,7 +4965,7 @@ export interface GatewayInstance {
  *
  * @example
  * ```ts
- * import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+ * import { createGateway, jwtAuth, rateLimit } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   name: "my-api",
@@ -5009,7 +5009,7 @@ export declare function getGatewayContext(c: Context): PolicyContext | undefined
  *
  * @example
  * ```ts
- * import { createGateway, scope, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+ * import { createGateway, scope, jwtAuth, rateLimit } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   routes: [
@@ -5076,8 +5076,8 @@ export interface MockConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { mock } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { mock } from "@vivero/stoma/policies";
  *
  * createGateway({
  *   routes: [{
@@ -5141,7 +5141,7 @@ export interface ProxyPolicyConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { proxy } from "@homegrower-club/stoma/policies";
+ * import { proxy } from "@vivero/stoma/policies";
  *
  * // Add an internal auth header and strip cookies for the upstream
  * proxy({
@@ -5288,7 +5288,7 @@ export interface GenerateJwtConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { generateJwt } from "@homegrower-club/stoma";
+ * import { generateJwt } from "@vivero/stoma";
  *
  * generateJwt({
  *   algorithm: "HS256",
@@ -5327,7 +5327,7 @@ export interface JwsConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { jws } from "@homegrower-club/stoma";
+ * import { jws } from "@vivero/stoma";
  *
  * // HMAC verification with embedded payload
  * jws({ secret: env.JWS_SECRET });
@@ -5703,7 +5703,7 @@ export interface JsonThreatProtectionConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { jsonThreatProtection } from "@homegrower-club/stoma";
+ * import { jsonThreatProtection } from "@vivero/stoma";
  *
  * // Default limits (20 depth, 100 keys, 10K string, 100 array, 1MB body)
  * jsonThreatProtection();
@@ -5755,7 +5755,7 @@ export interface RegexThreatProtectionConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { regexThreatProtection } from "@homegrower-club/stoma";
+ * import { regexThreatProtection } from "@vivero/stoma";
  *
  * regexThreatProtection({
  *   patterns: [
@@ -5801,7 +5801,7 @@ export interface ResourceFilterConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { resourceFilter } from "@homegrower-club/stoma";
+ * import { resourceFilter } from "@vivero/stoma";
  *
  * // Remove sensitive fields
  * resourceFilter({
@@ -5860,7 +5860,7 @@ export interface TrafficShadowConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { trafficShadow } from "@homegrower-club/stoma";
+ * import { trafficShadow } from "@vivero/stoma";
  *
  * trafficShadow({
  *   target: "https://shadow.internal",
@@ -6001,7 +6001,7 @@ export interface AssignAttributesConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { assignAttributes } from "@homegrower-club/stoma";
+ * import { assignAttributes } from "@vivero/stoma";
  *
  * assignAttributes({
  *   attributes: {
@@ -6031,7 +6031,7 @@ export interface AssignContentConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { assignContent } from "@homegrower-club/stoma";
+ * import { assignContent } from "@vivero/stoma";
  *
  * assignContent({
  *   request: {
@@ -6071,8 +6071,8 @@ export interface CorsConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { cors } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { cors } from "@vivero/stoma/policies";
  *
  * // Allow any origin (default)
  * createGateway({
@@ -6120,7 +6120,7 @@ export interface JsonValidationConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { jsonValidation } from "@homegrower-club/stoma";
+ * import { jsonValidation } from "@vivero/stoma";
  *
  * // With Zod
  * jsonValidation({
@@ -6198,7 +6198,7 @@ export interface RequestValidationConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { requestValidation } from "@homegrower-club/stoma";
+ * import { requestValidation } from "@vivero/stoma";
  *
  * // Simple boolean validator
  * requestValidation({
@@ -6244,7 +6244,7 @@ export interface ResponseTransformConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { requestTransform } from "@homegrower-club/stoma/policies";
+ * import { requestTransform } from "@vivero/stoma/policies";
  *
  * // Add API version header and strip cookies
  * requestTransform({
@@ -6271,7 +6271,7 @@ export declare const requestTransform: (config?: RequestTransformConfig | undefi
  *
  * @example
  * ```ts
- * import { responseTransform } from "@homegrower-club/stoma/policies";
+ * import { responseTransform } from "@vivero/stoma/policies";
  *
  * // Add security headers and strip server info
  * responseTransform({
@@ -6327,8 +6327,8 @@ export interface HealthConfig {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { health } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { health } from "@vivero/stoma/policies";
  *
  * createGateway({
  *   routes: [
@@ -6370,7 +6370,7 @@ export interface AssignMetricsConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { assignMetrics } from "@homegrower-club/stoma";
+ * import { assignMetrics } from "@vivero/stoma";
  *
  * assignMetrics({
  *   tags: {
@@ -6462,7 +6462,7 @@ export interface LogEntry {
  *
  * ## Data boundary: request logs vs analytics
  *
- * Request logs and analytics (`@homegrower-club/stoma-analytics`) serve
+ * Request logs and analytics (`@vivero/stoma-analytics`) serve
  * different purposes and deliberately carry different fields.
  *
  * **Request logs** (this policy) are for **debugging and operational triage**.
@@ -6502,8 +6502,8 @@ export interface LogEntry {
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { requestLog } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { requestLog } from "@vivero/stoma/policies";
  *
  * // Default structured JSON logging to console
  * createGateway({
@@ -6848,7 +6848,7 @@ export type PolicyFactory<TConfig extends PolicyConfig> = RequiredKeys<TConfig> 
  *
  * @example
  * ```ts
- * import { definePolicy, Priority } from "@homegrower-club/stoma";
+ * import { definePolicy, Priority } from "@vivero/stoma";
  *
  * const myPolicy = definePolicy<MyConfig>({
  *   name: "my-policy",
@@ -6903,7 +6903,7 @@ export interface PolicyTestHarnessOptions {
  *
  * @example
  * ```ts
- * import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+ * import { createPolicyTestHarness } from "@vivero/stoma/policies";
  * import { myPolicy } from "./my-policy";
  *
  * const { request, adapter } = createPolicyTestHarness(myPolicy({ max: 10 }));
@@ -7006,7 +7006,7 @@ export declare function extractClientIp(headers: {
  *
  * @example
  * ```ts
- * import { timingSafeEqual } from "@homegrower-club/stoma";
+ * import { timingSafeEqual } from "@vivero/stoma";
  *
  * // Use in API key validators to prevent timing attacks
  * const isValid = timingSafeEqual(providedKey, storedKey);

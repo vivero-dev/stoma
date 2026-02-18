@@ -21,7 +21,7 @@ In this guide, we'll build a production-grade gateway with authentication, rate 
     // - rateLimit: Limits requests per IP/user
     // - requestLog: Logs each request (timing, status, etc.)
     // - health: Adds a /health endpoint that probes your upstreams
-    import { createGateway, jwtAuth, rateLimit, requestLog, health } from "@homegrower-club/stoma";
+    import { createGateway, jwtAuth, rateLimit, requestLog, health } from "@vivero/stoma";
 
     // createGateway() validates your config at construction time
     // If anything is misconfigured, you get a clear error immediately

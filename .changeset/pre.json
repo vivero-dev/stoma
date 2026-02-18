@@ -2,8 +2,8 @@
   "mode": "pre",
   "tag": "rc",
   "initialVersions": {
-    "@homegrower-club/stoma": "0.0.1",
-    "@homegrower-club/stoma-core": "0.1.0-rc.0"
+    "@vivero/stoma": "0.0.1",
+    "@vivero/stoma-core": "0.1.0-rc.0"
   },
   "changesets": [
     "docs-og-deploy",

@@ -32,7 +32,7 @@ A [Policy](/api/index/interfaces/policy/) at priority 50 (mid-pipeline, after au
 ## Example
 
 ```ts
-import { requestTransform } from "@homegrower-club/stoma/policies";
+import { requestTransform } from "@vivero/stoma/policies";
 
 // Add API version header and strip cookies
 requestTransform({

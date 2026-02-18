@@ -65,7 +65,7 @@ Make a test request through the policy pipeline.
 ## Example
 
 ```ts
-import { createPolicyTestHarness } from "@homegrower-club/stoma/policies";
+import { createPolicyTestHarness } from "@vivero/stoma/policies";
 import { myPolicy } from "./my-policy";
 
 const { request, adapter } = createPolicyTestHarness(myPolicy({ max: 10 }));

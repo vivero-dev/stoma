@@ -30,7 +30,7 @@ export interface AssignMetricsConfig extends PolicyConfig {
  *
  * @example
  * ```ts
- * import { assignMetrics } from "@homegrower-club/stoma";
+ * import { assignMetrics } from "@vivero/stoma";
  *
  * assignMetrics({
  *   tags: {

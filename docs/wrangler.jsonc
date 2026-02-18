@@ -18,11 +18,7 @@
 	"workers_dev": true,
 	"routes": [
     {
-      "pattern": "stoma.opensource.homegrower.club",
-      "custom_domain": true
-    },
-    {
-      "pattern": "stoma.oss.homegrower.club",
+      "pattern": "stoma.vivero.dev",
       "custom_domain": true
     }
 	],

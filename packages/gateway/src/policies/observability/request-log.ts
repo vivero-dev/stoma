@@ -76,7 +76,7 @@ const DEFAULT_MAX_BODY_LENGTH = 8192;
  *
  * ## Data boundary: request logs vs analytics
  *
- * Request logs and analytics (`@homegrower-club/stoma-analytics`) serve
+ * Request logs and analytics (`@vivero/stoma-analytics`) serve
  * different purposes and deliberately carry different fields.
  *
  * **Request logs** (this policy) are for **debugging and operational triage**.
@@ -116,8 +116,8 @@ const DEFAULT_MAX_BODY_LENGTH = 8192;
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { requestLog } from "@homegrower-club/stoma/policies";
+ * import { createGateway } from "@vivero/stoma";
+ * import { requestLog } from "@vivero/stoma/policies";
  *
  * // Default structured JSON logging to console
  * createGateway({

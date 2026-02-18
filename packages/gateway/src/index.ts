@@ -17,7 +17,7 @@
  *   cache,
  *   requestLog,
  *   health,
- * } from "@homegrower-club/stoma";
+ * } from "@vivero/stoma";
  *
  * const gateway = createGateway({
  *   name: "my-api",

@@ -1,8 +1,8 @@
 /**
  * Policy barrel - re-exports all built-in policies, their config types, and the policy SDK.
  *
- * Import from `@homegrower-club/stoma/policies` for direct access to all policies
- * and their configuration types, or from `@homegrower-club/stoma` which re-exports
+ * Import from `@vivero/stoma/policies` for direct access to all policies
+ * and their configuration types, or from `@vivero/stoma` which re-exports
  * the most common symbols.
  *
  * @module policies

@@ -60,7 +60,7 @@ export interface PostgresAdapterConfig {
  *
  * @example
  * ```ts
- * import { POSTGRES_SCHEMA_SQL } from "@homegrower-club/stoma/adapters/postgres";
+ * import { POSTGRES_SCHEMA_SQL } from "@vivero/stoma/adapters/postgres";
  * await pool.query(POSTGRES_SCHEMA_SQL);
  * ```
  */
@@ -375,7 +375,7 @@ export class PostgresCacheStore implements CacheStore {
  * @example
  * ```ts
  * import { Pool } from "pg";
- * import { postgresAdapter, POSTGRES_SCHEMA_SQL } from "@homegrower-club/stoma/adapters/postgres";
+ * import { postgresAdapter, POSTGRES_SCHEMA_SQL } from "@vivero/stoma/adapters/postgres";
  *
  * const pool = new Pool({ connectionString: process.env.DATABASE_URL });
  * await pool.query(POSTGRES_SCHEMA_SQL); // one-time setup

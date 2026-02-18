@@ -74,10 +74,10 @@ interface GatewayConfig {
 - Policies with duplicate names are deduplicated (route-level wins over global).
 
 For dynamic or untrusted config (loaded from KV, environment variables, or
-external sources), use the Zod-based validation from `@homegrower-club/stoma/config`:
+external sources), use the Zod-based validation from `@vivero/stoma/config`:
 
 ```typescript
-import { validateConfig, safeValidateConfig } from "@homegrower-club/stoma/config";
+import { validateConfig, safeValidateConfig } from "@vivero/stoma/config";
 
 // Throws z.ZodError on failure
 const config = validateConfig(untrustedInput);
@@ -300,7 +300,7 @@ factory instead of a manual handler upstream. It returns a complete `RouteConfig
 with optional upstream probing:
 
 ```typescript
-import { createGateway, health } from "@homegrower-club/stoma";
+import { createGateway, health } from "@vivero/stoma";
 
 const gateway = createGateway({
   routes: [

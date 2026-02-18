@@ -34,7 +34,7 @@ Stoma has two auth-related groups:
 Validate JWT tokens from a request header. Supports HMAC (`HS256/384/512`) and RSA via JWKS (`RS256/384/512`).
 
 ```typescript
-import { jwtAuth } from "@homegrower-club/stoma";
+import { jwtAuth } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -79,7 +79,7 @@ interface JwtAuthConfig {
 Validate API keys from a header, with optional query fallback.
 
 ```typescript
-import { apiKeyAuth } from "@homegrower-club/stoma";
+import { apiKeyAuth } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -107,7 +107,7 @@ interface ApiKeyAuthConfig {
 HTTP Basic authentication with browser challenge support (`WWW-Authenticate`).
 
 ```typescript
-import { basicAuth } from "@homegrower-club/stoma";
+import { basicAuth } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -139,7 +139,7 @@ Validate OAuth2 access tokens using either:
 If both are provided, `localValidate` takes precedence.
 
 ```typescript
-import { oauth2 } from "@homegrower-club/stoma";
+import { oauth2 } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -181,7 +181,7 @@ interface OAuth2Config {
 Role/permission checks from request headers, usually after `jwtAuth` claim forwarding or `oauth2` token info forwarding.
 
 ```typescript
-import { rbac } from "@homegrower-club/stoma";
+import { rbac } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -211,7 +211,7 @@ When both `roles` and `permissions` are set, both checks must pass.
 Verify JWS compact serialization (`header.payload.signature`) using HMAC secret or JWKS RSA keys.
 
 ```typescript
-import { jws } from "@homegrower-club/stoma";
+import { jws } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -253,7 +253,7 @@ interface JwsConfig {
 Verify inbound RFC 9421 HTTP Message Signatures from `Signature` + `Signature-Input` headers.
 
 ```typescript
-import { verifyHttpSignature } from "@homegrower-club/stoma";
+import { verifyHttpSignature } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -289,7 +289,7 @@ Misconfiguration (`keys` missing/empty) returns `500` with `config_error`.
 Mint a JWT during request processing and attach it to a request header before upstream dispatch.
 
 ```typescript
-import { generateJwt } from "@homegrower-club/stoma";
+import { generateJwt } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -322,7 +322,7 @@ interface GenerateJwtConfig {
 Sign outbound requests with RFC 9421 headers (`Signature-Input`, `Signature`).
 
 ```typescript
-import { generateHttpSignature } from "@homegrower-club/stoma";
+import { generateHttpSignature } from "@vivero/stoma";
 ```
 
 ### Configuration
@@ -358,7 +358,7 @@ interface GenerateHttpSignatureConfig {
 <Tabs>
   <TabItem label="JWT + RBAC">
     ```typescript
-    import { createGateway, jwtAuth, rbac } from "@homegrower-club/stoma";
+    import { createGateway, jwtAuth, rbac } from "@vivero/stoma";
 
     createGateway({
       routes: [{
@@ -382,7 +382,7 @@ interface GenerateHttpSignatureConfig {
   </TabItem>
   <TabItem label="OAuth2 Introspection">
     ```typescript
-    import { oauth2 } from "@homegrower-club/stoma";
+    import { oauth2 } from "@vivero/stoma";
 
     oauth2({
       introspectionUrl: "https://auth.example.com/oauth/introspect",
@@ -396,7 +396,7 @@ interface GenerateHttpSignatureConfig {
   </TabItem>
   <TabItem label="Outbound Request Signing">
     ```typescript
-    import { generateJwt, generateHttpSignature } from "@homegrower-club/stoma";
+    import { generateJwt, generateHttpSignature } from "@vivero/stoma";
 
     [
       generateJwt({
@@ -419,7 +419,7 @@ interface GenerateHttpSignatureConfig {
 You can clear module-level verification caches in tests:
 
 ```typescript
-import { clearJwksCache, clearOAuth2Cache, clearJwsJwksCache } from "@homegrower-club/stoma";
+import { clearJwksCache, clearOAuth2Cache, clearJwsJwksCache } from "@vivero/stoma";
 
 clearJwksCache();
 clearOAuth2Cache();

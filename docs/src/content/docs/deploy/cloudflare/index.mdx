@@ -22,7 +22,7 @@ wrangler login
 1. **Install dependencies**
 
    ```sh
-   npm install hono @homegrower-club/stoma
+   npm install hono @vivero/stoma
    ```
 
 2. **Create your gateway**
@@ -36,8 +36,8 @@ wrangler login
      cors,
      requestLog,
      rateLimit,
-   } from "@homegrower-club/stoma";
-   import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+   } from "@vivero/stoma";
+   import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
 
    const gateway = createGateway(
      {
@@ -193,8 +193,8 @@ import {
   rateLimit,
   cache,
   circuitBreaker,
-} from "@homegrower-club/stoma";
-import { cloudflareAdapter } from "@homegrower-club/stoma/adapters/cloudflare";
+} from "@vivero/stoma";
+import { cloudflareAdapter } from "@vivero/stoma/adapters/cloudflare";
 
 interface Env {
   JWT_SECRET: string;

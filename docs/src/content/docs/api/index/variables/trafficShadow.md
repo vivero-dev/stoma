@@ -28,7 +28,7 @@ the primary response.
 ## Example
 
 ```ts
-import { trafficShadow } from "@homegrower-club/stoma";
+import { trafficShadow } from "@vivero/stoma";
 
 trafficShadow({
   target: "https://shadow.internal",

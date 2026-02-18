@@ -12,7 +12,7 @@ sidebar:
 Apply per-route request header mutation and timeout behavior near the upstream boundary.
 
 ```typescript
-import { proxy } from "@homegrower-club/stoma";
+import { proxy } from "@vivero/stoma";
 ```
 
 ### Priority
@@ -44,7 +44,7 @@ interface ProxyPolicyConfig {
 Short-circuit policy that returns a static response without calling `next()`.
 
 ```typescript
-import { mock } from "@homegrower-club/stoma";
+import { mock } from "@vivero/stoma";
 ```
 
 ### Priority
@@ -74,7 +74,7 @@ interface MockConfig {
 ## Example
 
 ```typescript
-import { proxy, mock } from "@homegrower-club/stoma";
+import { proxy, mock } from "@vivero/stoma";
 
 // Strip cookies, inject internal credential, preserve inbound Host
 proxy({

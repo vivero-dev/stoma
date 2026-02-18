@@ -7,8 +7,8 @@
  *
  * @example
  * ```ts
- * import { createGateway } from "@homegrower-club/stoma";
- * import { nodeAdapter } from "@homegrower-club/stoma/adapters/node";
+ * import { createGateway } from "@vivero/stoma";
+ * import { nodeAdapter } from "@vivero/stoma/adapters/node";
  * import { serve } from "@hono/node-server";
  *
  * const gateway = createGateway({

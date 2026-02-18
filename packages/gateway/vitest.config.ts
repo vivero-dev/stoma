@@ -4,11 +4,11 @@ import path from "node:path";
 export default defineConfig({
   resolve: {
     alias: {
-      "@homegrower-club/stoma/config": path.resolve(import.meta.dirname, "src/config/index.ts"),
-      "@homegrower-club/stoma/adapters/redis": path.resolve(import.meta.dirname, "src/adapters/redis.ts"),
-      "@homegrower-club/stoma/adapters/postgres": path.resolve(import.meta.dirname, "src/adapters/postgres.ts"),
-      "@homegrower-club/stoma/adapters": path.resolve(import.meta.dirname, "src/adapters/index.ts"),
-      "@homegrower-club/stoma": path.resolve(import.meta.dirname, "src/index.ts"),
+      "@vivero/stoma/config": path.resolve(import.meta.dirname, "src/config/index.ts"),
+      "@vivero/stoma/adapters/redis": path.resolve(import.meta.dirname, "src/adapters/redis.ts"),
+      "@vivero/stoma/adapters/postgres": path.resolve(import.meta.dirname, "src/adapters/postgres.ts"),
+      "@vivero/stoma/adapters": path.resolve(import.meta.dirname, "src/adapters/index.ts"),
+      "@vivero/stoma": path.resolve(import.meta.dirname, "src/index.ts"),
     },
   },
   test: {

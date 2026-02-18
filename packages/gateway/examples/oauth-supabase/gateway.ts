@@ -2,8 +2,8 @@
 // Validates bearer tokens via the introspection endpoint, caches
 // valid tokens, and forwards user info to upstream services.
 
-import { createGateway, oauth2, cors, requestLog } from "@homegrower-club/stoma";
-import { memoryAdapter } from "@homegrower-club/stoma/adapters";
+import { createGateway, oauth2, cors, requestLog } from "@vivero/stoma";
+import { memoryAdapter } from "@vivero/stoma/adapters";
 
 const adapter = memoryAdapter();
 

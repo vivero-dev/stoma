@@ -15,7 +15,7 @@ Bun provides ultra-fast startup and execution. Deploy your Stoma gateway with Bu
 1. **Install dependencies**
 
    ```sh
-   bun install hono @homegrower-club/stoma
+   bun install hono @vivero/stoma
    ```
 
 2. **Create your gateway**
@@ -29,8 +29,8 @@ Bun provides ultra-fast startup and execution. Deploy your Stoma gateway with Bu
      cors,
      requestLog,
      rateLimit,
-   } from "@homegrower-club/stoma";
-   import { bunAdapter } from "@homegrower-club/stoma/adapters/bun";
+   } from "@vivero/stoma";
+   import { bunAdapter } from "@vivero/stoma/adapters/bun";
 
    const gateway = createGateway(
      {
@@ -88,8 +88,8 @@ import {
   cors,
   rateLimit,
   cache,
-} from "@homegrower-club/stoma";
-import { bunAdapter } from "@homegrower-club/stoma/adapters/bun";
+} from "@vivero/stoma";
+import { bunAdapter } from "@vivero/stoma/adapters/bun";
 
 const adapter = bunAdapter();
 

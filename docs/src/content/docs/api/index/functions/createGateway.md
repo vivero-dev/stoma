@@ -43,7 +43,7 @@ If no routes are provided.
 ## Example
 
 ```ts
-import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth, rateLimit } from "@vivero/stoma";
 
 const gateway = createGateway({
   name: "my-api",

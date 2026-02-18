@@ -52,8 +52,8 @@ return async (c: Context) => {
 **Solution:** A `createExtProcServer()` entry point that takes the same policy array as `createGateway()` but serves them over a gRPC bidirectional stream using the Connect protocol (`@connectrpc/connect`, ~12KB).
 
 ```typescript
-import { createExtProcServer } from "@homegrower-club/stoma/runtimes/ext-proc";
-import { jwtAuth, rateLimit, cors } from "@homegrower-club/stoma";
+import { createExtProcServer } from "@vivero/stoma/runtimes/ext-proc";
+import { jwtAuth, rateLimit, cors } from "@vivero/stoma";
 
 const server = createExtProcServer({
   policies: [cors(), jwtAuth({ jwksUrl: "..." }), rateLimit({ max: 100 })],
@@ -84,7 +84,7 @@ Each policy declares which phases it participates in via `phases`. The ext_proc 
 **Solution:** An `evaluateToMiddleware()` adapter that wraps a policy's `evaluate` functions into a Hono middleware handler. This allows policy authors to write `evaluate` once and have it work on both the HTTP and non-HTTP runtimes.
 
 ```typescript
-import { evaluateToMiddleware } from "@homegrower-club/stoma/sdk";
+import { evaluateToMiddleware } from "@vivero/stoma/sdk";
 
 // If a policy only has `evaluate`, the HTTP runtime can auto-bridge it
 const httpHandler = evaluateToMiddleware(myPolicy.evaluate);
@@ -272,7 +272,7 @@ interface AuthContext {
 **Phase B — Higher-order `authenticate()` wrapper** (new API):
 
 ```typescript
-import { authenticate } from "@homegrower-club/stoma";
+import { authenticate } from "@vivero/stoma";
 
 // Compose verification + authorization as a single policy
 const authChain = authenticate({

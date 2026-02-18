@@ -15,17 +15,17 @@ Stoma requires **Hono v4.x or later** as a peer dependency. Install both togethe
 <Tabs>
   <TabItem label="npm">
     ```sh
-    npm install @homegrower-club/stoma hono
+    npm install @vivero/stoma hono
     ```
   </TabItem>
   <TabItem label="yarn">
     ```sh
-    yarn add @homegrower-club/stoma hono
+    yarn add @vivero/stoma hono
     ```
   </TabItem>
   <TabItem label="pnpm">
     ```sh
-    pnpm add @homegrower-club/stoma hono
+    pnpm add @vivero/stoma hono
     ```
   </TabItem>
 </Tabs>
@@ -80,7 +80,7 @@ Your `tsconfig.json` should use these settings at minimum:
     "module": "ESNext",
 
     // Required for subpath exports to resolve correctly
-    // Allows @homegrower-club/stoma/policies, @homegrower-club/stoma/config, etc.
+    // Allows @vivero/stoma/policies, @vivero/stoma/config, etc.
     "moduleResolution": "bundler",
 
     // Enable all strict type checking
@@ -103,7 +103,7 @@ Key requirements:
   `crypto.subtle`, and other modern APIs. These are available natively in Cloudflare
   Workers, Deno, Bun, and Node.js 20+.
 - **`moduleResolution: "bundler"`**. Required for subpath exports
-  (`@homegrower-club/stoma/policies`, `@homegrower-club/stoma/config`) to resolve
+  (`@vivero/stoma/policies`, `@vivero/stoma/config`) to resolve
   correctly.
 - **`strict: true`**. Recommended. Stoma's types are authored with strict mode enabled.
 
@@ -113,11 +113,11 @@ The package exposes five entry points:
 
 | Import path | Contents |
 |-------------|----------|
-| `@homegrower-club/stoma` | Main entry: `createGateway`, all built-in policies, SDK helpers, all types |
-| `@homegrower-club/stoma/policies` | Policy factory functions, SDK helpers, and policy types only |
-| `@homegrower-club/stoma/config` | Config type re-exports + Zod validation schemas (`validateConfig`, `safeValidateConfig`, `GatewayConfigSchema`) |
-| `@homegrower-club/stoma/sdk` | Policy SDK: `definePolicy()`, `createPolicyTestHarness()`, `Priority` constants, `resolveConfig`, `policyDebug`, `withSkip` |
-| `@homegrower-club/stoma/adapters` | Cloudflare-specific adapters (KV, Durable Objects) |
+| `@vivero/stoma` | Main entry: `createGateway`, all built-in policies, SDK helpers, all types |
+| `@vivero/stoma/policies` | Policy factory functions, SDK helpers, and policy types only |
+| `@vivero/stoma/config` | Config type re-exports + Zod validation schemas (`validateConfig`, `safeValidateConfig`, `GatewayConfigSchema`) |
+| `@vivero/stoma/sdk` | Policy SDK: `definePolicy()`, `createPolicyTestHarness()`, `Priority` constants, `resolveConfig`, `policyDebug`, `withSkip` |
+| `@vivero/stoma/adapters` | Cloudflare-specific adapters (KV, Durable Objects) |
 
 For most use cases, import everything from the main entry point:
 
@@ -127,7 +127,7 @@ For most use cases, import everything from the main entry point:
 // - All built-in policies: jwtAuth, rateLimit, cors, requestLog, etc.
 // - SDK helpers: definePolicy, Priority, withSkip, etc.
 // - All types: GatewayConfig, RouteConfig, PolicyContext, etc.
-import { createGateway, jwtAuth, rateLimit, cors } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth, rateLimit, cors } from "@vivero/stoma";
 ```
 
 For custom policy development, import the SDK directly:
@@ -142,7 +142,7 @@ For custom policy development, import the SDK directly:
   policyDebug: Namespaced debug logger with zero overhead when disabled
   withSkip: Conditionally disable a policy based on request characteristics
 */
-import { definePolicy, Priority, createPolicyTestHarness } from "@homegrower-club/stoma/sdk";
+import { definePolicy, Priority, createPolicyTestHarness } from "@vivero/stoma/sdk";
 ```
 
 ## Runtime-specific setup
@@ -169,7 +169,7 @@ Add them to your `tsconfig.json`:
 ```
 
 This enables typed access to `c.env` bindings (secrets, Service Bindings, KV
-namespaces). The `@homegrower-club/stoma/adapters` subpath export provides
+namespaces). The `@vivero/stoma/adapters` subpath export provides
 Cloudflare-specific stores for rate limiting (KV, Durable Objects) and circuit
 breakers.
 

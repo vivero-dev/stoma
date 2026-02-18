@@ -15,7 +15,7 @@ Stoma runs natively on Node.js. Deploy to traditional servers, containers, or se
 1. **Install dependencies**
 
    ```sh
-   npm install hono @homegrower-club/stoma @hono/node-server
+   npm install hono @vivero/stoma @hono/node-server
    ```
 
 2. **Create your gateway**
@@ -29,8 +29,8 @@ Stoma runs natively on Node.js. Deploy to traditional servers, containers, or se
      cors,
      requestLog,
      rateLimit,
-   } from "@homegrower-club/stoma";
-   import { nodeAdapter } from "@homegrower-club/stoma/adapters/node";
+   } from "@vivero/stoma";
+   import { nodeAdapter } from "@vivero/stoma/adapters/node";
 
    const gateway = createGateway(
      {
@@ -92,10 +92,10 @@ import {
   rateLimit,
   cache,
   circuitBreaker,
-} from "@homegrower-club/stoma";
-import { nodeAdapter } from "@homegrower-club/stoma/adapters/node";
-import { InMemoryMetricsCollector } from "@homegrower-club/stoma";
-import { metricsReporter } from "@homegrower-club/stoma";
+} from "@vivero/stoma";
+import { nodeAdapter } from "@vivero/stoma/adapters/node";
+import { InMemoryMetricsCollector } from "@vivero/stoma";
+import { metricsReporter } from "@vivero/stoma";
 
 const adapter = nodeAdapter();
 const metrics = new InMemoryMetricsCollector();

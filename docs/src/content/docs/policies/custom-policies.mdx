@@ -14,7 +14,7 @@ tutorial, then explore [Common Patterns](/policy-authoring/policy-patterns/) and
 experienced policy authors.
 </Aside>
 
-Stoma provides a policy SDK at `@homegrower-club/stoma/sdk` that gives you
+Stoma provides a policy SDK at `@vivero/stoma/sdk` that gives you
 the same tools the built-in policies use. The recommended way to write custom
 policies is with `definePolicy()`, which handles config merging, skip logic,
 debug logging, and gateway context injection automatically.
@@ -27,9 +27,9 @@ factory function `(config?) => Policy`. Your handler receives the request contex
 debug logger, and the gateway context.
 
 ```typescript
-import { definePolicy, Priority } from "@homegrower-club/stoma/sdk";
-import { GatewayError } from "@homegrower-club/stoma";
-import type { PolicyConfig } from "@homegrower-club/stoma";
+import { definePolicy, Priority } from "@vivero/stoma/sdk";
+import { GatewayError } from "@vivero/stoma";
+import type { PolicyConfig } from "@vivero/stoma";
 
 interface TenantFilterConfig extends PolicyConfig {
   allowedTenants: string[];
@@ -55,7 +55,7 @@ export const tenantFilter = definePolicy<TenantFilterConfig>({
 Using it:
 
 ```typescript
-import { createGateway, jwtAuth, rateLimit } from "@homegrower-club/stoma";
+import { createGateway, jwtAuth, rateLimit } from "@vivero/stoma";
 import { tenantFilter } from "./policies/tenant-filter";
 
 const gateway = createGateway({
@@ -124,7 +124,7 @@ interface PolicyHandlerContext<TConfig> {
 Priority constants are documented in [Policy Execution](/concepts/policies#priority-order).
 
 ```typescript
-import { Priority } from "@homegrower-club/stoma/sdk";
+import { Priority } from "@vivero/stoma/sdk";
 
 // Use named constants instead of magic numbers
 const myPolicy = definePolicy({
@@ -156,7 +156,7 @@ approach (see below).
 Shallow-merge default config values with user-provided config:
 
 ```typescript
-import { resolveConfig } from "@homegrower-club/stoma/sdk";
+import { resolveConfig } from "@vivero/stoma/sdk";
 
 const config = resolveConfig<MyConfig>(
   { timeout: 5000, retries: 3 },  // defaults
@@ -170,7 +170,7 @@ Get a debug logger pre-namespaced to `stoma:policy:{name}`. Returns a no-op
 logger when there is no gateway context:
 
 ```typescript
-import { policyDebug } from "@homegrower-club/stoma/sdk";
+import { policyDebug } from "@vivero/stoma/sdk";
 
 // Inside a policy handler:
 const debug = policyDebug(c, "my-policy");
@@ -183,7 +183,7 @@ Wrap a middleware handler with `PolicyConfig.skip` logic. If `skipFn` is
 undefined, returns the original handler unchanged (zero overhead):
 
 ```typescript
-import { withSkip } from "@homegrower-club/stoma/sdk";
+import { withSkip } from "@vivero/stoma/sdk";
 
 const handler: MiddlewareHandler = async (c, next) => {
   // policy logic
@@ -216,9 +216,9 @@ The Policy interface is documented in [Policy System](/concepts/policies#policy-
 ### Writing a manual policy factory
 
 ```typescript
-import type { Policy, PolicyConfig } from "@homegrower-club/stoma";
-import { GatewayError } from "@homegrower-club/stoma";
-import { resolveConfig, policyDebug, withSkip, Priority } from "@homegrower-club/stoma/sdk";
+import type { Policy, PolicyConfig } from "@vivero/stoma";
+import { GatewayError } from "@vivero/stoma";
+import { resolveConfig, policyDebug, withSkip, Priority } from "@vivero/stoma/sdk";
 
 interface TenantFilterConfig extends PolicyConfig {
   allowedTenants: string[];
@@ -257,7 +257,7 @@ The gateway injects a `PolicyContext` on every request. Access it via
 namespaced debug logger:
 
 ```typescript
-import { getGatewayContext } from "@homegrower-club/stoma";
+import { getGatewayContext } from "@vivero/stoma";
 
 // Inside a policy handler:
 const ctx = getGatewayContext(c);
@@ -278,7 +278,7 @@ A policy short-circuits the pipeline by returning a `Response` without calling
 execute. Use `GatewayError` for structured JSON error responses:
 
 ```typescript
-import { GatewayError } from "@homegrower-club/stoma";
+import { GatewayError } from "@vivero/stoma";
 
 // Inside a policy handler:
 throw new GatewayError(403, "forbidden", "Access denied");
@@ -300,7 +300,7 @@ Any existing Hono middleware can be wrapped as a policy by adding `name` and
 
 ```typescript
 import { compress } from "hono/compress";
-import type { Policy } from "@homegrower-club/stoma";
+import type { Policy } from "@vivero/stoma";
 
 function compression(): Policy {
   return {

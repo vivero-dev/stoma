@@ -27,7 +27,7 @@ Transforms mutate request/response shape and validate payloads as they move thro
 Applies CORS behavior (simple requests and preflight) as a policy.
 
 ```typescript
-import { cors } from "@homegrower-club/stoma";
+import { cors } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -49,7 +49,7 @@ interface CorsConfig {
 Apply method override on POST requests only.
 
 ```typescript
-import { overrideMethod } from "@homegrower-club/stoma";
+import { overrideMethod } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -69,7 +69,7 @@ Invalid overrides return `400` `invalid_method_override`.
 Rename, set, and remove request headers before upstream dispatch.
 
 ```typescript
-import { requestTransform } from "@homegrower-club/stoma";
+import { requestTransform } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -90,7 +90,7 @@ Operation order: `rename` -> `set` -> `remove`.
 Rename, set, and remove response headers after downstream runs.
 
 ```typescript
-import { responseTransform } from "@homegrower-club/stoma";
+import { responseTransform } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -111,7 +111,7 @@ Operation order: `rename` -> `set` -> `remove`.
 Attach key/value values to request context.
 
 ```typescript
-import { assignAttributes } from "@homegrower-club/stoma";
+import { assignAttributes } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -130,7 +130,7 @@ Downstream readers use `c.get(key)`.
 Inject/override JSON fields in request and/or response bodies.
 
 ```typescript
-import { assignContent } from "@homegrower-club/stoma";
+import { assignContent } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -151,7 +151,7 @@ Only matching content types are modified.
 Pluggable request body validation (sync or async), with optional detailed errors.
 
 ```typescript
-import { requestValidation } from "@homegrower-club/stoma";
+import { requestValidation } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -179,7 +179,7 @@ JSON-specific validation policy:
 - Optionally applies a user `validate` function.
 
 ```typescript
-import { jsonValidation } from "@homegrower-club/stoma";
+import { jsonValidation } from "@vivero/stoma";
 ```
 
 ```typescript
@@ -218,7 +218,7 @@ import {
   assignContent,
   requestValidation,
   responseTransform,
-} from "@homegrower-club/stoma";
+} from "@vivero/stoma";
 
 [
   cors({ origins: ["https://app.example.com"], credentials: true }),

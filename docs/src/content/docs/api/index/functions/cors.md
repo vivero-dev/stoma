@@ -32,8 +32,8 @@ A [Policy](/api/index/interfaces/policy/) at priority 5 (runs very early).
 ## Example
 
 ```ts
-import { createGateway } from "@homegrower-club/stoma";
-import { cors } from "@homegrower-club/stoma/policies";
+import { createGateway } from "@vivero/stoma";
+import { cors } from "@vivero/stoma/policies";
 
 // Allow any origin (default)
 createGateway({

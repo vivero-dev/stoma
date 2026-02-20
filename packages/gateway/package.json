@@ -1,6 +1,6 @@
 {
   "name": "@vivero/stoma",
-  "version": "0.1.0-rc.7",
+  "version": "0.1.0-rc.8",
   "description": "Declarative API gateway as a TypeScript library. Runs on Cloudflare Workers, Node.js, Deno, Bun, and any JavaScript runtime.",
   "type": "module",
   "repository": {

@@ -45,10 +45,10 @@ export function RequestBuilder({
 
   const handleRouteClick = useCallback(
     (route: RegisteredRoute, routeMethod: string) => {
+      const cleanPath = route.path.replace(/\*$/, "");
       setMethod(routeMethod);
-      // Registry paths already include basePath (e.g. "/api/echo")
-      setPath(route.path);
-      onSend({ method: routeMethod, path: route.path });
+      setPath(cleanPath);
+      onSend({ method: routeMethod, path: cleanPath });
     },
     [onSend]
   );
@@ -98,7 +98,7 @@ export function RequestBuilder({
                   <span className={`ed-method ed-method--${m.toLowerCase()}`}>
                     {m}
                   </span>
-                  <span className="ed-route-path">{route.path}</span>
+                  <span className="ed-route-path">{route.path.replace(/\*$/, "")}</span>
                 </button>
               ))
             )}

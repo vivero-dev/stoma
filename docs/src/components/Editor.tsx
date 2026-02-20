@@ -104,6 +104,21 @@ export default function Editor() {
     });
   }, []);
 
+  const handleDownload = useCallback(() => {
+    const slug = (gatewayName || initial.current.title || "gateway")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    const filename = `${slug}.ts`;
+    const blob = new Blob([codeRef.current], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [gatewayName]);
+
   const handleOpenAuthPopup = useCallback((url: string) => {
     if (popupRef.current && !popupRef.current.closed) {
       popupRef.current.close();
@@ -189,6 +204,9 @@ export default function Editor() {
           </button>
           <button className="ed-share-btn" onClick={handleShare}>
             {copied ? "Copied!" : "Share"}
+          </button>
+          <button className="ed-share-btn" onClick={handleDownload}>
+            Download
           </button>
           <a href="/" className="ed-back-link">
             Back to Docs

@@ -10,7 +10,8 @@
     "build:types": "dts-bundle-generator --no-check --external-inlines hono -o public/stoma-bundle.d.ts src/editor/stoma-entry.ts",
     "build:assets": "yarn build:sw && yarn build:stoma-bundle && yarn build:editor-worker && yarn build:types",
     "build:check-worker": "wrangler deploy --dry-run --outdir .wrangler/tmp 2>&1 | tail -5",
-    "build": "yarn build:assets && astro build && yarn build:check-worker",
+    "typecheck:gateway": "typedoc --emit none --tsconfig ../packages/gateway/tsconfig.docs.json --entryPointStrategy expand --exclude '**/__tests__/**' ../packages/gateway/src/index.ts ../packages/gateway/src/policies/index.ts ../packages/gateway/src/config/index.ts ../packages/gateway/src/adapters/index.ts",
+    "build": "yarn typecheck:gateway && yarn build:assets && astro build && yarn build:check-worker",
     "dev": "yarn build:assets && astro dev",
     "dev:sw": "vite build --config vite.sw.config.ts --watch",
     "preview": "astro preview"

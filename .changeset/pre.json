@@ -10,6 +10,7 @@
   },
   "changesets": [
     "cli-resolve-transitive-deps",
+    "cli-tests-and-readme",
     "docs-og-deploy",
     "fix-npm-publish-pipeline",
     "stoma-cli",

@@ -165,7 +165,7 @@
     "vitest": "3.2.4"
   },
   "peerDependencies": {
-    "@vivero/stoma": ">=0.1.0-rc.7",
+    "@vivero/stoma": ">=0.1.0-rc.8",
     "hono": ">=4.0.0"
   }
 }

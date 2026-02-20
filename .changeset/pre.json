@@ -11,6 +11,7 @@
   "changesets": [
     "cli-resolve-transitive-deps",
     "docs-og-deploy",
+    "fix-npm-publish-pipeline",
     "stoma-cli",
     "stoma-rc-010",
     "stoma-rc-020",

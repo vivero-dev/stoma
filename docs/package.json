@@ -38,6 +38,7 @@
     "dts-bundle-generator": "^9.0.0",
     "esbuild-wasm": "^0.24.2",
     "hono": "^4.7.0",
+    "lz-string": "^1.5.0",
     "vite": "^6.0.0",
     "wrangler": "^4.65.0"
   }

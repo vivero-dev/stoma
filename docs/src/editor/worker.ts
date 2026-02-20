@@ -54,15 +54,26 @@ self.onmessage = async (event: MessageEvent) => {
 
       const mod = await import(/* @vite-ignore */ currentBlobUrl);
 
-      // The compiled code exports createPlaygroundGateway()
-      if (typeof mod.createPlaygroundGateway !== "function") {
+      // Resolution order:
+      // 1. mod.createPlaygroundGateway() — backward compat with existing EditorLink snippets
+      // 2. mod.default — if it's a function, call it; if it's a gateway instance, use directly
+      let gw: GatewayInstance;
+
+      if (typeof mod.createPlaygroundGateway === "function") {
+        gw = await mod.createPlaygroundGateway();
+      } else if (typeof mod.default === "function") {
+        gw = await mod.default();
+      } else if (mod.default?.app && mod.default?._registry) {
+        gw = mod.default;
+      } else {
         throw new Error(
-          "Compiled code must export a `createPlaygroundGateway` function. " +
-            "Make sure your code has: export function createPlaygroundGateway() { ... }"
+          "Code must export a gateway. Use either:\n" +
+            '  export default createGateway({ ... })\n' +
+            '  export default async function() { return createGateway({ ... }) }'
         );
       }
 
-      gateway = await mod.createPlaygroundGateway();
+      gateway = gw;
 
       self.postMessage({
         type: "deployed",

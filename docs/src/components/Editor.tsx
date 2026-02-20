@@ -9,6 +9,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DEFAULT_CODE } from "../editor/default-code";
+import { buildShareUrl, compressCode, decompressCode } from "../editor/share";
 import { MonacoEditor } from "./editor/MonacoEditor";
 import { RequestBuilder } from "./editor/RequestBuilder";
 import { ResponsePanel } from "./editor/ResponsePanel";
@@ -26,21 +27,34 @@ const STATUS_LABELS: Record<string, string> = {
 function getInitialParams() {
   if (typeof window === "undefined")
     return { code: DEFAULT_CODE, autorun: false, title: null as string | null };
+
   const params = new URLSearchParams(window.location.search);
-  const urlCode = params.get("code");
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+
   let code = DEFAULT_CODE;
-  if (urlCode) {
+  let autorun = false;
+  let title: string | null = null;
+
+  // Priority: hash fragment (new share format) > query params (legacy EditorLink format)
+  const hashCode = hash.get("code");
+  const queryCode = params.get("code");
+
+  if (hashCode) {
+    const decompressed = decompressCode(hashCode);
+    if (decompressed) code = decompressed;
+    autorun = true;
+    title = hash.get("title");
+  } else if (queryCode) {
     try {
-      code = atob(urlCode);
+      code = atob(queryCode);
     } catch {
       /* ignore invalid base64 */
     }
+    autorun = params.get("autorun") === "true";
+    title = params.get("title");
   }
-  return {
-    code,
-    autorun: params.get("autorun") === "true",
-    title: params.get("title"),
-  };
+
+  return { code, autorun, title };
 }
 
 export default function Editor() {
@@ -51,9 +65,23 @@ export default function Editor() {
   const [response, setResponse] = useState<ResponseData | null>(null);
   const [requestError, setRequestError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [prefill, setPrefill] = useState<{ method: string; path: string } | null>(null);
+  const popupRef = useRef<Window | null>(null);
+  const hashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleCodeChange = useCallback((value: string) => {
     codeRef.current = value;
+
+    // Debounced hash update so refreshing preserves the current code
+    if (hashTimerRef.current) clearTimeout(hashTimerRef.current);
+    hashTimerRef.current = setTimeout(() => {
+      const hash = new URLSearchParams();
+      hash.set("code", compressCode(value));
+      const title = initial.current.title;
+      if (title) hash.set("title", title);
+      history.replaceState(null, "", `#${hash.toString()}`);
+    }, 1500);
   }, []);
 
   const handleCompile = useCallback(() => {
@@ -61,6 +89,47 @@ export default function Editor() {
     setResponse(null);
     setRequestError(null);
   }, [deploy]);
+
+  const handleShare = useCallback(() => {
+    const url = buildShareUrl(
+      codeRef.current,
+      initial.current.title ?? undefined
+    );
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, []);
+
+  const handleOpenAuthPopup = useCallback((url: string) => {
+    if (popupRef.current && !popupRef.current.closed) {
+      popupRef.current.close();
+    }
+    popupRef.current = window.open(url, "stoma-oauth", "width=600,height=700");
+  }, []);
+
+  // Listen for OAuth callback params from the popup
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type !== "stoma-oauth-callback") return;
+
+      const params = event.data.params as Record<string, string>;
+      if (!params) return;
+
+      // Find the callback route: look for a route whose path contains "callback"
+      const callbackRoute = routes.find((r) =>
+        r.path.toLowerCase().includes("callback")
+      );
+      const callbackPath = callbackRoute?.path ?? "/auth/callback";
+      const qs = new URLSearchParams(params).toString();
+
+      setPrefill({ method: "GET", path: `${callbackPath}?${qs}` });
+    }
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [routes]);
 
   const handleSendRequest = useCallback(
     async (req: {
@@ -115,6 +184,9 @@ export default function Editor() {
           >
             {isCompiling ? STATUS_LABELS[status] : "Compile & Run"}
           </button>
+          <button className="ed-share-btn" onClick={handleShare}>
+            {copied ? "Copied!" : "Share"}
+          </button>
           <a href="/" className="ed-back-link">
             Back to Docs
           </a>
@@ -152,8 +224,14 @@ export default function Editor() {
             routes={routes}
             busy={busy || isCompiling || status !== "ready"}
             onSend={handleSendRequest}
+            prefill={prefill}
+            onPrefillApplied={() => setPrefill(null)}
           />
-          <ResponsePanel response={response} error={requestError} />
+          <ResponsePanel
+            response={response}
+            error={requestError}
+            onOpenAuthPopup={handleOpenAuthPopup}
+          />
         </div>
       </div>
     </div>

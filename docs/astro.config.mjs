@@ -103,12 +103,12 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/HomeGrower-club/stoma",
+          href: "https://github.com/vivero-dev/stoma",
         },
       ],
       customCss: ["./src/styles/custom.css"],
       editLink: {
-        baseUrl: "https://github.com/HomeGrower-club/stoma/edit/main/docs/",
+        baseUrl: "https://github.com/vivero-dev/stoma/edit/main/docs/",
       },
       plugins: [
         // llmTxt(),

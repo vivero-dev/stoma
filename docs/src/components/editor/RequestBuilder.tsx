@@ -4,7 +4,7 @@
  * Shows auto-populated route shortcuts from the gateway registry and
  * a manual form for method/path/headers/body.
  */
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { RegisteredRoute } from "./useGatewayWorker";
 
 interface RequestBuilderProps {
@@ -16,15 +16,26 @@ interface RequestBuilderProps {
     headers?: Record<string, string>;
     body?: string;
   }) => void;
+  prefill?: { method: string; path: string } | null;
+  onPrefillApplied?: () => void;
 }
 
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 
-export function RequestBuilder({ routes, busy, onSend }: RequestBuilderProps) {
+export function RequestBuilder({ routes, busy, onSend, prefill, onPrefillApplied }: RequestBuilderProps) {
   const [method, setMethod] = useState<string>("GET");
   const [path, setPath] = useState("/api/echo");
   const [headersText, setHeadersText] = useState("");
   const [body, setBody] = useState("");
+
+  // Apply prefill from OAuth callback or other external sources
+  useEffect(() => {
+    if (prefill) {
+      setMethod(prefill.method);
+      setPath(prefill.path);
+      onPrefillApplied?.();
+    }
+  }, [prefill, onPrefillApplied]);
 
   const handleRouteClick = useCallback(
     (route: RegisteredRoute, routeMethod: string) => {

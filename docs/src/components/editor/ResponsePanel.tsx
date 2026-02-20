@@ -17,9 +17,10 @@ import "react-json-pretty/themes/monikai.css";
 interface ResponsePanelProps {
   response: ResponseData | null;
   error: string | null;
+  onOpenAuthPopup?: (url: string) => void;
 }
 
-export function ResponsePanel({ response, error }: ResponsePanelProps) {
+export function ResponsePanel({ response, error, onOpenAuthPopup }: ResponsePanelProps) {
   const timingEntries = useMemo(
     () => parseServerTiming(response?.headers["server-timing"]),
     [response]
@@ -62,6 +63,10 @@ export function ResponsePanel({ response, error }: ResponsePanelProps) {
     );
   }
 
+  const isRedirect = response.status >= 300 && response.status < 400;
+  const locationUrl = response.headers["location"];
+  const isExternalRedirect = isRedirect && locationUrl && !locationUrl.startsWith("/");
+
   let bodyContent = response.body;
   let parsedError: { error?: string; message?: string } | null = null;
   try {
@@ -96,6 +101,26 @@ export function ResponsePanel({ response, error }: ResponsePanelProps) {
               upstream for local testing.
             </div>
           )}
+        </div>
+      )}
+
+      {/* OAuth redirect banner */}
+      {isExternalRedirect && onOpenAuthPopup && (
+        <div className="ed-redirect">
+          <div className="ed-redirect-title">Redirect Detected</div>
+          <div className="ed-redirect-url">{locationUrl}</div>
+          <div className="ed-redirect-actions">
+            <button
+              className="ed-redirect-btn"
+              onClick={() => onOpenAuthPopup(locationUrl!)}
+            >
+              Open Authorization
+            </button>
+          </div>
+          <div className="ed-redirect-notice">
+            Opens in a popup. After authorizing, the callback parameters will be
+            sent back here. No data is logged or transmitted by the editor.
+          </div>
         </div>
       )}
 

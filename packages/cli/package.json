@@ -1,6 +1,6 @@
 {
   "name": "@vivero/stoma-cli",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "description": "CLI for running Stoma API gateways locally — load a gateway file and serve it on a Node.js HTTP server.",
   "type": "module",
   "repository": {

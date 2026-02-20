@@ -9,6 +9,7 @@
     "@vivero/stoma-cli": "0.1.0-rc.0"
   },
   "changesets": [
+    "cli-resolve-transitive-deps",
     "docs-og-deploy",
     "stoma-cli",
     "stoma-rc-010",

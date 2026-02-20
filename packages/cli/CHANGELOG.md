@@ -1,5 +1,14 @@
 # @vivero/stoma-cli
 
+## 0.1.0-rc.2
+### Patch Changes
+
+
+
+- [`ca21e7a`](https://github.com/vivero-dev/stoma/commit/ca21e7ad128b83c6f3398d30098644761e0e3501) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - Fix esbuild resolution of transitive dependencies when bundling gateway files
+  
+  The CLI's TypeScript transpiler now includes the `node_modules` of `@vivero/stoma` itself in esbuild's resolve paths, so transitive dependencies like `@vivero/stoma-core` are found even when not hoisted to the top-level `node_modules`.
+
 ## 0.1.0-rc.1
 ### Minor Changes
 

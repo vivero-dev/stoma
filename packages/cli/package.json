@@ -41,7 +41,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "provenance": true,
     "bin": {
       "stoma": "./dist/bin.js"
     },

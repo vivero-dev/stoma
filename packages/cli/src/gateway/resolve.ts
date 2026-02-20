@@ -128,7 +128,32 @@ function filenameFromUrl(url: string, contentType: string | null): string {
  */
 function getCliNodePaths(): string[] {
   const require = createRequire(import.meta.url);
-  return (require.resolve.paths("@vivero/stoma") ?? []).filter(existsSync);
+  const paths = (require.resolve.paths("@vivero/stoma") ?? []).filter(
+    existsSync
+  );
+
+  // Also include the node_modules of @vivero/stoma itself, so transitive
+  // deps like @vivero/stoma-core are resolvable even if not hoisted.
+  try {
+    const stomaEntry = require.resolve("@vivero/stoma");
+    const stomaDir = path.dirname(stomaEntry);
+    // Walk up to find the package root (contains package.json)
+    let dir = stomaDir;
+    while (dir !== path.dirname(dir)) {
+      if (existsSync(path.join(dir, "package.json"))) {
+        const nested = path.join(dir, "node_modules");
+        if (existsSync(nested) && !paths.includes(nested)) {
+          paths.unshift(nested);
+        }
+        break;
+      }
+      dir = path.dirname(dir);
+    }
+  } catch {
+    // @vivero/stoma not resolvable — will error later during build
+  }
+
+  return paths;
 }
 
 /**

@@ -197,6 +197,80 @@ describe("requestLog", () => {
     });
   });
 
+  // --- Upstream target ---
+
+  it("should log upstream target from context when set", async () => {
+    const sink = vi.fn();
+    const app = new Hono();
+    const injector = createContextInjector("test-gw", "/proxy/*");
+    const policy = requestLog({ sink });
+
+    app.use("/proxy/*", injector);
+    app.use("/proxy/*", policy.handler);
+    app.all("/proxy/*", (c) => {
+      c.set("_upstreamTarget", "https://api.example.com");
+      return c.json({ ok: true });
+    });
+
+    await app.request("/proxy/test");
+
+    const entry: LogEntry = sink.mock.calls[0][0];
+    expect(entry.upstream).toBe("https://api.example.com");
+  });
+
+  it("should log upstream as unknown when not set", async () => {
+    const sink = vi.fn();
+    const app = createApp({ sink });
+
+    await app.request("/test");
+
+    const entry: LogEntry = sink.mock.calls[0][0];
+    expect(entry.upstream).toBe("unknown");
+  });
+
+  // --- Client IP fallback from socket ---
+
+  it("should use socket remoteAddress as clientIp fallback", async () => {
+    const sink = vi.fn();
+    const app = new Hono();
+    const injector = createContextInjector("test-gw", "/test");
+    const policy = requestLog({ sink });
+
+    app.use("/*", injector);
+    app.use("/*", policy.handler);
+    app.get("/test", (c) => c.json({ ok: true }));
+
+    // Simulate @hono/node-server env shape: env.incoming.socket.remoteAddress
+    await app.request("/test", undefined, {
+      incoming: { socket: { remoteAddress: "192.168.1.42" } },
+    });
+
+    const entry: LogEntry = sink.mock.calls[0][0];
+    expect(entry.clientIp).toBe("192.168.1.42");
+  });
+
+  it("should prefer headers over socket remoteAddress", async () => {
+    const sink = vi.fn();
+    const app = new Hono();
+    const injector = createContextInjector("test-gw", "/test");
+    const policy = requestLog({ sink });
+
+    app.use("/*", injector);
+    app.use("/*", policy.handler);
+    app.get("/test", (c) => c.json({ ok: true }));
+
+    await app.request(
+      new Request("http://localhost/test", {
+        headers: { "x-forwarded-for": "10.0.0.1" },
+      }),
+      undefined,
+      { incoming: { socket: { remoteAddress: "192.168.1.42" } } }
+    );
+
+    const entry: LogEntry = sink.mock.calls[0][0];
+    expect(entry.clientIp).toBe("10.0.0.1");
+  });
+
   // --- Security tests ---
 
   it("should not include Authorization header in log output", async () => {

@@ -47,7 +47,7 @@ export interface LogEntry {
   gatewayName: string;
   /** Matched route path pattern. */
   routePath: string;
-  /** Upstream identifier (reserved for future enrichment). */
+  /** Upstream target identifier (e.g. origin URL, service binding name, or `"handler"`). */
   upstream: string;
   /** W3C Trace Context - 32-hex trace ID. */
   traceId?: string;
@@ -174,11 +174,13 @@ export const requestLog = /*#__PURE__*/ definePolicy<RequestLogConfig>({
       durationMs: Date.now() - startTime,
       clientIp: extractClientIp(c.req.raw.headers, {
         ipHeaders: config.ipHeaders,
+        fallbackAddress: getRemoteAddress(c),
       }),
       userAgent: c.req.header("user-agent") ?? "unknown",
       gatewayName: gateway?.gatewayName ?? "unknown",
       routePath: gateway?.routePath ?? url.pathname,
-      upstream: "unknown", // Enriched by proxy policy in future
+      upstream:
+        (c.get("_upstreamTarget") as string | undefined) ?? "unknown",
       traceId: gateway?.traceId,
       spanId: gateway?.spanId,
     };
@@ -300,6 +302,28 @@ async function captureResponseBody(
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Try to extract the remote address from the Hono env.
+ *
+ * `@hono/node-server` stores the Node.js `IncomingMessage` as `c.env.incoming`,
+ * giving access to `socket.remoteAddress`. This is a duck-typed check so the
+ * gateway library doesn't depend on any specific runtime adapter.
+ */
+function getRemoteAddress(c: { env?: unknown }): string | undefined {
+  try {
+    const env = c.env as Record<string, unknown> | undefined;
+    // @hono/node-server: env.incoming is a Node IncomingMessage
+    const incoming = env?.incoming as
+      | { socket?: { remoteAddress?: string } }
+      | undefined;
+    const addr = incoming?.socket?.remoteAddress;
+    if (typeof addr === "string" && addr) return addr;
+  } catch {
+    // Never break logging
+  }
+  return undefined;
 }
 
 function defaultSink(entry: LogEntry): void {

@@ -150,4 +150,30 @@ describe("extractClientIp", () => {
     // This is secure - cf-connecting-ip is set by Cloudflare edge
     expect(extractedIp).toBe("203.0.113.50");
   });
+
+  // --- Fallback address ---
+
+  it("should use fallbackAddress when no headers match", () => {
+    const h = headers({});
+    expect(extractClientIp(h, { fallbackAddress: "127.0.0.1" })).toBe(
+      "127.0.0.1"
+    );
+  });
+
+  it("should prefer headers over fallbackAddress", () => {
+    const h = headers({ "x-forwarded-for": "203.0.113.50" });
+    expect(
+      extractClientIp(h, { fallbackAddress: "127.0.0.1" })
+    ).toBe("203.0.113.50");
+  });
+
+  it("should return unknown when no headers match and no fallbackAddress", () => {
+    const h = headers({});
+    expect(extractClientIp(h)).toBe("unknown");
+  });
+
+  it("should use fallbackAddress with IPv6 loopback", () => {
+    const h = headers({});
+    expect(extractClientIp(h, { fallbackAddress: "::1" })).toBe("::1");
+  });
 });

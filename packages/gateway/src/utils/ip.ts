@@ -32,6 +32,12 @@ export interface ExtractClientIpOptions {
    * Default: false.
    */
   useRightmostForwardedIp?: boolean;
+  /**
+   * Fallback IP address used when no headers match (e.g., the socket remote
+   * address from the Node.js HTTP server). This is checked after all
+   * configured headers have been exhausted.
+   */
+  fallbackAddress?: string;
 }
 
 /**
@@ -64,6 +70,7 @@ export function extractClientIp(
     ipHeaders = DEFAULT_IP_HEADERS,
     trustedProxies,
     useRightmostForwardedIp = false,
+    fallbackAddress,
   } = options;
 
   const parsedTrustedProxies: ParsedCIDR[] | null = trustedProxies
@@ -89,5 +96,5 @@ export function extractClientIp(
 
     return clientIp;
   }
-  return "unknown";
+  return fallbackAddress ?? "unknown";
 }

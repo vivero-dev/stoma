@@ -335,6 +335,7 @@ function createUpstreamHandler(
 /** Handler upstream - invoke the custom function directly */
 function createHandlerUpstream(upstream: HandlerUpstream) {
   return async (c: Context) => {
+    c.set("_upstreamTarget", "handler");
     return upstream.handler(c);
   };
 }
@@ -356,6 +357,14 @@ const HOP_BY_HOP_HEADERS = [
 ];
 
 /**
+ * Headers that become stale after the runtime's `fetch()` transparently
+ * decompresses the response body. The body is already decoded, so these
+ * headers no longer describe it and will cause browser errors
+ * (ERR_CONTENT_DECODING_FAILED / ERR_CONTENT_LENGTH_MISMATCH) if forwarded.
+ */
+const ENCODING_HEADERS = ["content-encoding", "content-length"];
+
+/**
  * Service Binding upstream - forward to a named service binding or sidecar.
  *
  * Requires `adapter.dispatchBinding` to be configured. On Cloudflare, pass
@@ -368,6 +377,8 @@ function createServiceBindingUpstream(
   adapter?: GatewayAdapter
 ) {
   return async (c: Context) => {
+    c.set("_upstreamTarget", `service-binding:${upstream.service}`);
+
     if (!adapter?.dispatchBinding) {
       throw new GatewayError(
         502,
@@ -458,9 +469,12 @@ function createServiceBindingUpstream(
       otelSpans!.push(upstreamSpan.end());
     }
 
-    // Strip hop-by-hop headers from the upstream response
+    // Strip hop-by-hop and stale encoding headers from the upstream response
     const responseHeaders = new Headers(response.headers);
     for (const h of HOP_BY_HOP_HEADERS) {
+      responseHeaders.delete(h);
+    }
+    for (const h of ENCODING_HEADERS) {
       responseHeaders.delete(h);
     }
 
@@ -478,6 +492,8 @@ function createUrlUpstream(upstream: UrlUpstream, debug = noopDebugLogger) {
   const targetBase = new URL(upstream.target);
 
   return async (c: Context) => {
+    c.set("_upstreamTarget", targetBase.origin);
+
     const incomingUrl = new URL(c.req.url);
 
     // Apply path rewrite if configured
@@ -607,9 +623,14 @@ function createUrlUpstream(upstream: UrlUpstream, debug = noopDebugLogger) {
       otelSpans!.push(upstreamSpan.end());
     }
 
-    // Strip hop-by-hop headers from the upstream response before returning
+    // Strip hop-by-hop and stale encoding headers from the upstream response.
+    // fetch() transparently decompresses, so content-encoding/content-length
+    // no longer describe the body and will cause browser decode errors.
     const responseHeaders = new Headers(response.headers);
     for (const h of HOP_BY_HOP_HEADERS) {
+      responseHeaders.delete(h);
+    }
+    for (const h of ENCODING_HEADERS) {
       responseHeaders.delete(h);
     }
 

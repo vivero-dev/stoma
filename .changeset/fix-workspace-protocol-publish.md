@@ -4,6 +4,6 @@
 "@vivero/stoma-core": patch
 ---
 
-fix: publish via `yarn npm publish` to correctly resolve `workspace:*` protocols
+fix: resolve `workspace:*` protocols in published packages
 
-Replaces `changeset publish` (which used `npm publish <dir>` and never resolved workspace protocols) with a custom publish script that runs `yarn npm publish` from each package directory. Yarn natively handles `workspace:*` resolution and `publishConfig` field overrides, so the prepack/postpack workaround scripts have been removed.
+Replaces `changeset publish` with a custom publish script (`scripts/publish.mjs`) that uses `yarn pack` to resolve `workspace:*` protocols and apply `publishConfig` overrides, then `npm publish <tarball>` for OIDC trusted publishing with provenance. The prepack/postpack workaround scripts have been removed.

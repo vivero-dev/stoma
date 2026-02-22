@@ -13,7 +13,6 @@
     "cli-tests-and-readme",
     "docs-og-deploy",
     "fix-npm-publish-pipeline",
-    "fix-workspace-protocol-publish",
     "stoma-cli",
     "stoma-rc-010",
     "stoma-rc-020",

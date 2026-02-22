@@ -145,8 +145,6 @@
     }
   },
   "scripts": {
-    "prepack": "node ../../scripts/resolve-workspace-deps.mjs",
-    "postpack": "node ../../scripts/resolve-workspace-deps.mjs --restore",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

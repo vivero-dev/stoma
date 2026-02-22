@@ -166,8 +166,6 @@
     "test:cloudflare": "vitest run --config vitest.cloudflare.ts",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "prepack": "node ../../scripts/resolve-workspace-deps.mjs",
-    "postpack": "node ../../scripts/resolve-workspace-deps.mjs --restore",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {

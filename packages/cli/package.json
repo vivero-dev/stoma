@@ -55,8 +55,6 @@
     }
   },
   "scripts": {
-    "prepack": "node ../../scripts/resolve-workspace-deps.mjs",
-    "postpack": "node ../../scripts/resolve-workspace-deps.mjs --restore",
     "dev": "tsx src/bin.ts",
     "build": "tsup",
     "typecheck": "tsc --noEmit",

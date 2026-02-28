@@ -74,10 +74,16 @@ describe("resolveGateway integration (real esbuild + filesystem)", () => {
 
     await resolveGateway(fixturePath);
 
-    const dirAfter = await readdir(fixturesDir);
-    const tmpFiles = dirAfter.filter(
-      (f) => f.includes("stoma-tmp") && !dirBefore.includes(f)
-    );
+    // Allow filesystem to settle (Linux CI can lag behind unlink)
+    let tmpFiles: string[] = [];
+    for (let i = 0; i < 10; i++) {
+      const dirAfter = await readdir(fixturesDir);
+      tmpFiles = dirAfter.filter(
+        (f) => f.includes("stoma-tmp") && !dirBefore.includes(f)
+      );
+      if (tmpFiles.length === 0) break;
+      await new Promise((r) => setTimeout(r, 50));
+    }
     expect(tmpFiles).toHaveLength(0);
   });
 

@@ -1,5 +1,16 @@
 # @vivero/stoma-cli
 
+## 0.1.0-rc.9
+### Patch Changes
+
+
+
+- [`34c6d12`](https://github.com/vivero-dev/stoma/commit/34c6d12c01d9b940f6dc1a155d870bf282181c0e) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - ### @vivero/stoma-cli
+  
+  **Bug Fix**
+  
+  - Fix `yarn dlx` / Yarn PnP resolution failure: `--trust-remote` (and local TS files outside a project) failed with `Could not resolve "@vivero/stoma"` because esbuild's `nodePaths` only works with `node_modules` directories. Added an esbuild resolve plugin that uses `createRequire(import.meta.url)` — PnP patches this, so resolution works in all package manager environments (npm, yarn, pnpm, bun)
+
 ## 0.1.0-rc.8
 ### Patch Changes
 

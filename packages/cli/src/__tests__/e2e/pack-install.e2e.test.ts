@@ -32,6 +32,7 @@ const fixturePath = path.join(
   cliRoot,
   "src/__tests__/fixtures/test-gateway.ts"
 );
+const isWindows = process.platform === "win32";
 
 // Tarball paths — resolved dynamically from pnpm pack output
 let gatewayTarball: string;
@@ -103,6 +104,17 @@ async function installWith(
 ): Promise<RunnerEnv> {
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
+  // Yarn 4 on Windows needs file: protocol for local tarballs (backslash paths
+  // are interpreted as registry package names without it)
+  const gwTarball =
+    runner === "yarn" && isWindows
+      ? `file:${gatewayTarball}`
+      : gatewayTarball;
+  const clTarball =
+    runner === "yarn" && isWindows
+      ? `file:${cliTarball}`
+      : cliTarball;
+
   if (runner === "npm") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
@@ -110,8 +122,8 @@ async function installWith(
     );
     await execa(
       "npm",
-      ["install", "--no-package-lock", gatewayTarball, cliTarball, ...PEERS],
-      { cwd: tmpDir, timeout: 60_000 }
+      ["install", "--no-package-lock", gwTarball, clTarball, ...PEERS],
+      { cwd: tmpDir, timeout: 120_000 }
     );
   } else if (runner === "yarn") {
     // Yarn 4: use node-modules linker so native deps (esbuild) work
@@ -128,9 +140,9 @@ async function installWith(
       timeout: 10_000,
       input: "\n",
     }).catch(() => {});
-    await execa("yarn", ["add", gatewayTarball, cliTarball, ...PEERS], {
+    await execa("yarn", ["add", gwTarball, clTarball, ...PEERS], {
       cwd: tmpDir,
-      timeout: 60_000,
+      timeout: 120_000,
     });
   } else if (runner === "pnpm") {
     writeFileSync(
@@ -144,11 +156,11 @@ async function installWith(
         "add",
         "--no-lockfile",
         "--shamefully-hoist",
-        gatewayTarball,
-        cliTarball,
+        gwTarball,
+        clTarball,
         ...PEERS,
       ],
-      { cwd: tmpDir, timeout: 60_000 }
+      { cwd: tmpDir, timeout: 120_000 }
     );
   } else if (runner === "bun") {
     writeFileSync(
@@ -160,17 +172,19 @@ async function installWith(
       cwd: tmpDir,
       timeout: 60_000,
     });
-    await execa("bun", ["add", gatewayTarball], {
+    await execa("bun", ["add", gwTarball], {
       cwd: tmpDir,
       timeout: 60_000,
     });
-    await execa("bun", ["add", cliTarball], {
+    await execa("bun", ["add", clTarball], {
       cwd: tmpDir,
       timeout: 60_000,
     });
   }
 
-  const binPath = path.join(tmpDir, "node_modules/.bin/stoma");
+  // Windows creates .cmd shims instead of symlinks in .bin/
+  const binName = isWindows ? "stoma.cmd" : "stoma";
+  const binPath = path.join(tmpDir, "node_modules/.bin", binName);
   if (!existsSync(binPath)) {
     throw new Error(`Binary not found at ${binPath} after ${runner} install`);
   }
@@ -189,10 +203,14 @@ async function installWith(
 async function assertInstalledBinaryWorks(env: RunnerEnv) {
   const { tmpDir, binPath } = env;
 
+  // Windows .cmd shims need shell: true to execute
+  const execOpts = isWindows ? { shell: true as const } : {};
+
   // 1. --version parses and exits cleanly
   const versionResult = await execa(binPath, ["--version"], {
     cwd: tmpDir,
     reject: false,
+    ...execOpts,
   });
   expect(versionResult.exitCode).toBe(0);
   expect(versionResult.stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
@@ -204,6 +222,7 @@ async function assertInstalledBinaryWorks(env: RunnerEnv) {
   const proc = execa(binPath, ["run", fixturePath, "--port", String(port)], {
     cwd: tmpDir,
     reject: false,
+    ...execOpts,
   });
 
   try {
@@ -242,10 +261,18 @@ beforeAll(async () => {
 
 afterAll(() => {
   for (const dir of tmpDirs) {
-    rmSync(dir, { recursive: true, force: true });
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+      // Windows: EBUSY when processes still hold file handles
+    }
   }
-  rmSync(gatewayTarball, { force: true });
-  rmSync(cliTarball, { force: true });
+  try {
+    rmSync(gatewayTarball, { force: true });
+    rmSync(cliTarball, { force: true });
+  } catch {
+    // best-effort cleanup
+  }
 });
 
 // ── Runner-specific test suites ───────────────────────────────────

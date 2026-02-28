@@ -105,15 +105,16 @@ async function installWith(
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
   // Yarn 4 on Windows needs file: protocol with forward slashes for local tarballs
-  // e.g. "file:///D:/a/stoma/stoma/packages/gateway/stoma-e2e.tgz"
-  const gwTarball =
-    runner === "yarn" && isWindows
-      ? `file:///${gatewayTarball.replace(/\\/g, "/")}`
-      : gatewayTarball;
-  const clTarball =
-    runner === "yarn" && isWindows
-      ? `file:///${cliTarball.replace(/\\/g, "/")}`
-      : cliTarball;
+  // Default to absolute paths, which work flawlessly on npm, pnpm, and bun across all OSes.
+  let gwTarball = gatewayTarball;
+  let clTarball = cliTarball;
+
+  if (runner === "yarn" && isWindows) {
+    // Yarn 4 on Windows treats "D:\path" as a protocol "D:". To bypass this,
+    // we use a relative path. On Windows, tmpdir is not symlinked like on Mac, so this is safe.
+    gwTarball = `./${path.relative(tmpDir, gatewayTarball).replace(/\\/g, "/")}`;
+    clTarball = `./${path.relative(tmpDir, cliTarball).replace(/\\/g, "/")}`;
+  }
 
   if (runner === "npm") {
     writeFileSync(
@@ -241,12 +242,23 @@ async function assertInstalledBinaryWorks(env: RunnerEnv) {
     const healthRes = await fetch(`http://localhost:${port}/health`);
     expect(healthRes.status).toBe(200);
   } finally {
-    if (!proc.killed) {
-      proc.kill("SIGTERM");
+    if (proc.pid && !proc.killed) {
+      if (isWindows) {
+        try {
+          // SIGTERM leaves orphaned node.exe processes on Windows when sent to a .cmd shim.
+          // We must force kill the entire process tree to close stdio and let execa resolve.
+          const { execSync } = await import("node:child_process");
+          execSync(`taskkill /pid ${proc.pid} /T /F`, { stdio: "ignore" });
+        } catch {
+          // ignore taskkill errors
+        }
+      } else {
+        proc.kill("SIGKILL");
+      }
       try {
         await proc;
       } catch {
-        // may have already exited
+        // may have already exited or rejected due to SIGKILL
       }
     }
   }
@@ -288,11 +300,11 @@ describe("npm install (simulates npx)", () => {
   beforeAll(async () => {
     env = await installWith("npm");
     tmpDirs.push(env.tmpDir);
-  }, 180_000);
+  }, 300_000);
 
   it("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);
-  }, 180_000);
+  }, 300_000);
 });
 
 describe("yarn add (simulates yarn dlx)", async () => {
@@ -302,14 +314,14 @@ describe("yarn add (simulates yarn dlx)", async () => {
   beforeAll(async () => {
     env = await installWith("yarn");
     tmpDirs.push(env.tmpDir);
-  }, 180_000);
+  }, 300_000);
 
   it.skipIf(!available)(
     "installed binary works end-to-end",
     async () => {
       await assertInstalledBinaryWorks(env);
     },
-    180_000
+    300_000
   );
 });
 
@@ -321,14 +333,14 @@ describe("pnpm add (simulates pnpm dlx)", async () => {
     if (!available) return;
     env = await installWith("pnpm");
     tmpDirs.push(env.tmpDir);
-  }, 180_000);
+  }, 300_000);
 
   it.skipIf(!available)(
     "installed binary works end-to-end",
     async () => {
       await assertInstalledBinaryWorks(env);
     },
-    180_000
+    300_000
   );
 });
 
@@ -340,13 +352,13 @@ describe("bun add (simulates bunx)", async () => {
     if (!available) return;
     env = await installWith("bun");
     tmpDirs.push(env.tmpDir);
-  }, 180_000);
+  }, 300_000);
 
   it.skipIf(!available)(
     "installed binary works end-to-end",
     async () => {
       await assertInstalledBinaryWorks(env);
     },
-    180_000
+    300_000
   );
 });

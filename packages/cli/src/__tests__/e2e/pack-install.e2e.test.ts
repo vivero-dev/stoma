@@ -104,12 +104,16 @@ async function installWith(
 ): Promise<RunnerEnv> {
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
-  // Yarn 4 on Windows needs file: protocol for local tarballs (backslash paths
-  // are interpreted as registry package names without it)
+  // Yarn 4 on Windows needs file: protocol with forward slashes for local tarballs
+  // e.g. "file:D:/a/stoma/stoma/packages/gateway/stoma-e2e.tgz"
   const gwTarball =
-    runner === "yarn" && isWindows ? `file:${gatewayTarball}` : gatewayTarball;
+    runner === "yarn" && isWindows
+      ? `file:${gatewayTarball.replace(/\\/g, "/")}`
+      : gatewayTarball;
   const clTarball =
-    runner === "yarn" && isWindows ? `file:${cliTarball}` : cliTarball;
+    runner === "yarn" && isWindows
+      ? `file:${cliTarball.replace(/\\/g, "/")}`
+      : cliTarball;
 
   if (runner === "npm") {
     writeFileSync(
@@ -178,9 +182,16 @@ async function installWith(
     });
   }
 
-  // Windows creates .cmd shims instead of symlinks in .bin/
-  const binName = isWindows ? "stoma.cmd" : "stoma";
-  const binPath = path.join(tmpDir, "node_modules/.bin", binName);
+  // Windows creates various shims (.cmd, .exe) instead of symlinks in .bin/ depending on the package manager
+  let binPath = path.join(tmpDir, "node_modules/.bin", "stoma");
+  if (isWindows) {
+    if (existsSync(binPath + ".cmd")) {
+      binPath += ".cmd";
+    } else if (existsSync(binPath + ".exe")) {
+      binPath += ".exe";
+    }
+  }
+
   if (!existsSync(binPath)) {
     throw new Error(`Binary not found at ${binPath} after ${runner} install`);
   }
@@ -277,7 +288,7 @@ describe("npm install (simulates npx)", () => {
   beforeAll(async () => {
     env = await installWith("npm");
     tmpDirs.push(env.tmpDir);
-  }, 120_000);
+  }, 180_000);
 
   it("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);
@@ -291,7 +302,7 @@ describe("yarn add (simulates yarn dlx)", async () => {
   beforeAll(async () => {
     env = await installWith("yarn");
     tmpDirs.push(env.tmpDir);
-  }, 120_000);
+  }, 180_000);
 
   it.skipIf(!available)("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);
@@ -306,7 +317,7 @@ describe("pnpm add (simulates pnpm dlx)", async () => {
     if (!available) return;
     env = await installWith("pnpm");
     tmpDirs.push(env.tmpDir);
-  }, 120_000);
+  }, 180_000);
 
   it.skipIf(!available)("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);
@@ -321,7 +332,7 @@ describe("bun add (simulates bunx)", async () => {
     if (!available) return;
     env = await installWith("bun");
     tmpDirs.push(env.tmpDir);
-  }, 120_000);
+  }, 180_000);
 
   it.skipIf(!available)("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);

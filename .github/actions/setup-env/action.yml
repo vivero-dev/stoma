@@ -1,0 +1,26 @@
+name: "Setup Environment"
+description: "Install runtimes, package managers, and dependencies"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Install pnpm
+      shell: bash
+      run: npm install -g pnpm
+
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: "yarn"
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable

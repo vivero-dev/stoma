@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches-ignore: [main]
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -10,43 +10,48 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
-    # Skip changeset "Version Packages" PRs
-    if: github.actor != 'github-actions[bot]'
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Cache node_modules
-        id: cache-deps
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-            docs/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Install dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: yarn install --immutable
+      - uses: ./.github/actions/setup-env
 
       - name: Typecheck
         run: yarn typecheck
 
+      - name: Lint
+        run: yarn lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-env
+
       - name: Test
         run: yarn test
+
+  e2e:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-env
 
       - name: Build
         run: yarn build
 
+      - name: E2E test CLI
+        run: yarn workspace @vivero/stoma-cli test:e2e
+
+  changeset-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-env
+
       - name: Check for changeset
-        if: github.event_name == 'pull_request'
         run: yarn changeset status

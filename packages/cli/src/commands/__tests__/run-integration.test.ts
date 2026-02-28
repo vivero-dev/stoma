@@ -1,15 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Cli } from "clipanion";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  type MockInstance,
-  vi,
-} from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RunCommand } from "../run.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,14 +14,14 @@ function createRunCommand(args: string[]): RunCommand {
 }
 
 async function waitForLog(
-  logSpy: MockInstance,
+  logSpy: any,
   substring: string,
   timeoutMs = 5000
 ): Promise<void> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    const logCalls = logSpy.mock.calls.map((c: unknown[]) => c[0] as string);
-    if (logCalls.some((msg) => msg?.includes(substring))) {
+    const logCalls = logSpy.mock.calls.map((c: any) => c[0]);
+    if (logCalls.some((msg: string) => msg?.includes(substring))) {
       return;
     }
     await new Promise((r) => setTimeout(r, 50));
@@ -38,7 +30,7 @@ async function waitForLog(
 }
 
 describe("RunCommand full flow", () => {
-  let signalHandlers: Map<string, (...args: unknown[]) => void>;
+  let signalHandlers: Map<string, (...args: any[]) => void>;
 
   beforeEach(() => {
     signalHandlers = new Map();
@@ -46,11 +38,11 @@ describe("RunCommand full flow", () => {
     vi.spyOn(process, "exit").mockImplementation((() => {}) as never);
     vi.spyOn(process, "on").mockImplementation(((
       event: string,
-      handler: (...args: unknown[]) => void
+      handler: (...args: any[]) => void
     ) => {
       signalHandlers.set(event, handler);
       return process;
-    }) as never);
+    }) as any);
   });
 
   afterEach(() => {

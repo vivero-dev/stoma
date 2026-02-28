@@ -32,11 +32,10 @@ const fixturePath = path.join(
   cliRoot,
   "src/__tests__/fixtures/test-gateway.ts"
 );
-const isWindows = process.platform === "win32";
 
-// Stable tarball paths — cleaned up in afterAll
-const gatewayTarball = path.join(gatewayRoot, "stoma-e2e.tgz");
-const cliTarball = path.join(cliRoot, "stoma-cli-e2e.tgz");
+// Tarball paths — resolved dynamically from pnpm pack output
+let gatewayTarball: string;
+let cliTarball: string;
 
 // Peers that must be installed alongside the tarballs
 const PEERS = ["hono@^4", "esbuild@^0.25"];
@@ -104,17 +103,6 @@ async function installWith(
 ): Promise<RunnerEnv> {
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
-  // Yarn Berry on Windows requires `name@file:path` syntax with forward slashes.
-  // npm/pnpm/bun accept bare absolute paths on all OSes.
-  let gwTarball = gatewayTarball;
-  let clTarball = cliTarball;
-
-  if (runner === "yarn" && isWindows) {
-    const toFileUrl = (p: string) => p.replace(/\\/g, "/");
-    gwTarball = `@vivero/stoma@file:${toFileUrl(gatewayTarball)}`;
-    clTarball = `@vivero/stoma-cli@file:${toFileUrl(cliTarball)}`;
-  }
-
   if (runner === "npm") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
@@ -122,8 +110,8 @@ async function installWith(
     );
     await execa(
       "npm",
-      ["install", "--no-package-lock", gwTarball, clTarball, ...PEERS],
-      { cwd: tmpDir, timeout: 120_000 }
+      ["install", "--no-package-lock", gatewayTarball, cliTarball, ...PEERS],
+      { cwd: tmpDir, timeout: 60_000 }
     );
   } else if (runner === "yarn") {
     // Yarn 4: use node-modules linker so native deps (esbuild) work
@@ -140,9 +128,9 @@ async function installWith(
       timeout: 10_000,
       input: "\n",
     }).catch(() => {});
-    await execa("yarn", ["add", gwTarball, clTarball, ...PEERS], {
+    await execa("yarn", ["add", gatewayTarball, cliTarball, ...PEERS], {
       cwd: tmpDir,
-      timeout: 120_000,
+      timeout: 60_000,
     });
   } else if (runner === "pnpm") {
     writeFileSync(
@@ -156,11 +144,11 @@ async function installWith(
         "add",
         "--no-lockfile",
         "--shamefully-hoist",
-        gwTarball,
-        clTarball,
+        gatewayTarball,
+        cliTarball,
         ...PEERS,
       ],
-      { cwd: tmpDir, timeout: 120_000 }
+      { cwd: tmpDir, timeout: 60_000 }
     );
   } else if (runner === "bun") {
     writeFileSync(
@@ -172,26 +160,17 @@ async function installWith(
       cwd: tmpDir,
       timeout: 60_000,
     });
-    await execa("bun", ["add", gwTarball], {
+    await execa("bun", ["add", gatewayTarball], {
       cwd: tmpDir,
       timeout: 60_000,
     });
-    await execa("bun", ["add", clTarball], {
+    await execa("bun", ["add", cliTarball], {
       cwd: tmpDir,
       timeout: 60_000,
     });
   }
 
-  // Windows creates various shims (.cmd, .exe) instead of symlinks in .bin/ depending on the package manager
-  let binPath = path.join(tmpDir, "node_modules/.bin", "stoma");
-  if (isWindows) {
-    if (existsSync(`${binPath}.cmd`)) {
-      binPath += ".cmd";
-    } else if (existsSync(`${binPath}.exe`)) {
-      binPath += ".exe";
-    }
-  }
-
+  const binPath = path.join(tmpDir, "node_modules/.bin/stoma");
   if (!existsSync(binPath)) {
     throw new Error(`Binary not found at ${binPath} after ${runner} install`);
   }
@@ -210,14 +189,10 @@ async function installWith(
 async function assertInstalledBinaryWorks(env: RunnerEnv) {
   const { tmpDir, binPath } = env;
 
-  // Windows .cmd shims need shell: true to execute
-  const execOpts = isWindows ? { shell: true as const } : {};
-
   // 1. --version parses and exits cleanly
   const versionResult = await execa(binPath, ["--version"], {
     cwd: tmpDir,
     reject: false,
-    ...execOpts,
   });
   expect(versionResult.exitCode).toBe(0);
   expect(versionResult.stdout.trim()).toMatch(/^\d+\.\d+\.\d+/);
@@ -229,7 +204,6 @@ async function assertInstalledBinaryWorks(env: RunnerEnv) {
   const proc = execa(binPath, ["run", fixturePath, "--port", String(port)], {
     cwd: tmpDir,
     reject: false,
-    ...execOpts,
   });
 
   try {
@@ -241,23 +215,12 @@ async function assertInstalledBinaryWorks(env: RunnerEnv) {
     const healthRes = await fetch(`http://localhost:${port}/health`);
     expect(healthRes.status).toBe(200);
   } finally {
-    if (proc.pid && !proc.killed) {
-      if (isWindows) {
-        try {
-          // SIGTERM leaves orphaned node.exe processes on Windows when sent to a .cmd shim.
-          // We must force kill the entire process tree to close stdio and let execa resolve.
-          const { execSync } = await import("node:child_process");
-          execSync(`taskkill /pid ${proc.pid} /T /F`, { stdio: "ignore" });
-        } catch {
-          // ignore taskkill errors
-        }
-      } else {
-        proc.kill("SIGKILL");
-      }
+    if (!proc.killed) {
+      proc.kill("SIGTERM");
       try {
         await proc;
       } catch {
-        // may have already exited or rejected due to SIGKILL
+        // may have already exited
       }
     }
   }
@@ -269,26 +232,20 @@ const tmpDirs: string[] = [];
 
 beforeAll(async () => {
   // Pack both packages into tarballs (shared across all runners)
-  await Promise.all([
-    execa("yarn", ["pack", "--out", "stoma-e2e.tgz"], { cwd: gatewayRoot }),
-    execa("yarn", ["pack", "--out", "stoma-cli-e2e.tgz"], { cwd: cliRoot }),
+  const [gw, cli] = await Promise.all([
+    execa("pnpm", ["pack"], { cwd: gatewayRoot }),
+    execa("pnpm", ["pack"], { cwd: cliRoot }),
   ]);
+  gatewayTarball = path.join(gatewayRoot, gw.stdout.trim());
+  cliTarball = path.join(cliRoot, cli.stdout.trim());
 }, 30_000);
 
 afterAll(() => {
   for (const dir of tmpDirs) {
-    try {
-      rmSync(dir, { recursive: true, force: true });
-    } catch {
-      // Windows: EBUSY when processes still hold file handles
-    }
+    rmSync(dir, { recursive: true, force: true });
   }
-  try {
-    rmSync(gatewayTarball, { force: true });
-    rmSync(cliTarball, { force: true });
-  } catch {
-    // best-effort cleanup
-  }
+  rmSync(gatewayTarball, { force: true });
+  rmSync(cliTarball, { force: true });
 });
 
 // ── Runner-specific test suites ───────────────────────────────────
@@ -299,11 +256,11 @@ describe("npm install (simulates npx)", () => {
   beforeAll(async () => {
     env = await installWith("npm");
     tmpDirs.push(env.tmpDir);
-  }, 300_000);
+  }, 120_000);
 
   it("installed binary works end-to-end", async () => {
     await assertInstalledBinaryWorks(env);
-  }, 300_000);
+  });
 });
 
 describe("yarn add (simulates yarn dlx)", async () => {
@@ -313,15 +270,11 @@ describe("yarn add (simulates yarn dlx)", async () => {
   beforeAll(async () => {
     env = await installWith("yarn");
     tmpDirs.push(env.tmpDir);
-  }, 300_000);
+  }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    },
-    300_000
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });
 
 describe("pnpm add (simulates pnpm dlx)", async () => {
@@ -332,15 +285,11 @@ describe("pnpm add (simulates pnpm dlx)", async () => {
     if (!available) return;
     env = await installWith("pnpm");
     tmpDirs.push(env.tmpDir);
-  }, 300_000);
+  }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    },
-    300_000
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });
 
 describe("bun add (simulates bunx)", async () => {
@@ -351,13 +300,9 @@ describe("bun add (simulates bunx)", async () => {
     if (!available) return;
     env = await installWith("bun");
     tmpDirs.push(env.tmpDir);
-  }, 300_000);
+  }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    },
-    300_000
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });

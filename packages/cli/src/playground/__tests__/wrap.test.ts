@@ -191,6 +191,107 @@ describe("wrapWithPlayground", () => {
     });
   });
 
+  // ── Encoding header hygiene ────────────────────────────────────
+  //
+  // After fetch() transparently decompresses an upstream response the
+  // content-encoding and content-length headers are stale. The proxy
+  // must strip them so the playground UI never sees misleading headers
+  // or (worse) tries to re-interpret already-decoded bytes.
+
+  describe("/__playground/send strips stale encoding headers", () => {
+    it("strips content-encoding from the response headers", async () => {
+      const gatewayFetch = () =>
+        new Response('{"ok":true}', {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "content-encoding": "gzip", // stale — body is already decoded
+            "x-custom": "keep-me",
+          },
+        });
+
+      const wrapped = wrapWithPlayground(gatewayFetch, mockRegistry());
+      const res = await wrapped(
+        req("/__playground/send", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ method: "GET", path: "/api/hello" }),
+        })
+      );
+
+      const data = (await res.json()) as {
+        headers: Record<string, string>;
+        body: string;
+      };
+
+      // The stale content-encoding MUST NOT leak to the playground UI
+      expect(data.headers).not.toHaveProperty("content-encoding");
+      // Other headers pass through normally
+      expect(data.headers["x-custom"]).toBe("keep-me");
+      // Body should be the readable decoded text
+      expect(data.body).toBe('{"ok":true}');
+    });
+
+    it("strips content-length from the response headers", async () => {
+      const body = '{"users":[1,2,3]}';
+      const gatewayFetch = () =>
+        new Response(body, {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            // Stale content-length from the compressed body — does not
+            // match the decompressed body length shown to the user.
+            "content-length": "9999",
+          },
+        });
+
+      const wrapped = wrapWithPlayground(gatewayFetch, mockRegistry());
+      const res = await wrapped(
+        req("/__playground/send", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ method: "GET", path: "/api/hello" }),
+        })
+      );
+
+      const data = (await res.json()) as {
+        headers: Record<string, string>;
+        body: string;
+      };
+
+      // Stale content-length MUST NOT leak — it doesn't match the
+      // decoded body and confuses response display
+      expect(data.headers).not.toHaveProperty("content-length");
+      expect(data.body).toBe(body);
+    });
+
+    it("strips transfer-encoding from the response headers", async () => {
+      const gatewayFetch = () =>
+        new Response("chunk1chunk2", {
+          status: 200,
+          headers: {
+            "content-type": "text/plain",
+            "transfer-encoding": "chunked",
+          },
+        });
+
+      const wrapped = wrapWithPlayground(gatewayFetch, mockRegistry());
+      const res = await wrapped(
+        req("/__playground/send", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ method: "GET", path: "/api/hello" }),
+        })
+      );
+
+      const data = (await res.json()) as {
+        headers: Record<string, string>;
+      };
+
+      expect(data.headers).not.toHaveProperty("transfer-encoding");
+    });
+  });
+
   // ── OAuth relay invariants ──────────────────────────────────────
 
   describe("OAuth relay interception", () => {

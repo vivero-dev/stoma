@@ -62,6 +62,19 @@ export function wrapWithPlayground(
 }
 
 /**
+ * Headers that are stale or meaningless after the body has been fully
+ * read and decoded in-process. Forwarding these to the playground UI
+ * causes garbled display (content-encoding implies the body is still
+ * compressed) or misleading metadata (content-length from the
+ * compressed payload doesn't match the decoded text).
+ */
+const STRIPPED_HEADERS = new Set([
+  "content-encoding",
+  "content-length",
+  "transfer-encoding",
+]);
+
+/**
  * Execute a request against the gateway in-process and return the full
  * response details as JSON. This avoids browser fetch limitations
  * (redirect following, CORS, opaque responses).
@@ -97,7 +110,9 @@ async function handlePlaygroundSend(
     const body = await res.text();
     const headers: Record<string, string> = {};
     res.headers.forEach((v, k) => {
-      headers[k] = v;
+      if (!STRIPPED_HEADERS.has(k)) {
+        headers[k] = v;
+      }
     });
 
     return Response.json({

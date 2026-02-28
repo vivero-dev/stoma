@@ -4,9 +4,11 @@ description: "Install runtimes, package managers, and dependencies"
 runs:
   using: "composite"
   steps:
-    - name: Enable Corepack
+    - name: Enable Corepack and prepare Yarn
       shell: bash
-      run: corepack enable
+      run: |
+        corepack enable
+        corepack prepare yarn@stable --activate
 
     - uses: oven-sh/setup-bun@v2
       with:

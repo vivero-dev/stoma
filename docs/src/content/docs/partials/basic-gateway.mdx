@@ -17,10 +17,10 @@ import basicGateway from '@examples/basic/gateway.ts?raw';
 |----------|---------|---------------|
 | `name` | Identifier for logs/admin | `"my-gateway"` |
 | `basePath` | Prefix for all routes | `"/api"` |
-| `routes[].path` | URL pattern to match | `"/users/*"` |
+| `routes[].path` | URL pattern to match | `"/*"` or `"/users/*"` |
 | `pipeline.policies` | Middleware for this route | `[jwtAuth(), rateLimit()]` |
-| `upstream.target` | Destination URL | `"https://api.example.com"` |
-| `upstream.rewritePath` | Path transformation | `(path) => path.replace("/api", "")` |
+| `upstream.target` | Destination origin | `"https://api.example.com"` |
+| `upstream.rewritePath` | Path transformation | `(path) => path.replace("/api", "/v1")` |
 
 ## Next Steps
 

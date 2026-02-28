@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Stoma — Declarative API Gateway",
+  "short_name": "Stoma",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

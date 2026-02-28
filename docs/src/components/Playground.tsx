@@ -138,6 +138,7 @@ export default function Playground() {
             headers: {},
             body: String(err),
             timingMs: 0,
+            trace: null,
           },
         });
       } finally {
@@ -212,6 +213,7 @@ export default function Playground() {
             className="pg-btn"
             disabled={buttonsDisabled}
             onClick={() => handlePreset(preset)}
+            type="submit"
           >
             <span
               className={
@@ -292,6 +294,7 @@ export default function Playground() {
         className="pg-reset-btn"
         disabled={resetting}
         onClick={handleReset}
+        type="reset"
       >
         Reset Playground
       </button>

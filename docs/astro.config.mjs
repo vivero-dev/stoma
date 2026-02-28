@@ -4,6 +4,7 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import mermaid from "astro-mermaid";
 import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
+import { OptionDefaults } from "typedoc";
 import demoApiPlugin from "./vite-plugin-demo-api";
 
 export default defineConfig({
@@ -34,7 +35,7 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             property: "twitter:image",
-            content: "/og_image.jpg",
+            content: "https://stoma.vivero.dev/og_image.jpg",
           },
         },
         {
@@ -48,7 +49,14 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             property: "og:image",
-            content: "/og_image.jpg",
+            content: "https://stoma.vivero.dev/og_image.jpg",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            property: "og:image:type",
+            content: "image/jpeg",
           },
         },
         {
@@ -125,6 +133,7 @@ export default defineConfig({
             exclude: ["**/__tests__/**"],
             excludePrivate: true,
             excludeInternal: true,
+            blockTags: [...OptionDefaults.blockTags, "@security"],
           },
         }),
       ],

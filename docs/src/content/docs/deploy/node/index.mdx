@@ -1,0 +1,248 @@
+---
+title: Deploy with Node.js
+description: Deploy your Stoma gateway to Node.js with @hono/node-server.
+sidebar:
+  order: 2
+---
+
+import { Steps, Aside, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+Deploy your Stoma gateway on Node.js using [`@hono/node-server`](https://github.com/honojs/node-server), Hono's official Node.js adapter.
+
+## Quick Start
+
+<Steps>
+1. **Install dependencies**
+
+   ```sh
+   npm install hono @hono/node-server @vivero/stoma
+   ```
+
+2. **Create your gateway**
+
+   ```typescript title="src/index.ts"
+   import { serve } from "@hono/node-server";
+   import {
+     createGateway,
+     cors,
+     requestLog,
+     rateLimit,
+   } from "@vivero/stoma";
+   import { nodeAdapter } from "@vivero/stoma/adapters/node";
+
+   const gateway = createGateway({
+     name: "my-gateway",
+     basePath: "/api",
+     adapter: nodeAdapter(),
+     policies: [requestLog(), cors()],
+     routes: [
+       {
+         path: "/users/*",
+         pipeline: {
+           policies: [rateLimit({ max: 100, window: 60 })],
+           upstream: {
+             type: "url",
+             target: "https://api.example.com",
+             rewritePath: (path) => path.replace("/api", ""),
+           },
+         },
+       },
+     ],
+   });
+
+   serve({ fetch: gateway.app.fetch, port: 3000 }, (info) => {
+     console.log(`Gateway listening on http://localhost:${info.port}`);
+   });
+   ```
+
+3. **Run**
+
+   ```sh
+   npx tsx src/index.ts
+   ```
+</Steps>
+
+## Node Adapter
+
+The `nodeAdapter()` provides in-memory stores for rate limiting, circuit breakers, and caching. It delegates to `memoryAdapter()` under the hood.
+
+```typescript title="src/index.ts"
+import { serve } from "@hono/node-server";
+import {
+  createGateway,
+  cors,
+  rateLimit,
+  cache,
+} from "@vivero/stoma";
+import { nodeAdapter } from "@vivero/stoma/adapters/node";
+
+const adapter = nodeAdapter();
+
+const gateway = createGateway({
+  name: "my-gateway",
+  basePath: "/api",
+  adapter,
+  policies: [cors()],
+  routes: [
+    {
+      path: "/users/*",
+      pipeline: {
+        policies: [
+          rateLimit({
+            max: 100,
+            windowSeconds: 60,
+            store: adapter.rateLimitStore,
+          }),
+        ],
+        upstream: {
+          type: "url",
+          target: "https://api.example.com",
+        },
+      },
+    },
+  ],
+});
+
+serve({ fetch: gateway.app.fetch, port: 3000 }, (info) => {
+  console.log(`Gateway listening on http://localhost:${info.port}`);
+});
+```
+
+## Server Options
+
+### Basic Server
+
+```typescript title="src/index.ts"
+import { serve } from "@hono/node-server";
+import gateway from "./gateway";
+
+serve({ fetch: gateway.app.fetch, port: 3000 }, (info) => {
+  console.log(`Listening on http://localhost:${info.port}`);
+});
+```
+
+### With TLS/HTTPS
+
+```typescript title="src/index.ts"
+import { readFileSync } from "node:fs";
+import { serve } from "@hono/node-server";
+import gateway from "./gateway";
+
+serve({
+  fetch: gateway.app.fetch,
+  port: 443,
+  createServer: await import("node:https").then((m) => m.createServer),
+  serverOptions: {
+    cert: readFileSync("./cert.pem"),
+    key: readFileSync("./key.pem"),
+  },
+});
+```
+
+### With Unix Socket
+
+For reverse proxy integration (nginx, Caddy):
+
+```typescript title="src/index.ts"
+import { createServer } from "node:http";
+import { serve } from "@hono/node-server";
+import gateway from "./gateway";
+
+const server = serve({
+  fetch: gateway.app.fetch,
+  createServer,
+});
+
+server.listen("/tmp/gateway.sock");
+```
+
+## Platform Deployment
+
+### Railway
+
+```json title="package.json"
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  }
+}
+```
+
+### Render
+
+```yaml title="render.yaml"
+services:
+  - type: web
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+```
+
+### Fly.io
+
+```toml title="fly.toml"
+app = "stoma-gateway"
+
+[build]
+  builder = "heroku/buildpacks:22"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+
+[[services]]
+  internal_port = 3000
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+```
+
+## Environment Variables
+
+```typescript title="src/index.ts"
+const gateway = createGateway({
+  name: process.env.GATEWAY_NAME || "my-gateway",
+  basePath: process.env.BASE_PATH || "/api",
+  debug: process.env.DEBUG === "true",
+});
+
+serve({
+  fetch: gateway.app.fetch,
+  port: parseInt(process.env.PORT || "3000"),
+});
+```
+
+```sh title=".env"
+GATEWAY_NAME=my-gateway
+PORT=3000
+DEBUG=false
+```
+
+<Aside type="tip">
+Node.js is the most broadly supported runtime. Choose it when you need compatibility with existing Node.js infrastructure or access to the widest npm ecosystem.
+</Aside>
+
+## Next Steps
+
+<CardGrid>
+  <LinkCard
+    title="Deploy with Docker"
+    href="/deploy/docker/"
+    description="Containerize your Node.js gateway"
+  />
+  <LinkCard
+    title="Deploy to Cloudflare"
+    href="/deploy/cloudflare/"
+    description="Deploy to the edge for global low latency"
+  />
+</CardGrid>

@@ -12,12 +12,16 @@ describe("createCli", () => {
   it("has binaryLabel 'stoma'", () => {
     const cli = createCli();
     // Clipanion stores binaryLabel on the instance
-    expect((cli as Record<string, unknown>).binaryLabel).toBe("stoma");
+    expect((cli as unknown as Record<string, unknown>).binaryLabel).toBe(
+      "stoma"
+    );
   });
 
   it("has binaryName 'stoma'", () => {
     const cli = createCli();
-    expect((cli as Record<string, unknown>).binaryName).toBe("stoma");
+    expect((cli as unknown as Record<string, unknown>).binaryName).toBe(
+      "stoma"
+    );
   });
 
   it("registers the RunCommand (accepts 'run' path)", () => {

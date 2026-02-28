@@ -28,8 +28,8 @@ async function waitForLog(
 ): Promise<void> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    const logCalls = logSpy.mock.calls.map((c: unknown[]) => c[0]);
-    if (logCalls.some((msg: string) => msg?.includes(substring))) {
+    const logCalls = logSpy.mock.calls.map((c: unknown[]) => c[0] as string);
+    if (logCalls.some((msg) => msg?.includes(substring))) {
       return;
     }
     await new Promise((r) => setTimeout(r, 50));

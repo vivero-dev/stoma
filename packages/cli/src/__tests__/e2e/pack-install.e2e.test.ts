@@ -104,16 +104,15 @@ async function installWith(
 ): Promise<RunnerEnv> {
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
-  // Yarn 4 on Windows needs file: protocol with forward slashes for local tarballs
-  // Default to absolute paths, which work flawlessly on npm, pnpm, and bun across all OSes.
+  // Yarn Berry on Windows requires `name@file:path` syntax with forward slashes.
+  // npm/pnpm/bun accept bare absolute paths on all OSes.
   let gwTarball = gatewayTarball;
   let clTarball = cliTarball;
 
   if (runner === "yarn" && isWindows) {
-    // Yarn 4 on Windows treats "D:\path" as a protocol "D:". To bypass this,
-    // we use a relative path. On Windows, tmpdir is not symlinked like on Mac, so this is safe.
-    gwTarball = `./${path.relative(tmpDir, gatewayTarball).replace(/\\/g, "/")}`;
-    clTarball = `./${path.relative(tmpDir, cliTarball).replace(/\\/g, "/")}`;
+    const toFileUrl = (p: string) => p.replace(/\\/g, "/");
+    gwTarball = `@vivero/stoma@file:${toFileUrl(gatewayTarball)}`;
+    clTarball = `@vivero/stoma-cli@file:${toFileUrl(cliTarball)}`;
   }
 
   if (runner === "npm") {

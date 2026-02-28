@@ -81,9 +81,7 @@ describe("RunCommand.execute() validation", () => {
 
     const cmd = createRunCommand(["./nonexistent.ts"]);
     await cmd.execute();
-    expect(spy).toHaveBeenCalledWith(
-      expect.stringContaining("File not found")
-    );
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining("File not found"));
   });
 
   it("returns 1 when startServer throws", async () => {

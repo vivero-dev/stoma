@@ -209,7 +209,6 @@ export default function Playground() {
       <div className="pg-buttons">
         {PRESETS.map((preset, i) => (
           <button
-            // biome-ignore lint/suspicious/noArrayIndexKey: fine for playground
             key={i}
             className="pg-btn"
             disabled={buttonsDisabled}

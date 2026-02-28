@@ -18,7 +18,8 @@
       "!**/docs/node_modules",
       "!**/docs/.astro",
       "!**/docs/public/stoma-bundle.*",
-      "!**/docs/public/editor-worker.js"
+      "!**/docs/public/editor-worker.js",
+      "!**/fixtures/syntax-error.ts"
     ]
   },
   "formatter": {

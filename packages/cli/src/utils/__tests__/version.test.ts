@@ -42,7 +42,8 @@ describe("getVersion", () => {
   it("falls back to 0.0.0 when package.json has wrong name", async () => {
     vi.mock("node:fs", () => ({
       existsSync: () => true,
-      readFileSync: () => JSON.stringify({ name: "wrong-package", version: "9.9.9" }),
+      readFileSync: () =>
+        JSON.stringify({ name: "wrong-package", version: "9.9.9" }),
     }));
 
     const { getVersion } = await import("../version.js");

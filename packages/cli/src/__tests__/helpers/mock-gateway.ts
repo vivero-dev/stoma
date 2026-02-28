@@ -1,7 +1,4 @@
-import type {
-  GatewayInstance,
-  GatewayRegistry,
-} from "../../gateway/types.js";
+import type { GatewayInstance, GatewayRegistry } from "../../gateway/types.js";
 
 export function mockGateway(
   overrides: Partial<GatewayInstance> = {}

@@ -99,9 +99,11 @@ describe("resolveGateway remote URLs", () => {
     });
 
     it("throws descriptive error for HTTP 404", async () => {
-      globalThis.fetch = vi.fn().mockResolvedValue(
-        new Response("Not Found", { status: 404, statusText: "Not Found" })
-      );
+      globalThis.fetch = vi
+        .fn()
+        .mockResolvedValue(
+          new Response("Not Found", { status: 404, statusText: "Not Found" })
+        );
 
       await expect(
         resolveGateway("https://example.com/missing.ts", {
@@ -140,9 +142,9 @@ describe("resolveGateway remote URLs", () => {
 
   describe("without --trust-remote", () => {
     it("rejects with security warning", async () => {
-      await expect(
-        resolveGateway("https://example.com/gw.ts")
-      ).rejects.toThrow("--trust-remote");
+      await expect(resolveGateway("https://example.com/gw.ts")).rejects.toThrow(
+        "--trust-remote"
+      );
     });
   });
 });

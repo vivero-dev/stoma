@@ -18,18 +18,12 @@
  * Runners that aren't installed on the machine are automatically skipped.
  */
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import path from "node:path";
 import { tmpdir } from "node:os";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execa, type ResultPromise } from "execa";
 import getPort from "get-port";
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  it,
-} from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cliRoot = path.resolve(__dirname, "../../..");
@@ -116,13 +110,7 @@ async function installWith(
     );
     await execa(
       "npm",
-      [
-        "install",
-        "--no-package-lock",
-        gatewayTarball,
-        cliTarball,
-        ...PEERS,
-      ],
+      ["install", "--no-package-lock", gatewayTarball, cliTarball, ...PEERS],
       { cwd: tmpDir, timeout: 60_000 }
     );
   } else if (runner === "yarn") {
@@ -140,11 +128,10 @@ async function installWith(
       timeout: 10_000,
       input: "\n",
     }).catch(() => {});
-    await execa(
-      "yarn",
-      ["add", gatewayTarball, cliTarball, ...PEERS],
-      { cwd: tmpDir, timeout: 60_000 }
-    );
+    await execa("yarn", ["add", gatewayTarball, cliTarball, ...PEERS], {
+      cwd: tmpDir,
+      timeout: 60_000,
+    });
   } else if (runner === "pnpm") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
@@ -185,9 +172,7 @@ async function installWith(
 
   const binPath = path.join(tmpDir, "node_modules/.bin/stoma");
   if (!existsSync(binPath)) {
-    throw new Error(
-      `Binary not found at ${binPath} after ${runner} install`
-    );
+    throw new Error(`Binary not found at ${binPath} after ${runner} install`);
   }
 
   return { tmpDir, binPath };
@@ -216,18 +201,15 @@ async function assertInstalledBinaryWorks(env: RunnerEnv) {
   // Use the bin path directly (shebang handles execution) — do NOT prefix
   // with `node` because pnpm creates a shell wrapper at .bin/stoma
   const port = await getPort();
-  const proc = execa(
-    binPath,
-    ["run", fixturePath, "--port", String(port)],
-    { cwd: tmpDir, reject: false }
-  );
+  const proc = execa(binPath, ["run", fixturePath, "--port", String(port)], {
+    cwd: tmpDir,
+    reject: false,
+  });
 
   try {
     const startOutput = await waitForOutput(proc, "listening on");
     if (!startOutput.includes("listening on")) {
-      throw new Error(
-        `Server failed to start.\nOutput: ${startOutput}`
-      );
+      throw new Error(`Server failed to start.\nOutput: ${startOutput}`);
     }
 
     const healthRes = await fetch(`http://localhost:${port}/health`);
@@ -288,12 +270,9 @@ describe("yarn add (simulates yarn dlx)", async () => {
     tmpDirs.push(env.tmpDir);
   }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    }
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });
 
 describe("pnpm add (simulates pnpm dlx)", async () => {
@@ -306,12 +285,9 @@ describe("pnpm add (simulates pnpm dlx)", async () => {
     tmpDirs.push(env.tmpDir);
   }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    }
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });
 
 describe("bun add (simulates bunx)", async () => {
@@ -324,10 +300,7 @@ describe("bun add (simulates bunx)", async () => {
     tmpDirs.push(env.tmpDir);
   }, 120_000);
 
-  it.skipIf(!available)(
-    "installed binary works end-to-end",
-    async () => {
-      await assertInstalledBinaryWorks(env);
-    }
-  );
+  it.skipIf(!available)("installed binary works end-to-end", async () => {
+    await assertInstalledBinaryWorks(env);
+  });
 });

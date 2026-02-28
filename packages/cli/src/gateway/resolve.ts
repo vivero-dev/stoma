@@ -100,7 +100,10 @@ async function resolveRemoteGateway(
  * Derive a filename (with extension) from a URL path and optional content-type.
  * Falls back to `.ts` so esbuild can transpile unknown sources.
  */
-export function filenameFromUrl(url: string, contentType: string | null): string {
+export function filenameFromUrl(
+  url: string,
+  contentType: string | null
+): string {
   const pathname = new URL(url).pathname;
   const basename = path.basename(pathname);
 

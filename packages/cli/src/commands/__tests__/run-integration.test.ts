@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Cli } from "clipanion";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RunCommand } from "../run.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +21,7 @@ async function waitForLog(
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const logCalls = logSpy.mock.calls.map((c: any) => c[0]);
-    if (logCalls.some((msg: string) => msg && msg.includes(substring))) {
+    if (logCalls.some((msg: string) => msg?.includes(substring))) {
       return;
     }
     await new Promise((r) => setTimeout(r, 50));
@@ -72,37 +72,26 @@ describe("RunCommand full flow", () => {
     ).toBe(true);
   });
 
-  it(
-    "--verbose shows route table after loading",
-    async () => {
-      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-      vi.spyOn(console, "error").mockImplementation(() => {});
+  it("--verbose shows route table after loading", async () => {
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const fixturePath = path.join(fixturesDir, "test-gateway.ts");
-      const cmd = createRunCommand([
-        fixturePath,
-        "--port",
-        "0",
-        "--verbose",
-      ]);
+    const fixturePath = path.join(fixturesDir, "test-gateway.ts");
+    const cmd = createRunCommand([fixturePath, "--port", "0", "--verbose"]);
 
-      const executePromise = cmd.execute();
-      
-      // Wait for the verbose logging to output routes, then trigger shutdown
-      await waitForLog(logSpy, "/echo");
-      const sigterm = signalHandlers.get("SIGTERM");
-      if (sigterm) sigterm();
-      await executePromise;
+    const executePromise = cmd.execute();
 
-      const logCalls = logSpy.mock.calls.map((c) => c[0]);
-      // Verbose mode should show individual routes
-      expect(logCalls.some((msg: string) => msg.includes("/health"))).toBe(
-        true
-      );
-      expect(logCalls.some((msg: string) => msg.includes("/echo"))).toBe(true);
-    },
-    10_000
-  );
+    // Wait for the verbose logging to output routes, then trigger shutdown
+    await waitForLog(logSpy, "/echo");
+    const sigterm = signalHandlers.get("SIGTERM");
+    if (sigterm) sigterm();
+    await executePromise;
+
+    const logCalls = logSpy.mock.calls.map((c) => c[0]);
+    // Verbose mode should show individual routes
+    expect(logCalls.some((msg: string) => msg.includes("/health"))).toBe(true);
+    expect(logCalls.some((msg: string) => msg.includes("/echo"))).toBe(true);
+  }, 10_000);
 
   it("rejects non-existent file", async () => {
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -111,9 +100,9 @@ describe("RunCommand full flow", () => {
     const cmd = createRunCommand(["/tmp/no-such-file-gateway.ts"]);
     const code = await cmd.execute();
     expect(code).toBe(1);
-    expect(
-      errSpy.mock.calls.some((c) => c[0].includes("File not found"))
-    ).toBe(true);
+    expect(errSpy.mock.calls.some((c) => c[0].includes("File not found"))).toBe(
+      true
+    );
   });
 
   it("rejects invalid port", async () => {
@@ -127,8 +116,8 @@ describe("RunCommand full flow", () => {
     ]);
     const code = await cmd.execute();
     expect(code).toBe(1);
-    expect(
-      errSpy.mock.calls.some((c) => c[0].includes("Invalid port"))
-    ).toBe(true);
+    expect(errSpy.mock.calls.some((c) => c[0].includes("Invalid port"))).toBe(
+      true
+    );
   });
 });

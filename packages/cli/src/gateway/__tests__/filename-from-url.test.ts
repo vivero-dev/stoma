@@ -43,7 +43,10 @@ describe("filenameFromUrl", () => {
   describe("content-type fallback", () => {
     it("returns gateway.mjs for javascript content-type", () => {
       expect(
-        filenameFromUrl("https://example.com/api/gateway", "application/javascript")
+        filenameFromUrl(
+          "https://example.com/api/gateway",
+          "application/javascript"
+        )
       ).toBe("gateway.mjs");
     });
 
@@ -83,9 +86,9 @@ describe("filenameFromUrl", () => {
     });
 
     it("handles fragments", () => {
-      expect(
-        filenameFromUrl("https://example.com/gw.ts#section", null)
-      ).toBe("gw.ts");
+      expect(filenameFromUrl("https://example.com/gw.ts#section", null)).toBe(
+        "gw.ts"
+      );
     });
   });
 });

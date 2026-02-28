@@ -64,8 +64,7 @@ describe("startServer", () => {
     });
 
     const address = server.address();
-    const port =
-      typeof address === "object" && address ? address.port : 0;
+    const port = typeof address === "object" && address ? address.port : 0;
 
     // Try to start second server on the same port
     await expect(
@@ -85,8 +84,7 @@ describe("startServer", () => {
     });
 
     const address = server.address();
-    const port =
-      typeof address === "object" && address ? address.port : 0;
+    const port = typeof address === "object" && address ? address.port : 0;
 
     // Close the server
     server.closeAllConnections();
@@ -94,8 +92,6 @@ describe("startServer", () => {
     server = undefined;
 
     // Requests should now fail
-    await expect(
-      fetch(`http://127.0.0.1:${port}/test`)
-    ).rejects.toThrow();
+    await expect(fetch(`http://127.0.0.1:${port}/test`)).rejects.toThrow();
   });
 });

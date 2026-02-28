@@ -4,7 +4,7 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { build } from "esbuild";
+import { build, type Plugin } from "esbuild";
 import type { GatewayInstance } from "./types.js";
 
 export interface ResolveOptions {
@@ -125,9 +125,35 @@ export function filenameFromUrl(
 }
 
 /**
+ * esbuild plugin that resolves CLI-provided packages using Node's require
+ * resolution. This is necessary because esbuild's `nodePaths` only works
+ * with traditional `node_modules` directories — it doesn't understand Yarn
+ * PnP or other virtual resolution schemes (e.g. `yarn dlx` environments).
+ *
+ * `createRequire` is patched by PnP's loader, so `require.resolve()` works
+ * correctly regardless of the package manager's resolution strategy.
+ */
+function createCliResolvePlugin(): Plugin {
+  const require = createRequire(import.meta.url);
+  return {
+    name: "stoma-cli-resolve",
+    setup(build) {
+      build.onResolve({ filter: /^(@vivero\/stoma|hono)(\/.*)?$/ }, (args) => {
+        try {
+          return { path: require.resolve(args.path) };
+        } catch {
+          return undefined;
+        }
+      });
+    },
+  };
+}
+
+/**
  * Get the node_modules search paths from the CLI's own install location.
- * Uses Node's own resolution algorithm via createRequire, so it works
- * correctly regardless of monorepo hoisting, Yarn PnP, or flat installs.
+ * Used as a fallback for environments with traditional node_modules layout.
+ * In Yarn PnP environments, this returns an empty array — the
+ * `createCliResolvePlugin()` handles resolution instead.
  */
 function getCliNodePaths(): string[] {
   const require = createRequire(import.meta.url);
@@ -183,6 +209,7 @@ async function importTypeScript(
       format: "esm",
       platform: "node",
       target: "node20",
+      plugins: [createCliResolvePlugin()],
       nodePaths: getCliNodePaths(),
       write: false,
       logLevel: "silent",

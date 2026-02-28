@@ -57,7 +57,7 @@ export interface ErrorResponse {
 }
 
 /**
- * Build a JSON {@link Response} from a {@link GatewayError}.
+ * Build a JSON `Response` from a {@link GatewayError}.
  *
  * Merges any custom headers from the error (e.g. `Retry-After`) into the
  * response. Includes the request ID when available for tracing.

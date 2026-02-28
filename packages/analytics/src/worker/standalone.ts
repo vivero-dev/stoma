@@ -1,6 +1,7 @@
 import { ndjsonPassthroughWriter } from "../parquet/ndjson-passthrough.js";
 import { createProcessor } from "../processor/index.js";
 import { localStorageAdapter } from "../storage/local.js";
+import type { ParquetWriter } from "../types.js";
 
 export interface StandaloneOptions {
   /** Path to directory containing raw log files. */
@@ -46,7 +47,7 @@ export async function runStandalone(options: StandaloneOptions) {
   } = options;
 
   // Try to use DuckDB WASM if available, fall back to NDJSON
-  let parquetWriter;
+  let parquetWriter: ParquetWriter;
   try {
     const { duckdbWasmParquetWriter } = await import(
       "../parquet/duckdb-wasm.js"

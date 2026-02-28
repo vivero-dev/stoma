@@ -216,6 +216,7 @@ describe("mergeConfigs - scalar fields", () => {
 
   it("should use last-defined adapter", () => {
     const adapter1 = {};
+    // biome-ignore lint/suspicious/noExplicitAny: stub for test
     const adapter2 = { rateLimitStore: {} as any };
 
     const merged = mergeConfigs(

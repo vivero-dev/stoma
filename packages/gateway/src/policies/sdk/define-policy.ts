@@ -148,8 +148,10 @@ export interface PolicyDefinition<TConfig extends PolicyConfig = PolicyConfig> {
 /**
  * Extract the keys of T that are required (not optional).
  * Evaluates to `never` when all keys are optional.
+ * @internal
  */
-type RequiredKeys<T> = {
+export type RequiredKeys<T> = {
+  // biome-ignore lint/complexity/noBannedTypes: {} is intentional — tests optional key detection
   [K in keyof T]-?: {} extends Pick<T, K> ? never : K;
 }[keyof T];
 

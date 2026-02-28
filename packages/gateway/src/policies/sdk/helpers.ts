@@ -37,7 +37,7 @@ export function resolveConfig<TConfig>(
 /**
  * Get a debug logger pre-namespaced to `stoma:policy:{name}`.
  *
- * Returns {@link noopDebugLogger} when there is no gateway context
+ * Returns a no-op debug logger when there is no gateway context
  * (e.g. outside a gateway pipeline) or when debug is disabled.
  * This eliminates the repeated `getGatewayContext(c)?.debug(...)` pattern.
  *

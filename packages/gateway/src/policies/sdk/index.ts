@@ -66,6 +66,8 @@ export type {
   PolicyFactory,
   /** Context injected into `definePolicy` handlers: merged config, debug logger, and gateway context. */
   PolicyHandlerContext,
+  /** @internal */
+  RequiredKeys,
 } from "./define-policy";
 /** Create a policy factory from a declarative definition - combines resolveConfig, policyDebug, and withSkip. */
 export { definePolicy } from "./define-policy";

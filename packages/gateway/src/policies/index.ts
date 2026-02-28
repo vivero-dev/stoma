@@ -10,8 +10,12 @@
 
 // ── Root-level policies ─────────────────────────────────────────────────
 
+/** Configuration for the mock policy. */
+export type { MockConfig } from "./mock";
 /** Return a static mock response, bypassing the upstream entirely (priority 999). */
 export { mock } from "./mock";
+/** Configuration for the proxy policy. */
+export type { ProxyPolicyConfig } from "./proxy";
 /** Per-route header manipulation, timeout control, and Host header preservation (priority 95). */
 export { proxy } from "./proxy";
 
@@ -156,6 +160,10 @@ export {
 
 /** Configuration for the health route factory. */
 export type { HealthConfig } from "../core/health";
+/** Configuration for the apiKeyAuth policy. */
+export type { ApiKeyAuthConfig } from "./auth/api-key-auth";
+/** Configuration for the basicAuth policy. */
+export type { BasicAuthConfig } from "./auth/basic-auth";
 /** Configuration for the generateHttpSignature policy. */
 export type { GenerateHttpSignatureConfig } from "./auth/generate-http-signature";
 /** Configuration for the generateJwt policy. */
@@ -237,7 +245,11 @@ export type {
   RateLimitStore,
 } from "./traffic/rate-limit";
 /** Configuration for the regexThreatProtection policy. */
-export type { RegexThreatProtectionConfig } from "./traffic/regex-threat-protection";
+export type {
+  /** A pattern rule for the regexThreatProtection policy. */
+  RegexPatternRule,
+  RegexThreatProtectionConfig,
+} from "./traffic/regex-threat-protection";
 /** Configuration for the requestLimit policy. */
 export type { RequestLimitConfig } from "./traffic/request-limit";
 /** Configuration for the resourceFilter policy. */
@@ -250,6 +262,8 @@ export type { TrafficShadowConfig } from "./traffic/traffic-shadow";
 export type { AssignAttributesConfig } from "./transform/assign-attributes";
 /** Configuration for the assignContent policy. */
 export type { AssignContentConfig } from "./transform/assign-content";
+/** Configuration for the cors policy. */
+export type { CorsConfig } from "./transform/cors";
 /** Configuration for the jsonValidation policy. */
 export type {
   JsonValidationConfig,
@@ -259,7 +273,11 @@ export type {
 /** Configuration for the overrideMethod policy. */
 export type { OverrideMethodConfig } from "./transform/override-method";
 /** Configuration for the requestValidation policy. */
-export type { RequestValidationConfig } from "./transform/request-validation";
+export type {
+  RequestValidationConfig,
+  /** Result shape returned by requestValidation's user-provided validator. */
+  ValidationResult,
+} from "./transform/request-validation";
 /** Configuration for requestTransform and responseTransform policies. */
 export type {
   RequestTransformConfig,

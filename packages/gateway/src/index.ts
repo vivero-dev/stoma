@@ -131,15 +131,23 @@ export type {
 
 // ── Policies - root-level ───────────────────────────────────────────────
 
+/** Configuration for the mock policy. */
+export type { MockConfig } from "./policies/mock";
 /** Return a static mock response, bypassing the upstream entirely (priority 999). */
 export { mock } from "./policies/mock";
+/** Configuration for the proxy policy. */
+export type { ProxyPolicyConfig } from "./policies/proxy";
 /** Per-route header manipulation, timeout control, and Host header preservation (priority 95). */
 export { proxy } from "./policies/proxy";
 
 // ── Policies - auth ─────────────────────────────────────────────────────
 
+/** Configuration for the apiKeyAuth policy. */
+export type { ApiKeyAuthConfig } from "./policies/auth/api-key-auth";
 /** Validate API keys from headers or query parameters using a custom validator function (priority 10). */
 export { apiKeyAuth } from "./policies/auth/api-key-auth";
+/** Configuration for the basicAuth policy. */
+export type { BasicAuthConfig } from "./policies/auth/basic-auth";
 /** Validate HTTP Basic credentials with a custom validator and WWW-Authenticate challenge (priority 10). */
 export { basicAuth } from "./policies/auth/basic-auth";
 /** Clear the shared JWKS cache used by jwt-auth and jws. Intended for testing. */
@@ -211,6 +219,8 @@ export { timeout } from "./policies/resilience/timeout";
 export { assignAttributes } from "./policies/transform/assign-attributes";
 /** Inject or override fields in JSON request and/or response bodies with static or dynamic values (priority 50). */
 export { assignContent } from "./policies/transform/assign-content";
+/** Configuration for the cors policy. */
+export type { CorsConfig } from "./policies/transform/cors";
 /** Add CORS headers to responses, wrapping Hono's built-in CORS middleware as a composable policy (priority 5). */
 export { cors } from "./policies/transform/cors";
 /** Pluggable JSON body validation - wrap Zod, AJV, or any validator; falls back to JSON parse check (priority 10). */
@@ -294,6 +304,8 @@ export type {
   PolicyTraceEntry,
   /** Union of all named priority level values. */
   PriorityLevel,
+  /** @internal */
+  RequiredKeys,
   /** Trace reporter function type. */
   TraceReporter,
 } from "./policies/sdk";
@@ -331,6 +343,8 @@ export type { DebugLogger } from "./utils/debug";
 
 // ── Utilities ───────────────────────────────────────────────────────────
 
+/** Options for {@link extractClientIp}. */
+export type { ExtractClientIpOptions } from "./utils/ip";
 /** Extract the client IP from request headers using a configurable header priority list. */
 export {
   /** Default ordered list of headers inspected for client IP (`cf-connecting-ip`, `x-forwarded-for`). */

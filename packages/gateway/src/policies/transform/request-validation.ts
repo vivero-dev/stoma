@@ -13,7 +13,7 @@ import { definePolicy, Priority } from "../sdk";
 import type { PolicyConfig } from "../types";
 
 /** Result shape returned by validation functions that provide error details. */
-interface ValidationResult {
+export interface ValidationResult {
   valid: boolean;
   errors?: string[];
 }

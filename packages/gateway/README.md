@@ -292,7 +292,7 @@ Policies execute in **priority order** (lowest number first), then in **declarat
 
 ## Documentation & Resources
 
-- [Architecture Design](ARCHITECTURE.md) - Deep dive into the gateway's internal design and decisions.
+- [Architecture Design](https://stoma.vivero.dev/concepts/architecture/) - Deep dive into the gateway's internal design and decisions.
 - [Full Documentation](https://stoma.vivero.dev) - Comprehensive guides, recipes, and API reference.
 
 ## Package Exports

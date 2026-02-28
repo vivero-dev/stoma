@@ -3134,7 +3134,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vitest: "npm:3.2.4"
   peerDependencies:
-    "@vivero/stoma": ">=0.1.0-rc.9"
+    "@vivero/stoma": ">=0.1.0-rc.10"
     hono: ">=4.0.0"
   languageName: unknown
   linkType: soft

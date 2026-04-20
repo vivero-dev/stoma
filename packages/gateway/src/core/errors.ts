@@ -70,10 +70,12 @@ export function errorToResponse(
   error: GatewayError,
   requestId?: string
 ): Response {
+  let statusCode = error.statusCode;
+  if (statusCode < 100 || statusCode > 599) statusCode = 500;
   const body: ErrorResponse = {
     error: error.code,
     message: error.message,
-    statusCode: error.statusCode,
+    statusCode,
     ...(requestId ? { requestId } : {}),
   };
   const headers: Record<string, string> = {
@@ -81,7 +83,7 @@ export function errorToResponse(
     ...error.headers,
   };
   return new Response(JSON.stringify(body), {
-    status: error.statusCode,
+    status: statusCode,
     headers,
   });
 }

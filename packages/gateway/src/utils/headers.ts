@@ -18,6 +18,7 @@ import type { Context } from "hono";
  * @returns The sanitized value
  */
 export function sanitizeHeaderValue(value: string): string {
+  if (value == null) return "";
   return value.replace(/[\r\n\0]/g, "");
 }
 
@@ -30,6 +31,7 @@ export function sanitizeHeaderValue(value: string): string {
  * @returns The escaped value
  */
 export function escapeHeaderValue(value: string): string {
+  if (value == null) return "";
   return value.replace(/"/g, '\\"');
 }
 

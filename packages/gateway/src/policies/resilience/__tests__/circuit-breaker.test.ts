@@ -195,6 +195,79 @@ describe("circuitBreaker", () => {
     vi.useRealTimers();
   });
 
+  // --- Consecutive failure tracking ---
+
+  it("should not trip circuit when failures are non-consecutive", async () => {
+    let callIdx = 0;
+    const sequence = [500, 500, 200, 500, 500, 200, 500]; // 5 total, max 2 consecutive
+
+    const app = new Hono();
+    const policy = circuitBreaker({ store, failureThreshold: 5 });
+
+    app.use("/*", async (c, next) => {
+      try {
+        await policy.handler(c, next);
+      } catch (err) {
+        if (err instanceof GatewayError) {
+          return c.json(
+            { error: err.code, message: err.message },
+            err.statusCode as 503
+          );
+        }
+        throw err;
+      }
+    });
+
+    app.get("/test", (c) => {
+      const status = sequence[Math.min(callIdx, sequence.length - 1)];
+      callIdx++;
+      return c.json({ idx: callIdx }, status as 200);
+    });
+
+    for (let i = 0; i < 7; i++) {
+      await app.request("/test");
+    }
+
+    const snap = await store.getState("/test");
+    expect(snap.state).toBe("closed");
+  });
+
+  it("should reset failure counter on success in closed state", async () => {
+    let callIdx = 0;
+    const sequence = [500, 500, 500, 500, 200, 500];
+
+    const app = new Hono();
+    const policy = circuitBreaker({ store, failureThreshold: 5 });
+
+    app.use("/*", async (c, next) => {
+      try {
+        await policy.handler(c, next);
+      } catch (err) {
+        if (err instanceof GatewayError) {
+          return c.json(
+            { error: err.code, message: err.message },
+            err.statusCode as 503
+          );
+        }
+        throw err;
+      }
+    });
+
+    app.get("/test", (c) => {
+      const status = sequence[Math.min(callIdx, sequence.length - 1)];
+      callIdx++;
+      return c.json({ idx: callIdx }, status as 200);
+    });
+
+    for (let i = 0; i < 6; i++) {
+      await app.request("/test");
+    }
+
+    const snap = await store.getState("/test");
+    expect(snap.state).toBe("closed");
+    expect(snap.failureCount).toBeLessThan(5);
+  });
+
   // --- Custom failure detection ---
 
   it("should use custom failureOn status codes", async () => {
@@ -327,6 +400,25 @@ describe("circuitBreaker", () => {
       await store.transition("test", "half-open");
       const snap = await store.getState("test");
       expect(snap.successCount).toBe(0);
+    });
+
+    it("should reset failureCount on recordSuccess (consecutive failures)", async () => {
+      await store.recordFailure("test");
+      await store.recordFailure("test");
+      await store.recordFailure("test");
+      await store.recordSuccess("test");
+      const snap = await store.getState("test");
+      expect(snap.failureCount).toBe(0);
+    });
+
+    it("should reset failureCount on transition to half-open", async () => {
+      await store.recordFailure("test");
+      await store.recordFailure("test");
+      await store.recordFailure("test");
+      await store.transition("test", "open");
+      await store.transition("test", "half-open");
+      const snap = await store.getState("test");
+      expect(snap.failureCount).toBe(0);
     });
 
     it("should remove key on reset", async () => {

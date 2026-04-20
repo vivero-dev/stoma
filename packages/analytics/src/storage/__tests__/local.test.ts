@@ -120,5 +120,65 @@ describe("localStorageAdapter", () => {
 
       await expect(storage.read("to-delete.txt")).rejects.toThrow();
     });
+
+    it("cleans up empty parent directories after delete", async () => {
+      const { existsSync } = await import("node:fs");
+      const storage = localStorageAdapter({ basePath: testDir });
+
+      await storage.write(
+        "deep/nested/dir/file.txt",
+        new TextEncoder().encode("temp")
+      );
+      await storage.delete("deep/nested/dir/file.txt");
+
+      expect(existsSync(join(testDir, "deep", "nested", "dir"))).toBe(false);
+      expect(existsSync(join(testDir, "deep"))).toBe(false);
+    });
+  });
+
+  // --- Path traversal prevention ---
+
+  describe("path traversal prevention", () => {
+    it("rejects keys with ../ that escape basePath", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      await expect(
+        storage.write("../escape.txt", new TextEncoder().encode("bad"))
+      ).rejects.toThrow(/basePath/);
+    });
+
+    it("rejects read with ../ path traversal", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      await expect(storage.read("../escape.txt")).rejects.toThrow(/basePath/);
+    });
+
+    it("rejects delete with ../ path traversal", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      await expect(storage.delete("../escape.txt")).rejects.toThrow(/basePath/);
+    });
+
+    it("returns empty array for list with ../ prefix", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      const keys = await storage.list("../");
+      expect(keys).toEqual([]);
+    });
+
+    it("rejects empty keys", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      await expect(
+        storage.write("", new TextEncoder().encode("bad"))
+      ).rejects.toThrow(/empty/);
+      await expect(storage.read("")).rejects.toThrow(/empty/);
+    });
+  });
+
+  // --- list() edge cases ---
+
+  describe("list() edge cases", () => {
+    it("returns empty array when prefix matches a file (ENOTDIR)", async () => {
+      const storage = localStorageAdapter({ basePath: testDir });
+      await writeFile(join(testDir, "file.txt"), "data");
+      const keys = await storage.list("file.txt");
+      expect(keys).toEqual([]);
+    });
   });
 });

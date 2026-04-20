@@ -24,12 +24,12 @@
 export function toSelfTimes<T extends { durationMs: number }>(
   timings: T[]
 ): T[] {
-  const selfTimes = timings.map((entry, i) => ({
+  const selfTimes = timings.filter((entry) => entry != null).map((entry, i, arr) => ({
     ...entry,
     durationMs:
       i === 0
         ? entry.durationMs
-        : Math.max(0, entry.durationMs - timings[i - 1].durationMs),
+        : Math.max(0, entry.durationMs - arr[i - 1].durationMs),
   }));
 
   // Reverse: innermost-first → outermost-first (execution order)

@@ -320,6 +320,43 @@ describe("debug headers", () => {
     expect(res.headers.get("x-stoma-cache-key")).toBeNull();
   });
 
+  it("should silently ignore empty header names in setDebugHeader", async () => {
+    const testPolicy: Policy = {
+      name: "empty-name-test",
+      priority: 50,
+      handler: async (c, next) => {
+        setDebugHeader(c, "", "value");
+        setDebugHeader(c, "  ", "value");
+        setDebugHeader(c, "x-stoma-valid", "ok");
+        await next();
+      },
+    };
+
+    const gw = createGateway({
+      name: "empty-name-debug-test",
+      debugHeaders: true,
+      routes: [
+        {
+          path: "/test",
+          pipeline: {
+            policies: [testPolicy],
+            upstream: {
+              type: "handler",
+              handler: (c) => c.json({ ok: true }),
+            },
+          },
+        },
+      ],
+    });
+
+    const res = await gw.app.request("/test", {
+      headers: { "x-stoma-debug": "*" },
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("x-stoma-valid")).toBe("ok");
+  });
+
   it("should handle requested headers that no policy sets", async () => {
     const app = createDebugApp(true, {});
 

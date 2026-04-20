@@ -150,6 +150,7 @@ export function setDebugHeader(
   name: string,
   value: string | number | boolean
 ): void {
+  if (!name || !name.trim()) return;
   const requested = c.get(DEBUG_REQUESTED_KEY) as Set<string> | undefined;
   if (!requested || !(requested.has(name) || requested.has("*"))) return;
 

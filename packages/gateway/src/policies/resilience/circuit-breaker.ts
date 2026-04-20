@@ -89,6 +89,7 @@ export class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
 
   async recordSuccess(key: string): Promise<CircuitBreakerSnapshot> {
     const snap = this.getOrCreate(key);
+    snap.failureCount = 0;
     snap.successCount++;
     return { ...snap };
   }
@@ -112,6 +113,7 @@ export class InMemoryCircuitBreakerStore implements CircuitBreakerStore {
       snap.successCount = 0;
     }
     if (to === "half-open") {
+      snap.failureCount = 0;
       snap.successCount = 0;
     }
     return { ...snap };

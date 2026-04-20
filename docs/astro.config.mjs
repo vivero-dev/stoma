@@ -9,6 +9,11 @@ import demoApiPlugin from "./vite-plugin-demo-api";
 
 export default defineConfig({
   site: "https://stoma.vivero.dev/",
+  markdown: {
+    shikiConfig: {
+      theme: "github-dark-default",
+    },
+  },
   vite: {
     plugins: [demoApiPlugin()],
     resolve: {

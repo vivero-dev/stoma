@@ -9,11 +9,6 @@ import demoApiPlugin from "./vite-plugin-demo-api";
 
 export default defineConfig({
   site: "https://stoma.vivero.dev/",
-  markdown: {
-    shikiConfig: {
-      themes: { light: "github-light", dark: "github-dark-default" },
-    },
-  },
   vite: {
     plugins: [demoApiPlugin()],
     resolve: {
@@ -28,6 +23,9 @@ export default defineConfig({
   integrations: [
     react(),
     starlight({
+      expressiveCode: {
+        themes: ["github-dark-default", "github-light"],
+      },
       title: "Stoma",
       description:
         "Declarative API gateway as a TypeScript library. Runs on Cloudflare Workers, Node.js, Deno, Bun, and any JavaScript runtime.",

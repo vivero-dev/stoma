@@ -17,8 +17,8 @@
  */
 
 import { execSync } from "node:child_process";
-import { readFileSync, existsSync, readdirSync } from "node:fs";
-import { join, resolve, dirname } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -32,8 +32,13 @@ if (isDryRun) console.log("=== DRY RUN — nothing will be published ===\n");
 
 function discoverPackages() {
   const packages = [];
-  const workspaceFile = readFileSync(join(rootDir, "pnpm-workspace.yaml"), "utf-8");
-  const globs = [...workspaceFile.matchAll(/- ["']?([^"'\n]+)["']?/g)].map((m) => m[1]);
+  const workspaceFile = readFileSync(
+    join(rootDir, "pnpm-workspace.yaml"),
+    "utf-8"
+  );
+  const globs = [...workspaceFile.matchAll(/- ["']?([^"'\n]+)["']?/g)].map(
+    (m) => m[1]
+  );
 
   for (const glob of globs) {
     if (glob.includes("*")) {

@@ -66,7 +66,8 @@ export function extractClientIp(
   headers: { get(name: string): string | null | undefined },
   options: ExtractClientIpOptions = {}
 ): string {
-  if (!headers || typeof headers.get !== "function") return options.fallbackAddress ?? "unknown";
+  if (!headers || typeof headers.get !== "function")
+    return options.fallbackAddress ?? "unknown";
   const {
     ipHeaders = DEFAULT_IP_HEADERS,
     trustedProxies,
@@ -84,7 +85,10 @@ export function extractClientIp(
     const value = headers.get(header);
     if (!value) continue;
 
-    const ips = value.split(",").map((ip) => ip.trim()).filter(Boolean);
+    const ips = value
+      .split(",")
+      .map((ip) => ip.trim())
+      .filter(Boolean);
     if (ips.length === 0) continue;
     const clientIp = useRightmostForwardedIp ? ips[ips.length - 1] : ips[0];
 

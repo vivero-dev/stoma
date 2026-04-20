@@ -4,7 +4,7 @@ import { trafficShadow } from "../traffic-shadow";
 
 describe("trafficShadow", () => {
   const originalFetch = globalThis.fetch;
-  let fetchSpy: ReturnType<typeof vi.fn>;
+  let fetchSpy: ReturnType<typeof vi.fn<typeof fetch>>;
 
   beforeEach(() => {
     fetchSpy = vi

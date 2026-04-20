@@ -28,6 +28,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cliRoot = path.resolve(__dirname, "../../..");
 const gatewayRoot = path.resolve(cliRoot, "../gateway");
+const coreRoot = path.resolve(cliRoot, "../core");
 const fixturePath = path.join(
   cliRoot,
   "src/__tests__/fixtures/test-gateway.ts"
@@ -35,6 +36,7 @@ const fixturePath = path.join(
 const isWindows = process.platform === "win32";
 
 // Tarball paths — resolved dynamically from pnpm pack output
+let coreTarball: string;
 let gatewayTarball: string;
 let cliTarball: string;
 
@@ -106,12 +108,14 @@ async function installWith(
 
   // Yarn 4 on Windows needs file: protocol with forward slashes for local tarballs
   // Default to absolute paths, which work flawlessly on npm, pnpm, and bun across all OSes.
+  let coreTgz = coreTarball;
   let gwTarball = gatewayTarball;
   let clTarball = cliTarball;
 
   if (runner === "yarn" && isWindows) {
     // Yarn Classic on Windows needs file: protocol — it treats "D:\path" as protocol "D:".
     // Convert backslashes to forward slashes for the file: URL.
+    coreTgz = `file:${coreTarball.replace(/\\/g, "/")}`;
     gwTarball = `file:${gatewayTarball.replace(/\\/g, "/")}`;
     clTarball = `file:${cliTarball.replace(/\\/g, "/")}`;
   }
@@ -123,7 +127,7 @@ async function installWith(
     );
     await execa(
       "npm",
-      ["install", "--no-package-lock", gwTarball, clTarball, ...PEERS],
+      ["install", "--no-package-lock", coreTgz, gwTarball, clTarball, ...PEERS],
       { cwd: tmpDir, timeout: 120_000 }
     );
   } else if (runner === "yarn") {
@@ -141,7 +145,7 @@ async function installWith(
       timeout: 10_000,
       input: "\n",
     }).catch(() => {});
-    await execa("yarn", ["add", gwTarball, clTarball, ...PEERS], {
+    await execa("yarn", ["add", coreTgz, gwTarball, clTarball, ...PEERS], {
       cwd: tmpDir,
       timeout: 120_000,
     });
@@ -157,6 +161,7 @@ async function installWith(
         "add",
         "--no-lockfile",
         "--shamefully-hoist",
+        coreTgz,
         gwTarball,
         clTarball,
         ...PEERS,
@@ -170,6 +175,10 @@ async function installWith(
     );
     // Bun requires each tarball as a separate add call to avoid duplicates
     await execa("bun", ["add", ...PEERS], {
+      cwd: tmpDir,
+      timeout: 60_000,
+    });
+    await execa("bun", ["add", coreTgz], {
       cwd: tmpDir,
       timeout: 60_000,
     });
@@ -271,7 +280,8 @@ const tmpDirs: string[] = [];
 beforeAll(async () => {
   // Pack both packages into tarballs (shared across all runners)
   // pnpm pack outputs a verbose summary; the .tgz filename is the last line
-  const [gw, cli] = await Promise.all([
+  const [core, gw, cli] = await Promise.all([
+    execa("pnpm", ["pack"], { cwd: coreRoot }),
     execa("pnpm", ["pack"], { cwd: gatewayRoot }),
     execa("pnpm", ["pack"], { cwd: cliRoot }),
   ]);
@@ -281,6 +291,7 @@ beforeAll(async () => {
       throw new Error(`Could not find .tgz in pnpm pack output:\n${output}`);
     return match[1].trim();
   };
+  coreTarball = path.join(coreRoot, extractTgz(core.stdout));
   gatewayTarball = path.join(gatewayRoot, extractTgz(gw.stdout));
   cliTarball = path.join(cliRoot, extractTgz(cli.stdout));
 }, 30_000);
@@ -294,6 +305,7 @@ afterAll(() => {
     }
   }
   try {
+    rmSync(coreTarball, { force: true });
     rmSync(gatewayTarball, { force: true });
     rmSync(cliTarball, { force: true });
   } catch {

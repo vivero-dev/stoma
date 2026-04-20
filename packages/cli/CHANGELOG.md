@@ -1,5 +1,70 @@
 # @vivero/stoma-cli
 
+## 0.1.0-rc.8
+### Patch Changes
+
+
+
+- [`34c6d12`](https://github.com/vivero-dev/stoma/commit/34c6d12c01d9b940f6dc1a155d870bf282181c0e) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - ### @vivero/stoma-cli
+  
+  **Bug Fix**
+  
+  - Fix `yarn dlx` / Yarn PnP resolution failure: `--trust-remote` (and local TS files outside a project) failed with `Could not resolve "@vivero/stoma"` because esbuild's `nodePaths` only works with `node_modules` directories. Added an esbuild resolve plugin that uses `createRequire(import.meta.url)` — PnP patches this, so resolution works in all package manager environments (npm, yarn, pnpm, bun)
+
+
+- [`fae4c3e`](https://github.com/vivero-dev/stoma/commit/fae4c3e1b7189454576c1c20642b7a3371f7df06) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - ### @vivero/stoma-cli
+  
+  **Bug Fix**
+  
+  - Fix gzipped/garbled response bodies in the playground UI: `/__playground/send` now strips stale `content-encoding`, `content-length`, and `transfer-encoding` headers from proxied responses — these headers become misleading after `fetch()` transparently decompresses the body
+  - Add tests for stale encoding header stripping in the playground send proxy
+  
+  **Lint & Formatting**
+  
+  - Reformat test assertions in `resolve-security.test.ts` and `wrap.test.ts` for consistency
+  
+  **Test Infrastructure**
+  
+  - Fix Windows E2E: use `packageName@file:path` syntax with forward slashes for Yarn Berry local tarball installs
+  - Fix Windows E2E: check for `.bin/stoma.cmd` instead of `.bin/stoma`, pass `shell: true` to execa for .cmd shims
+  - Fix Windows E2E: bump install timeouts from 60s to 120s for slower CI runners
+  - Fix Windows E2E: wrap `afterAll` cleanup in try/catch to handle EBUSY file locking
+  - Fix flaky `cleans up temp files` test: retry `readdir` to account for Linux filesystem propagation delay after `unlink`
+  - Remove stale biome suppression comments (`noArrayIndexKey` already disabled globally)
+  
+  **CI/CD**
+  
+  - Restructure CI into three workflows: `ci.yml` (parallel validation), `changeset-pr.yml` (PR management), `release.yml` (publish + deploy)
+  - Extract shared setup into `.github/actions/setup-env` composite action (Node, Corepack, Bun, Yarn install)
+  - Add OS matrix (ubuntu, macos, windows) for E2E tests — catches platform-specific issues before publish
+  - Parallelize CI jobs: `checks`, `test`, `e2e` run concurrently instead of sequentially
+  - Remove `github-actions[bot]` actor filter so Version Packages PRs get full CI validation
+  - Add `@biomejs/biome` as root devDependency (was relying on global install) and enable lint in CI
+  - Add husky + lint-staged pre-commit hook to run biome on staged files
+  - Exclude `**/fixtures/syntax-error.ts` from biome (intentional test fixture)
+
+
+- [#17](https://github.com/vivero-dev/stoma/pull/17) [`2c38d8e`](https://github.com/vivero-dev/stoma/commit/2c38d8e0f10086826108ca9e06161f5daec84e83) Thanks [@JonathanBennett](https://github.com/JonathanBennett)! - Bug fixes, test infrastructure, yarn → pnpm migration
+  
+  ### Bug Fixes
+  
+  - **Circuit breaker**: `recordSuccess` now resets `failureCount` (was tracking total failures instead of consecutive). Transition to `half-open` now resets `failureCount` for a clean probe phase.
+  - **Error responses**: `errorToResponse` clamps invalid HTTP status codes (< 100 or > 599) to 500, preventing `Response` constructor crashes.
+  - **IP extraction**: `trustedProxies` now validates the rightmost IP (the proxy) in `X-Forwarded-For` instead of the leftmost (the client), fixing a bug that made the feature non-functional. Empty `trustedProxies` array is now treated as "not configured" instead of rejecting all IPs.
+  - **Redact utility**: `redactFields` no longer crashes on objects containing non-serializable values (Symbols, functions) — falls back to JSON clone when `structuredClone` fails.
+  - **SDK helpers**: `setDebugHeader` silently ignores empty/whitespace header names.
+  - **Storage adapter** (analytics): Path traversal prevention — all operations now validate that resolved paths stay within `basePath`. Also fixes `list()` crash on file prefixes (ENOTDIR), empty key handling, and empty parent directory cleanup on delete.
+  - **Parser guards** (analytics): `parseStandardLine` and `parseWorkersTraceEvent` no longer crash on non-string input. `isValidEntry` rejects `NaN` numeric values via `Number.isFinite()`.
+  - **File tracker** (analytics): Negative `maxKeys` no longer silently truncates all tracked keys.
+  
+  ### Infrastructure
+  
+  - **yarn → pnpm**: Migrated the monorepo from Yarn v4 to pnpm v10. Simplified the publish script from `yarn pack` + `npm publish` workaround to direct `pnpm publish` (native workspace protocol resolution + provenance support). Updated all CI workflows, setup-env action, and documentation.
+  - **Unified test runner**: Single `vitest run` from root via `vitest.config.ts` with `test.projects`, replacing `yarn workspaces foreach` which swallowed output. Cloudflare Workers durable-object tests now run in CI alongside all other tests.
+  - **Vitest v4 + Cloudflare pool v0.14**: Bumped vitest to 4.1.4 and `@cloudflare/vitest-pool-workers` to 0.14.7 across all packages. Renamed `vitest.cloudflare.ts` → `vitest.cloudflare.config.ts` to match vitest v4 project naming requirements.
+- Updated dependencies [[`2c38d8e`](https://github.com/vivero-dev/stoma/commit/2c38d8e0f10086826108ca9e06161f5daec84e83)]:
+  - @vivero/stoma@0.1.0-rc.12
+
 ## 0.1.0-rc.7
 ### Patch Changes
 

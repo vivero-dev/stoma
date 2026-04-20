@@ -13,7 +13,6 @@
     "cli-tests-and-readme",
     "docs-og-deploy",
     "fix-npm-publish-pipeline",
-    "fix-pnp-resolve",
     "fix-workspace-protocol-publish",
     "stoma-cli",
     "stoma-rc-010",
@@ -24,7 +23,6 @@
     "stoma-rc-060",
     "stoma-rc-070",
     "stoma-rc-080",
-    "stoma-rc-081",
     "tree-shaking"
   ]
 }

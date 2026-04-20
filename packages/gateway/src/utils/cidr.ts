@@ -171,6 +171,7 @@ function isIPv6(input: string): boolean {
  * @returns Parsed range, or `null` if the input is invalid.
  */
 export function parseCIDR(cidr: string): ParsedCIDR | null {
+  if (cidr == null) return null;
   const slash = cidr.indexOf("/");
 
   if (slash === -1) {
@@ -184,7 +185,9 @@ export function parseCIDR(cidr: string): ParsedCIDR | null {
   }
 
   const ipPart = cidr.slice(0, slash);
-  const bits = Number(cidr.slice(slash + 1));
+  const bitsStr = cidr.slice(slash + 1);
+  if (bitsStr === "") return null;
+  const bits = Number(bitsStr);
   if (Number.isNaN(bits)) return null;
 
   if (isIPv6(ipPart)) {
@@ -204,6 +207,7 @@ export function parseCIDR(cidr: string): ParsedCIDR | null {
  * @returns `true` if the IP matches any range.
  */
 export function isInRange(ip: string, ranges: ParsedCIDR[]): boolean {
+  if (ip == null || !ranges) return false;
   if (isIPv6(ip)) {
     const addr = ipv6ToBigInt(ip);
     if (addr === null) return false;

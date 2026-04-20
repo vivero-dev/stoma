@@ -18,8 +18,8 @@ export interface ExtractClientIpOptions {
   ipHeaders?: readonly string[];
   /**
    * List of trusted proxy IP ranges (CIDR notation).
-   * When specified, X-Forwarded-For will only be trusted if the client IP
-   * (leftmost) is within one of these ranges.
+   * When specified, X-Forwarded-For will only be trusted if the rightmost
+   * IP (the most recent proxy) is within one of these ranges.
    *
    * @example
    * // Only trust X-Forwarded-For from Cloudflare IPs
@@ -66,6 +66,8 @@ export function extractClientIp(
   headers: { get(name: string): string | null | undefined },
   options: ExtractClientIpOptions = {}
 ): string {
+  if (!headers || typeof headers.get !== "function")
+    return options.fallbackAddress ?? "unknown";
   const {
     ipHeaders = DEFAULT_IP_HEADERS,
     trustedProxies,
@@ -73,7 +75,7 @@ export function extractClientIp(
     fallbackAddress,
   } = options;
 
-  const parsedTrustedProxies: ParsedCIDR[] | null = trustedProxies
+  const parsedTrustedProxies: ParsedCIDR[] | null = trustedProxies?.length
     ? trustedProxies
         .map((cidr) => parseCIDR(cidr))
         .filter((r): r is ParsedCIDR => r !== null)
@@ -83,15 +85,21 @@ export function extractClientIp(
     const value = headers.get(header);
     if (!value) continue;
 
-    const ips = value.split(",").map((ip) => ip.trim());
+    const ips = value
+      .split(",")
+      .map((ip) => ip.trim())
+      .filter(Boolean);
+    if (ips.length === 0) continue;
     const clientIp = useRightmostForwardedIp ? ips[ips.length - 1] : ips[0];
 
-    // If trustedProxies is configured, validate against it
+    // If trustedProxies is configured, validate the rightmost IP (most recent proxy)
     if (parsedTrustedProxies && header.toLowerCase() === "x-forwarded-for") {
-      if (!isInRange(clientIp, parsedTrustedProxies)) {
-        // Client IP is not from trusted proxy - don't trust this header
+      const proxyIp = ips[ips.length - 1];
+      if (!isInRange(proxyIp, parsedTrustedProxies)) {
         continue;
       }
+      // Proxy is trusted — return the client IP (leftmost)
+      return ips[0];
     }
 
     return clientIp;

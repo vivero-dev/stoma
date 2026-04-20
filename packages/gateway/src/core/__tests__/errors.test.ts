@@ -60,6 +60,16 @@ describe("errorToResponse", () => {
 
     expect(res.headers.get("content-type")).toBe("application/json");
   });
+
+  it("should clamp invalid status codes to 500", async () => {
+    for (const code of [0, -1, 99999]) {
+      const err = new GatewayError(code, "invalid", "Invalid");
+      const res = errorToResponse(err);
+      expect(res.status).toBe(500);
+      const body = (await res.json()) as Record<string, unknown>;
+      expect(body.statusCode).toBe(500);
+    }
+  });
 });
 
 describe("defaultErrorResponse", () => {

@@ -17,13 +17,13 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'changeset-release/main')"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-env
 
       - name: Create Release Pull Request
         uses: changesets/action@v1.7.0
         with:
-          version: yarn changeset version
+          version: pnpm changeset version
           title: "Version Packages"
           commit: "Version Packages"
         env:

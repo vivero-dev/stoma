@@ -13,23 +13,23 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-env
 
       - name: Typecheck
-        run: yarn typecheck
+        run: pnpm typecheck
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-env
 
       - name: Test
-        run: yarn test
+        run: pnpm test
 
   e2e:
     strategy:
@@ -37,21 +37,23 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-env
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: E2E test CLI
-        run: yarn workspace @vivero/stoma-cli test:e2e
+        run: pnpm --filter @vivero/stoma-cli test:e2e
 
   changeset-check:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup-env
 
       - name: Check for changeset
-        run: yarn changeset status
+        run: pnpm changeset status --since=origin/main

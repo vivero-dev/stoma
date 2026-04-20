@@ -8,8 +8,8 @@ To run the documentation site locally:
 
 ```bash
 cd docs
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 
 This will start the Astro dev server and also watch for changes in the playground service worker and editor components.
@@ -20,7 +20,7 @@ To build the documentation for production:
 
 ```bash
 cd docs
-yarn build
+pnpm build
 ```
 
 The output will be in `docs/dist`.

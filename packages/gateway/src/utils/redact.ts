@@ -32,8 +32,16 @@ export function redactFields(obj: unknown, config: RedactConfig): unknown {
     return obj;
   }
 
+  if (!config?.paths) return obj;
+
   const replacement = config.replacement ?? "[REDACTED]";
-  const cloned = structuredClone(obj);
+  let cloned: unknown;
+  try {
+    cloned = structuredClone(obj);
+  } catch {
+    // structuredClone fails on non-serializable values (Symbols, functions, etc.)
+    cloned = JSON.parse(JSON.stringify(obj));
+  }
 
   for (const path of config.paths) {
     applyRedaction(cloned, path.split("."), 0, replacement);

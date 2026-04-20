@@ -3,7 +3,7 @@
  *
  * Tests the actual published package experience for each package runner:
  *
- * 1. `yarn pack` both @vivero/stoma and @vivero/stoma-cli into tarballs
+ * 1. `pnpm pack` both @vivero/stoma and @vivero/stoma-cli into tarballs
  * 2. For each runner (npm, yarn, pnpm, bun): create an isolated temp dir,
  *    install from tarballs using that runner's install command, run the
  *    installed binary, verify it starts and responds to a health check
@@ -34,9 +34,9 @@ const fixturePath = path.join(
 );
 const isWindows = process.platform === "win32";
 
-// Stable tarball paths — cleaned up in afterAll
-const gatewayTarball = path.join(gatewayRoot, "stoma-e2e.tgz");
-const cliTarball = path.join(cliRoot, "stoma-cli-e2e.tgz");
+// Tarball paths — resolved dynamically from pnpm pack output
+let gatewayTarball: string;
+let cliTarball: string;
 
 // Peers that must be installed alongside the tarballs
 const PEERS = ["hono@^4", "esbuild@^0.25"];
@@ -104,15 +104,16 @@ async function installWith(
 ): Promise<RunnerEnv> {
   const tmpDir = mkdtempSync(path.join(tmpdir(), `stoma-e2e-${runner}-`));
 
-  // Yarn Berry on Windows requires `name@file:path` syntax with forward slashes.
-  // npm/pnpm/bun accept bare absolute paths on all OSes.
+  // Yarn 4 on Windows needs file: protocol with forward slashes for local tarballs
+  // Default to absolute paths, which work flawlessly on npm, pnpm, and bun across all OSes.
   let gwTarball = gatewayTarball;
   let clTarball = cliTarball;
 
   if (runner === "yarn" && isWindows) {
-    const toFileUrl = (p: string) => p.replace(/\\/g, "/");
-    gwTarball = `@vivero/stoma@file:${toFileUrl(gatewayTarball)}`;
-    clTarball = `@vivero/stoma-cli@file:${toFileUrl(cliTarball)}`;
+    // Yarn Classic on Windows needs file: protocol — it treats "D:\path" as protocol "D:".
+    // Convert backslashes to forward slashes for the file: URL.
+    gwTarball = `file:${gatewayTarball.replace(/\\/g, "/")}`;
+    clTarball = `file:${cliTarball.replace(/\\/g, "/")}`;
   }
 
   if (runner === "npm") {
@@ -269,10 +270,19 @@ const tmpDirs: string[] = [];
 
 beforeAll(async () => {
   // Pack both packages into tarballs (shared across all runners)
-  await Promise.all([
-    execa("yarn", ["pack", "--out", "stoma-e2e.tgz"], { cwd: gatewayRoot }),
-    execa("yarn", ["pack", "--out", "stoma-cli-e2e.tgz"], { cwd: cliRoot }),
+  // pnpm pack outputs a verbose summary; the .tgz filename is the last line
+  const [gw, cli] = await Promise.all([
+    execa("pnpm", ["pack"], { cwd: gatewayRoot }),
+    execa("pnpm", ["pack"], { cwd: cliRoot }),
   ]);
+  const extractTgz = (output: string) => {
+    const match = output.match(/^(.+\.tgz)$/m);
+    if (!match)
+      throw new Error(`Could not find .tgz in pnpm pack output:\n${output}`);
+    return match[1].trim();
+  };
+  gatewayTarball = path.join(gatewayRoot, extractTgz(gw.stdout));
+  cliTarball = path.join(cliRoot, extractTgz(cli.stdout));
 }, 30_000);
 
 afterAll(() => {

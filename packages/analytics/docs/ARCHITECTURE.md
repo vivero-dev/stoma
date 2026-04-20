@@ -1,10 +1,4 @@
 ---
-orphan: true
----
-
-orphan: true
----
-title: Architecture
 title: Architecture
 description: Design principles and module structure for the stoma-analytics pipeline.
 sidebar:

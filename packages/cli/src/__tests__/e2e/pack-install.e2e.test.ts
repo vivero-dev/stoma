@@ -127,6 +127,8 @@ async function installWith(
     : `file:${coreTgz}`;
 
   if (runner === "npm") {
+    // npm doesn't allow overrides that conflict with direct dependencies,
+    // so we install core only via the override, not as a direct argument.
     writeFileSync(
       path.join(tmpDir, "package.json"),
       JSON.stringify({
@@ -138,7 +140,7 @@ async function installWith(
     );
     await execa(
       "npm",
-      ["install", "--no-package-lock", coreTgz, gwTarball, clTarball, ...PEERS],
+      ["install", "--no-package-lock", gwTarball, clTarball, ...PEERS],
       { cwd: tmpDir, timeout: 120_000 }
     );
   } else if (runner === "yarn") {

@@ -58,9 +58,9 @@ the earlier one.
 Organize route definitions by team or domain, with a shared base config for
 gateway-wide settings:
 
-<Code code={authRoutes} lang="ts" title="routes/auth.ts" />
-<Code code={apiRoutes} lang="ts" title="routes/api.ts" />
-<Code code={configGateway} lang="ts" title="gateway.ts" />
+<Code theme="github-dark-default" code={authRoutes} lang="ts" title="routes/auth.ts" />
+<Code theme="github-dark-default" code={apiRoutes} lang="ts" title="routes/api.ts" />
+<Code theme="github-dark-default" code={configGateway} lang="ts" title="gateway.ts" />
 
 Routes are concatenated in the order configs are passed. The global `cors`,
 `requestLog`, and `rateLimit` policies from the base config apply to every route.

@@ -270,12 +270,19 @@ const tmpDirs: string[] = [];
 
 beforeAll(async () => {
   // Pack both packages into tarballs (shared across all runners)
+  // pnpm pack outputs a verbose summary; the .tgz filename is the last line
   const [gw, cli] = await Promise.all([
     execa("pnpm", ["pack"], { cwd: gatewayRoot }),
     execa("pnpm", ["pack"], { cwd: cliRoot }),
   ]);
-  gatewayTarball = path.join(gatewayRoot, gw.stdout.trim());
-  cliTarball = path.join(cliRoot, cli.stdout.trim());
+  const extractTgz = (output: string) => {
+    const match = output.match(/^(.+\.tgz)$/m);
+    if (!match)
+      throw new Error(`Could not find .tgz in pnpm pack output:\n${output}`);
+    return match[1].trim();
+  };
+  gatewayTarball = path.join(gatewayRoot, extractTgz(gw.stdout));
+  cliTarball = path.join(cliRoot, extractTgz(cli.stdout));
 }, 30_000);
 
 afterAll(() => {

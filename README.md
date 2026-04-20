@@ -50,32 +50,32 @@ npx @vivero/stoma-cli run ./gateway.ts --playground
 ## Development
 
 ```sh
-yarn install          # install all workspace dependencies
-yarn build            # build all packages (Turborepo is not used — runs sequentially)
-yarn test             # test all packages
-yarn typecheck        # type-check all packages
-yarn lint             # lint with Biome
+pnpm install          # install all workspace dependencies
+pnpm build            # build all packages
+pnpm test             # test all packages
+pnpm typecheck        # type-check all packages
+pnpm lint             # lint with Biome
 ```
 
 Individual packages:
 
 ```sh
-cd packages/gateway && yarn test        # gateway tests (vitest + workerd pool)
-cd packages/cli && yarn test            # CLI tests (vitest, Node)
-cd packages/analytics && yarn test      # analytics tests
-cd docs && yarn dev                     # docs site dev server
+pnpm --filter @vivero/stoma test        # gateway tests (vitest + workerd pool)
+pnpm --filter @vivero/stoma-cli test    # CLI tests (vitest, Node)
+pnpm --filter @vivero/stoma-analytics test  # analytics tests
+pnpm --filter @vivero/stoma-docs dev    # docs site dev server
 ```
 
-Workspace consumers resolve source TypeScript directly — no build step needed during development. The `yarn build` scripts (tsup) compile to `dist/` for npm publishing only.
+Workspace consumers resolve source TypeScript directly — no build step needed during development. The `pnpm build` scripts (tsup) compile to `dist/` for npm publishing only.
 
 ## Releasing
 
 Versioning and publishing use [Changesets](https://github.com/changesets/changesets):
 
 ```sh
-yarn changeset            # create a changeset
-yarn changeset:version    # bump versions from pending changesets
-yarn changeset:publish    # publish to npm
+pnpm changeset            # create a changeset
+pnpm changeset:version    # bump versions from pending changesets
+pnpm changeset:publish    # publish to npm
 ```
 
 ## License

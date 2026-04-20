@@ -31,10 +31,10 @@ jobs:
       - uses: ./.github/actions/setup-env
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: E2E test CLI
-        run: yarn workspace @vivero/stoma-cli test:e2e
+        run: pnpm --filter @vivero/stoma-cli test:e2e
 
   publish:
     needs: e2e
@@ -46,16 +46,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
           registry-url: https://registry.npmjs.org
 
-      - name: Update npm
-        run: npm install -g npm@latest
-
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Publish to npm
-        run: yarn changeset:publish
+        run: pnpm changeset:publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
@@ -84,7 +82,7 @@ jobs:
           path: packages
 
       - name: Build docs
-        run: cd docs && yarn build
+        run: pnpm --filter @vivero/stoma-docs build
 
       - name: Deploy docs to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3

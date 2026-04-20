@@ -315,9 +315,9 @@ Policies execute in **priority order** (lowest number first), then in **declarat
 Contributions are welcome. Please open an issue to discuss proposed changes before submitting a pull request.
 
 ```sh
-yarn install
-yarn test
-yarn typecheck
+pnpm install
+pnpm test
+pnpm typecheck
 ```
 
 ## License

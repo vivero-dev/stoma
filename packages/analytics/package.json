@@ -150,7 +150,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",

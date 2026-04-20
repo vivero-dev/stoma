@@ -166,7 +166,7 @@
     "test:cloudflare": "vitest run --config vitest.cloudflare.config.ts",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@vivero/stoma-core": "workspace:*"

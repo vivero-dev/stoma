@@ -17,10 +17,10 @@ jobs:
       - uses: ./.github/actions/setup-env
 
       - name: Typecheck
-        run: yarn typecheck
+        run: pnpm typecheck
 
       - name: Lint
-        run: yarn lint
+        run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
       - uses: ./.github/actions/setup-env
 
       - name: Test
-        run: yarn test
+        run: pnpm test
 
   e2e:
     strategy:
@@ -41,10 +41,10 @@ jobs:
       - uses: ./.github/actions/setup-env
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: E2E test CLI
-        run: yarn workspace @vivero/stoma-cli test:e2e
+        run: pnpm --filter @vivero/stoma-cli test:e2e
 
   changeset-check:
     if: github.event_name == 'pull_request'
@@ -54,4 +54,4 @@ jobs:
       - uses: ./.github/actions/setup-env
 
       - name: Check for changeset
-        run: yarn changeset status
+        run: pnpm changeset status

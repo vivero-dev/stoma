@@ -1,39 +1,28 @@
 #!/usr/bin/env node
 
 /**
- * Publish workspace packages using `yarn pack` + `npm publish`.
+ * Publish workspace packages via `pnpm publish`.
  *
- * - `yarn pack` resolves `workspace:*` protocols and applies `publishConfig`
- *   field overrides (main, types, exports, bin) natively.
- * - `npm publish <tarball>` supports OIDC trusted publishing (id-token)
- *   and --provenance, which `yarn npm publish` does not.
+ * pnpm publish natively resolves `workspace:*` protocols, applies
+ * `publishConfig` overrides, and supports `--provenance` for OIDC
+ * trusted publishing.
  *
- * Changesets is still used for versioning (changeset version) and tagging
- * (changeset tag). Only the publish step is ours.
+ * Changesets is still used for versioning (changeset version) and
+ * tagging (changeset tag). Only the publish step is ours.
  *
  * Usage:
  *   node scripts/publish.mjs              # publish for real
- *   node scripts/publish.mjs --dry-run    # test locally (pack + inspect, no publish)
- *   yarn changeset:publish                # via package.json script (CI)
+ *   node scripts/publish.mjs --dry-run    # test locally (no publish)
+ *   pnpm changeset:publish                # via package.json script (CI)
  */
 
 import { execSync } from "node:child_process";
-import {
-  existsSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-  rmSync,
-} from "node:fs";
-import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, "..");
-const rootPkg = JSON.parse(
-  readFileSync(join(rootDir, "package.json"), "utf-8")
-);
 const isCI = Boolean(process.env.CI);
 const isDryRun = process.argv.includes("--dry-run");
 
@@ -43,7 +32,10 @@ if (isDryRun) console.log("=== DRY RUN — nothing will be published ===\n");
 
 function discoverPackages() {
   const packages = [];
-  for (const glob of rootPkg.workspaces ?? []) {
+  const workspaceFile = readFileSync(join(rootDir, "pnpm-workspace.yaml"), "utf-8");
+  const globs = [...workspaceFile.matchAll(/- ["']?([^"'\n]+)["']?/g)].map((m) => m[1]);
+
+  for (const glob of globs) {
     if (glob.includes("*")) {
       const baseDir = join(rootDir, glob.replace(/\/?\*$/, ""));
       if (!existsSync(baseDir)) continue;
@@ -85,102 +77,6 @@ function isAlreadyPublished(name, version) {
   }
 }
 
-// ── Pack + inspect (shared by dry-run and publish) ──────────────────────────
-
-function packPackage(pkg, tmpDir) {
-  const tgzPath = join(tmpDir, "package.tgz");
-
-  // yarn pack resolves workspace:* and applies publishConfig natively
-  execSync(`yarn pack --out ${tgzPath}`, { cwd: pkg.dir, stdio: "pipe" });
-
-  // Extract and validate the packed package.json
-  execSync(`tar xzf ${tgzPath} -C ${tmpDir}`, { stdio: "pipe" });
-  const packed = JSON.parse(
-    readFileSync(join(tmpDir, "package", "package.json"), "utf-8")
-  );
-
-  const allDeps = { ...packed.dependencies, ...packed.peerDependencies };
-  const unresolved = Object.entries(allDeps).filter(([, v]) =>
-    v.startsWith("workspace:")
-  );
-  if (unresolved.length > 0) {
-    console.log(`  FAIL: unresolved workspace deps:`);
-    for (const [name, ver] of unresolved) console.log(`    ${name}: ${ver}`);
-    return null;
-  }
-
-  return tgzPath;
-}
-
-// ── Dry-run: pack and inspect tarball contents ──────────────────────────────
-
-function dryRunPackage(pkg) {
-  const tmpDir = mkdtempSync(join(tmpdir(), "stoma-publish-"));
-  try {
-    const tag = pkg.version.includes("-") ? "rc" : "latest";
-    console.log(`\n--- ${pkg.name}@${pkg.version} (tag: ${tag}) ---`);
-    console.log(`dir: ${pkg.dir}`);
-
-    const tgzPath = packPackage(pkg, tmpDir);
-    if (!tgzPath) return false;
-
-    const packed = JSON.parse(
-      readFileSync(join(tmpDir, "package", "package.json"), "utf-8")
-    );
-    const allDeps = { ...packed.dependencies, ...packed.peerDependencies };
-    const original = JSON.parse(
-      readFileSync(join(pkg.dir, "package.json"), "utf-8")
-    );
-
-    // Report resolved workspace deps
-    const resolvedWorkspace = Object.entries(allDeps).filter(([name]) =>
-      readFileSync(join(pkg.dir, "package.json"), "utf-8").includes(
-        `"${name}": "workspace:`
-      )
-    );
-    if (resolvedWorkspace.length > 0) {
-      console.log(`  workspace deps resolved:`);
-      for (const [name] of resolvedWorkspace)
-        console.log(`    ${name}: ${allDeps[name]}`);
-    }
-
-    // Check publishConfig overrides applied
-    if (original.publishConfig) {
-      const overrideFields = [
-        "main",
-        "types",
-        "exports",
-        "bin",
-        "module",
-      ].filter((f) => f in original.publishConfig);
-      if (overrideFields.length > 0) {
-        console.log(`  publishConfig applied: ${overrideFields.join(", ")}`);
-        for (const f of overrideFields) {
-          const expected = JSON.stringify(original.publishConfig[f]);
-          const actual = JSON.stringify(packed[f]);
-          if (expected !== actual) {
-            console.log(`    FAIL: ${f} expected ${expected}, got ${actual}`);
-            return false;
-          }
-        }
-      }
-    }
-
-    // Show files
-    const files = execSync(`tar tzf ${tgzPath}`, { encoding: "utf-8" })
-      .trim()
-      .split("\n")
-      .map((f) => f.replace("package/", "  "));
-    console.log(`  files: ${files.length}`);
-    for (const f of files) console.log(`  ${f}`);
-
-    console.log(`  OK`);
-    return true;
-  } finally {
-    rmSync(tmpDir, { recursive: true, force: true });
-  }
-}
-
 // ── Main ────────────────────────────────────────────────────────────────────
 
 const packages = discoverPackages();
@@ -202,56 +98,32 @@ if (toPublish.length === 0) {
   process.exit(0);
 }
 
-// ── Dry run ─────────────────────────────────────────────────────────────────
-
-if (isDryRun) {
-  let allOk = true;
-  for (const pkg of toPublish) {
-    if (!dryRunPackage(pkg)) allOk = false;
-  }
-  console.log(allOk ? "\n=== DRY RUN PASSED ===" : "\n=== DRY RUN FAILED ===");
-  process.exit(allOk ? 0 : 1);
-}
-
-// ── Publish ─────────────────────────────────────────────────────────────────
-
 const published = [];
 const failed = [];
 
 for (const pkg of toPublish) {
-  const tmpDir = mkdtempSync(join(tmpdir(), "stoma-publish-"));
   try {
     const tag = pkg.version.includes("-") ? "rc" : "latest";
-    console.log(`\n$ yarn pack (${pkg.name}@${pkg.version})`);
-
-    const tgzPath = packPackage(pkg, tmpDir);
-    if (!tgzPath) {
-      failed.push(pkg);
-      continue;
-    }
-
-    // npm publish <tarball> supports OIDC trusted publishing + provenance
-    const flags = [`--access public`, `--tag ${tag}`];
+    const flags = ["--access public", `--tag ${tag}`, "--no-git-checks"];
     if (isCI) flags.push("--provenance");
+    if (isDryRun) flags.push("--dry-run");
 
-    const cmd = `npm publish ${tgzPath} ${flags.join(" ")}`;
-    console.log(`$ ${cmd}`);
+    const cmd = `pnpm publish ${flags.join(" ")}`;
+    console.log(`\n$ ${cmd} (${pkg.name}@${pkg.version})`);
 
     execSync(cmd, { cwd: pkg.dir, stdio: "inherit" });
     published.push(pkg);
   } catch {
     console.error(`FAILED: ${pkg.name}@${pkg.version}`);
     failed.push(pkg);
-  } finally {
-    rmSync(tmpDir, { recursive: true, force: true });
   }
 }
 
 // Let changeset handle git tags
-if (published.length > 0) {
+if (published.length > 0 && !isDryRun) {
   console.log("\nCreating git tags...");
   try {
-    execSync("yarn changeset tag", { cwd: rootDir, stdio: "inherit" });
+    execSync("pnpm changeset tag", { cwd: rootDir, stdio: "inherit" });
   } catch {
     console.warn("Warning: changeset tag failed");
   }

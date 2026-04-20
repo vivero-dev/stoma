@@ -110,10 +110,10 @@ async function installWith(
   let clTarball = cliTarball;
 
   if (runner === "yarn" && isWindows) {
-    // Yarn 4 on Windows treats "D:\path" as a protocol "D:". To bypass this,
-    // we use a relative path. On Windows, tmpdir is not symlinked like on Mac, so this is safe.
-    gwTarball = `./${path.relative(tmpDir, gatewayTarball).replace(/\\/g, "/")}`;
-    clTarball = `./${path.relative(tmpDir, cliTarball).replace(/\\/g, "/")}`;
+    // Yarn Classic on Windows needs file: protocol — it treats "D:\path" as protocol "D:".
+    // Convert backslashes to forward slashes for the file: URL.
+    gwTarball = `file:${gatewayTarball.replace(/\\/g, "/")}`;
+    clTarball = `file:${cliTarball.replace(/\\/g, "/")}`;
   }
 
   if (runner === "npm") {

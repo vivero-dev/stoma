@@ -120,10 +120,21 @@ async function installWith(
     clTarball = `file:${cliTarball.replace(/\\/g, "/")}`;
   }
 
+  // Override @vivero/stoma-core to resolve from the local tarball instead of npm.
+  // pnpm pack resolves workspace:* to a concrete version that may not be published yet.
+  const coreOverride = coreTgz.startsWith("file:")
+    ? coreTgz
+    : `file:${coreTgz}`;
+
   if (runner === "npm") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
-      JSON.stringify({ name: "stoma-e2e-npm", private: true, type: "module" })
+      JSON.stringify({
+        name: "stoma-e2e-npm",
+        private: true,
+        type: "module",
+        overrides: { "@vivero/stoma-core": coreOverride },
+      })
     );
     await execa(
       "npm",
@@ -131,10 +142,14 @@ async function installWith(
       { cwd: tmpDir, timeout: 120_000 }
     );
   } else if (runner === "yarn") {
-    // Yarn 4: use node-modules linker so native deps (esbuild) work
     writeFileSync(
       path.join(tmpDir, "package.json"),
-      JSON.stringify({ name: "stoma-e2e-yarn", private: true, type: "module" })
+      JSON.stringify({
+        name: "stoma-e2e-yarn",
+        private: true,
+        type: "module",
+        resolutions: { "@vivero/stoma-core": coreOverride },
+      })
     );
     writeFileSync(
       path.join(tmpDir, ".yarnrc.yml"),
@@ -152,7 +167,12 @@ async function installWith(
   } else if (runner === "pnpm") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
-      JSON.stringify({ name: "stoma-e2e-pnpm", private: true, type: "module" })
+      JSON.stringify({
+        name: "stoma-e2e-pnpm",
+        private: true,
+        type: "module",
+        pnpm: { overrides: { "@vivero/stoma-core": coreOverride } },
+      })
     );
     // --shamefully-hoist so transitive deps (e.g. hono used by @hono/node-server) resolve
     await execa(
@@ -171,7 +191,12 @@ async function installWith(
   } else if (runner === "bun") {
     writeFileSync(
       path.join(tmpDir, "package.json"),
-      JSON.stringify({ name: "stoma-e2e-bun", private: true, type: "module" })
+      JSON.stringify({
+        name: "stoma-e2e-bun",
+        private: true,
+        type: "module",
+        overrides: { "@vivero/stoma-core": coreOverride },
+      })
     );
     // Bun requires each tarball as a separate add call to avoid duplicates
     await execa("bun", ["add", ...PEERS], {

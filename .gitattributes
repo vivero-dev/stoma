@@ -1,0 +1,2 @@
+# Prevent CRLF conversion on lockfiles — pnpm's YAML parser breaks on CRLF
+pnpm-lock.yaml text eol=lf

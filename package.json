@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "yarn workspaces foreach -Apt --exclude @vivero/stoma-docs run build",
-    "test": "yarn workspaces foreach -Ap --exclude @vivero/stoma-docs run test",
+    "test": "vitest run",
     "typecheck": "yarn workspaces foreach -Ap --exclude @vivero/stoma-docs run typecheck",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
@@ -24,7 +24,8 @@
     "@changesets/cli": "^2.29.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.3.0",
-    "tsup": "^8.5.1"
+    "tsup": "^8.5.1",
+    "vitest": "^4.1.4"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css}": "biome check --no-errors-on-unmatched"

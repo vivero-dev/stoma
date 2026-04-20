@@ -70,7 +70,7 @@ export function createStorageFileTracker(
   storage: StorageAdapter,
   opts?: { maxKeys?: number }
 ): ProcessedFileTracker {
-  const maxKeys = opts?.maxKeys ?? 10_000;
+  const maxKeys = Math.max(0, opts?.maxKeys ?? 10_000);
   const manifestPath = "__processed/manifest.json";
 
   async function readManifest(): Promise<Set<string>> {

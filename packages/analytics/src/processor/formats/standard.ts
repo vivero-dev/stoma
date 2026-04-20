@@ -7,6 +7,7 @@ import { ANALYTICS_TYPE, type AnalyticsEntry } from "../../types.js";
  * (wrong `_type`, malformed JSON, or missing required fields).
  */
 export function parseStandardLine(line: string): AnalyticsEntry | null {
+  if (typeof line !== "string") return null;
   const trimmed = line.trim();
   if (!trimmed) return null;
 

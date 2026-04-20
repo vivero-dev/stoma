@@ -151,6 +151,38 @@ describe("extractClientIp", () => {
     expect(extractedIp).toBe("203.0.113.50");
   });
 
+  // --- Trusted proxy validation direction ---
+
+  it("should validate rightmost IP (proxy) against trustedProxies", () => {
+    const h = headers({
+      "x-forwarded-for": "203.0.113.50, 173.245.48.1",
+    });
+    const ip = extractClientIp(h, {
+      trustedProxies: ["173.245.48.0/20"],
+    });
+    // Rightmost IP (173.245.48.1) is the proxy and is trusted,
+    // so return the leftmost IP (203.0.113.50) as the client
+    expect(ip).toBe("203.0.113.50");
+  });
+
+  it("should skip x-forwarded-for when rightmost IP is not a trusted proxy", () => {
+    const h = headers({
+      "x-forwarded-for": "203.0.113.50, 5.6.7.8",
+    });
+    const ip = extractClientIp(h, {
+      trustedProxies: ["173.245.48.0/20"],
+    });
+    expect(ip).toBe("unknown");
+  });
+
+  it("should treat empty trustedProxies array as not configured", () => {
+    const h = headers({
+      "x-forwarded-for": "1.2.3.4",
+    });
+    const ip = extractClientIp(h, { trustedProxies: [] });
+    expect(ip).toBe("1.2.3.4");
+  });
+
   // --- Fallback address ---
 
   it("should use fallbackAddress when no headers match", () => {

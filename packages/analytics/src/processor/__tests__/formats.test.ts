@@ -54,6 +54,13 @@ describe("parseStandardLine", () => {
     const result = parseStandardLine(JSON.stringify(entry));
     expect(result?.dimensions).toEqual({ region: "us-east-1" });
   });
+
+  it("should return null for non-string input", () => {
+    expect(parseStandardLine(null as unknown as string)).toBeNull();
+    expect(parseStandardLine(undefined as unknown as string)).toBeNull();
+    expect(parseStandardLine(123 as unknown as string)).toBeNull();
+    expect(parseStandardLine({} as unknown as string)).toBeNull();
+  });
 });
 
 describe("parseCloudflareEvent", () => {
@@ -127,5 +134,24 @@ describe("parseCloudflareEvent", () => {
   it("should return empty array for empty lines", () => {
     expect(parseCloudflareEvent("")).toEqual([]);
     expect(parseCloudflareEvent("   ")).toEqual([]);
+  });
+
+  it("should return empty array for non-string input", () => {
+    expect(parseCloudflareEvent(null as unknown as string)).toEqual([]);
+    expect(parseCloudflareEvent(undefined as unknown as string)).toEqual([]);
+  });
+
+  it("should reject NaN numeric values in object messages", () => {
+    const entry = makeEntry();
+    const traceEvent = {
+      Logs: [
+        {
+          Level: "log",
+          Message: [{ ...entry, statusCode: NaN }],
+        },
+      ],
+    };
+    const results = parseCloudflareEvent(JSON.stringify(traceEvent));
+    expect(results).toHaveLength(0);
   });
 });

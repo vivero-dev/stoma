@@ -125,6 +125,18 @@ describe("redactFields", () => {
     expect(result).toEqual({ password: "secret" });
   });
 
+  // --- Non-serializable values ---
+
+  it("should not crash on objects containing Symbols", () => {
+    const obj = { key: Symbol("my-key"), name: "test" };
+    expect(() => redactFields(obj, { paths: ["name"] })).not.toThrow();
+  });
+
+  it("should not crash on objects containing functions", () => {
+    const obj = { handler: () => "called", name: "test" };
+    expect(() => redactFields(obj, { paths: ["name"] })).not.toThrow();
+  });
+
   // --- Wildcard with nested objects ---
 
   it("should handle wildcard at intermediate level with nested target", () => {

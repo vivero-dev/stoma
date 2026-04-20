@@ -22,6 +22,7 @@ interface TraceEvent {
  * may be a stoma analytics entry. Returns all extracted entries.
  */
 export function parseWorkersTraceEvent(line: string): AnalyticsEntry[] {
+  if (typeof line !== "string") return [];
   const trimmed = line.trim();
   if (!trimmed) return [];
 
@@ -70,7 +71,10 @@ function isValidEntry(obj: Record<string, unknown>): boolean {
     typeof obj.routePath === "string" &&
     typeof obj.method === "string" &&
     typeof obj.statusCode === "number" &&
+    Number.isFinite(obj.statusCode) &&
     typeof obj.durationMs === "number" &&
-    typeof obj.responseSize === "number"
+    Number.isFinite(obj.durationMs) &&
+    typeof obj.responseSize === "number" &&
+    Number.isFinite(obj.responseSize)
   );
 }

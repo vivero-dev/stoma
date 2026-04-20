@@ -267,6 +267,15 @@ describe("createStorageFileTracker", () => {
     expect(await tracker.isProcessed("file3.ndjson")).toBe(true);
     expect(await tracker.isProcessed("file4.ndjson")).toBe(true);
   });
+
+  it("should treat negative maxKeys as zero", async () => {
+    const storage = createMockStorageAdapter();
+    const tracker = createStorageFileTracker(storage, { maxKeys: -5 });
+
+    await tracker.markProcessed("file1.ndjson");
+    // With maxKeys=0, the manifest is always empty after write
+    expect(await tracker.isProcessed("file1.ndjson")).toBe(false);
+  });
 });
 
 // ── Processor Integration with Lock & Dedup ─────────────────────────────

@@ -43,8 +43,8 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: E2E test CLI
-        run: pnpm --filter @vivero/stoma-cli test:e2e
+      - name: E2E smoke test CLI
+        run: pnpm --filter @vivero/stoma-cli test:e2e:smoke
 
   changeset-check:
     if: github.event_name == 'pull_request'

@@ -17,7 +17,8 @@ permissions:
   packages: write
 
 jobs:
-  e2e:
+  # Gate: smoke tests must pass on all platforms before publishing
+  e2e-smoke:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true &&
@@ -33,11 +34,11 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: E2E test CLI
-        run: pnpm --filter @vivero/stoma-cli test:e2e
+      - name: E2E smoke test CLI
+        run: pnpm --filter @vivero/stoma-cli test:e2e:smoke
 
   publish:
-    needs: e2e
+    needs: e2e-smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -67,6 +68,26 @@ jobs:
             packages/cli/dist
             packages/core/dist
             packages/analytics/dist
+
+  # Post-publish: verify packages install correctly from npm with each package manager.
+  # This runs AFTER publish — the packages must be on npm for transitive deps to resolve.
+  # Failures here are alerts, not blockers (packages are already published).
+  e2e-install:
+    needs: publish
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-env
+
+      - name: Build
+        run: pnpm build
+
+      - name: E2E install test CLI
+        run: pnpm --filter @vivero/stoma-cli test:e2e:install
 
   deploy-docs:
     needs: publish

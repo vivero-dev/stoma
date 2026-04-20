@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
 /**
- * Publish workspace packages via `pnpm publish`.
+ * Publish workspace packages via `pnpm pack` + `npm publish`.
  *
- * pnpm publish natively resolves `workspace:*` protocols, applies
- * `publishConfig` overrides, and supports `--provenance` for OIDC
- * trusted publishing.
+ * - `pnpm pack` resolves `workspace:*` protocols and applies `publishConfig`
+ *   field overrides natively.
+ * - `npm publish <tarball>` supports OIDC trusted publishing and --provenance.
+ *   pnpm does not support OIDC (https://github.com/pnpm/pnpm/issues/9812).
  *
  * Changesets is still used for versioning (changeset version) and
  * tagging (changeset tag). Only the publish step is ours.
@@ -17,7 +18,14 @@
  */
 
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -82,6 +90,46 @@ function isAlreadyPublished(name, version) {
   }
 }
 
+// ── Pack + publish ──────────────────────────────────────────────────────────
+
+function packAndPublish(pkg, { tag, dryRun, provenance }) {
+  const tmpDir = mkdtempSync(join(tmpdir(), "stoma-publish-"));
+  try {
+    // pnpm pack resolves workspace:* and applies publishConfig
+    const packOutput = execSync("pnpm pack", {
+      cwd: pkg.dir,
+      encoding: "utf-8",
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    // Extract .tgz filename from pnpm pack output
+    const match = packOutput.match(/^(.+\.tgz)$/m);
+    if (!match) {
+      throw new Error(
+        `Could not find .tgz in pnpm pack output:\n${packOutput}`
+      );
+    }
+    const tgzPath = join(pkg.dir, match[1].trim());
+
+    // npm publish <tarball> supports OIDC trusted publishing + provenance
+    const flags = ["--access public", `--tag ${tag}`];
+    if (provenance) flags.push("--provenance");
+    if (dryRun) flags.push("--dry-run");
+
+    const cmd = `npm publish ${tgzPath} ${flags.join(" ")}`;
+    console.log(`$ ${cmd}`);
+    execSync(cmd, { cwd: pkg.dir, stdio: "inherit" });
+
+    // Clean up tarball
+    rmSync(tgzPath, { force: true });
+    return true;
+  } catch (err) {
+    console.error(err.message || err);
+    return false;
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 const packages = discoverPackages();
@@ -107,18 +155,12 @@ const published = [];
 const failed = [];
 
 for (const pkg of toPublish) {
-  try {
-    const tag = pkg.version.includes("-") ? "rc" : "latest";
-    const flags = ["--access public", `--tag ${tag}`, "--no-git-checks"];
-    if (isCI) flags.push("--provenance");
-    if (isDryRun) flags.push("--dry-run");
+  const tag = pkg.version.includes("-") ? "rc" : "latest";
+  console.log(`\n--- ${pkg.name}@${pkg.version} (tag: ${tag}) ---`);
 
-    const cmd = `pnpm publish ${flags.join(" ")}`;
-    console.log(`\n$ ${cmd} (${pkg.name}@${pkg.version})`);
-
-    execSync(cmd, { cwd: pkg.dir, stdio: "inherit" });
+  if (packAndPublish(pkg, { tag, dryRun: isDryRun, provenance: isCI })) {
     published.push(pkg);
-  } catch {
+  } else {
     console.error(`FAILED: ${pkg.name}@${pkg.version}`);
     failed.push(pkg);
   }
